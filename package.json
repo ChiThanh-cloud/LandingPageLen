@@ -1,0 +1,27 @@
+{
+  "name": "landing-page-len",
+  "version": "1.0.0",
+  "description": "Landing page for Tiệm Len Nhà Tiny - Handmade yarn shop",
+  "main": "script.js",
+  "scripts": {
+    "build": "esbuild analytics.js --bundle --outfile=analytics-bundle.js --format=esm",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thanh123-ui/LandingPageLen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thanh123-ui/LandingPageLen/issues"
+  },
+  "homepage": "https://github.com/Thanh123-ui/LandingPageLen#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
