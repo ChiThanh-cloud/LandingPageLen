@@ -472,66 +472,6 @@ ul { list-style: none; }
 .reveal.visible { opacity: 1; transform: none; }
 
 /* =============================================
-   CHARTS (GÓC CHIA SẺ)
-   ============================================= */
-.charts { background: var(--cream); }
-.charts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
-.chart-card {
-  background: var(--white); border-radius: var(--radius-lg); overflow: hidden;
-  box-shadow: var(--shadow-sm); cursor: pointer; transition: var(--transition);
-  border: 1px solid var(--blue-pale);
-}
-.chart-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: var(--blue-main); }
-.chart-img { position: relative; aspect-ratio: 4/3; overflow: hidden; }
-.chart-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
-.chart-card:hover .chart-img img { transform: scale(1.05); filter: brightness(0.9); }
-.chart-overlay-btn {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-  background: rgba(255,255,255,0.9); color: var(--blue-deep); font-weight: 600;
-  padding: 10px 20px; border-radius: 100px; opacity: 0; transition: all .3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.chart-card:hover .chart-overlay-btn { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.chart-info { padding: 20px; text-align: center; }
-.chart-info h3 { font-size: 1.1rem; color: var(--text-dark); margin-bottom: 8px; font-family: 'Playfair Display', serif; }
-.yarn-tag { display: inline-block; font-size: .8rem; color: var(--blue-main); background: var(--blue-pale); padding: 4px 12px; border-radius: 6px; font-weight: 500; }
-
-/* Modal */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; visibility: hidden; transition: var(--transition);
-  backdrop-filter: blur(4px); padding: 20px;
-}
-.modal-overlay.active { opacity: 1; visibility: visible; }
-.modal-content {
-  background: var(--white); width: 100%; max-width: 900px; max-height: 90vh;
-  border-radius: var(--radius-lg); position: relative; overflow: hidden;
-  transform: scale(0.95) translateY(20px); transition: transform .4s cubic-bezier(.4,0,.2,1);
-  display: flex; flex-direction: column;
-}
-.modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-.modal-close {
-  position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
-  background: var(--blue-pale); color: var(--blue-deep); border: none; border-radius: 50%;
-  font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
-  transition: var(--transition);
-}
-.modal-close:hover { background: var(--blue-main); color: var(--white); transform: rotate(90deg); }
-.modal-body {
-  display: flex; gap: 32px; padding: 40px; overflow-y: auto;
-}
-.modal-img-col { flex: 0 0 320px; }
-.modal-img-col img { width: 100%; border-radius: var(--radius); box-shadow: var(--shadow-sm); aspect-ratio: 1; object-fit: cover; }
-.modal-yarn-info { margin-top: 20px; padding: 16px; background: var(--blue-pale); border-radius: var(--radius); border: 1px solid var(--blue-light); }
-.modal-yarn-info h4 { font-size: .95rem; color: var(--blue-deep); margin-bottom: 6px; }
-.modal-yarn-info p { font-size: .85rem; color: var(--text-mid); }
-.modal-text-col { flex: 1; display: flex; flex-direction: column; }
-.modal-text-col h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--text-dark); margin-bottom: 24px; border-bottom: 2px solid var(--blue-pale); padding-bottom: 12px; }
-.chart-formula { font-family: monospace; font-size: 1rem; color: var(--text-mid); line-height: 1.8; background: #f8fafc; padding: 24px; border-radius: var(--radius); border: 1px dashed var(--blue-light); overflow-y: auto; flex: 1; }
-.chart-formula strong { color: var(--blue-deep); font-family: 'Be Vietnam Pro', sans-serif; }
-
-/* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 1024px) {
@@ -540,9 +480,6 @@ ul { list-style: none; }
   .products-grid { grid-template-columns: repeat(2, 1fr); }
   .trust-grid { grid-template-columns: repeat(2, 1fr); }
   .trust-item { border-right: none; border-bottom: 1px solid var(--blue-light); }
-  .charts-grid { grid-template-columns: repeat(2, 1fr); }
-  .modal-body { flex-direction: column; padding: 24px; }
-  .modal-img-col { flex: auto; max-width: 400px; margin: 0 auto; }
 }
 @media (max-width: 768px) {
   .section { padding: 64px 0; }
@@ -566,5 +503,4 @@ ul { list-style: none; }
   .hero-btns { flex-direction: column; align-items: center; }
   .trust-grid { grid-template-columns: 1fr; }
   .about-badge-card { position: static; margin-top: 16px; display: inline-block; }
-  .charts-grid { grid-template-columns: 1fr; }
 }
