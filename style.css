@@ -483,6 +483,42 @@ ul { list-style: none; }
 .reveal.visible { opacity: 1; transform: none; }
 
 /* =============================================
+   SAMPLE MODAL
+   ============================================= */
+.sample-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden; transition: var(--transition);
+  backdrop-filter: blur(5px); padding: 20px;
+}
+.sample-modal-overlay.active { opacity: 1; visibility: visible; }
+.sample-modal-content {
+  background: var(--white); width: 100%; max-width: 800px; max-height: 90vh;
+  border-radius: var(--radius-lg); position: relative; overflow-y: auto;
+  transform: scale(0.95) translateY(20px); transition: transform .4s cubic-bezier(.4,0,.2,1);
+  padding: 40px; display: flex; flex-direction: column;
+}
+.sample-modal-overlay.active .sample-modal-content { transform: scale(1) translateY(0); }
+.sample-modal-close {
+  position: absolute; top: 16px; right: 16px; width: 36px; height: 36px;
+  background: var(--blue-pale); color: var(--blue-deep); border: none; border-radius: 50%;
+  font-size: 1.2rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.sample-modal-close:hover { background: var(--blue-main); color: var(--white); transform: rotate(90deg); }
+.sample-modal-title {
+  font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--blue-deep); 
+  margin-bottom: 24px; text-align: center; border-bottom: 2px solid var(--blue-pale); padding-bottom: 16px;
+}
+.sample-gallery {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+.sample-item { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.sample-item img { width: 100%; height: 250px; object-fit: cover; transition: transform .5s ease; }
+.sample-item:hover img { transform: scale(1.05); }
+.sample-item h4 { padding: 12px; text-align: center; font-size: .95rem; color: var(--text-dark); background: var(--cream); }
+
+/* =============================================
    RESPONSIVE
    ============================================= */
 @media (max-width: 1024px) {
@@ -511,6 +547,8 @@ ul { list-style: none; }
   .step-arrow { transform: rotate(90deg); margin: 16px 0; }
   .step { max-width: 100%; width: 100%; }
   .contact-card { min-width: unset; width: 100%; }
+  .sample-gallery { grid-template-columns: 1fr; }
+  .sample-modal-content { padding: 24px; }
   .float-btn .float-label { display: none; }
   .float-btn { padding: 14px; border-radius: 50%; width: 52px; height: 52px; justify-content: center; }
   .trust-grid { grid-template-columns: 1fr 1fr; }

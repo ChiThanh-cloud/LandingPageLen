@@ -69,3 +69,60 @@ window.addEventListener('scroll', () => {
   });
 }, { passive: true });
 
+// ---- Sample Modal Logic ----
+const sampleData = {
+  yarn: {
+    title: "Mẫu Cuộn Len",
+    items: [
+      { img: "images/yarn_collection.jpg", name: "Len Milk Cotton 125g" },
+      { img: "images/yarn_hero.jpg", name: "Len Sợi Dệt 2mm" }
+    ]
+  },
+  handmade: {
+    title: "Mẫu Móc Theo Yêu Cầu",
+    items: [
+      { img: "images/crochet_products.jpg", name: "Thú Bông Handmade" },
+      { img: "images/yarn_hero.jpg", name: "Túi Tote Móc Tay" }
+    ]
+  },
+  gift: {
+    title: "Mẫu Bộ Quà Tặng",
+    items: [
+      { img: "images/yarn_hero.jpg", name: "Set Quà Tặng Người Yêu" },
+      { img: "images/yarn_collection.jpg", name: "Set Quà Sinh Nhật" }
+    ]
+  }
+};
+
+const sampleModal = document.getElementById('sampleModal');
+const sampleModalTitle = document.getElementById('sampleModalTitle');
+const sampleGallery = document.getElementById('sampleGallery');
+
+function openSampleModal(type) {
+  const data = sampleData[type];
+  if (!data) return;
+
+  sampleModalTitle.textContent = data.title;
+  sampleGallery.innerHTML = '';
+  
+  data.items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'sample-item';
+    div.innerHTML = `<img src="${item.img}" alt="${item.name}"><h4>${item.name}</h4>`;
+    sampleGallery.appendChild(div);
+  });
+
+  sampleModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSampleModal() {
+  sampleModal.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+if (sampleModal) {
+  sampleModal.addEventListener('click', (e) => {
+    if (e.target === sampleModal) closeSampleModal();
+  });
+}

@@ -165,7 +165,7 @@
         tim</p>
 
       <div class="products-grid">
-        <div class="product-card" id="prod-cuon-len">
+        <div class="product-card" id="prod-cuon-len" onclick="openSampleModal('yarn')" style="cursor: pointer;">
           <div class="product-img-wrap">
             <img src="images/yarn_collection.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" />
             <div class="product-tag">Bán chạy</div>
@@ -173,11 +173,11 @@
           <div class="product-info">
             <h3>Cuộn Len Các Loại</h3>
             <p>Đa dạng màu sắc và chất liệu: len cotton, acrylic, wool. Phù hợp cho mọi dự án đan móc của bạn.</p>
-            <a href="#contact" class="btn-link">Hỏi giá ngay →</a>
+            <span class="btn-link">Xem bảng màu & mẫu →</span>
           </div>
         </div>
 
-        <div class="product-card featured" id="prod-moc-yc">
+        <div class="product-card featured" id="prod-moc-yc" onclick="openSampleModal('handmade')" style="cursor: pointer;">
           <div class="product-img-wrap">
             <img src="images/crochet_products.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện" />
             <div class="product-tag hot">Yêu thích nhất</div>
@@ -185,11 +185,11 @@
           <div class="product-info">
             <h3>Móc Theo Yêu Cầu</h3>
             <p>Thú nhồi bông, túi xách, mũ nón, phụ kiện — thiết kế riêng theo ý tưởng của bạn hoặc mẫu có sẵn.</p>
-            <a href="#contact" class="btn-link">Đặt hàng ngay →</a>
+            <span class="btn-link">Xem ảnh sản phẩm →</span>
           </div>
         </div>
 
-        <div class="product-card" id="prod-qua-tang">
+        <div class="product-card" id="prod-qua-tang" onclick="openSampleModal('gift')" style="cursor: pointer;">
           <div class="product-img-wrap">
             <img src="images/yarn_hero.jpg" alt="Bộ quà tặng handmade từ len" />
             <div class="product-tag gift">Quà tặng</div>
@@ -197,7 +197,7 @@
           <div class="product-info">
             <h3>Bộ Quà Tặng Handmade</h3>
             <p>Quà sinh nhật, kỷ niệm, Valentine... ý nghĩa và độc đáo hơn bất kỳ món quà nào. Gói hộp xinh sẵn.</p>
-            <a href="#contact" class="btn-link">Tìm hiểu thêm →</a>
+            <span class="btn-link">Xem mẫu hộp quà →</span>
           </div>
         </div>
       </div>
@@ -446,6 +446,19 @@
     logged_out_greeting="Xin chào! Bạn muốn đặt len hay móc theo yêu cầu? 🧶">
   </div>
   -->
+  <!-- ===== SAMPLE MODAL ===== -->
+  <div class="sample-modal-overlay" id="sampleModal">
+    <div class="sample-modal-content">
+      <button class="sample-modal-close" onclick="closeSampleModal()">✕</button>
+      <h2 class="sample-modal-title" id="sampleModalTitle">Sản phẩm mẫu</h2>
+      <div class="sample-gallery" id="sampleGallery">
+        <!-- JS sẽ chèn ảnh vào đây -->
+      </div>
+      <div style="text-align: center; margin-top: 24px;">
+        <a href="#contact" class="btn btn-primary" onclick="closeSampleModal()">Tôi muốn đặt mẫu tương tự</a>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
