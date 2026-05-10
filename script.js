@@ -2,6 +2,27 @@
    TIỆM LEN NHÀ TINY – SCRIPT
    ============================================= */
 
+// ---- Khởi tạo Supabase ----
+const SUPABASE_URL = 'https://pkcmpqerwjxscbhwchgx.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_C4UKMMkAjjqSnYVD4tA7bA_NXEakUyg';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Kiểm tra kết nối (bạn có thể xem kết quả trong F12 -> Console)
+async function checkSupabaseConnection() {
+  try {
+    const { data, error } = await supabaseClient.from('products').select('*').limit(1);
+    if (error) {
+      console.log('Chưa tìm thấy bảng "products" trên Supabase. Bạn hãy tạo bảng nhé!');
+    } else {
+      console.log('🎉 Kết nối Supabase thành công! Dữ liệu mẫu:', data);
+    }
+  } catch (err) {
+    console.error('Lỗi kết nối Supabase:', err.message);
+  }
+}
+// Chạy hàm kiểm tra
+checkSupabaseConnection();
+
 // ---- Navbar scroll effect ----
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
