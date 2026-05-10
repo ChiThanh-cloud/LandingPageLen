@@ -90,51 +90,49 @@ window.addEventListener('scroll', () => {
   });
 }, { passive: true });
 
-// ---- Sample Modal Logic ----
-const sampleData = {
-  yarn: {
-    title: "Mẫu Cuộn Len",
-    items: [
-      { img: "images/yarn_collection.jpg", name: "Len Milk Cotton 125g" },
-      { img: "images/yarn_hero.jpg", name: "Len Sợi Dệt 2mm" }
-    ]
-  },
-  handmade: {
-    title: "Mẫu Móc Theo Yêu Cầu",
-    items: [
-      { img: "images/crochet_products.jpg", name: "Thú Bông Handmade" },
-      { img: "images/yarn_hero.jpg", name: "Túi Tote Móc Tay" }
-    ]
-  },
-  gift: {
-    title: "Mẫu Bộ Quà Tặng",
-    items: [
-      { img: "images/yarn_hero.jpg", name: "Set Quà Tặng Người Yêu" },
-      { img: "images/yarn_collection.jpg", name: "Set Quà Sinh Nhật" }
-    ]
-  }
-};
-
 const sampleModal = document.getElementById('sampleModal');
 const sampleModalTitle = document.getElementById('sampleModalTitle');
 const sampleGallery = document.getElementById('sampleGallery');
 
-function openSampleModal(type) {
-  const data = sampleData[type];
-  if (!data) return;
+const categoryTitles = {
+  yarn: "Mẫu Cuộn Len",
+  handmade: "Mẫu Móc Theo Yêu Cầu",
+  gift: "Mẫu Bộ Quà Tặng"
+};
 
-  sampleModalTitle.textContent = data.title;
-  sampleGallery.innerHTML = '';
+async function openSampleModal(type) {
+  sampleModalTitle.textContent = categoryTitles[type] || "Sản phẩm mẫu";
+  sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-light);">Đang tải mẫu sản phẩm...</div>';
   
-  data.items.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'sample-item';
-    div.innerHTML = `<img src="${item.img}" alt="${item.name}"><h4>${item.name}</h4>`;
-    sampleGallery.appendChild(div);
-  });
-
   sampleModal.classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  try {
+    // Lấy dữ liệu từ bảng "products" trên Supabase lọc theo category
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .eq('category', type);
+
+    if (error) throw error;
+
+    sampleGallery.innerHTML = '';
+    
+    if (data.length === 0) {
+      sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Chưa có mẫu nào trong mục này.</div>';
+      return;
+    }
+
+    data.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'sample-item';
+      div.innerHTML = `<img src="${item.image_url}" alt="${item.name}"><h4>${item.name}</h4>`;
+      sampleGallery.appendChild(div);
+    });
+  } catch (err) {
+    console.error('Lỗi khi lấy dữ liệu:', err.message);
+    sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Không thể tải dữ liệu. Vui lòng kiểm tra lại bảng "products" trên Supabase.</div>';
+  }
 }
 
 function closeSampleModal() {
