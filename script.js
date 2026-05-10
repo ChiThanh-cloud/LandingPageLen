@@ -126,7 +126,17 @@ async function openSampleModal(type) {
     data.forEach(item => {
       const div = document.createElement('div');
       div.className = 'sample-item';
-      div.innerHTML = `<img src="${item.image_url}" alt="${item.name}"><h4>${item.name}</h4>`;
+      
+      let weightHtml = '';
+      if (item.weight) {
+        weightHtml = `<div class="sample-weight">${item.weight}</div>`;
+      }
+      
+      div.innerHTML = `
+        <img src="${item.image_url}" alt="${item.name}">
+        <h4>${item.name}</h4>
+        ${weightHtml}
+      `;
       sampleGallery.appendChild(div);
     });
   } catch (err) {
