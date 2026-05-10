@@ -15,7 +15,13 @@
   <link rel="icon" type="image/png" href="images/logo.png?v=2" />
   <link rel="apple-touch-icon" href="images/logo.png?v=2" />
   <meta property="og:image" content="images/logo.png?v=2" />
-  <link rel="stylesheet" href="style.css?v=3" />
+  <!-- CSS Modules -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/sections.css" />
+  <link rel="stylesheet" href="css/products.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
 
   <!-- ===== GOOGLE ANALYTICS 4 =====
        Bước 1: Vào https://analytics.google.com → Tạo tài khoản mới
@@ -246,7 +252,7 @@
         <div class="step">
           <div class="step-num">03</div>
           <div class="step-icon">🧶</div>
-          <h3>Tỉ mẩn móc tay</h3>
+          <h3>Tỉ mỉ móc tay</h3>
           <p>Tiny bắt tay vào làm và sẽ gửi ảnh cập nhật để bạn xem hình hài bé nó ra sao.</p>
         </div>
         <div class="step-arrow">→</div>
@@ -424,18 +430,6 @@
     </div>
   </footer>
 
-  <!-- ===== STICKY MOBILE CTA ===== -->
-  <div class="mobile-sticky-bar">
-    <a href="https://m.me/61559447375156" target="_blank" rel="noopener" class="sticky-item fb">
-      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      <span>Messenger</span>
-    </a>
-    <a href="https://zalo.me/036.890.3519" target="_blank" rel="noopener" class="sticky-item zalo">
-      <div class="zalo-dot">Za</div>
-      <span>Zalo: 036.890.3519</span>
-    </a>
-  </div>
-
   <!-- ===== POLICY MODAL ===== -->
   <div class="policy-modal" id="policyModal">
     <div class="policy-modal-content">
@@ -450,6 +444,7 @@
   <div class="float-buttons">
     <a href="https://zalo.me/036.890.3519" target="_blank" rel="noopener" class="float-btn zalo-float" id="float-zalo"
       aria-label="Chat Zalo">
+      <div class="msg-badge">+1</div>
       <svg viewBox="0 0 48 48" width="26" height="26">
         <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="18"
           font-weight="bold" font-family="Arial, sans-serif">Za</text>
@@ -491,6 +486,18 @@
     <div class="sample-modal-content">
       <button class="sample-modal-close" onclick="closeSampleModal()">✕</button>
       <h2 class="sample-modal-title" id="sampleModalTitle">Sản phẩm mẫu</h2>
+      
+      <!-- Bộ lọc và Tìm kiếm -->
+      <div class="modal-search-wrap">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="modalSearchInput" placeholder="Tìm kiếm trong danh mục này...">
+        </div>
+        <div class="filter-tabs" id="modalFilterTabs">
+          <!-- JS sẽ chèn các nút lọc (Gấu len, Hoa len...) vào đây -->
+        </div>
+      </div>
+
       <div class="sample-gallery" id="sampleGallery">
         <!-- JS sẽ chèn ảnh vào đây -->
       </div>

@@ -1,0 +1,282 @@
+/* =============================================
+   NAVBAR
+   ============================================= */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 18px 0;
+  transition: var(--transition);
+}
+
+.navbar.scrolled {
+  top: 10px;
+  left: 16px;
+  right: 16px;
+  background: rgba(244, 249, 249, .95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(26, 95, 122, .14);
+  border-radius: 20px;
+  border: 1px solid rgba(166, 227, 233, .35);
+  padding: 10px 0;
+}
+
+.nav-container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-logo img.logo-img {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+  transition: var(--transition);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.nav-links a {
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--white);
+  transition: var(--transition);
+  position: relative;
+}
+
+.navbar.scrolled .nav-links a {
+  color: var(--text-dark);
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--blue-deep);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transition: var(--transition);
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-links a.nav-cta {
+  background: linear-gradient(135deg, var(--blue-deep), var(--blue-main));
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 100px;
+  box-shadow: 0 4px 14px rgba(26, 95, 122, .3);
+}
+
+.nav-links a.nav-cta::after {
+  display: none;
+}
+
+.nav-links a.nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 95, 122, .4);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* Touch target 44x44px theo chuẩn UX */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: background .2s ease;
+}
+
+.hamburger:hover {
+  background: rgba(255,255,255,.12);
+}
+
+.navbar.scrolled .hamburger:hover {
+  background: var(--blue-pale);
+}
+
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.navbar.scrolled .hamburger span {
+  background: var(--text-dark);
+}
+
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer {
+  background: var(--text-dark);
+  padding: 56px 0 32px;
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.footer-brand {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-logo {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+  opacity: 1;
+}
+
+.footer-slogan {
+  color: rgba(255, 255, 255, .65);
+  font-size: .9rem;
+  font-style: italic;
+}
+
+.footer-addr {
+  color: rgba(255, 255, 255, .45);
+  font-size: .82rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, .55);
+  font-size: .88rem;
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--blue-light);
+}
+
+.footer-copy {
+  color: rgba(255, 255, 255, .3);
+  font-size: .8rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, .08);
+  padding-top: 24px;
+  width: 100%;
+}
+
+/* Navbar logo in footer */
+.logo-icon {
+  font-size: 1.4rem;
+}
+
+.logo-text {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, .8);
+}
+
+.logo-text strong {
+  color: var(--blue-light);
+}
+
+/* Navbar logo (light version) */
+.navbar .logo-text {
+  color: var(--white);
+}
+
+.navbar.scrolled .logo-text {
+  color: var(--text-dark);
+}
+
+.navbar.scrolled .logo-text strong {
+  color: var(--blue-deep);
+}
+
+/* =============================================
+   FLOATING BUTTONS
+   ============================================= */
+.float-buttons {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 999;
+}
+
+.float-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px 12px 14px;
+  border-radius: 100px;
+  color: var(--white);
+  font-weight: 600;
+  font-size: .85rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .2);
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.float-btn:hover {
+  transform: translateX(-4px) scale(1.04);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .25);
+}
+
+.zalo-float {
+  background: linear-gradient(135deg, #0068ff, #339dff);
+  animation: zalo-shake 3s infinite ease-in-out, pulse-zalo 2s infinite;
+}
+
+.fb-float {
+  background: linear-gradient(135deg, #1877f2, #42a5f5);
+  animation: pulse-fb 2s infinite 1s; /* Bắt đầu trễ 1 giây để so le với Zalo */
+}
+
+.float-label {
+  font-weight: 600;
+  color: #e0f2f1; /* Một tông xanh battle rất nhạt để nổi bật trên nền xanh đậm */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+

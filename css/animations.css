@@ -1,0 +1,76 @@
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+@keyframes zalo-shake {
+  0%, 80%, 100% { transform: scale(1); }
+  82%, 86% { transform: scale(1.05) rotate(-2deg); }
+  84%, 88% { transform: scale(1.05) rotate(2deg); }
+}
+
+@keyframes pulse-zalo {
+  0% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 104, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 0); }
+}
+
+@keyframes pulse-fb {
+  0% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(24, 119, 242, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0); }
+}
+
+.msg-badge {
+  position: absolute;
+  top: -8px;
+  left: 24px;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 100px;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+  animation: badgePop 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+  z-index: 10;
+}
+
+@keyframes badgePop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scrollDot {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(14px);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .7s ease, transform .7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}

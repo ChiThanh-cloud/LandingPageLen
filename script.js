@@ -90,9 +90,10 @@ window.addEventListener('scroll', () => {
   });
 }, { passive: true });
 
-const sampleModal = document.getElementById('sampleModal');
-const sampleModalTitle = document.getElementById('sampleModalTitle');
-const sampleGallery = document.getElementById('sampleGallery');
+// ---- TRẠNG THÁI MODAL SẢN PHẨM ----
+let currentCategory = '';
+let currentSubCategory = 'all';
+let searchKeyword = '';
 
 const categoryTitles = {
   yarn: "Mẫu Cuộn Len",
@@ -101,10 +102,75 @@ const categoryTitles = {
   set: "Set Tự Móc"
 };
 
+const subCategories = {
+  handmade: [
+    { id: 'all', label: 'Tất cả' },
+    { id: 'gau', label: 'Gấu len' },
+    { id: 'hoa', label: 'Hoa len' },
+    { id: 'tui', label: 'Túi xách' }
+  ],
+  yarn: [
+    { id: 'all', label: 'Tất cả' },
+    { id: 'milk', label: 'Len Milk' },
+    { id: 'cotton', label: 'Len Cotton' }
+  ]
+};
+
+const modalSearchInput = document.getElementById('modalSearchInput');
+const modalFilterTabs = document.getElementById('modalFilterTabs');
+
 async function openSampleModal(type) {
+  currentCategory = type;
+  currentSubCategory = 'all';
+  searchKeyword = '';
+  
+  if (modalSearchInput) modalSearchInput.value = '';
   sampleModalTitle.textContent = categoryTitles[type] || "Sản phẩm mẫu";
   
-  // Skeleton Loader cho trải nghiệm Premium
+  sampleModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  renderFilterTabs(type);
+  fetchAndRenderProducts();
+}
+
+function renderFilterTabs(type) {
+  if (!modalFilterTabs) return;
+  const tabs = subCategories[type];
+  
+  if (!tabs) {
+    modalFilterTabs.innerHTML = '';
+    return;
+  }
+
+  modalFilterTabs.innerHTML = tabs.map(tab => `
+    <div class="filter-tab ${tab.id === currentSubCategory ? 'active' : ''}" 
+         onclick="filterBySubCategory('${tab.id}')">
+      ${tab.label}
+    </div>
+  `).join('');
+}
+
+async function filterBySubCategory(subId) {
+  currentSubCategory = subId;
+  renderFilterTabs(currentCategory);
+  fetchAndRenderProducts();
+}
+
+// Debounce tìm kiếm để tránh gọi Supabase quá nhiều lần
+let searchTimeout;
+if (modalSearchInput) {
+  modalSearchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchKeyword = e.target.value.trim();
+    searchTimeout = setTimeout(() => {
+      fetchAndRenderProducts();
+    }, 400);
+  });
+}
+
+async function fetchAndRenderProducts() {
+  // 1. Hiện Skeleton
   sampleGallery.innerHTML = Array(4).fill(0).map(() => `
     <div class="sample-item">
       <div class="skeleton skeleton-img"></div>
@@ -112,27 +178,33 @@ async function openSampleModal(type) {
       <div class="skeleton skeleton-btn"></div>
     </div>
   `).join('');
-  
-  sampleModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
 
   try {
-    // Lấy dữ liệu từ bảng "products" trên Supabase lọc theo category
-    const { data, error } = await supabaseClient
+    // 2. Xây dựng câu truy vấn Supabase
+    let query = supabaseClient
       .from('products')
       .select('*')
-      .eq('category', type);
+      .eq('category', currentCategory);
 
+    if (currentSubCategory !== 'all') {
+      query = query.eq('sub_category', currentSubCategory);
+    }
+
+    if (searchKeyword) {
+      query = query.ilike('name', `%${searchKeyword}%`);
+    }
+
+    const { data, error } = await query;
     if (error) throw error;
 
+    // 3. Render dữ liệu
     sampleGallery.innerHTML = '';
     
     if (data.length === 0) {
-      sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Chưa có mẫu nào trong mục này.</div>';
+      sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Không tìm thấy sản phẩm nào phù hợp.</div>';
       return;
     }
 
-    // ---- Bảng kịch bản nhắn tin theo từng danh mục ----
     const actionScripts = {
       yarn: {
         label: '🎨 Xem bảng màu & Đặt',
@@ -152,8 +224,7 @@ async function openSampleModal(type) {
       }
     };
 
-    // Lấy kịch bản tương ứng, fallback nếu type không nằm trong danh sách
-    const script = actionScripts[type] || {
+    const script = actionScripts[currentCategory] || {
       label: '💬 Nhắn Mess hỏi mua',
       msg: (name) => `Chào Tiny, mình muốn hỏi mua: "${name}"`
     };
@@ -161,30 +232,19 @@ async function openSampleModal(type) {
     data.forEach(item => {
       const div = document.createElement('div');
       div.className = 'sample-item';
-
       const outOfStock = item.status === 'out';
-
-      const stockBadge = outOfStock
-        ? `<div class="sample-stock-badge">Hết hàng</div>`
-        : '';
-
-      const weightHtml = item.weight
-        ? `<div class="sample-weight">⚖️ ${item.weight}</div>`
-        : '';
-
-      // Xử lý giá: Loại bỏ dấu phẩy/chấm nếu người dùng nhập thủ công (vídụ: 150,000 -> 150000)
+      const stockBadge = outOfStock ? `<div class="sample-stock-badge">Hết hàng</div>` : '';
+      const weightHtml = item.weight ? `<span class="sample-weight">${item.weight}</span>` : '';
+      
       const cleanPrice = item.price ? item.price.toString().replace(/[,.]/g, '') : '';
       const priceHtml = (cleanPrice && !isNaN(cleanPrice)) 
         ? `<div class="sample-price">${Number(cleanPrice).toLocaleString('vi-VN')}đ</div>`
         : '';
 
       const messengerUrl = `https://m.me/61559447375156?text=${encodeURIComponent(script.msg(item.name))}`;
-
       const messengerBtn = outOfStock
-        ? `<div class="sample-outstock-note">Liên hệ Tiny để đặt trước khi có hàng mới nhé!</div>`
-        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger">
-            ${script.label}
-           </a>`;
+        ? `<div class="sample-outstock-note">Liên hệ Tiny để đặt trước!</div>`
+        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger">${script.label}</a>`;
 
       div.innerHTML = `
         <div class="sample-img-wrap">
@@ -192,32 +252,36 @@ async function openSampleModal(type) {
           ${stockBadge}
         </div>
         <div class="sample-item-info">
-          <h4>${item.name}</h4>
+          <div class="sample-title-row">
+            <h4>${item.name}</h4>
+            ${weightHtml}
+          </div>
           ${priceHtml}
-          ${weightHtml}
         </div>
         <div class="sample-item-footer">${messengerBtn}</div>
       `;
       sampleGallery.appendChild(div);
     });
 
-    // Ghi chú hướng dẫn cho từng danh mục
+    // 4. Thêm ghi chú
     const categoryNotes = {
-      yarn: '💡 Mách nhỏ: Chọn loại len bạn thích, Tiny sẽ gửi bảng màu để bạn tha hồ lựa chọn số lượng nhé!',
-      handmade: '💡 Mách nhỏ: Bạn có thể đặt theo mẫu có sẵn hoặc chia sẻ ảnh ý tưởng, Tiny sẽ tư vấn kích thước phù hợp!',
-      set: '💡 Mách nhỏ: Mỗi Set đã gom đủ nguyên liệu, bạn chỉ cần chọn mẫu yêu thích và bắt đầu thôi!',
-      gift: '💡 Mách nhỏ: Tiny có thể ghi thiệp tay và gói hộp thêm, hãy nhắn để biết thêm chi tiết nhé!'
+      yarn: '💡 Mách nhỏ: Chọn loại len bạn thích, Tiny sẽ gửi bảng màu nhé!',
+      handmade: '💡 Mách nhỏ: Bạn có thể đặt theo mẫu hoặc chia sẻ ảnh ý tưởng riêng!',
+      set: '💡 Mách nhỏ: Mỗi Set đã gom đủ nguyên liệu và có hướng dẫn!',
+      gift: '💡 Mách nhỏ: Tiny có thể ghi thiệp tay và gói hộp thêm nhé!'
     };
 
-    if (categoryNotes[type] && data.length > 0) {
+    if (categoryNotes[currentCategory] && data.length > 0) {
       const note = document.createElement('div');
+      note.className = 'category-note'; 
       note.style.cssText = 'grid-column: 1/-1; text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--text-mid); font-style: italic;';
-      note.innerHTML = categoryNotes[type];
+      note.innerHTML = categoryNotes[currentCategory];
       sampleGallery.appendChild(note);
     }
+
   } catch (err) {
     console.error('Lỗi khi lấy dữ liệu:', err.message);
-    sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Không thể tải dữ liệu. Vui lòng kiểm tra lại bảng "products" trên Supabase.</div>';
+    sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Không thể tải dữ liệu.</div>';
   }
 }
 
