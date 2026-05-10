@@ -58,7 +58,7 @@
       <a href="#hero" class="nav-logo">
         <img src="images/logo.png?v=2" alt="Tiệm Len Nhà Tiny" class="logo-img" />
       </a>
-      <ul class="nav-links">
+      <ul class="nav-links" id="navLinks">
         <li><a href="#about">Về chúng tôi</a></li>
         <li><a href="#products">Sản phẩm</a></li>
         <li><a href="#process">Quy trình</a></li>
@@ -74,19 +74,22 @@
   <!-- ===== HERO ===== -->
   <section class="hero" id="hero">
     <div class="hero-video-wrap">
-      <video autoplay muted loop playsinline id="heroVideo">
+      <video autoplay muted loop playsinline id="heroVideo" poster="images/yarn_hero.jpg">
         <source src="images/hero_video.mp4" type="video/mp4" />
       </video>
       <div class="hero-overlay"></div>
     </div>
     <div class="hero-content">
-      <p class="hero-badge">🧶 Handmade với tất cả tình yêu</p>
+      <p class="hero-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12c0-2.76 1.12-5.26 2.93-7.07"/><path d="M12 6v6l4 2"/></svg>
+        Handmade với tất cả tình yêu
+      </p>
       <h1 class="hero-title">Tiệm Len Nhà <span class="highlight">Tiny</span></h1>
-      <p class="hero-slogan">"Từng sợi len, một tình yêu — Tiny đan trọn niềm vui vào tay bạn"</p>
-      <p class="hero-subtitle">Cuộn len chất lượng · Móc thú nhồi bông · Phụ kiện len theo yêu cầu</p>
+      <p class="hero-slogan">"Đan niềm vui, móc tình yêu — Mang hơi ấm từ sợi len đến nụ cười của bạn"</p>
+      <p class="hero-subtitle">Nguyên liệu len sợi cao cấp · Thú bông móc tay · Quà tặng thiết kế riêng</p>
       <div class="hero-btns">
-        <a href="#products" class="btn btn-primary">Xem sản phẩm</a>
-        <a href="#contact" class="btn btn-outline">Đặt hàng ngay</a>
+        <a href="#products" class="btn btn-primary">Góc nhỏ có gì?</a>
+        <a href="#contact" class="btn btn-outline">Nhắn Tiny tư vấn</a>
       </div>
     </div>
     <div class="hero-scroll">
@@ -98,28 +101,36 @@
   <section class="trust-bar">
     <div class="container trust-grid">
       <div class="trust-item">
-        <span class="trust-icon">🎁</span>
+        <span class="trust-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/><path d="M16.5 9.4 7.55 4.24"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" x2="12" y1="22" y2="12"/><circle cx="18.5" cy="15.5" r="2.5"/><path d="M20.27 17.27 22 19"/></svg>
+        </span>
         <div>
           <strong>Nhận đơn theo yêu cầu</strong>
           <p>Thiết kế riêng cho bạn</p>
         </div>
       </div>
       <div class="trust-item">
-        <span class="trust-icon">💯</span>
+        <span class="trust-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
         <div>
           <strong>Chất liệu cao cấp</strong>
           <p>Len mềm mịn, an toàn</p>
         </div>
       </div>
       <div class="trust-item">
-        <span class="trust-icon">🚚</span>
+        <span class="trust-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12H19"/><path d="M12 5l7 7-7 7"/></svg>
+        </span>
         <div>
           <strong>Giao hàng toàn quốc</strong>
           <p>Đóng gói cẩn thận, an toàn</p>
         </div>
       </div>
       <div class="trust-item">
-        <span class="trust-icon">💬</span>
+        <span class="trust-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
         <div>
           <strong>Tư vấn miễn phí</strong>
           <p>Hỗ trợ qua Zalo &amp; FB</p>
@@ -132,26 +143,23 @@
   <section class="about section" id="about">
     <div class="container about-grid">
       <div class="about-img-wrap">
-        <img src="images/yarn_hero.jpg" alt="Tiệm len nhà Tiny – không gian cửa hàng" class="about-img" />
+        <img src="images/yarn_hero.jpg" alt="Tiệm len nhà Tiny – không gian cửa hàng" class="about-img" loading="lazy" />
         <div class="about-badge-card">
           <span class="badge-num">100+</span>
           <span class="badge-label">Khách hàng hài lòng</span>
         </div>
       </div>
       <div class="about-text">
-        <p class="section-tag">Câu chuyện của chúng tôi</p>
-        <h2 class="section-title">Nơi len trở thành <span class="highlight">tình yêu</span></h2>
-        <p>Tiệm Len Nhà Tiny ra đời từ niềm đam mê với những sợi len mềm mại và mong muốn mang đến những sản phẩm
-          handmade ấm áp, đầy ý nghĩa cho mọi người.</p>
-        <p>Chúng tôi cung cấp đa dạng cuộn len chất lượng và nhận móc thú nhồi bông, phụ kiện, đồ trang trí theo yêu cầu
-          — mỗi sản phẩm đều được làm thủ công tỉ mỉ bằng cả tình yêu.</p>
+        <p class="section-tag">Chút tâm tình từ Tiny</p>
+        <h2 class="section-title">Nơi những cuộn len <span class="highlight">biết kể chuyện</span></h2>
+        <p>Không chỉ là một trạm dừng chân mua bán len sợi, Tiny là góc nhỏ dành riêng cho những ai trân trọng đồ thủ công. Chúng mình tin rằng, mỗi cuộn len đều ẩn chứa một câu chuyện, và mỗi mũi móc đều mang theo một phần tâm huyết.</p>
+        <p>Dù bạn đang tìm kiếm những cuộn len mềm mịn để tự đan chiếc khăn ấm, hay cần một em gấu bông "độc bản" để làm quà tặng – Tiny luôn ở đây, cẩn thận tỉ mẩn từng chút một để gửi đến bạn sản phẩm hoàn thiện nhất.</p>
         <ul class="about-list">
-          <li>✔ Len nhập khẩu chất lượng cao, không xù, không gây dị ứng</li>
-          <li>✔ Nhận đặt theo mẫu hoặc thiết kế mới hoàn toàn</li>
-          <li>✔ Cam kết hoàn tiền nếu sản phẩm lỗi do người bán</li>
-          <li>✔ Thời gian hoàn thành từ 3–7 ngày tùy độ phức tạp</li>
+          <li>✔ Len tuyển chọn kỹ lưỡng: Dòng len Milk, Cotton, len xù... an toàn cho cả em bé.</li>
+          <li>✔ Móc tay 100%: Nhận làm theo mẫu ảnh hoặc lên ý tưởng thiết kế riêng cho bạn.</li>
+          <li>✔ Trách nhiệm tới cùng: Luôn gửi ảnh kiểm tra trước khi giao, hỗ trợ sửa dáng nếu chưa ưng ý.</li>
         </ul>
-        <a href="#contact" class="btn btn-primary">Liên hệ tư vấn</a>
+        <a href="#contact" class="btn btn-primary">Ghé tiệm trò chuyện</a>
       </div>
     </div>
   </section>
@@ -159,45 +167,56 @@
   <!-- ===== PRODUCTS ===== -->
   <section class="products section" id="products">
     <div class="container">
-      <p class="section-tag center">Sản phẩm nổi bật</p>
-      <h2 class="section-title center">Những điều <span class="highlight">Tiny</span> có thể làm cho bạn</h2>
-      <p class="section-sub center">Từ cuộn len nguyên liệu đến các món đồ móc tinh tế — tất cả đều được làm bằng trái
-        tim</p>
+      <p class="section-tag center">Góc nhỏ của Tiny</p>
+      <h2 class="section-title center">Tiny có thể làm gì <span class="highlight">giúp bạn?</span></h2>
+      <p class="section-sub center">Từ nguyên liệu đan móc đến những món quà thành phẩm, tất cả đều sẵn sàng.</p>
 
       <div class="products-grid">
         <div class="product-card" id="prod-cuon-len" onclick="openSampleModal('yarn')" style="cursor: pointer;">
           <div class="product-img-wrap">
-            <img src="images/yarn_collection.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" />
+            <img src="images/yarn_collection.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" loading="lazy" />
             <div class="product-tag">Bán chạy</div>
           </div>
           <div class="product-info">
-            <h3>Cuộn Len Các Loại</h3>
-            <p>Đa dạng màu sắc và chất liệu: len cotton, acrylic, wool. Phù hợp cho mọi dự án đan móc của bạn.</p>
-            <span class="btn-link">Xem bảng màu & mẫu →</span>
+            <h3>Cuộn Len & Phụ Kiện</h3>
+            <p>Bảng màu len siêu xinh, chất sợi mềm mịn (Cotton, Wool...). Đủ kim móc và phụ kiện để bạn tự tay làm nên tác phẩm của mình.</p>
+            <span class="btn-link">Xem bảng màu len →</span>
           </div>
         </div>
 
         <div class="product-card featured" id="prod-moc-yc" onclick="openSampleModal('handmade')" style="cursor: pointer;">
           <div class="product-img-wrap">
-            <img src="images/crochet_products.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện" />
+            <img src="images/crochet_products.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện" loading="lazy" />
             <div class="product-tag hot">Yêu thích nhất</div>
           </div>
           <div class="product-info">
-            <h3>Móc Theo Yêu Cầu</h3>
-            <p>Thú nhồi bông, túi xách, mũ nón, phụ kiện — thiết kế riêng theo ý tưởng của bạn hoặc mẫu có sẵn.</p>
-            <span class="btn-link">Xem ảnh sản phẩm →</span>
+            <h3>Đồ Móc Đặt Riêng</h3>
+            <p>Thú bông Amigurumi, túi xách, mũ nón... Bạn chỉ cần có ý tưởng hoặc ảnh mẫu, Tiny sẽ dùng len biến nó thành hiện thực.</p>
+            <span class="btn-link">Xem mẫu Tiny đã móc →</span>
           </div>
         </div>
 
         <div class="product-card" id="prod-qua-tang" onclick="openSampleModal('gift')" style="cursor: pointer;">
           <div class="product-img-wrap">
-            <img src="images/yarn_hero.jpg" alt="Bộ quà tặng handmade từ len" />
+            <img src="images/yarn_hero.jpg" alt="Bộ quà tặng handmade từ len" loading="lazy" />
             <div class="product-tag gift">Quà tặng</div>
           </div>
           <div class="product-info">
-            <h3>Bộ Quà Tặng Handmade</h3>
-            <p>Quà sinh nhật, kỷ niệm, Valentine... ý nghĩa và độc đáo hơn bất kỳ món quà nào. Gói hộp xinh sẵn.</p>
-            <span class="btn-link">Xem mẫu hộp quà →</span>
+            <h3>Hộp Quà Ý Nghĩa</h3>
+            <p>Một bó hoa len không bao giờ tàn hay set hộp quà mix sẵn cực kỳ mộng mơ. Gói ghém thơm tho thay lời bạn muốn nói.</p>
+            <span class="btn-link">Xem các set quà →</span>
+          </div>
+        </div>
+
+        <div class="product-card" id="prod-set" onclick="openSampleModal('set')" style="cursor: pointer;">
+          <div class="product-img-wrap">
+            <img src="images/yarn_collection.jpg" alt="Set Tự Móc" loading="lazy" />
+            <div class="product-tag hot">Mới nhất</div>
+          </div>
+          <div class="product-info">
+            <h3>Set Tự Móc</h3>
+            <p>Dành riêng cho người mới bắt đầu! Mỗi set đã gom đủ len, kim móc, bông nhồi và hướng dẫn cực chi tiết để bạn tự vọc vạch.</p>
+            <span class="btn-link">Xem mẫu tự móc →</span>
           </div>
         </div>
       </div>
@@ -207,35 +226,35 @@
   <!-- ===== PROCESS ===== -->
   <section class="process section" id="process">
     <div class="container">
-      <p class="section-tag center">Đặt hàng đơn giản</p>
-      <h2 class="section-title center">Chỉ <span class="highlight">4 bước</span> để có sản phẩm ưng ý</h2>
+      <p class="section-tag center">Cách thức đặt hàng</p>
+      <h2 class="section-title center">Hành trình làm ra <span class="highlight">món quà của bạn</span></h2>
       <div class="process-steps">
         <div class="step">
           <div class="step-num">01</div>
           <div class="step-icon">💬</div>
-          <h3>Liên hệ tư vấn</h3>
-          <p>Nhắn tin qua Zalo hoặc Facebook, mô tả sản phẩm bạn muốn</p>
+          <h3>Nhắn nhủ ý tưởng</h3>
+          <p>Kể Tiny nghe bạn muốn món đồ thế nào qua Zalo hoặc Facebook nhé.</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">02</div>
           <div class="step-icon">🎨</div>
-          <h3>Chốt thiết kế</h3>
-          <p>Chọn màu, kiểu dáng, kích thước — Tiny sẽ tư vấn chi tiết</p>
+          <h3>Chốt màu & Dáng</h3>
+          <p>Tiny sẽ gửi bảng màu len, tư vấn cách phối màu sao cho xinh nhất.</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">03</div>
           <div class="step-icon">🧶</div>
-          <h3>Tiến hành làm</h3>
-          <p>Tiny bắt đầu móc và cập nhật tiến độ thường xuyên cho bạn</p>
+          <h3>Tỉ mẩn móc tay</h3>
+          <p>Tiny bắt tay vào làm và sẽ gửi ảnh cập nhật để bạn xem hình hài bé nó ra sao.</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">04</div>
           <div class="step-icon">📦</div>
-          <h3>Nhận hàng</h3>
-          <p>Đóng gói cẩn thận, ship toàn quốc — bạn nhận và yêu thích!</p>
+          <h3>Giao tới tận tay</h3>
+          <p>Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!</p>
         </div>
       </div>
     </div>
@@ -398,12 +417,34 @@
         <a href="#process">Quy trình</a>
         <a href="#reviews">Đánh giá</a>
         <a href="#contact">Liên hệ</a>
-        <a href="#" onclick="alert('Chính sách bảo mật đang được cập nhật.'); return false;">Chính sách bảo mật</a>
-        <a href="#" onclick="alert('Điều khoản dịch vụ đang được cập nhật.'); return false;">Điều khoản</a>
+        <a href="#" onclick="openPolicyModal('privacy'); return false;">Chính sách bảo mật</a>
+        <a href="#" onclick="openPolicyModal('terms'); return false;">Điều khoản dịch vụ</a>
       </div>
       <p class="footer-copy">© 2025 Tiệm Len Nhà Tiny. Handmade with 🩷</p>
     </div>
   </footer>
+
+  <!-- ===== STICKY MOBILE CTA ===== -->
+  <div class="mobile-sticky-bar">
+    <a href="https://m.me/61559447375156" target="_blank" rel="noopener" class="sticky-item fb">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      <span>Messenger</span>
+    </a>
+    <a href="https://zalo.me/036.890.3519" target="_blank" rel="noopener" class="sticky-item zalo">
+      <div class="zalo-dot">Za</div>
+      <span>Zalo: 036.890.3519</span>
+    </a>
+  </div>
+
+  <!-- ===== POLICY MODAL ===== -->
+  <div class="policy-modal" id="policyModal">
+    <div class="policy-modal-content">
+      <button class="policy-modal-close" onclick="closePolicyModal()">✕</button>
+      <div id="policyContent">
+        <!-- Nội dung sẽ được load qua JS -->
+      </div>
+    </div>
+  </div>
 
   <!-- ===== FLOATING BUTTONS ===== -->
   <div class="float-buttons">
@@ -422,7 +463,6 @@
           d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
       </svg>
       <span class="float-label">Facebook</span>
-    </a>
     </a>
   </div>
 

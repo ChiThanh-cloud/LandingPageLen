@@ -198,10 +198,16 @@ ul {
 }
 
 .navbar.scrolled {
-  background: rgba(244, 249, 249, .92);
-  backdrop-filter: blur(20px);
-  box-shadow: var(--shadow-sm);
-  padding: 12px 0;
+  top: 10px;
+  left: 16px;
+  right: 16px;
+  background: rgba(244, 249, 249, .95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(26, 95, 122, .14);
+  border-radius: 20px;
+  border: 1px solid rgba(166, 227, 233, .35);
+  padding: 10px 0;
 }
 
 .nav-container {
@@ -285,7 +291,22 @@ ul {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  /* Touch target 44x44px theo chuẩn UX */
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: background .2s ease;
+}
+
+.hamburger:hover {
+  background: rgba(255,255,255,.12);
+}
+
+.navbar.scrolled .hamburger:hover {
+  background: var(--blue-pale);
 }
 
 .hamburger span {
@@ -340,7 +361,9 @@ ul {
 }
 
 .hero-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: rgba(255, 255, 255, .15);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, .3);
@@ -450,8 +473,15 @@ ul {
 }
 
 .trust-icon {
-  font-size: 2rem;
   flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-pale);
+  border-radius: 12px;
+  color: var(--blue-deep);
 }
 
 .trust-item strong {
@@ -547,7 +577,7 @@ ul {
 
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 28px;
   margin-top: 16px;
 }
@@ -1273,8 +1303,66 @@ ul {
   font-size: 0.85rem;
   color: var(--text-mid);
   background: var(--cream);
-  padding: 0 12px 12px 12px;
+  padding: 0 12px 8px 12px;
 }
+
+/* Wrapper ảnh để đặt badge lên trên */
+.sample-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Badge hết hàng */
+.sample-stock-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(0,0,0,0.65);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: .5px;
+}
+
+/* Footer dưới card sản phẩm */
+.sample-item-footer {
+  background: var(--cream);
+  padding: 0 12px 14px 12px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Nút nhắn Messenger */
+.btn-messenger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0084ff;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: background .2s, transform .2s;
+  white-space: nowrap;
+}
+.btn-messenger:hover {
+  background: #006edb;
+  transform: scale(1.04);
+}
+
+/* Ghi chú hết hàng */
+.sample-outstock-note {
+  font-size: 0.78rem;
+  color: var(--text-mid);
+  font-style: italic;
+  text-align: center;
+  padding: 4px 0;
+}
+
 
 /* =============================================
    RESPONSIVE
@@ -1332,11 +1420,15 @@ ul {
   }
 
   .nav-links a {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: var(--text-dark);
-    padding: 16px 0;
+    padding: 18px 0;
     border-bottom: 1px solid var(--blue-light);
     width: 100%;
+    /* Touch target tối thiểu */
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 
   .navbar.scrolled .nav-links a {
@@ -1362,7 +1454,20 @@ ul {
 
   .products-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 20px;
+  }
+
+  /* Sample items trong modal: 1 cột trên màn hình nhỏ */
+  .sample-gallery {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  /* Nút Messenger to hơn trên mobile */
+  .btn-messenger {
+    font-size: .9rem;
+    padding: 10px 18px;
+    min-height: 44px;
   }
 
   .reviews-grid {
@@ -1434,4 +1539,156 @@ ul {
     display: inline-block;
     width: 100%;
   }
+
+  /* Modal gallery: 1 cột trên màn hình rất nhỏ */
+  .sample-gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================================
+   ACCESSIBILITY – REDUCED MOTION
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+/* =============================================
+   FB ADS & MOBILE OPTIMIZATION
+   ============================================= */
+
+/* 1. Mobile Sticky Bar */
+.mobile-sticky-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  grid-template-columns: 1fr 1.2fr;
+  padding: 10px 16px;
+  gap: 12px;
+  z-index: 999;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+  border-top: 1px solid rgba(0,0,0,0.05);
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
+}
+
+.sticky-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.2s ease;
+}
+
+.sticky-item.fb { background: #0084FF; color: #fff; }
+.sticky-item.zalo { background: #0068FF; color: #fff; }
+
+/* 2. Policy Modal */
+.policy-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.policy-modal.active { display: flex; }
+
+.policy-modal-content {
+  background: #fff;
+  width: 100%;
+  max-width: 700px;
+  max-height: 85vh;
+  border-radius: 24px;
+  padding: 40px;
+  position: relative;
+  overflow-y: auto;
+  animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.policy-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f4f7f7;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+#policyContent h2 { font-family: 'Playfair Display', serif; margin-bottom: 24px; color: var(--blue-deep); }
+#policyContent h3 { margin: 24px 0 12px; font-size: 1.1rem; }
+#policyContent p, #policyContent li { line-height: 1.7; color: var(--text-mid); margin-bottom: 12px; }
+
+/* 3. Skeleton Loading */
+.skeleton {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 8px;
+  background-size: 200% 100%;
+  animation: shine 1.5s linear infinite;
+}
+
+.skeleton-img { width: 100%; aspect-ratio: 1; border-radius: 16px; margin-bottom: 16px; }
+.skeleton-text { height: 20px; width: 80%; margin-bottom: 10px; }
+.skeleton-btn { height: 45px; width: 100%; border-radius: 100px; }
+
+@keyframes shine { to { background-position-x: -200%; } }
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .mobile-sticky-bar { display: grid; }
+  .footer { padding-bottom: 80px; }
+  .float-buttons { bottom: 90px; }
+}
+
+/* 4. Product Modal Refinement */
+.sample-item-info {
+  padding: 12px 0;
+}
+
+.sample-price {
+  font-weight: 700;
+  color: var(--blue-main);
+  font-size: 1.1rem;
+  margin: 4px 0;
+}
+
+.sample-weight {
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
+.sample-item h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-dark);
 }
