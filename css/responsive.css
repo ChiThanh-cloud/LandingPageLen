@@ -55,14 +55,15 @@ body.menu-open .navbar.scrolled {
   .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 16px; /* Tăng khoảng cách giữa các mục */
     position: fixed;
     inset: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
-    padding: 100px 32px 32px;
+    padding: 80px 32px 32px;
     align-items: center;
+    justify-content: center; /* Căn giữa theo chiều dọc */
     z-index: 999;
     opacity: 0;
     visibility: hidden;
@@ -80,7 +81,7 @@ body.menu-open .navbar.scrolled {
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--text-dark);
-    padding: 20px 0;
+    padding: 16px 0;
     width: 100%;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
@@ -89,6 +90,17 @@ body.menu-open .navbar.scrolled {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     transition-delay: calc(0.05s * var(--i, 0));
   }
+
+  /* Style riêng cho nút CTA trên mobile */
+  .nav-links a.nav-cta {
+    width: auto;
+    min-width: 200px;
+    margin-top: 24px;
+    padding: 14px 32px;
+    border-bottom: none;
+    font-size: 1.2rem;
+  }
+
 
   .nav-links.open a {
     opacity: 1;
