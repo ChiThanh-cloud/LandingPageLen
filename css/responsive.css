@@ -26,24 +26,40 @@
   }
 }
 
-/* Xử lý lỗi Stacking Context của Navbar khi mở menu */
+/* Xử lý lỗi Stacking Context và tạo hiệu ứng mở menu mượt mà */
 body.menu-open {
   overflow: hidden;
 }
 
-body.menu-open .navbar.scrolled {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  border-radius: 0 !important;
+body.menu-open .navbar {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+/* Đảm bảo nav-links chiếm trọn không gian của navbar đã bung rộng */
+body.menu-open .nav-links {
+  position: absolute;
+  height: 100%;
 }
 
 @media (max-width: 768px) {
+  /* H\u01b0\u1edbng A: \u1ea8n video, hi\u1ec7n \u1ea3nh t\u0129nh tr\u00ean Mobile */
+  .hero-video-wrap video {
+    display: none;
+  }
+
+  .hero-mobile-bg {
+    display: block;
+  }
+
   .section {
     padding: 64px 0;
   }
@@ -67,8 +83,8 @@ body.menu-open .navbar.scrolled {
     z-index: 999;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(-5px);
+    transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
   }
 
   .nav-links.open {
@@ -78,27 +94,32 @@ body.menu-open .navbar.scrolled {
   }
 
   .nav-links a {
+    display: block;
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--text-dark);
-    padding: 16px 0;
+    padding: 10px 0;
     width: 100%;
     text-align: center;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     transition-delay: calc(0.05s * var(--i, 0));
   }
 
   /* Style riêng cho nút CTA trên mobile */
   .nav-links a.nav-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: auto;
     min-width: 200px;
-    margin-top: 24px;
+    margin-top: 30px;
     padding: 14px 32px;
     border-bottom: none;
     font-size: 1.2rem;
+    box-shadow: 0 8px 24px rgba(26, 95, 122, 0.2);
   }
 
 

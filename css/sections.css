@@ -22,6 +22,18 @@
   object-fit: cover;
 }
 
+/* Ảnh nền thay thế video trên Mobile */
+.hero-mobile-bg {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-image: url('../images/hero_mobile.png');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
