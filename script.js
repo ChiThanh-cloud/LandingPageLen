@@ -5,10 +5,13 @@
 // ---- Khởi tạo Supabase ----
 const SUPABASE_URL = 'https://pkcmpqerwjxscbhwchgx.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_C4UKMMkAjjqSnYVD4tA7bA_NXEakUyg';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null;
 
 // Kiểm tra kết nối (bạn có thể xem kết quả trong F12 -> Console)
 async function checkSupabaseConnection() {
+  if (!supabaseClient) return;
   try {
     const { data, error } = await supabaseClient.from('products').select('*').limit(1);
     if (error) {
@@ -20,18 +23,89 @@ async function checkSupabaseConnection() {
     console.error('Lỗi kết nối Supabase:', err.message);
   }
 }
-// Chạy hàm kiểm tra
-checkSupabaseConnection();
+
+if (location.hostname === 'localhost' || location.hostname.startsWith('192.168.')) {
+  checkSupabaseConnection();
+}
+
+// ---- Ads tracking placeholder (Meta / GA4 / TikTok safe mode) ----
+const adEventNames = {
+  nav_order_click: 'NavOrderClick',
+  hero_messenger_click: 'HeroMessengerClick',
+  hero_view_products_click: 'HeroViewProductsClick',
+  product_card_click: 'ViewContent',
+  sample_messenger_click: 'Contact',
+  modal_order_similar_click: 'Lead',
+  contact_facebook_click: 'ContactFacebookClick',
+  contact_zalo_click: 'ContactZaloClick',
+  float_top_click: 'FloatTopClick',
+  float_zalo_click: 'FloatZaloClick',
+  float_facebook_click: 'FloatFacebookClick',
+  policy_privacy_click: 'PolicyView',
+  policy_terms_click: 'PolicyView',
+  policy_shipping_click: 'PolicyView',
+  policy_refund_click: 'PolicyView'
+};
+
+function trackAdEvent(trackKey, params = {}) {
+  const eventName = adEventNames[trackKey] || trackKey;
+  const payload = {
+    source: 'landing_page',
+    track_key: trackKey,
+    ...params
+  };
+
+  if (typeof window.fbq === 'function') {
+    window.fbq('trackCustom', eventName, payload);
+  }
+
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', eventName, payload);
+  }
+
+  if (window.ttq && typeof window.ttq.track === 'function') {
+    window.ttq.track(eventName, payload);
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-track]');
+  if (el) {
+    trackAdEvent(el.dataset.track, {
+      label: el.textContent.trim().replace(/\s+/g, ' '),
+      href: el.getAttribute('href') || '',
+      category: el.dataset.category || '',
+      product: el.dataset.product || ''
+    });
+  }
+});
 
 // ---- Navbar scroll effect ----
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
+const floatTopBtn = document.getElementById('float-top');
+const floatButtons = document.querySelector('.float-buttons');
+
+function updateFloatingButtons() {
+  const heroHeight = document.getElementById('hero')?.offsetHeight || 0;
+  const inHero = window.scrollY < heroHeight;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
   navbar.classList.toggle('scrolled', window.scrollY > 60);
-});
+  if (floatTopBtn) {
+    floatTopBtn.classList.toggle('is-hidden', inHero);
+  }
+  if (floatButtons) {
+    floatButtons.classList.toggle('is-mobile-hero', isMobile && inHero);
+  }
+}
+
+window.addEventListener('scroll', updateFloatingButtons, { passive: true });
+window.addEventListener('resize', updateFloatingButtons);
+updateFloatingButtons();
 
 // ---- Mobile menu ----
 const hamburger = document.getElementById('hamburger');
-const navLinks  = document.querySelector('.nav-links');
+const navLinks = document.querySelector('.nav-links');
 hamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
   hamburger.classList.toggle('active');
@@ -125,10 +199,10 @@ async function openSampleModal(type) {
   currentCategory = type;
   currentSubCategory = 'all';
   searchKeyword = '';
-  
+
   if (modalSearchInput) modalSearchInput.value = '';
   sampleModalTitle.textContent = categoryTitles[type] || "Sản phẩm mẫu";
-  
+
   sampleModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 
@@ -139,7 +213,7 @@ async function openSampleModal(type) {
 function renderFilterTabs(type) {
   if (!modalFilterTabs) return;
   const tabs = subCategories[type];
-  
+
   if (!tabs) {
     modalFilterTabs.innerHTML = '';
     return;
@@ -172,6 +246,11 @@ if (modalSearchInput) {
 }
 
 async function fetchAndRenderProducts() {
+  if (!supabaseClient) {
+    sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Không thể tải dữ liệu sản phẩm lúc này. Bạn có thể nhắn Tiny để được gửi mẫu trực tiếp.</div>';
+    return;
+  }
+
   // 1. Hiện Skeleton
   sampleGallery.innerHTML = Array(4).fill(0).map(() => `
     <div class="sample-item">
@@ -201,7 +280,7 @@ async function fetchAndRenderProducts() {
 
     // 3. Render dữ liệu
     sampleGallery.innerHTML = '';
-    
+
     if (data.length === 0) {
       sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Không tìm thấy sản phẩm nào phù hợp.</div>';
       return;
@@ -237,16 +316,16 @@ async function fetchAndRenderProducts() {
       const outOfStock = item.status === 'out';
       const stockBadge = outOfStock ? `<div class="sample-stock-badge">Hết hàng</div>` : '';
       const weightHtml = item.weight ? `<span class="sample-weight">${item.weight}</span>` : '';
-      
+
       const cleanPrice = item.price ? item.price.toString().replace(/[,.]/g, '') : '';
-      const priceHtml = (cleanPrice && !isNaN(cleanPrice)) 
+      const priceHtml = (cleanPrice && !isNaN(cleanPrice))
         ? `<div class="sample-price">${Number(cleanPrice).toLocaleString('vi-VN')}đ</div>`
         : '';
 
       const messengerUrl = `https://m.me/61559447375156?text=${encodeURIComponent(script.msg(item.name))}`;
       const messengerBtn = outOfStock
         ? `<div class="sample-outstock-note">Liên hệ Tiny để đặt trước!</div>`
-        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger">${script.label}</a>`;
+        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger" data-track="sample_messenger_click" data-category="${currentCategory}" data-product="${String(item.name).replace(/"/g, '&quot;')}">${script.label}</a>`;
 
       div.innerHTML = `
         <div class="sample-img-wrap">
@@ -275,7 +354,7 @@ async function fetchAndRenderProducts() {
 
     if (categoryNotes[currentCategory] && data.length > 0) {
       const note = document.createElement('div');
-      note.className = 'category-note'; 
+      note.className = 'category-note';
       note.style.cssText = 'grid-column: 1/-1; text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--text-mid); font-style: italic;';
       note.innerHTML = categoryNotes[currentCategory];
       sampleGallery.appendChild(note);
@@ -305,27 +384,59 @@ const policyContent = document.getElementById('policyContent');
 const policies = {
   privacy: `
     <h2>Chính sách bảo mật</h2>
-    <p>Chào mừng bạn đến với <strong>Tiệm Len Nhà Tiny</strong>. Chúng mình cam kết bảo mật tuyệt đối thông tin cá nhân của bạn.</p>
-    <h3>1. Thu thập thông tin</h3>
-    <p>Chúng mình thu thập thông tin (tên, số điện thoại, địa chỉ) chỉ khi bạn chủ động nhắn tin đặt hàng qua Zalo hoặc Messenger.</p>
-    <h3>2. Sử dụng thông tin</h3>
-    <p>Thông tin của bạn chỉ được dùng để: Tư vấn sản phẩm, giao hàng và hỗ trợ sau bán hàng.</p>
-    <h3>3. Facebook Pixel & Cookies</h3>
-    <p>Trang web sử dụng Facebook Pixel để tối ưu hóa quảng cáo. Dữ liệu này là ẩn danh và giúp chúng mình hiển thị sản phẩm phù hợp hơn với bạn.</p>
-    <h3>4. Cam kết</h3>
-    <p>Tiny không bao giờ bán hoặc chia sẻ thông tin của bạn cho bên thứ ba.</p>
+    <p><strong>Chủ thể bán hàng: Tiệm Len Nhà Tiny.</strong> Tiny chỉ thu thập thông tin cần thiết để tư vấn, xác nhận đơn, giao hàng và hỗ trợ sau bán hàng.</p>
+    <h3>1. Thông tin có thể được thu thập</h3>
+    <p>Tên người nhận, số điện thoại, địa chỉ giao hàng, nội dung bạn nhắn qua Zalo/Messenger/Facebook, ảnh mẫu bạn gửi để đặt làm sản phẩm và lịch sử sản phẩm đã tư vấn.</p>
+    <h3>2. Mục đích sử dụng</h3>
+    <p>Thông tin được dùng để báo giá, tư vấn màu/size/chất liệu, xác nhận đơn, giao hàng, xử lý đổi trả/hoàn tiền và chăm sóc khách hàng.</p>
+    <h3>3. Cookie, pixel và công cụ đo lường</h3>
+    <p>Khi được bật, website có thể dùng Meta Pixel, TikTok Pixel và Google Analytics để đo lượt xem trang, lượt nhấn nút liên hệ và hiệu quả quảng cáo. Các công cụ này không dùng để bán thông tin cá nhân của bạn.</p>
+    <h3>4. Bên thứ ba liên quan</h3>
+    <p>Thông tin có thể được chia sẻ ở mức cần thiết với nền tảng chat, đơn vị vận chuyển, Supabase để hiển thị dữ liệu sản phẩm, và các nền tảng đo lường quảng cáo khi pixel được bật.</p>
+    <h3>5. Quyền của khách hàng</h3>
+    <p>Bạn có thể yêu cầu Tiny kiểm tra, chỉnh sửa hoặc xóa thông tin đặt hàng bằng cách liên hệ qua Zalo 036.890.3519 hoặc Facebook Fanpage.</p>
+    <h3>6. Cam kết</h3>
+    <p>Tiny không bán thông tin khách hàng. Dữ liệu chỉ được lưu trong thời gian cần thiết cho việc xử lý đơn, bảo hành/đổi trả và đối soát vận chuyển.</p>
   `,
   terms: `
     <h2>Điều khoản dịch vụ</h2>
-    <p>Bằng việc mua sắm tại Tiny, bạn đồng ý với các điều khoản sau:</p>
-    <h3>1. Quy trình Handmade</h3>
-    <p>Sản phẩm móc tay cần thời gian hoàn thiện từ 3-7 ngày tùy độ phức tạp. Tiny sẽ thông báo lịch giao dự kiến khi chốt đơn.</p>
-    <h3>2. Thanh toán & Đặt cọc</h3>
-    <p>Với các đơn hàng thiết kế riêng theo yêu cầu, vui lòng chuyển khoản đặt cọc trước 50% giá trị đơn hàng.</p>
-    <h3>3. Chính sách đổi trả</h3>
-    <p>Vì là hàng handmade, Tiny chỉ nhận đổi trả nếu sản phẩm bị lỗi kỹ thuật hoặc sai mẫu so với thỏa thuận ban đầu. Vui lòng quay video khi mở hàng.</p>
-    <h3>4. Vận chuyển</h3>
-    <p>Chúng mình sử dụng các đơn vị vận chuyển uy tín. Thời gian nhận hàng từ 2-4 ngày tùy khu vực.</p>
+    <p>Chủ thể bán hàng: <strong>Tiệm Len Nhà Tiny</strong>. Địa chỉ liên hệ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh. Kênh hỗ trợ: Zalo 036.890.3519 và Facebook Fanpage.</p>
+    <h3>1. Sản phẩm và báo giá</h3>
+    <p>Tiny bán len sợi từ 18.000đ, hộp quà từ 100.000đ, set tự móc từ 100.000đ và nhận làm đồ móc handmade báo giá theo mẫu. Giá hiển thị hoặc báo qua tin nhắn được tính bằng VND và có thể thay đổi theo kích thước, chất liệu, độ khó, số lượng và yêu cầu gói quà.</p>
+    <h3>2. Đơn đặt riêng</h3>
+    <p>Với sản phẩm handmade theo ảnh mẫu, Tiny sẽ tư vấn trước về màu, size, thời gian hoàn thiện và chi phí. Sản phẩm handmade có thể chênh nhẹ về màu sắc/kích thước do ánh sáng, lô len và thao tác thủ công.</p>
+    <h3>3. Thanh toán và đặt cọc</h3>
+    <p>Đơn có sẵn có thể thanh toán theo thỏa thuận khi chốt đơn. Đơn thiết kế riêng có thể cần đặt cọc trước, thông thường từ 30-50% giá trị đơn, tùy độ phức tạp và số lượng.</p>
+    <h3>4. Thời gian thực hiện</h3>
+    <p>Đơn móc theo yêu cầu thường cần 3-7 ngày làm việc, đơn phức tạp hoặc số lượng lớn có thể lâu hơn. Tiny sẽ báo lịch dự kiến trước khi nhận cọc.</p>
+    <h3>5. Hủy đơn</h3>
+    <p>Đơn đặt riêng đã bắt đầu làm hoặc đã mua nguyên liệu riêng theo yêu cầu có thể không được hủy hoàn toàn. Tiny sẽ trao đổi phương án phù hợp theo tiến độ thực tế.</p>
+  `,
+  shipping: `
+    <h2>Chính sách vận chuyển</h2>
+    <h3>1. Phạm vi giao hàng</h3>
+    <p>Tiny hỗ trợ giao hàng toàn quốc qua các đơn vị vận chuyển phù hợp như GHN, GHTK, J&amp;T hoặc đơn vị tương đương.</p>
+    <h3>2. Thời gian giao hàng</h3>
+    <p>Nội thành TP.HCM thường từ 1-3 ngày làm việc sau khi gửi hàng. Các tỉnh thành khác thường từ 2-5 ngày làm việc, tùy khu vực và tình trạng vận chuyển.</p>
+    <h3>3. Phí vận chuyển</h3>
+    <p>Phí ship được báo khi chốt đơn, phụ thuộc địa chỉ nhận hàng, kích thước và trọng lượng gói hàng. Một số chương trình ưu đãi ship nếu có sẽ được thông báo rõ trước khi thanh toán.</p>
+    <h3>4. Đóng gói</h3>
+    <p>Sản phẩm được đóng gói cẩn thận để hạn chế móp méo, ẩm bẩn hoặc hư hại trong quá trình vận chuyển. Với đơn quà tặng, Tiny có thể hỗ trợ gói hộp/thiệp theo thỏa thuận.</p>
+    <h3>5. Kiểm tra khi nhận hàng</h3>
+    <p>Khách hàng nên quay video khi mở hàng để Tiny và đơn vị vận chuyển có căn cứ hỗ trợ nếu phát sinh thiếu hàng, sai mẫu hoặc hư hỏng.</p>
+  `,
+  refund: `
+    <h2>Chính sách đổi trả &amp; hoàn tiền</h2>
+    <h3>1. Trường hợp hỗ trợ</h3>
+    <p>Tiny hỗ trợ đổi, sửa hoặc hoàn tiền nếu sản phẩm bị lỗi kỹ thuật do Tiny, giao sai mẫu đã chốt, thiếu sản phẩm, hoặc hư hỏng nghiêm trọng trong quá trình vận chuyển có video mở hàng rõ ràng.</p>
+    <h3>2. Thời hạn phản hồi</h3>
+    <p>Vui lòng liên hệ trong vòng 48 giờ sau khi nhận hàng kèm ảnh/video tình trạng sản phẩm để Tiny kiểm tra và đề xuất hướng xử lý.</p>
+    <h3>3. Sản phẩm đặt riêng</h3>
+    <p>Với hàng handmade làm theo yêu cầu cá nhân, Tiny không nhận đổi trả vì đổi ý sau khi sản phẩm đã hoàn thiện đúng thông tin đã chốt. Nếu có lỗi do Tiny, Tiny sẽ ưu tiên sửa hoặc làm lại phần lỗi.</p>
+    <h3>4. Hoàn tiền</h3>
+    <p>Nếu đủ điều kiện hoàn tiền, Tiny sẽ hoàn qua phương thức đã thỏa thuận sau khi xác minh tình trạng đơn hàng. Thời gian xử lý thông thường từ 3-7 ngày làm việc.</p>
+    <h3>5. Chi phí phát sinh</h3>
+    <p>Nếu lỗi phát sinh từ Tiny hoặc vận chuyển có xác nhận, Tiny sẽ hỗ trợ chi phí hợp lý. Nếu khách đổi thông tin sau khi đơn đã gửi, chi phí phát sinh có thể do khách thanh toán.</p>
   `
 };
 

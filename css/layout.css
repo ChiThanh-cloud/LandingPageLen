@@ -15,12 +15,12 @@
   top: 10px;
   left: 16px;
   right: 16px;
-  background: rgba(244, 249, 249, .95);
+  background: rgba(251, 253, 255, .96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 8px 32px rgba(26, 95, 122, .14);
+  box-shadow: 0 8px 32px rgba(45, 111, 148, .12);
   border-radius: 20px;
-  border: 1px solid rgba(166, 227, 233, .35);
+  border: 1px solid rgba(153, 204, 255, .44);
   padding: 10px 0;
 }
 
@@ -86,7 +86,7 @@
   color: var(--white) !important;
   padding: 10px 24px;
   border-radius: 100px;
-  box-shadow: 0 4px 14px rgba(26, 95, 122, .3);
+  box-shadow: 0 4px 14px rgba(45, 111, 148, .22);
 }
 
 .nav-links a.nav-cta::after {
@@ -95,7 +95,7 @@
 
 .nav-links a.nav-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(26, 95, 122, .4);
+  box-shadow: 0 8px 20px rgba(45, 111, 148, .28);
 }
 
 .hamburger {
@@ -192,6 +192,12 @@
   font-style: italic;
 }
 
+.footer-entity {
+  color: rgba(255, 255, 255, .62);
+  font-size: .84rem;
+  font-weight: 600;
+}
+
 .footer-addr {
   color: rgba(255, 255, 255, .45);
   font-size: .82rem;
@@ -263,6 +269,12 @@
   z-index: 999;
 }
 
+.float-buttons.is-mobile-hero {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+}
+
 .float-btn {
   position: relative;
   display: flex;
@@ -293,9 +305,19 @@
   animation: pulse-fb 2s infinite 1s; /* Bắt đầu trễ 1 giây để so le với Zalo */
 }
 
+.top-float {
+  background: linear-gradient(135deg, var(--text-dark), var(--blue-deep));
+}
+
+.top-float.is-hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+}
+
 .float-label {
   font-weight: 600;
   color: #e0f2f1; /* Một tông xanh battle rất nhạt để nổi bật trên nền xanh đậm */
   text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-

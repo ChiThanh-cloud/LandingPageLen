@@ -368,5 +368,5 @@
 .filter-tab.active {
   background: var(--blue-main);
   color: var(--white);
-  box-shadow: 0 4px 12px rgba(34, 163, 159, 0.3);
+  box-shadow: 0 4px 12px rgba(153, 204, 255, 0.28);
 }

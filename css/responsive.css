@@ -60,6 +60,77 @@ body.menu-open .nav-links {
     display: block;
   }
 
+  .hero {
+    min-height: 86vh;
+    align-items: flex-end;
+  }
+
+  .hero-overlay {
+    background:
+      linear-gradient(180deg, rgba(24, 62, 92, .03) 0%, rgba(24, 62, 92, .58) 48%, rgba(24, 62, 92, .78) 100%),
+      linear-gradient(90deg, rgba(45, 111, 148, .42), rgba(153, 204, 255, .12));
+  }
+
+  .hero-content {
+    padding: 100px 20px 46px;
+  }
+
+  .hero-badge {
+    font-size: .68rem;
+    line-height: 1.45;
+    letter-spacing: .06em;
+    margin-bottom: 16px;
+    padding: 8px 13px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.92rem, 10.8vw, 3.05rem);
+    line-height: 1.08;
+    margin-bottom: 14px;
+  }
+
+  .hero-subtitle {
+    font-size: .92rem;
+    line-height: 1.58;
+    margin-bottom: 16px;
+  }
+
+  .hero-benefits {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .hero-benefits li {
+    font-size: .8rem;
+    padding: 7px 11px;
+  }
+
+  .hero-benefits li:nth-child(3) {
+    display: none;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .hero-btns .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 52px;
+    padding: 13px 20px;
+  }
+
+  .hero-microcopy {
+    font-size: .76rem;
+    margin-top: 12px;
+  }
+
+  .hero-scroll {
+    display: none;
+  }
+
   .section {
     padding: 64px 0;
   }
@@ -119,7 +190,7 @@ body.menu-open .nav-links {
     padding: 14px 32px;
     border-bottom: none;
     font-size: 1.2rem;
-    box-shadow: 0 8px 24px rgba(26, 95, 122, 0.2);
+    box-shadow: 0 8px 24px rgba(45, 111, 148, 0.18);
   }
 
 
@@ -193,21 +264,39 @@ body.menu-open .nav-links {
     justify-content: center;
   }
 
+  .float-buttons.is-mobile-hero {
+    display: none;
+  }
+
   .trust-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-btns {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+  .hero {
+    min-height: 88svh;
   }
 
-  .hero-btns .btn {
-    width: 100%;
-    justify-content: center;
+  .hero-content {
+    padding: 84px 16px 32px;
+  }
+
+  .hero-title {
+    font-size: clamp(1.82rem, 10.8vw, 2.72rem);
+  }
+
+  .hero-subtitle {
+    font-size: .88rem;
+  }
+
+  .hero-benefits li {
+    font-size: .78rem;
+    padding: 7px 10px;
+  }
+
+  .hero-microcopy {
+    font-size: .74rem;
   }
 
   .trust-grid {
