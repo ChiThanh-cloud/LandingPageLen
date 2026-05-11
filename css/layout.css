@@ -101,22 +101,22 @@
 .hamburger {
   display: none;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   background: none;
   border: none;
   cursor: pointer;
-  /* Touch target 44x44px theo chuẩn UX */
-  min-width: 44px;
-  min-height: 44px;
+  width: 44px;
+  height: 44px;
   padding: 10px;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  transition: background .2s ease;
+  border-radius: 12px;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .hamburger:hover {
-  background: rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar.scrolled .hamburger:hover {
@@ -125,15 +125,34 @@
 
 .hamburger span {
   display: block;
-  width: 24px;
+  width: 22px;
   height: 2px;
   background: var(--white);
-  border-radius: 2px;
-  transition: var(--transition);
+  border-radius: 10px;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
 }
 
 .navbar.scrolled .hamburger span {
   background: var(--text-dark);
+}
+
+/* X-Transformation Animation */
+.hamburger.active span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.hamburger.active span {
+  background: var(--text-dark) !important;
 }
 
 
