@@ -35,11 +35,13 @@ const navLinks  = document.querySelector('.nav-links');
 hamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
   hamburger.classList.toggle('active');
+  document.body.classList.toggle('menu-open');
 });
 navLinks.querySelectorAll('a').forEach(a => {
   a.addEventListener('click', () => {
     navLinks.classList.remove('open');
     hamburger.classList.remove('active');
+    document.body.classList.remove('menu-open');
   });
 });
 
