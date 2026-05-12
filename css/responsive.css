@@ -213,8 +213,8 @@ body.menu-open .nav-links {
     gap: 20px;
   }
 
-  /* Sample items trong modal: 2 cột khi màn hình đủ rộng */
-  .sample-gallery {
+  /* Product items trong modal: 2 cột khi màn hình đủ rộng */
+  .product-gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
   }
@@ -299,24 +299,24 @@ body.menu-open .nav-links {
     font-size: .74rem;
   }
 
-  .sample-modal-overlay {
+  .product-modal-overlay {
     padding: 10px;
   }
 
-  .sample-modal-content {
+  .product-modal-content {
     max-height: 92dvh;
     border-radius: 20px;
     padding: 28px 14px 20px;
   }
 
-  .sample-modal-close {
+  .product-modal-close {
     top: 10px;
     right: 10px;
     width: 44px;
     height: 44px;
   }
 
-  .sample-modal-title {
+  .product-modal-title {
     font-size: 1.55rem;
     padding: 0 44px 12px;
     margin-bottom: 18px;
@@ -338,7 +338,7 @@ body.menu-open .nav-links {
   }
 
   /* Modal gallery: 1 cột trên màn hình rất nhỏ */
-  .sample-gallery {
+  .product-gallery {
     grid-template-columns: 1fr;
   }
 }

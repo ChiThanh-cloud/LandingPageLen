@@ -34,7 +34,7 @@ const adEventNames = {
   hero_messenger_click: 'HeroMessengerClick',
   hero_view_products_click: 'HeroViewProductsClick',
   product_card_click: 'ViewContent',
-  sample_messenger_click: 'Contact',
+  product_messenger_click: 'Contact',
   modal_order_similar_click: 'Lead',
   contact_facebook_click: 'ContactFacebookClick',
   contact_zalo_click: 'ContactZaloClick',
@@ -172,9 +172,9 @@ let currentSubCategory = 'all';
 let searchKeyword = '';
 
 const categoryTitles = {
-  yarn: "Mẫu Cuộn Len",
-  handmade: "Mẫu Móc Theo Yêu Cầu",
-  gift: "Mẫu Bộ Quà Tặng",
+  yarn: "Cuộn Len",
+  handmade: "Đồ Móc Theo Yêu Cầu",
+  gift: "Bộ Quà Tặng",
   set: "Set Tự Móc"
 };
 
@@ -194,8 +194,11 @@ const subCategories = {
 
 const modalSearchInput = document.getElementById('modalSearchInput');
 const modalFilterTabs = document.getElementById('modalFilterTabs');
+const productModal = document.getElementById('productModal');
+const productModalTitle = document.getElementById('productModalTitle');
+const productGallery = document.getElementById('productGallery');
 
-let sampleImageLightbox = null;
+let productImageLightbox = null;
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -212,7 +215,7 @@ function getProductImageUrl(item) {
 }
 
 function showProductUnavailableMessage(message = 'Tiny đang nhập hàng, bạn liên hệ Tiny khi có hàng nhé.') {
-  sampleGallery.innerHTML = `
+  productGallery.innerHTML = `
     <div style="grid-column: 1/-1; text-align: center; padding: 40px 16px; color: var(--text-mid);">
       ${message}
     </div>
@@ -242,32 +245,32 @@ function productMatchesSubCategory(product, subCategory) {
 }
 
 function ensureImageLightbox() {
-  if (sampleImageLightbox) return sampleImageLightbox;
+  if (productImageLightbox) return productImageLightbox;
 
-  sampleImageLightbox = document.createElement('div');
-  sampleImageLightbox.className = 'sample-image-lightbox';
-  sampleImageLightbox.setAttribute('role', 'dialog');
-  sampleImageLightbox.setAttribute('aria-modal', 'true');
-  sampleImageLightbox.setAttribute('aria-label', 'Xem ảnh sản phẩm');
-  sampleImageLightbox.innerHTML = `
-    <button class="sample-image-lightbox-close" type="button" aria-label="Đóng ảnh lớn">×</button>
-    <figure class="sample-image-lightbox-frame">
+  productImageLightbox = document.createElement('div');
+  productImageLightbox.className = 'product-image-lightbox';
+  productImageLightbox.setAttribute('role', 'dialog');
+  productImageLightbox.setAttribute('aria-modal', 'true');
+  productImageLightbox.setAttribute('aria-label', 'Xem ảnh sản phẩm');
+  productImageLightbox.innerHTML = `
+    <button class="product-image-lightbox-close" type="button" aria-label="Đóng ảnh lớn">×</button>
+    <figure class="product-image-lightbox-frame">
       <img src="" alt="">
       <figcaption></figcaption>
     </figure>
   `;
 
-  sampleImageLightbox.addEventListener('click', (e) => {
+  productImageLightbox.addEventListener('click', (e) => {
     if (
-      e.target === sampleImageLightbox ||
-      e.target.closest('.sample-image-lightbox-close')
+      e.target === productImageLightbox ||
+      e.target.closest('.product-image-lightbox-close')
     ) {
       closeImageLightbox();
     }
   });
 
-  document.body.appendChild(sampleImageLightbox);
-  return sampleImageLightbox;
+  document.body.appendChild(productImageLightbox);
+  return productImageLightbox;
 }
 
 function openImageLightbox(src, title) {
@@ -283,21 +286,21 @@ function openImageLightbox(src, title) {
 }
 
 function closeImageLightbox() {
-  if (!sampleImageLightbox) return;
-  sampleImageLightbox.classList.remove('active');
-  const image = sampleImageLightbox.querySelector('img');
+  if (!productImageLightbox) return;
+  productImageLightbox.classList.remove('active');
+  const image = productImageLightbox.querySelector('img');
   image.removeAttribute('src');
 }
 
-async function openSampleModal(type) {
+async function openProductModal(type) {
   currentCategory = type;
   currentSubCategory = 'all';
   searchKeyword = '';
 
   if (modalSearchInput) modalSearchInput.value = '';
-  sampleModalTitle.textContent = categoryTitles[type] || "Sản phẩm mẫu";
+  productModalTitle.textContent = categoryTitles[type] || "Sản phẩm";
 
-  sampleModal.classList.add('active');
+  productModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 
   renderFilterTabs(type);
@@ -341,8 +344,8 @@ if (modalSearchInput) {
 
 async function fetchAndRenderProducts() {
   // 1. Hiện Skeleton
-  sampleGallery.innerHTML = Array(4).fill(0).map(() => `
-    <div class="sample-item">
+  productGallery.innerHTML = Array(4).fill(0).map(() => `
+    <div class="product-item">
       <div class="skeleton skeleton-img"></div>
       <div class="skeleton skeleton-text"></div>
       <div class="skeleton skeleton-btn"></div>
@@ -350,7 +353,7 @@ async function fetchAndRenderProducts() {
   `).join('');
 
   const renderProducts = (products) => {
-    sampleGallery.innerHTML = '';
+    productGallery.innerHTML = '';
 
     if (products.length === 0) {
       showProductUnavailableMessage(searchKeyword
@@ -385,10 +388,10 @@ async function fetchAndRenderProducts() {
 
     products.forEach(item => {
       const div = document.createElement('div');
-      div.className = 'sample-item';
+      div.className = 'product-item';
       const outOfStock = item.status === 'out';
-      const stockBadge = outOfStock ? `<div class="sample-stock-badge">Hết hàng</div>` : '';
-      const weightHtml = item.weight ? `<span class="sample-weight">${escapeHtml(item.weight)}</span>` : '';
+      const stockBadge = outOfStock ? `<div class="product-stock-badge">Hết hàng</div>` : '';
+      const weightHtml = item.weight ? `<span class="product-weight">${escapeHtml(item.weight)}</span>` : '';
       const itemNameRaw = item.name || 'Sản phẩm';
       const itemName = escapeHtml(itemNameRaw);
       const imageUrl = getProductImageUrl(item);
@@ -396,34 +399,34 @@ async function fetchAndRenderProducts() {
 
       const cleanPrice = item.price ? item.price.toString().replace(/[,.]/g, '') : '';
       const priceHtml = (cleanPrice && !isNaN(cleanPrice))
-        ? `<div class="sample-price">${Number(cleanPrice).toLocaleString('vi-VN')}đ</div>`
+        ? `<div class="product-price-inline">${Number(cleanPrice).toLocaleString('vi-VN')}đ</div>`
         : '';
 
       const messengerUrl = `https://m.me/61559447375156?text=${encodeURIComponent(script.msg(itemNameRaw))}`;
       const messengerBtn = outOfStock
-        ? `<div class="sample-outstock-note">Liên hệ Tiny để đặt trước!</div>`
-        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger" data-track="sample_messenger_click" data-category="${currentCategory}" data-product="${itemName}">${script.label}</a>`;
+        ? `<div class="product-outstock-note">Liên hệ Tiny để đặt trước!</div>`
+        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger" data-track="product_messenger_click" data-category="${currentCategory}" data-product="${itemName}">${script.label}</a>`;
 
       div.innerHTML = `
-        <button class="sample-img-wrap sample-img-button" type="button" aria-label="Xem ảnh lớn: ${itemName}">
+        <button class="product-img-wrap product-img-button" type="button" aria-label="Xem ảnh lớn: ${itemName}">
           <img src="${escapeHtml(thumbImageUrl)}" alt="${itemName}" loading="lazy" ${outOfStock ? 'style="filter:grayscale(60%);opacity:.7"' : ''}>
           ${stockBadge}
         </button>
-        <div class="sample-item-info">
-          <div class="sample-title-row">
+        <div class="product-item-info">
+          <div class="product-title-row">
             <h4>${itemName}</h4>
             ${weightHtml}
           </div>
           ${priceHtml}
         </div>
-        <div class="sample-item-footer">${messengerBtn}</div>
+        <div class="product-item-footer">${messengerBtn}</div>
       `;
 
-      div.querySelector('.sample-img-button').addEventListener('click', () => {
+      div.querySelector('.product-img-button').addEventListener('click', () => {
         openImageLightbox(imageUrl, itemNameRaw);
       });
 
-      sampleGallery.appendChild(div);
+      productGallery.appendChild(div);
     });
 
     const categoryNotes = {
@@ -438,7 +441,7 @@ async function fetchAndRenderProducts() {
       note.className = 'category-note';
       note.style.cssText = 'grid-column: 1/-1; text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--text-mid); font-style: italic;';
       note.innerHTML = categoryNotes[currentCategory];
-      sampleGallery.appendChild(note);
+      productGallery.appendChild(note);
     }
   };
 
@@ -477,27 +480,27 @@ async function fetchAndRenderProducts() {
   }
 }
 
-function closeSampleModal() {
+function closeProductModal() {
   closeImageLightbox();
-  sampleModal.classList.remove('active');
+  productModal.classList.remove('active');
   document.body.style.overflow = '';
 }
 
-if (sampleModal) {
-  sampleModal.addEventListener('click', (e) => {
-    if (e.target === sampleModal) closeSampleModal();
+if (productModal) {
+  productModal.addEventListener('click', (e) => {
+    if (e.target === productModal) closeProductModal();
   });
 }
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    if (sampleImageLightbox?.classList.contains('active')) {
+    if (productImageLightbox?.classList.contains('active')) {
       closeImageLightbox();
       return;
     }
 
-    if (sampleModal?.classList.contains('active')) {
-      closeSampleModal();
+    if (productModal?.classList.contains('active')) {
+      closeProductModal();
     }
   }
 });

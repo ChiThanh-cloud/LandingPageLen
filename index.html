@@ -247,7 +247,7 @@
       <p class="section-sub center">Từ nguyên liệu đan móc đến những món quà thành phẩm, tất cả đều sẵn sàng.</p>
 
       <div class="products-grid">
-        <div class="product-card" id="prod-cuon-len" onclick="openSampleModal('yarn')" style="cursor: pointer;"
+        <div class="product-card" id="prod-cuon-len" onclick="openProductModal('yarn')" style="cursor: pointer;"
           data-track="product_card_click" data-category="yarn">
           <div class="product-img-wrap">
             <img src="images/yarn_collection.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" loading="lazy" />
@@ -262,7 +262,7 @@
           </div>
         </div>
 
-        <div class="product-card featured" id="prod-moc-yc" onclick="openSampleModal('handmade')"
+        <div class="product-card featured" id="prod-moc-yc" onclick="openProductModal('handmade')"
           style="cursor: pointer;" data-track="product_card_click" data-category="handmade">
           <div class="product-img-wrap">
             <img src="images/crochet_products.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện"
@@ -278,7 +278,7 @@
           </div>
         </div>
 
-        <div class="product-card" id="prod-qua-tang" onclick="openSampleModal('gift')" style="cursor: pointer;"
+        <div class="product-card" id="prod-qua-tang" onclick="openProductModal('gift')" style="cursor: pointer;"
           data-track="product_card_click" data-category="gift">
           <div class="product-img-wrap">
             <img src="images/gift_set.jpg" alt="Bộ quà tặng handmade từ len" loading="lazy" />
@@ -293,7 +293,7 @@
           </div>
         </div>
 
-        <div class="product-card" id="prod-set" onclick="openSampleModal('set')" style="cursor: pointer;"
+        <div class="product-card" id="prod-set" onclick="openProductModal('set')" style="cursor: pointer;"
           data-track="product_card_click" data-category="set">
           <div class="product-img-wrap">
             <img src="images/set_kit.jpg" alt="Set tự móc gấu len đầy đủ nguyên liệu và hướng dẫn" loading="lazy" />
@@ -433,7 +433,7 @@
       <h2 class="section-title center">Liên hệ <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
       <p class="section-sub center">Tiny luôn sẵn sàng tư vấn và hỗ trợ bạn — đừng ngại nhắn nhé! 🩷</p>
       <div class="contact-cards">
-        <a href="https://www.facebook.com/profile.php?id=61559447375156" target="_blank" rel="noopener"
+        <a href="https://m.me/61559447375156" target="_blank" rel="noopener"
           class="contact-card" id="contact-fb" data-track="contact_facebook_click">
           <div class="contact-card-icon fb-icon">
             <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
@@ -442,7 +442,7 @@
             </svg>
           </div>
           <div class="contact-card-info">
-            <strong>Facebook Fanpage</strong>
+            <strong>Messenger</strong>
             <span>Nhắn tin trực tiếp qua Messenger</span>
             <em>Tiệm Len Nhà Tiny</em>
           </div>
@@ -542,41 +542,21 @@
       </svg>
       <span class="float-label">Zalo</span>
     </a>
-    <a href="https://www.facebook.com/profile.php?id=61559447375156" target="_blank" rel="noopener"
+    <a href="https://m.me/61559447375156" target="_blank" rel="noopener"
       class="float-btn fb-float" id="float-fb" aria-label="Chat Facebook" data-track="float_facebook_click">
       <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
         <path
           d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
       </svg>
-      <span class="float-label">Facebook</span>
+      <span class="float-label">Messenger</span>
     </a>
   </div>
 
-  <!-- ===== FACEBOOK MESSENGER CHAT PLUGIN =====
-       Plugin này hiển thị nút chat Messenger nổi trên trang web.
-       Lưu ý: Chỉ hoạt động khi trang web được đưa lên mạng (domain thật).
-       Page ID của bạn: 61559447375156
-       Nếu muốn bật, hãy xoá <!-- và --> bao quanh đoạn code này.
-  ===== -->
-  <!--
-  <div id="fb-root"></div>
-  <script async defer crossorigin="anonymous"
-    src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v18.0&appId=&autoLogAppEvents=1">
-  </script>
-  <div class="fb-customerchat"
-    attribution="setup_tool"
-    page_id="61559447375156"
-    theme_color="#ff6b9d"
-    greeting_dialog_display="hide"
-    logged_in_greeting="Xin chào! Tiny có thể giúp gì cho bạn không? 🩷"
-    logged_out_greeting="Xin chào! Bạn muốn đặt len hay móc theo yêu cầu? 🧶">
-  </div>
-  -->
-  <!-- ===== SAMPLE MODAL ===== -->
-  <div class="sample-modal-overlay" id="sampleModal">
-    <div class="sample-modal-content">
-      <button class="sample-modal-close" onclick="closeSampleModal()">✕</button>
-      <h2 class="sample-modal-title" id="sampleModalTitle">Sản phẩm mẫu</h2>
+  <!-- ===== PRODUCT MODAL ===== -->
+  <div class="product-modal-overlay" id="productModal">
+    <div class="product-modal-content">
+      <button class="product-modal-close" onclick="closeProductModal()">✕</button>
+      <h2 class="product-modal-title" id="productModalTitle">Sản phẩm</h2>
 
       <!-- Bộ lọc và Tìm kiếm -->
       <div class="modal-search-wrap">
@@ -589,12 +569,12 @@
         </div>
       </div>
 
-      <div class="sample-gallery" id="sampleGallery">
-        <!-- JS sẽ chèn ảnh vào đây -->
+      <div class="product-gallery" id="productGallery">
+        <!-- JS sẽ chèn sản phẩm vào đây -->
       </div>
       <div style="text-align: center; margin-top: 24px;">
-        <a href="#lien-he-tu-van" class="btn btn-primary" onclick="closeSampleModal()"
-          data-track="modal_order_similar_click">Tôi muốn đặt mẫu tương tự</a>
+        <a href="#lien-he-tu-van" class="btn btn-primary" onclick="closeProductModal()"
+          data-track="modal_order_similar_click">Liên hệ Tiny tư vấn</a>
       </div>
     </div>
   </div>
