@@ -211,6 +211,36 @@ function getProductImageUrl(item) {
   return item.full_image_url || item.image_url || '';
 }
 
+function showProductUnavailableMessage(message = 'Tiny đang nhập hàng, bạn liên hệ Tiny khi có hàng nhé.') {
+  sampleGallery.innerHTML = `
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px 16px; color: var(--text-mid);">
+      ${message}
+    </div>
+  `;
+}
+
+function normalizeProductText(value) {
+  return String(value || '').toLowerCase().trim();
+}
+
+function productMatchesSubCategory(product, subCategory) {
+  if (subCategory === 'all') return true;
+
+  const rawSubCategory = normalizeProductText(product.sub_category || product.subCategory || product.type);
+  if (rawSubCategory === subCategory) return true;
+
+  const productName = normalizeProductText(product.name);
+  const aliases = {
+    gau: ['gau', 'gấu', 'bear'],
+    hoa: ['hoa', 'flower'],
+    tui: ['tui', 'túi', 'bag'],
+    milk: ['milk'],
+    cotton: ['cotton']
+  };
+
+  return (aliases[subCategory] || [subCategory]).some(alias => productName.includes(alias));
+}
+
 function ensureImageLightbox() {
   if (sampleImageLightbox) return sampleImageLightbox;
 
@@ -310,11 +340,6 @@ if (modalSearchInput) {
 }
 
 async function fetchAndRenderProducts() {
-  if (!supabaseClient) {
-    sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Không thể tải dữ liệu sản phẩm lúc này. Bạn có thể nhắn Tiny để được gửi mẫu trực tiếp.</div>';
-    return;
-  }
-
   // 1. Hiện Skeleton
   sampleGallery.innerHTML = Array(4).fill(0).map(() => `
     <div class="sample-item">
@@ -324,29 +349,13 @@ async function fetchAndRenderProducts() {
     </div>
   `).join('');
 
-  try {
-    // 2. Xây dựng câu truy vấn Supabase
-    let query = supabaseClient
-      .from('products')
-      .select('*')
-      .eq('category', currentCategory);
-
-    if (currentSubCategory !== 'all') {
-      query = query.eq('sub_category', currentSubCategory);
-    }
-
-    if (searchKeyword) {
-      query = query.ilike('name', `%${searchKeyword}%`);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-
-    // 3. Render dữ liệu
+  const renderProducts = (products) => {
     sampleGallery.innerHTML = '';
 
-    if (data.length === 0) {
-      sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px;">Không tìm thấy sản phẩm nào phù hợp.</div>';
+    if (products.length === 0) {
+      showProductUnavailableMessage(searchKeyword
+        ? 'Không tìm thấy sản phẩm phù hợp. Bạn nhắn Tiny để được tư vấn mẫu gần giống nhé.'
+        : undefined);
       return;
     }
 
@@ -374,7 +383,7 @@ async function fetchAndRenderProducts() {
       msg: (name) => `Chào Tiny, mình muốn hỏi mua: "${name}"`
     };
 
-    data.forEach(item => {
+    products.forEach(item => {
       const div = document.createElement('div');
       div.className = 'sample-item';
       const outOfStock = item.status === 'out';
@@ -417,7 +426,6 @@ async function fetchAndRenderProducts() {
       sampleGallery.appendChild(div);
     });
 
-    // 4. Thêm ghi chú
     const categoryNotes = {
       yarn: '💡 Mách nhỏ: Chọn loại len bạn thích, Tiny sẽ gửi bảng màu nhé!',
       handmade: '💡 Mách nhỏ: Bạn có thể đặt theo mẫu hoặc chia sẻ ảnh ý tưởng riêng!',
@@ -425,17 +433,47 @@ async function fetchAndRenderProducts() {
       gift: '💡 Mách nhỏ: Tiny có thể ghi thiệp tay và gói hộp thêm nhé!'
     };
 
-    if (categoryNotes[currentCategory] && data.length > 0) {
+    if (categoryNotes[currentCategory]) {
       const note = document.createElement('div');
       note.className = 'category-note';
       note.style.cssText = 'grid-column: 1/-1; text-align: center; margin-top: 15px; font-size: 0.85rem; color: var(--text-mid); font-style: italic;';
       note.innerHTML = categoryNotes[currentCategory];
       sampleGallery.appendChild(note);
     }
+  };
+
+  if (!supabaseClient) {
+    showProductUnavailableMessage();
+    return;
+  }
+
+  try {
+    // 2. Xây dựng câu truy vấn Supabase
+    let query = supabaseClient
+      .from('products')
+      .select('*')
+      .eq('category', currentCategory);
+
+    if (searchKeyword) {
+      query = query.ilike('name', `%${searchKeyword}%`);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    // 3. Lọc tab ở phía trình duyệt để không phụ thuộc cứng vào cột sub_category.
+    const filteredData = data.filter(item => productMatchesSubCategory(item, currentSubCategory));
+
+    if (!searchKeyword && filteredData.length === 0) {
+      showProductUnavailableMessage();
+      return;
+    }
+
+    renderProducts(filteredData);
 
   } catch (err) {
     console.error('Lỗi khi lấy dữ liệu:', err.message);
-    sampleGallery.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Không thể tải dữ liệu.</div>';
+    showProductUnavailableMessage();
   }
 }
 
