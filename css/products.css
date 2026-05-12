@@ -36,6 +36,15 @@
   flex-direction: column;
 }
 
+.sample-modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sample-modal-content::-webkit-scrollbar-thumb {
+  background: var(--blue-light);
+  border-radius: 999px;
+}
+
 .sample-modal-overlay.active .sample-modal-content {
   transform: scale(1) translateY(0);
 }
@@ -77,25 +86,26 @@
 
 .sample-gallery {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
 .sample-item {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  background: var(--cream);
 }
 
 .sample-item img {
   width: 100%;
-  height: 250px;
+  height: 220px;
   object-fit: cover;
   transition: transform .5s ease;
 }
 
 .sample-item:hover img {
-  transform: scale(1.05);
+  transform: none;
 }
 
 .sample-item h4 {
@@ -118,6 +128,21 @@
 .sample-img-wrap {
   position: relative;
   overflow: hidden;
+}
+
+.sample-img-button {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  text-align: inherit;
+}
+
+.sample-img-button:focus-visible {
+  outline: 3px solid var(--blue-main);
+  outline-offset: -3px;
 }
 
 /* Badge hết hàng */
@@ -146,12 +171,14 @@
 .btn-messenger {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   background: #0084ff;
   color: #fff;
   font-size: 0.82rem;
   font-weight: 600;
   padding: 8px 16px;
+  min-height: 44px;
   border-radius: 30px;
   text-decoration: none;
   transition: background .2s, transform .2s;
@@ -169,6 +196,92 @@
   font-style: italic;
   text-align: center;
   padding: 4px 0;
+}
+
+.sample-image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(8, 26, 42, 0.88);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s ease, visibility .2s ease;
+}
+
+.sample-image-lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sample-image-lightbox-frame {
+  width: min(100%, 980px);
+  max-height: calc(100dvh - 88px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.sample-image-lightbox-frame img {
+  width: 100%;
+  max-height: calc(100dvh - 140px);
+  object-fit: contain;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .28);
+}
+
+.sample-image-lightbox-frame figcaption {
+  color: var(--white);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.sample-image-lightbox-close {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--blue-deep);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+}
+
+.sample-image-lightbox-close:focus-visible {
+  outline: 3px solid var(--blue-main);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sample-item:hover img {
+    transform: scale(1.04);
+  }
+
+  .sample-img-button:hover img {
+    transform: scale(1.04);
+  }
+}
+
+@media (min-width: 560px) {
+  .sample-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .sample-item img {
+    height: 250px;
+  }
 }
 
 

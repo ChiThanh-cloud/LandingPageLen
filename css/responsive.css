@@ -213,7 +213,7 @@ body.menu-open .nav-links {
     gap: 20px;
   }
 
-  /* Sample items trong modal: 1 cột trên màn hình nhỏ */
+  /* Sample items trong modal: 2 cột khi màn hình đủ rộng */
   .sample-gallery {
     grid-template-columns: repeat(2, 1fr);
     gap: 14px;
@@ -297,6 +297,29 @@ body.menu-open .nav-links {
 
   .hero-microcopy {
     font-size: .74rem;
+  }
+
+  .sample-modal-overlay {
+    padding: 10px;
+  }
+
+  .sample-modal-content {
+    max-height: 92dvh;
+    border-radius: 20px;
+    padding: 28px 14px 20px;
+  }
+
+  .sample-modal-close {
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .sample-modal-title {
+    font-size: 1.55rem;
+    padding: 0 44px 12px;
+    margin-bottom: 18px;
   }
 
   .trust-grid {

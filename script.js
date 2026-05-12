@@ -195,6 +195,70 @@ const subCategories = {
 const modalSearchInput = document.getElementById('modalSearchInput');
 const modalFilterTabs = document.getElementById('modalFilterTabs');
 
+let sampleImageLightbox = null;
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function getProductImageUrl(item) {
+  return item.full_image_url || item.image_url || '';
+}
+
+function ensureImageLightbox() {
+  if (sampleImageLightbox) return sampleImageLightbox;
+
+  sampleImageLightbox = document.createElement('div');
+  sampleImageLightbox.className = 'sample-image-lightbox';
+  sampleImageLightbox.setAttribute('role', 'dialog');
+  sampleImageLightbox.setAttribute('aria-modal', 'true');
+  sampleImageLightbox.setAttribute('aria-label', 'Xem ảnh sản phẩm');
+  sampleImageLightbox.innerHTML = `
+    <button class="sample-image-lightbox-close" type="button" aria-label="Đóng ảnh lớn">×</button>
+    <figure class="sample-image-lightbox-frame">
+      <img src="" alt="">
+      <figcaption></figcaption>
+    </figure>
+  `;
+
+  sampleImageLightbox.addEventListener('click', (e) => {
+    if (
+      e.target === sampleImageLightbox ||
+      e.target.closest('.sample-image-lightbox-close')
+    ) {
+      closeImageLightbox();
+    }
+  });
+
+  document.body.appendChild(sampleImageLightbox);
+  return sampleImageLightbox;
+}
+
+function openImageLightbox(src, title) {
+  if (!src) return;
+  const lightbox = ensureImageLightbox();
+  const image = lightbox.querySelector('img');
+  const caption = lightbox.querySelector('figcaption');
+
+  image.src = src;
+  image.alt = title || 'Ảnh sản phẩm';
+  caption.textContent = title || '';
+  lightbox.classList.add('active');
+}
+
+function closeImageLightbox() {
+  if (!sampleImageLightbox) return;
+  sampleImageLightbox.classList.remove('active');
+  const image = sampleImageLightbox.querySelector('img');
+  image.removeAttribute('src');
+}
+
 async function openSampleModal(type) {
   currentCategory = type;
   currentSubCategory = 'all';
@@ -289,7 +353,7 @@ async function fetchAndRenderProducts() {
     const actionScripts = {
       yarn: {
         label: '🎨 Xem bảng màu & Đặt',
-        msg: (name) => `Chào Tiny, mình đang quan tâm đến loại "${name}", Tiny gửi mình bảng màu và tư vấn số lượng nhé!`
+        msg: (name) => `Chào Tiny, mình đang quan tâm đến màu/dòng len "${name}", Tiny tư vấn số lượng và tình trạng màu này giúp mình nhé!`
       },
       handmade: {
         label: '📏 Tư vấn Size & Dáng',
@@ -315,32 +379,41 @@ async function fetchAndRenderProducts() {
       div.className = 'sample-item';
       const outOfStock = item.status === 'out';
       const stockBadge = outOfStock ? `<div class="sample-stock-badge">Hết hàng</div>` : '';
-      const weightHtml = item.weight ? `<span class="sample-weight">${item.weight}</span>` : '';
+      const weightHtml = item.weight ? `<span class="sample-weight">${escapeHtml(item.weight)}</span>` : '';
+      const itemNameRaw = item.name || 'Sản phẩm';
+      const itemName = escapeHtml(itemNameRaw);
+      const imageUrl = getProductImageUrl(item);
+      const thumbImageUrl = item.image_url || imageUrl;
 
       const cleanPrice = item.price ? item.price.toString().replace(/[,.]/g, '') : '';
       const priceHtml = (cleanPrice && !isNaN(cleanPrice))
         ? `<div class="sample-price">${Number(cleanPrice).toLocaleString('vi-VN')}đ</div>`
         : '';
 
-      const messengerUrl = `https://m.me/61559447375156?text=${encodeURIComponent(script.msg(item.name))}`;
+      const messengerUrl = `https://m.me/61559447375156?text=${encodeURIComponent(script.msg(itemNameRaw))}`;
       const messengerBtn = outOfStock
         ? `<div class="sample-outstock-note">Liên hệ Tiny để đặt trước!</div>`
-        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger" data-track="sample_messenger_click" data-category="${currentCategory}" data-product="${String(item.name).replace(/"/g, '&quot;')}">${script.label}</a>`;
+        : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger" data-track="sample_messenger_click" data-category="${currentCategory}" data-product="${itemName}">${script.label}</a>`;
 
       div.innerHTML = `
-        <div class="sample-img-wrap">
-          <img src="${item.image_url}" alt="${item.name}" loading="lazy" ${outOfStock ? 'style="filter:grayscale(60%);opacity:.7"' : ''}>
+        <button class="sample-img-wrap sample-img-button" type="button" aria-label="Xem ảnh lớn: ${itemName}">
+          <img src="${escapeHtml(thumbImageUrl)}" alt="${itemName}" loading="lazy" ${outOfStock ? 'style="filter:grayscale(60%);opacity:.7"' : ''}>
           ${stockBadge}
-        </div>
+        </button>
         <div class="sample-item-info">
           <div class="sample-title-row">
-            <h4>${item.name}</h4>
+            <h4>${itemName}</h4>
             ${weightHtml}
           </div>
           ${priceHtml}
         </div>
         <div class="sample-item-footer">${messengerBtn}</div>
       `;
+
+      div.querySelector('.sample-img-button').addEventListener('click', () => {
+        openImageLightbox(imageUrl, itemNameRaw);
+      });
+
       sampleGallery.appendChild(div);
     });
 
@@ -367,6 +440,7 @@ async function fetchAndRenderProducts() {
 }
 
 function closeSampleModal() {
+  closeImageLightbox();
   sampleModal.classList.remove('active');
   document.body.style.overflow = '';
 }
@@ -376,6 +450,19 @@ if (sampleModal) {
     if (e.target === sampleModal) closeSampleModal();
   });
 }
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (sampleImageLightbox?.classList.contains('active')) {
+      closeImageLightbox();
+      return;
+    }
+
+    if (sampleModal?.classList.contains('active')) {
+      closeSampleModal();
+    }
+  }
+});
 
 // ---- POLICY MODAL LOGIC (FB ADS) ----
 const policyModal = document.getElementById('policyModal');
