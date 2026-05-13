@@ -199,6 +199,8 @@ const productModalTitle = document.getElementById('productModalTitle');
 const productGallery = document.getElementById('productGallery');
 
 let productImageLightbox = null;
+const productCategoryCache = new Map();
+const PRODUCT_SELECT_COLUMNS = 'id,created_at,name,category,sub_category,image_url,full_image_url,weight,price,status,sort_order';
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -210,8 +212,31 @@ function escapeHtml(value) {
   }[char]));
 }
 
+function getOptimizedCloudinaryUrl(url, variant = 'thumb') {
+  if (!url || !url.includes('res.cloudinary.com') || !url.includes('/image/upload/')) {
+    return url || '';
+  }
+
+  const uploadMarker = '/image/upload/';
+  const [base, path] = url.split(uploadMarker);
+  const firstPathPart = path.split('/')[0] || '';
+  if (firstPathPart.includes('f_auto') || firstPathPart.includes('q_auto') || firstPathPart.startsWith('w_')) {
+    return url;
+  }
+
+  const transform = variant === 'full'
+    ? 'f_auto,q_auto,w_1400,c_limit'
+    : 'f_auto,q_auto,w_520,c_limit';
+
+  return `${base}${uploadMarker}${transform}/${path}`;
+}
+
 function getProductImageUrl(item) {
-  return item.full_image_url || item.image_url || '';
+  return getOptimizedCloudinaryUrl(item.full_image_url || item.image_url || '', 'full');
+}
+
+function getProductThumbImageUrl(item) {
+  return getOptimizedCloudinaryUrl(item.image_url || item.full_image_url || '', 'thumb');
 }
 
 function showProductUnavailableMessage(message = 'Tiny đang nhập hàng, bạn liên hệ Tiny khi có hàng nhé.') {
@@ -395,7 +420,7 @@ async function fetchAndRenderProducts() {
       const itemNameRaw = item.name || 'Sản phẩm';
       const itemName = escapeHtml(itemNameRaw);
       const imageUrl = getProductImageUrl(item);
-      const thumbImageUrl = item.image_url || imageUrl;
+      const thumbImageUrl = getProductThumbImageUrl(item);
 
       const cleanPrice = item.price ? item.price.toString().replace(/[,.]/g, '') : '';
       const priceHtml = (cleanPrice && !isNaN(cleanPrice))
@@ -451,28 +476,63 @@ async function fetchAndRenderProducts() {
   }
 
   try {
-    // 2. Xây dựng câu truy vấn Supabase
-    let query = supabaseClient
-      .from('products')
-      .select('*')
-      .eq('category', currentCategory);
+    // 2. Query theo schema chuẩn. Có cache theo danh mục/tab/tìm kiếm.
+    const normalizedSearch = normalizeProductText(searchKeyword);
+    const cacheKey = [
+      currentCategory,
+      currentSubCategory,
+      normalizedSearch
+    ].join('|');
+    let data = productCategoryCache.get(cacheKey);
 
-    if (searchKeyword) {
-      query = query.ilike('name', `%${searchKeyword}%`);
+    if (!data) {
+      let query = supabaseClient
+        .from('products')
+        .select(PRODUCT_SELECT_COLUMNS)
+        .eq('category', currentCategory)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      if (currentSubCategory !== 'all') {
+        query = query.eq('sub_category', currentSubCategory);
+      }
+
+      if (normalizedSearch) {
+        query = query.ilike('name', `%${normalizedSearch}%`);
+      }
+
+      const { data: standardData, error: standardError } = await query;
+
+      if (standardError) {
+        console.warn('Schema products chưa chuẩn, đang dùng fallback:', standardError.message);
+        const { data: legacyData, error: legacyError } = await supabaseClient
+          .from('products')
+          .select('*')
+          .eq('category', currentCategory)
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (legacyError) throw legacyError;
+
+        data = (legacyData || []).filter(item => (
+          productMatchesSubCategory(item, currentSubCategory)
+          && (!normalizedSearch || normalizeProductText(item.name).includes(normalizedSearch))
+        ));
+      } else {
+        data = standardData || [];
+      }
+
+      data = data.filter(item => item.status !== 'hidden');
+      productCategoryCache.set(cacheKey, data);
     }
 
-    const { data, error } = await query;
-    if (error) throw error;
-
-    // 3. Lọc tab ở phía trình duyệt để không phụ thuộc cứng vào cột sub_category.
-    const filteredData = data.filter(item => productMatchesSubCategory(item, currentSubCategory));
-
-    if (!searchKeyword && filteredData.length === 0) {
+    if (!searchKeyword && data.length === 0) {
       showProductUnavailableMessage();
       return;
     }
 
-    renderProducts(filteredData);
+    renderProducts(data);
 
   } catch (err) {
     console.error('Lỗi khi lấy dữ liệu:', err.message);

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Quản lý sản phẩm | Tiệm Len Nhà Tiny</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css?v=1" />
+</head>
+
+<body>
+  <main class="admin-shell">
+    <section class="login-panel" id="loginPanel">
+      <div>
+        <p class="eyebrow">Tiny Admin</p>
+        <h1>Đăng nhập quản lý sản phẩm</h1>
+      </div>
+      <form class="login-form" id="loginForm">
+        <label>
+          Email
+          <input type="email" id="loginEmail" autocomplete="email" required />
+        </label>
+        <label>
+          Mật khẩu
+          <input type="password" id="loginPassword" autocomplete="current-password" required />
+        </label>
+        <button type="submit">Đăng nhập</button>
+        <p class="form-message" id="loginMessage"></p>
+      </form>
+    </section>
+
+    <section class="admin-app hidden" id="adminApp">
+      <header class="admin-header">
+        <div>
+          <p class="eyebrow">Tiny Admin</p>
+          <h1>Quản lý sản phẩm</h1>
+        </div>
+        <div class="header-actions">
+          <span id="userEmail"></span>
+          <button type="button" class="ghost-btn" id="refreshBtn">Làm mới</button>
+          <button type="button" class="ghost-btn" id="logoutBtn">Đăng xuất</button>
+        </div>
+      </header>
+
+      <section class="toolbar">
+        <label>
+          Tìm nhanh
+          <input type="search" id="searchInput" placeholder="Tên sản phẩm..." />
+        </label>
+        <label>
+          Danh mục
+          <select id="categoryFilter">
+            <option value="all">Tất cả</option>
+            <option value="handmade">Đồ móc</option>
+            <option value="yarn">Cuộn len</option>
+            <option value="set">Set tự móc</option>
+            <option value="gift">Quà tặng</option>
+          </select>
+        </label>
+        <button type="button" id="newProductBtn">Sản phẩm mới</button>
+      </section>
+
+      <section class="workspace">
+        <form class="product-form" id="productForm">
+          <div class="form-title-row">
+            <h2 id="formTitle">Sản phẩm mới</h2>
+            <button type="button" class="ghost-btn" id="clearFormBtn">Xóa form</button>
+          </div>
+
+          <input type="hidden" id="productId" />
+
+          <label>
+            Tên sản phẩm
+            <input type="text" id="productName" required />
+          </label>
+
+          <div class="field-grid">
+            <label>
+              Danh mục
+              <select id="productCategory" required>
+                <option value="handmade">Đồ móc</option>
+                <option value="yarn">Cuộn len</option>
+                <option value="set">Set tự móc</option>
+                <option value="gift">Quà tặng</option>
+              </select>
+            </label>
+            <label>
+              Danh mục con
+              <select id="productSubCategory">
+                <option value="">Không có</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              Trạng thái
+              <select id="productStatus">
+                <option value="available">Còn hàng</option>
+                <option value="out">Hết hàng</option>
+                <option value="preorder">Đặt trước</option>
+                <option value="hidden">Ẩn khỏi web</option>
+              </select>
+            </label>
+            <label>
+              Thứ tự
+              <input type="number" id="productSortOrder" min="0" step="1" value="0" />
+            </label>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              Giá
+              <input type="number" id="productPrice" min="0" step="1000" />
+            </label>
+            <label>
+              Khối lượng / ghi chú ngắn
+              <input type="text" id="productWeight" placeholder="125g, size M..." />
+            </label>
+          </div>
+
+          <label>
+            Link ảnh Cloudinary
+            <input type="url" id="productImageUrl" placeholder="https://res.cloudinary.com/..." required />
+          </label>
+
+          <label>
+            Link ảnh lớn
+            <input type="url" id="productFullImageUrl" placeholder="Để trống nếu dùng cùng ảnh" />
+          </label>
+
+          <figure class="image-preview hidden" id="imagePreviewWrap">
+            <img id="imagePreview" alt="Xem trước ảnh sản phẩm" />
+            <figcaption>Xem trước ảnh card</figcaption>
+          </figure>
+
+          <p class="form-message" id="productMessage"></p>
+          <button type="submit" class="save-btn">Lưu sản phẩm</button>
+        </form>
+
+        <section class="product-list-wrap">
+          <div class="list-header">
+            <h2>Danh sách</h2>
+            <span id="productCount">0 sản phẩm</span>
+          </div>
+          <div class="product-table" id="productTable"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin.js?v=1"></script>
+</body>
+
+</html>
