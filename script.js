@@ -831,7 +831,7 @@ const policies = {
     <h2>Điều khoản dịch vụ</h2>
     <p>Chủ thể bán hàng: <strong>Tiệm Len Nhà Tiny</strong>. Địa chỉ liên hệ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh. Kênh hỗ trợ: Zalo 036.890.3519 và Facebook Fanpage.</p>
     <h3>1. Sản phẩm và báo giá</h3>
-    <p>Tiny bán len sợi từ 18.000đ, hộp quà từ 100.000đ, set tự móc từ 100.000đ và nhận làm đồ móc handmade báo giá theo mẫu. Giá hiển thị hoặc báo qua tin nhắn được tính bằng VND và có thể thay đổi theo kích thước, chất liệu, độ khó, số lượng và yêu cầu gói quà.</p>
+    <p>Tiny bán len sợi từ 8.000đ, hộp quà từ 100.000đ, set tự móc từ 100.000đ và nhận làm đồ móc handmade báo giá theo mẫu. Giá hiển thị hoặc báo qua tin nhắn được tính bằng VND và có thể thay đổi theo kích thước, chất liệu, độ khó, số lượng và yêu cầu gói quà.</p>
     <h3>2. Đơn đặt riêng</h3>
     <p>Với sản phẩm handmade theo ảnh mẫu, Tiny sẽ tư vấn trước về màu, size, thời gian hoàn thiện và chi phí. Sản phẩm handmade có thể chênh nhẹ về màu sắc/kích thước do ánh sáng, lô len và thao tác thủ công.</p>
     <h3>3. Thanh toán và đặt cọc</h3>

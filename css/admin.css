@@ -406,7 +406,7 @@ textarea:focus {
 
 .product-row {
   display: grid;
-  grid-template-columns: 72px minmax(190px, 1fr) 130px 110px 152px;
+  grid-template-columns: 72px minmax(190px, 1fr) 130px 110px 210px;
   gap: 12px;
   align-items: center;
   padding: 10px;
@@ -586,6 +586,6 @@ textarea:focus {
 
   .row-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

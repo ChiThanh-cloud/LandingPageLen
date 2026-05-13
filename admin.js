@@ -179,6 +179,25 @@ function formatPrice(value) {
   return `${number.toLocaleString('vi-VN')}đ`;
 }
 
+function parsePriceInput(value) {
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw) return null;
+
+  const hasK = raw.includes('k');
+  const digits = raw.replace(/[^\d]/g, '');
+  if (!digits) return null;
+
+  const number = Number(digits);
+  if (Number.isNaN(number)) return null;
+
+  return hasK && number < 1000 ? number * 1000 : number;
+}
+
+function normalizeProductPriceInput() {
+  const price = parsePriceInput(els.productPrice.value);
+  els.productPrice.value = price ? String(price) : '';
+}
+
 function updateSubCategoryOptions(selectedValue = '') {
   const options = subCategoryOptions[els.productCategory.value] || [];
   els.productSubCategory.innerHTML = '<option value="">Không có</option>'
@@ -807,6 +826,7 @@ function renderProducts() {
         <div class="row-actions">
           <button type="button" data-action="edit" data-id="${product.id}">Sửa</button>
           <button type="button" class="${toggleClass}" data-action="toggle" data-id="${product.id}">${toggleText}</button>
+          <button type="button" class="danger-btn" data-action="delete" data-id="${product.id}">Xoá</button>
         </div>
       </article>
     `;
@@ -832,7 +852,7 @@ async function loadProducts() {
 }
 
 function getFormPayload() {
-  const price = els.productPrice.value.trim();
+  const price = parsePriceInput(els.productPrice.value);
   const fullImage = els.productFullImageUrl.value.trim();
   return {
     name: els.productName.value.trim(),
@@ -840,7 +860,7 @@ function getFormPayload() {
     sub_category: els.productSubCategory.value || null,
     status: els.productStatus.value,
     sort_order: Number(els.productSortOrder.value || 0),
-    price: price ? Number(price) : null,
+    price,
     weight: els.productWeight.value.trim() || null,
     image_url: els.productImageUrl.value.trim(),
     full_image_url: fullImage || null
@@ -858,7 +878,7 @@ async function saveProduct(event) {
 
   setMessage(els.productMessage, 'Đang lưu...');
   const request = wasEditing
-    ? supabaseClient.from('products').update(payload).eq('id', state.editingId)
+    ? supabaseClient.from('products').update(payload).eq('id', state.editingId).select(PRODUCT_COLUMNS).single()
     : supabaseClient.from('products').insert(payload).select(PRODUCT_COLUMNS).single();
 
   const { data, error } = await request;
@@ -869,7 +889,7 @@ async function saveProduct(event) {
 
   setMessage(els.productMessage, 'Đã lưu sản phẩm.', 'success');
   await loadProducts();
-  if (!wasEditing && data?.id) {
+  if (data?.id) {
     const createdProduct = state.products.find((item) => String(item.id) === String(data.id)) || data;
     await fillForm(createdProduct);
   } else {
@@ -895,6 +915,32 @@ async function toggleProductVisibility(id) {
   await loadProducts();
 }
 
+async function deleteProduct(id) {
+  const product = state.products.find((item) => String(item.id) === String(id));
+  if (!product) return;
+
+  const confirmed = window.confirm(`Xoá sản phẩm "${product.name || 'Sản phẩm'}"? Các ảnh màu/biến thể thuộc sản phẩm này cũng sẽ bị xoá.`);
+  if (!confirmed) return;
+
+  setMessage(els.productMessage, 'Đang xoá sản phẩm...');
+  const { error } = await supabaseClient
+    .from('products')
+    .delete()
+    .eq('id', product.id);
+
+  if (error) {
+    setMessage(els.productMessage, error.message, 'error');
+    return;
+  }
+
+  if (String(state.editingId) === String(product.id)) {
+    resetForm();
+  }
+
+  setMessage(els.productMessage, 'Đã xoá sản phẩm.', 'success');
+  await loadProducts();
+}
+
 function bindEvents() {
   els.loginForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -915,6 +961,7 @@ function bindEvents() {
   els.newProductBtn.addEventListener('click', resetForm);
   els.clearFormBtn.addEventListener('click', resetForm);
   els.productForm.addEventListener('submit', saveProduct);
+  els.productPrice.addEventListener('blur', normalizeProductPriceInput);
   els.productCategory.addEventListener('change', () => {
     updateSubCategoryOptions();
     updateVariantPanel();
@@ -949,6 +996,10 @@ function bindEvents() {
 
     if (button.dataset.action === 'toggle') {
       toggleProductVisibility(product.id);
+    }
+
+    if (button.dataset.action === 'delete') {
+      deleteProduct(product.id);
     }
   });
 
