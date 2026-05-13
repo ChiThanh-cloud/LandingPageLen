@@ -5,6 +5,7 @@
 // ---- Khởi tạo Supabase ----
 const SUPABASE_URL = 'https://pkcmpqerwjxscbhwchgx.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_C4UKMMkAjjqSnYVD4tA7bA_NXEakUyg';
+const CONTACT_URL = 'https://m.me/61559447375156';
 const supabaseClient = window.supabase
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
@@ -200,7 +201,9 @@ const productGallery = document.getElementById('productGallery');
 
 let productImageLightbox = null;
 const productCategoryCache = new Map();
-const PRODUCT_SELECT_COLUMNS = 'id,created_at,name,category,sub_category,image_url,full_image_url,weight,price,status,sort_order';
+const yarnVariantCache = new Map();
+const PRODUCT_SELECT_COLUMNS = 'id,created_at,name,slug,category,sub_category,description,cover_image,image_url,full_image_url,base_price,price,weight,yarn_size,knitting_needle,crochet_hook,origin,status,sort_order';
+const VARIANT_SELECT_COLUMNS = 'id,product_id,sku,name,color_code,color_name,color_hex,image_url,full_image_url,price,status,sort_order';
 
 function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({
@@ -232,11 +235,54 @@ function getOptimizedCloudinaryUrl(url, variant = 'thumb') {
 }
 
 function getProductImageUrl(item) {
-  return getOptimizedCloudinaryUrl(item.full_image_url || item.image_url || '', 'full');
+  return getOptimizedCloudinaryUrl(item.full_image_url || item.cover_image || item.image_url || '', 'full');
 }
 
 function getProductThumbImageUrl(item) {
-  return getOptimizedCloudinaryUrl(item.image_url || item.full_image_url || '', 'thumb');
+  return getOptimizedCloudinaryUrl(item.cover_image || item.image_url || item.full_image_url || '', 'thumb');
+}
+
+function getProductPrice(item) {
+  return item.base_price ?? item.price ?? '';
+}
+
+function formatProductPrice(value) {
+  const cleanPrice = value ? value.toString().replace(/[,.]/g, '') : '';
+  return (cleanPrice && !isNaN(cleanPrice))
+    ? `${Number(cleanPrice).toLocaleString('vi-VN')}đ`
+    : '';
+}
+
+function buildContactUrl(message) {
+  const separator = CONTACT_URL.includes('?') ? '&' : '?';
+  return `${CONTACT_URL}${separator}text=${encodeURIComponent(message)}`;
+}
+
+function getVariantCode(variant) {
+  return variant.sku || variant.color_code || variant.name || '';
+}
+
+function getVariantName(variant) {
+  return variant.color_name || variant.name || '';
+}
+
+function getVariantImage(product, variant, mode = 'full') {
+  const url = variant?.full_image_url || variant?.image_url || product.full_image_url || product.cover_image || product.image_url || '';
+  return getOptimizedCloudinaryUrl(url, mode);
+}
+
+function getVariantPrice(product, variant) {
+  return variant?.price ?? product.base_price ?? product.price ?? '';
+}
+
+function getVariantStatusLabel(status) {
+  const labels = {
+    available: 'Còn hàng',
+    out: 'Hết hàng',
+    preorder: 'Đặt trước',
+    hidden: 'Ẩn'
+  };
+  return labels[status || 'available'] || status || 'Còn hàng';
 }
 
 function showProductUnavailableMessage(message = 'Tiny đang nhập hàng, bạn liên hệ Tiny khi có hàng nhé.') {
@@ -267,6 +313,182 @@ function productMatchesSubCategory(product, subCategory) {
   };
 
   return (aliases[subCategory] || [subCategory]).some(alias => productName.includes(alias));
+}
+
+function setYarnListMode() {
+  const searchWrap = document.querySelector('.modal-search-wrap');
+  if (searchWrap) searchWrap.style.display = '';
+  productModal?.querySelector('.product-modal-content')?.classList.remove('yarn-detail-modal');
+  renderFilterTabs(currentCategory);
+  productModalTitle.textContent = categoryTitles[currentCategory] || 'Sản phẩm';
+}
+
+function setYarnDetailMode(product) {
+  const searchWrap = document.querySelector('.modal-search-wrap');
+  if (searchWrap) searchWrap.style.display = 'none';
+  productModal?.querySelector('.product-modal-content')?.classList.add('yarn-detail-modal');
+  if (modalFilterTabs) modalFilterTabs.innerHTML = '';
+  productModalTitle.textContent = product.name || 'Bảng màu';
+}
+
+async function fetchYarnVariants(productId) {
+  if (!supabaseClient || !productId) return [];
+  if (yarnVariantCache.has(productId)) return yarnVariantCache.get(productId);
+
+  const baseQuery = supabaseClient
+    .from('product_variants')
+    .select(VARIANT_SELECT_COLUMNS)
+    .eq('product_id', productId)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  let { data, error } = await baseQuery;
+
+  if (error) {
+    console.warn('Schema variants chưa chuẩn, đang dùng fallback:', error.message);
+    const fallback = await supabaseClient
+      .from('product_variants')
+      .select('*')
+      .eq('product_id', productId)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
+    data = fallback.data;
+    error = fallback.error;
+  }
+
+  if (error) {
+    console.warn('Chưa tải được variants:', error.message);
+    yarnVariantCache.set(productId, []);
+    return [];
+  }
+
+  const variants = (data || []).filter(variant => variant.status !== 'hidden');
+  yarnVariantCache.set(productId, variants);
+  return variants;
+}
+
+async function attachYarnVariantCounts(products) {
+  if (currentCategory !== 'yarn' || products.length === 0) return products;
+
+  const productsWithVariants = await Promise.all(products.map(async (product) => {
+    const variants = await fetchYarnVariants(product.id);
+    return {
+      ...product,
+      variant_count: variants.length
+    };
+  }));
+
+  return productsWithVariants;
+}
+
+function renderYarnContactButton(product, variant) {
+  const selectedVariant = variant || {};
+  const code = getVariantCode(selectedVariant) || 'Chưa chọn';
+  const colorName = getVariantName(selectedVariant) || 'Chưa có tên màu';
+  const price = formatProductPrice(getVariantPrice(product, selectedVariant)) || 'Liên hệ';
+  const status = getVariantStatusLabel(selectedVariant.status);
+  const message = [
+    'Em muốn hỏi màu len:',
+    `- Dòng len: ${product.name || ''}`,
+    `- Mã màu: ${code}`,
+    `- Tên màu: ${colorName}`,
+    `- Giá: ${price}`,
+    `- Trạng thái: ${status}`
+  ].join('\n');
+
+  return buildContactUrl(message);
+}
+
+function renderYarnVariantDetail(product, variants, selectedVariantId) {
+  const selectedVariant = variants.find(variant => String(variant.id) === String(selectedVariantId)) || variants[0] || null;
+  const heroImage = getVariantImage(product, selectedVariant, 'full');
+  const selectedCode = selectedVariant ? getVariantCode(selectedVariant) : '';
+  const selectedName = selectedVariant ? getVariantName(selectedVariant) : '';
+  const selectedPrice = formatProductPrice(getVariantPrice(product, selectedVariant)) || 'Liên hệ';
+  const selectedStatus = selectedVariant ? getVariantStatusLabel(selectedVariant.status) : 'Chưa có bảng màu';
+  const detailRows = [
+    ['Trọng lượng', product.weight],
+    ['Kích cỡ sợi', product.yarn_size],
+    ['Kim đan', product.knitting_needle],
+    ['Kim móc', product.crochet_hook],
+    ['Xuất xứ', product.origin]
+  ].filter(([, value]) => value);
+
+  productGallery.innerHTML = `
+    <article class="yarn-detail-view">
+      <button type="button" class="yarn-back-btn" id="yarnBackBtn">← Quay lại danh sách len</button>
+      <div class="yarn-detail-layout">
+        <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
+          <img src="${escapeHtml(heroImage)}" alt="${escapeHtml(product.name || 'Cuộn len')}">
+        </button>
+        <div class="yarn-detail-info">
+          <h3>${escapeHtml(product.name || 'Cuộn len')}</h3>
+          <div class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</div>
+          ${product.description ? `<p class="yarn-detail-description">${escapeHtml(product.description)}</p>` : ''}
+          ${detailRows.length ? `
+            <ul class="yarn-spec-list">
+              ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
+            </ul>
+          ` : ''}
+          <div class="yarn-selected-box">
+            <span>Mã đang chọn: <strong id="yarnSelectedCode">${escapeHtml(selectedCode || 'Chưa có')}</strong></span>
+            <span>Tên màu: <strong id="yarnSelectedName">${escapeHtml(selectedName || 'Chưa có')}</strong></span>
+            <span>Trạng thái: <strong id="yarnSelectedStatus">${escapeHtml(selectedStatus)}</strong></span>
+          </div>
+          <a class="btn-messenger yarn-contact-btn ${selectedVariant ? '' : 'disabled'}" id="yarnContactBtn" href="${selectedVariant ? renderYarnContactButton(product, selectedVariant) : '#'}" target="_blank" rel="noopener">
+            Liên hệ đặt màu này
+          </a>
+        </div>
+      </div>
+      <section class="yarn-color-section">
+        <h4>Mã màu</h4>
+        ${variants.length ? `
+          <div class="yarn-color-grid">
+            ${variants.map((variant) => {
+              const thumb = getVariantImage(product, variant, 'thumb');
+              const code = getVariantCode(variant);
+              const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
+              return `
+                <button type="button" class="yarn-color-option ${active ? 'active' : ''}" data-variant-id="${variant.id}" aria-label="Chọn màu ${escapeHtml(code)}">
+                  <img src="${escapeHtml(thumb)}" alt="${escapeHtml(code)}" loading="lazy">
+                  <span>${escapeHtml(code || 'Màu')}</span>
+                </button>
+              `;
+            }).join('')}
+          </div>
+        ` : '<p class="yarn-empty-variants">Dòng len này chưa có bảng màu. Bạn liên hệ Tiny để được gửi bảng màu nhé.</p>'}
+      </section>
+    </article>
+  `;
+
+  const imageButton = document.getElementById('yarnDetailImageBtn');
+  imageButton?.addEventListener('click', () => {
+    openImageLightbox(heroImage, product.name || 'Cuộn len');
+  });
+
+  document.getElementById('yarnBackBtn')?.addEventListener('click', () => {
+    setYarnListMode();
+    fetchAndRenderProducts();
+  });
+
+  productGallery.querySelectorAll('.yarn-color-option').forEach((button) => {
+    button.addEventListener('click', () => {
+      renderYarnVariantDetail(product, variants, button.dataset.variantId);
+    });
+  });
+}
+
+async function openYarnProductDetail(product) {
+  setYarnDetailMode(product);
+  productGallery.innerHTML = `
+    <div class="yarn-detail-loading">
+      <div class="skeleton skeleton-img"></div>
+      <div class="skeleton skeleton-text"></div>
+      <div class="skeleton skeleton-btn"></div>
+    </div>
+  `;
+  const variants = await fetchYarnVariants(product.id);
+  renderYarnVariantDetail(product, variants, variants[0]?.id);
 }
 
 function ensureImageLightbox() {
@@ -328,6 +550,7 @@ async function openProductModal(type) {
   productModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 
+  setYarnListMode();
   renderFilterTabs(type);
   fetchAndRenderProducts();
 }
@@ -414,6 +637,7 @@ async function fetchAndRenderProducts() {
     products.forEach(item => {
       const div = document.createElement('div');
       div.className = 'product-item';
+      if (currentCategory === 'yarn') div.classList.add('yarn-line-card');
       const outOfStock = item.status === 'out';
       const stockBadge = outOfStock ? `<div class="product-stock-badge">Hết hàng</div>` : '';
       const weightHtml = item.weight ? `<span class="product-weight">${escapeHtml(item.weight)}</span>` : '';
@@ -422,13 +646,18 @@ async function fetchAndRenderProducts() {
       const imageUrl = getProductImageUrl(item);
       const thumbImageUrl = getProductThumbImageUrl(item);
 
-      const cleanPrice = item.price ? item.price.toString().replace(/[,.]/g, '') : '';
-      const priceHtml = (cleanPrice && !isNaN(cleanPrice))
-        ? `<div class="product-price-inline">${Number(cleanPrice).toLocaleString('vi-VN')}đ</div>`
+      const displayPrice = formatProductPrice(getProductPrice(item));
+      const priceHtml = displayPrice
+        ? `<div class="product-price-inline">${currentCategory === 'yarn' ? 'Từ ' : ''}${displayPrice}</div>`
+        : '';
+      const variantCountHtml = currentCategory === 'yarn' && Number(item.variant_count) > 0
+        ? `<div class="yarn-card-count">${Number(item.variant_count)} màu hiện có</div>`
         : '';
 
       const messengerUrl = `https://m.me/61559447375156?text=${encodeURIComponent(script.msg(itemNameRaw))}`;
-      const messengerBtn = outOfStock
+      const messengerBtn = currentCategory === 'yarn'
+        ? `<button type="button" class="btn-messenger yarn-view-colors-btn" data-track="product_card_click" data-category="${currentCategory}" data-product="${itemName}">${script.label}</button>`
+        : outOfStock
         ? `<div class="product-outstock-note">Liên hệ Tiny để đặt trước!</div>`
         : `<a href="${messengerUrl}" target="_blank" rel="noopener" class="btn-messenger" data-track="product_messenger_click" data-category="${currentCategory}" data-product="${itemName}">${script.label}</a>`;
 
@@ -443,13 +672,19 @@ async function fetchAndRenderProducts() {
             ${weightHtml}
           </div>
           ${priceHtml}
+          ${variantCountHtml}
         </div>
         <div class="product-item-footer">${messengerBtn}</div>
       `;
 
-      div.querySelector('.product-img-button').addEventListener('click', () => {
-        openImageLightbox(imageUrl, itemNameRaw);
-      });
+      if (currentCategory === 'yarn') {
+        div.querySelector('.product-img-button').addEventListener('click', () => openYarnProductDetail(item));
+        div.querySelector('.yarn-view-colors-btn')?.addEventListener('click', () => openYarnProductDetail(item));
+      } else {
+        div.querySelector('.product-img-button').addEventListener('click', () => {
+          openImageLightbox(imageUrl, itemNameRaw);
+        });
+      }
 
       productGallery.appendChild(div);
     });
@@ -523,9 +758,15 @@ async function fetchAndRenderProducts() {
         data = standardData || [];
       }
 
-      data = data.filter(item => item.status !== 'hidden');
+      data = data.filter(item => (
+        currentCategory === 'yarn'
+          ? (!item.status || item.status === 'available')
+          : item.status !== 'hidden'
+      ));
       productCategoryCache.set(cacheKey, data);
     }
+
+    data = await attachYarnVariantCounts(data);
 
     if (!searchKeyword && data.length === 0) {
       showProductUnavailableMessage();

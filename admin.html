@@ -11,7 +11,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="css/admin.css?v=2" />
+  <link rel="stylesheet" href="css/admin.css?v=6" />
 </head>
 
 <body>
@@ -172,6 +172,81 @@
           <button type="submit" class="save-btn">Lưu sản phẩm</button>
         </form>
 
+        <section class="variant-panel hidden" id="variantPanel">
+          <div class="list-header">
+            <div>
+              <h2>Ảnh cuộn len</h2>
+              <p id="variantProductName">Chọn một sản phẩm cuộn len để thêm ảnh/mẫu tương ứng.</p>
+            </div>
+            <span id="variantCount">0 biến thể</span>
+          </div>
+
+          <form class="variant-form" id="variantForm">
+            <input type="hidden" id="variantId" />
+            <div class="field-grid">
+              <label>
+                Tên ảnh / mã
+                <input type="text" id="variantName" placeholder="01, 02, Mắc đen..." required />
+              </label>
+              <label>
+                Thứ tự
+                <input type="number" id="variantSortOrder" min="0" step="1" value="0" />
+              </label>
+            </div>
+            <div class="field-grid">
+              <label>
+                Trạng thái
+                <select id="variantStatus">
+                  <option value="available">Còn hàng</option>
+                  <option value="out">Hết hàng</option>
+                  <option value="preorder">Đặt trước</option>
+                  <option value="hidden">Ẩn khỏi web</option>
+                </select>
+              </label>
+              <label>
+                Ảnh biến thể
+                <input type="url" id="variantImageUrl" placeholder="Để trống nếu dùng ảnh sản phẩm" />
+              </label>
+            </div>
+            <div class="upload-row">
+              <label>
+                Upload ảnh biến thể
+                <input type="file" id="variantImageFile" accept="image/*" />
+              </label>
+              <button type="button" class="ghost-btn" id="uploadVariantImageBtn">Upload</button>
+            </div>
+            <div class="variant-actions">
+              <button type="button" class="ghost-btn" id="clearVariantBtn">Xóa form biến thể</button>
+              <button type="submit" class="save-btn">Lưu biến thể</button>
+            </div>
+            <p class="form-message" id="variantMessage"></p>
+          </form>
+
+          <section class="bulk-variants">
+            <h3>Upload nhanh nhiều ảnh</h3>
+            <div class="bulk-actions">
+              <label>
+                Upload nhiều ảnh
+                <input type="file" id="bulkVariantFiles" accept="image/*" multiple />
+              </label>
+              <button type="button" class="ghost-btn" id="bulkUploadVariantsBtn">Upload và tạo ảnh</button>
+            </div>
+          </section>
+
+          <section class="bulk-variants">
+            <h3>Import ảnh màu từ tool</h3>
+            <label>
+              Dán JSON hoặc CSV
+              <textarea id="variantImportText" placeholder="Dán JSON sau khi bấm Copy JSON, hoặc CSV đã xuất từ tool lấy ảnh mã màu."></textarea>
+            </label>
+            <div class="bulk-actions import-actions">
+              <button type="button" class="ghost-btn" id="importVariantsBtn">Import ảnh màu</button>
+            </div>
+          </section>
+
+          <div class="variant-list" id="variantList"></div>
+        </section>
+
         <section class="product-list-wrap">
           <div class="list-header">
             <h2>Danh sách</h2>
@@ -184,7 +259,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="admin.js?v=2"></script>
+  <script src="admin.js?v=6"></script>
 </body>
 
 </html>
