@@ -4,6 +4,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const PRODUCT_COLUMNS = 'id,created_at,updated_at,name,category,sub_category,image_url,full_image_url,weight,price,status,sort_order';
 const VARIANT_COLUMNS = 'id,product_id,created_at,updated_at,name,image_url,status,sort_order';
+const CONTENT_POST_COLUMNS = 'id,product_id,facebook_caption,main_keyword,hashtags,seo_score_note,model,prompt_version,created_at,updated_at';
 const CLOUDINARY_CONFIG_KEY = 'tiny_admin_cloudinary_config';
 const DEFAULT_CLOUDINARY_CONFIG = {
   cloudName: 'djn2kd2hh',
@@ -39,7 +40,10 @@ const labels = {
 const state = {
   products: [],
   variants: [],
-  editingId: null
+  contentPosts: new Map(),
+  editingId: null,
+  activeCaptionProductId: null,
+  captionLoadingId: null
 };
 
 const $ = (id) => document.getElementById(id);
@@ -177,6 +181,19 @@ function formatPrice(value) {
   const number = Number(value);
   if (Number.isNaN(number)) return '';
   return `${number.toLocaleString('vi-VN')}đ`;
+}
+
+function formatDateTime(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 }
 
 function parsePriceInput(value) {
@@ -786,6 +803,123 @@ async function toggleVariantVisibility(id) {
   await loadVariants(state.editingId);
 }
 
+function renderCaptionCard(post, field, title) {
+  const text = post?.[field] || '';
+  const hashtags = Array.isArray(post?.hashtags) ? post.hashtags.filter(Boolean) : [];
+
+  return `
+    <section class="caption-card">
+      <div class="caption-card-header">
+        <h3>${escapeHtml(title)}</h3>
+        <button type="button" data-caption-action="copy" data-field="${field}">Copy</button>
+      </div>
+      <p>${escapeHtml(text)}</p>
+      ${(post?.main_keyword || hashtags.length || post?.seo_score_note) ? `
+        <div class="caption-seo">
+          ${post.main_keyword ? `<span><strong>Từ khóa:</strong> ${escapeHtml(post.main_keyword)}</span>` : ''}
+          ${hashtags.length ? `<span><strong>Hashtag:</strong> ${escapeHtml(hashtags.join(' '))}</span>` : ''}
+          ${post.seo_score_note ? `<span><strong>SEO:</strong> ${escapeHtml(post.seo_score_note)}</span>` : ''}
+        </div>
+      ` : ''}
+    </section>
+  `;
+}
+
+function renderCaptionPanel(product) {
+  const productId = String(product.id);
+  if (String(state.activeCaptionProductId) !== productId) return '';
+
+  const post = state.contentPosts.get(productId);
+  const isLoading = String(state.captionLoadingId) === productId;
+  const updatedAt = formatDateTime(post?.updated_at || post?.created_at);
+
+  return `
+    <section class="caption-panel" data-caption-panel="${escapeHtml(productId)}">
+      <div class="caption-panel-header">
+        <div>
+          <h3>Caption marketing</h3>
+          <p>${updatedAt ? `Cập nhật ${escapeHtml(updatedAt)}` : 'Chưa có caption đã lưu.'}</p>
+        </div>
+        <button type="button" class="ghost-btn" data-action="generate-caption" data-id="${escapeHtml(productId)}" ${isLoading ? 'disabled' : ''}>
+          ${isLoading ? 'Đang tạo...' : (post ? 'Tạo lại' : 'Tạo caption')}
+        </button>
+      </div>
+      ${post ? `
+        ${renderCaptionCard(post, 'facebook_caption', 'Facebook')}
+      ` : '<p class="form-message">Bấm “Tạo caption” để sinh nội dung cho sản phẩm này.</p>'}
+      <p class="form-message caption-message" data-caption-message="${escapeHtml(productId)}"></p>
+    </section>
+  `;
+}
+
+async function loadContentPosts() {
+  const { data, error } = await supabaseClient
+    .from('content_posts')
+    .select(CONTENT_POST_COLUMNS);
+
+  if (error) {
+    state.contentPosts = new Map();
+    return error;
+  }
+
+  state.contentPosts = new Map((data || []).map((post) => [String(post.product_id), post]));
+  return null;
+}
+
+function setCaptionMessage(productId, text = '', type = '') {
+  const message = els.productTable.querySelector(`[data-caption-message="${String(productId)}"]`);
+  if (!message) return;
+  setMessage(message, text, type);
+}
+
+async function generateCaption(productId) {
+  state.activeCaptionProductId = String(productId);
+  state.captionLoadingId = String(productId);
+  renderProducts();
+  setCaptionMessage(productId, 'Đang gửi thông tin sản phẩm cho AI...');
+
+  try {
+    const { data, error } = await supabaseClient.functions.invoke('generate-caption', {
+      body: { product_id: productId }
+    });
+
+    if (error) throw error;
+    if (data?.error) throw new Error(data.error);
+    if (!data?.content_post) throw new Error('Function không trả về caption.');
+
+    state.contentPosts.set(String(productId), data.content_post);
+    state.captionLoadingId = null;
+    renderProducts();
+    setCaptionMessage(productId, 'Đã tạo caption.', 'success');
+  } catch (err) {
+    state.captionLoadingId = null;
+    renderProducts();
+    setCaptionMessage(productId, err.message || 'Tạo caption thất bại.', 'error');
+  }
+}
+
+function toggleCaptionPanel(productId) {
+  const id = String(productId);
+  state.activeCaptionProductId = state.activeCaptionProductId === id ? null : id;
+  renderProducts();
+}
+
+async function copyCaption(productId, field) {
+  const post = state.contentPosts.get(String(productId));
+  const text = post?.[field] || '';
+  if (!text) {
+    setCaptionMessage(productId, 'Chưa có nội dung để copy.', 'error');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(text);
+    setCaptionMessage(productId, 'Đã copy caption.', 'success');
+  } catch (_err) {
+    setCaptionMessage(productId, 'Trình duyệt đang chặn copy tự động.', 'error');
+  }
+}
+
 function getFilteredProducts() {
   const keyword = normalizeText(els.searchInput.value);
   const category = els.categoryFilter.value;
@@ -825,10 +959,12 @@ function renderProducts() {
         <span class="status-pill">${escapeHtml(labels[status] || status)}</span>
         <div class="row-actions">
           <button type="button" data-action="edit" data-id="${product.id}">Sửa</button>
+          <button type="button" data-action="caption" data-id="${product.id}">${state.contentPosts.has(String(product.id)) ? 'Caption' : 'Tạo caption'}</button>
           <button type="button" class="${toggleClass}" data-action="toggle" data-id="${product.id}">${toggleText}</button>
           <button type="button" class="danger-btn" data-action="delete" data-id="${product.id}">Xoá</button>
         </div>
       </article>
+      ${renderCaptionPanel(product)}
     `;
   }).join('');
 }
@@ -847,7 +983,13 @@ async function loadProducts() {
   }
 
   state.products = data || [];
+  const contentPostError = await loadContentPosts();
   renderProducts();
+  if (contentPostError) {
+    setMessage(els.productMessage, `Không tải được content_posts: ${contentPostError.message}`, 'error');
+    return;
+  }
+
   setMessage(els.productMessage);
 }
 
@@ -994,12 +1136,37 @@ function bindEvents() {
       fillForm(product);
     }
 
+    if (button.dataset.action === 'caption') {
+      const productId = String(product.id);
+      const hasPost = state.contentPosts.has(productId);
+      toggleCaptionPanel(product.id);
+      if (!hasPost) {
+        generateCaption(product.id);
+      }
+    }
+
+    if (button.dataset.action === 'generate-caption') {
+      generateCaption(product.id);
+    }
+
     if (button.dataset.action === 'toggle') {
       toggleProductVisibility(product.id);
     }
 
     if (button.dataset.action === 'delete') {
       deleteProduct(product.id);
+    }
+  });
+
+  els.productTable.addEventListener('click', (event) => {
+    const button = event.target.closest('button[data-caption-action]');
+    if (!button) return;
+
+    const panel = button.closest('[data-caption-panel]');
+    if (!panel) return;
+
+    if (button.dataset.captionAction === 'copy') {
+      copyCaption(panel.dataset.captionPanel, button.dataset.field);
     }
   });
 
@@ -1033,6 +1200,9 @@ function showLogin() {
   els.userEmail.textContent = '';
   state.products = [];
   state.variants = [];
+  state.contentPosts = new Map();
+  state.activeCaptionProductId = null;
+  state.captionLoadingId = null;
   renderProducts();
   updateVariantPanel();
 }

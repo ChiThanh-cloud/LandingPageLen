@@ -1,5 +1,4 @@
 .DS_Store
 .agent
-supabase_products_schema.sql
-supabase
 product-color-extractor.html
+supabase
