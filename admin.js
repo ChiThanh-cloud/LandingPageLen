@@ -18,8 +18,8 @@ const subCategoryOptions = {
     ['tui', 'Túi xách']
   ],
   yarn: [
-    ['milk', 'Len Milk'],
-    ['cotton', 'Len Cotton']
+    ['milk', 'Milk Bò'],
+    ['mac', 'Mác Đen']
   ],
   set: [],
   gift: []
