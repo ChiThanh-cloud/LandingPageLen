@@ -3,6 +3,12 @@ const SUPABASE_KEY = 'sb_publishable_C4UKMMkAjjqSnYVD4tA7bA_NXEakUyg';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const PRODUCT_COLUMNS = 'id,created_at,updated_at,name,category,sub_category,image_url,full_image_url,weight,price,status,sort_order';
+const CLOUDINARY_CONFIG_KEY = 'tiny_admin_cloudinary_config';
+const DEFAULT_CLOUDINARY_CONFIG = {
+  cloudName: 'djn2kd2hh',
+  uploadPreset: '',
+  folder: 'tiny-products'
+};
 
 const subCategoryOptions = {
   handmade: [
@@ -49,6 +55,10 @@ const els = {
   searchInput: $('searchInput'),
   categoryFilter: $('categoryFilter'),
   newProductBtn: $('newProductBtn'),
+  cloudinaryCloudName: $('cloudinaryCloudName'),
+  cloudinaryUploadPreset: $('cloudinaryUploadPreset'),
+  cloudinaryFolder: $('cloudinaryFolder'),
+  saveCloudinaryConfigBtn: $('saveCloudinaryConfigBtn'),
   productForm: $('productForm'),
   formTitle: $('formTitle'),
   clearFormBtn: $('clearFormBtn'),
@@ -61,6 +71,8 @@ const els = {
   productPrice: $('productPrice'),
   productWeight: $('productWeight'),
   productImageUrl: $('productImageUrl'),
+  productImageFile: $('productImageFile'),
+  uploadImageBtn: $('uploadImageBtn'),
   productFullImageUrl: $('productFullImageUrl'),
   productMessage: $('productMessage'),
   imagePreviewWrap: $('imagePreviewWrap'),
@@ -76,6 +88,39 @@ function setMessage(el, text = '', type = '') {
 
 function normalizeText(value) {
   return String(value || '').toLowerCase().trim();
+}
+
+function getCloudinaryConfig() {
+  try {
+    return {
+      ...DEFAULT_CLOUDINARY_CONFIG,
+      ...(JSON.parse(localStorage.getItem(CLOUDINARY_CONFIG_KEY)) || {})
+    };
+  } catch (_err) {
+    return { ...DEFAULT_CLOUDINARY_CONFIG };
+  }
+}
+
+function setCloudinaryConfig(config) {
+  localStorage.setItem(CLOUDINARY_CONFIG_KEY, JSON.stringify(config));
+}
+
+function renderCloudinaryConfig() {
+  const config = getCloudinaryConfig();
+  els.cloudinaryCloudName.value = config.cloudName;
+  els.cloudinaryUploadPreset.value = config.uploadPreset;
+  els.cloudinaryFolder.value = config.folder;
+}
+
+function saveCloudinaryConfig() {
+  const config = {
+    cloudName: els.cloudinaryCloudName.value.trim() || DEFAULT_CLOUDINARY_CONFIG.cloudName,
+    uploadPreset: els.cloudinaryUploadPreset.value.trim(),
+    folder: els.cloudinaryFolder.value.trim()
+  };
+
+  setCloudinaryConfig(config);
+  setMessage(els.productMessage, 'Đã lưu cấu hình Cloudinary.', 'success');
 }
 
 function getOptimizedCloudinaryUrl(url, variant = 'thumb') {
@@ -163,6 +208,56 @@ function updateImagePreview() {
 
   els.imagePreview.src = getOptimizedCloudinaryUrl(url, 'thumb');
   els.imagePreviewWrap.classList.remove('hidden');
+}
+
+async function uploadSelectedImage() {
+  const file = els.productImageFile.files?.[0];
+  const config = getCloudinaryConfig();
+
+  if (!file) {
+    setMessage(els.productMessage, 'Chọn một file ảnh trước khi upload.', 'error');
+    return;
+  }
+
+  if (!config.cloudName || !config.uploadPreset) {
+    setMessage(els.productMessage, 'Nhập Cloud name và unsigned upload preset trước.', 'error');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', config.uploadPreset);
+  if (config.folder) {
+    formData.append('folder', config.folder);
+  }
+
+  els.uploadImageBtn.disabled = true;
+  els.uploadImageBtn.textContent = 'Đang upload...';
+  setMessage(els.productMessage, 'Đang upload ảnh lên Cloudinary...');
+
+  try {
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(config.cloudName)}/image/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error?.message || 'Upload Cloudinary thất bại.');
+    }
+
+    els.productImageUrl.value = result.secure_url;
+    if (!els.productFullImageUrl.value.trim()) {
+      els.productFullImageUrl.value = '';
+    }
+    updateImagePreview();
+    setMessage(els.productMessage, 'Upload ảnh thành công. Link đã được điền vào image_url.', 'success');
+  } catch (err) {
+    setMessage(els.productMessage, err.message, 'error');
+  } finally {
+    els.uploadImageBtn.disabled = false;
+    els.uploadImageBtn.textContent = 'Upload';
+  }
 }
 
 function getFilteredProducts() {
@@ -303,11 +398,14 @@ function bindEvents() {
 
   els.logoutBtn.addEventListener('click', () => supabaseClient.auth.signOut());
   els.refreshBtn.addEventListener('click', loadProducts);
+  els.saveCloudinaryConfigBtn.addEventListener('click', saveCloudinaryConfig);
   els.newProductBtn.addEventListener('click', resetForm);
   els.clearFormBtn.addEventListener('click', resetForm);
   els.productForm.addEventListener('submit', saveProduct);
   els.productCategory.addEventListener('change', () => updateSubCategoryOptions());
   els.productImageUrl.addEventListener('input', updateImagePreview);
+  els.uploadImageBtn.addEventListener('click', uploadSelectedImage);
+  els.productImageFile.addEventListener('change', uploadSelectedImage);
   els.searchInput.addEventListener('input', renderProducts);
   els.categoryFilter.addEventListener('change', renderProducts);
 
@@ -345,6 +443,7 @@ function showLogin() {
 
 async function init() {
   bindEvents();
+  renderCloudinaryConfig();
   updateSubCategoryOptions();
   const { data } = await supabaseClient.auth.getSession();
 

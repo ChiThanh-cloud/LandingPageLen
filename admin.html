@@ -11,7 +11,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="css/admin.css?v=1" />
+  <link rel="stylesheet" href="css/admin.css?v=2" />
 </head>
 
 <body>
@@ -64,6 +64,26 @@
           </select>
         </label>
         <button type="button" id="newProductBtn">Sản phẩm mới</button>
+      </section>
+
+      <section class="cloudinary-panel">
+        <div>
+          <h2>Cloudinary upload</h2>
+          <p>Preset được lưu trong trình duyệt của máy này.</p>
+        </div>
+        <label>
+          Cloud name
+          <input type="text" id="cloudinaryCloudName" value="djn2kd2hh" />
+        </label>
+        <label>
+          Upload preset
+          <input type="text" id="cloudinaryUploadPreset" placeholder="Tên unsigned preset" />
+        </label>
+        <label>
+          Folder
+          <input type="text" id="cloudinaryFolder" placeholder="tiny-products" />
+        </label>
+        <button type="button" class="ghost-btn" id="saveCloudinaryConfigBtn">Lưu cấu hình</button>
       </section>
 
       <section class="workspace">
@@ -130,6 +150,14 @@
             <input type="url" id="productImageUrl" placeholder="https://res.cloudinary.com/..." required />
           </label>
 
+          <div class="upload-row">
+            <label>
+              Upload ảnh
+              <input type="file" id="productImageFile" accept="image/*" />
+            </label>
+            <button type="button" class="ghost-btn" id="uploadImageBtn">Upload</button>
+          </div>
+
           <label>
             Link ảnh lớn
             <input type="url" id="productFullImageUrl" placeholder="Để trống nếu dùng cùng ảnh" />
@@ -156,7 +184,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="admin.js?v=1"></script>
+  <script src="admin.js?v=2"></script>
 </body>
 
 </html>

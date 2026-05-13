@@ -158,12 +158,30 @@ select:focus {
   font-size: .9rem;
 }
 
-.toolbar {
+.toolbar,
+.cloudinary-panel {
   margin-bottom: 18px;
   padding: 14px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--white);
+}
+
+.cloudinary-panel {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 160px 220px 180px auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.cloudinary-panel h2 {
+  font-size: 1rem;
+}
+
+.cloudinary-panel p {
+  margin: 4px 0 0;
+  color: var(--text-mid);
+  font-size: .82rem;
 }
 
 .toolbar label:first-child {
@@ -201,6 +219,18 @@ select:focus {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.upload-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.upload-row input[type="file"] {
+  height: auto;
+  padding: 9px 12px;
 }
 
 .image-preview {
@@ -321,7 +351,9 @@ select:focus {
 @media (max-width: 960px) {
   .workspace,
   .toolbar,
+  .cloudinary-panel,
   .admin-header {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
   }
