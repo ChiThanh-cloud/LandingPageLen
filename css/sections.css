@@ -232,6 +232,73 @@
 }
 
 /* =============================================
+   SHOP INFO
+   ============================================= */
+.shop-info {
+  background: linear-gradient(180deg, #f8fcff 0%, var(--white) 100%);
+}
+
+.shop-info-inner {
+  max-width: 940px;
+}
+
+.shop-info .section-title {
+  margin-bottom: 18px;
+}
+
+.shop-info-lead {
+  margin: 0 auto 14px;
+  color: var(--text-mid);
+  line-height: 1.85;
+  font-size: 1rem;
+}
+
+.shop-info strong {
+  color: var(--text-dark);
+}
+
+.shop-info-list {
+  margin: 20px 0 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 10px;
+}
+
+.shop-info-list li {
+  color: var(--text-mid);
+  line-height: 1.72;
+}
+
+.shop-info-faq {
+  background: linear-gradient(180deg, var(--white) 0%, var(--blue-pale) 100%);
+}
+
+.shop-info-faq-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.shop-info-faq-item {
+  padding: 18px 20px;
+  border: 1px solid var(--blue-light);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, .92);
+}
+
+.shop-info-faq-item h3 {
+  margin: 0 0 4px;
+  color: var(--text-dark);
+  font-size: .98rem;
+}
+
+.shop-info-faq-item p {
+  margin: 0;
+  color: var(--text-mid);
+  line-height: 1.72;
+}
+
+/* =============================================
    ABOUT
    ============================================= */
 .about {
