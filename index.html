@@ -27,11 +27,18 @@
   <meta name="twitter:description"
     content="Cuộn len chất lượng, đồ móc handmade theo yêu cầu và set quà tặng xinh xắn từ Tiệm Len Nhà Tiny." />
   <meta name="twitter:image" content="https://lentiny.xyz/images/og-image.jpg" />
+  <link rel="preload" as="image" href="images/hero_mobile_optimized_768.jpg" media="(max-width: 768px)"
+    fetchpriority="high" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Be+Vietnam+Pro:wght@300;400;500;600&amp;display=swap"
+    onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;family=Be+Vietnam+Pro:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet" />
+  </noscript>
   <link rel="icon" type="image/png" href="images/favicon.png?v=1" />
   <link rel="shortcut icon" type="image/png" href="images/favicon.png?v=1" />
   <link rel="apple-touch-icon" href="images/logo.png?v=2" />
@@ -180,29 +187,54 @@
     }
   </script>
   <!-- CSS Modules -->
-  <link rel="stylesheet" href="css/base.css?v=3" />
-  <link rel="stylesheet" href="css/animations.css?v=2" />
-  <link rel="stylesheet" href="css/layout.css?v=4" />
-  <link rel="stylesheet" href="css/sections.css?v=4" />
-  <link rel="stylesheet" href="css/products.css?v=6" />
+  <link rel="stylesheet" href="css/base.css?v=4" />
+  <link rel="stylesheet" href="css/layout.css?v=5" />
+  <link rel="stylesheet" href="css/sections.css?v=5" />
   <link rel="stylesheet" href="css/responsive.css?v=5" />
+  <link rel="preload" href="css/animations.css?v=2" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <link rel="preload" href="css/products.css?v=6" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
+    <link rel="stylesheet" href="css/animations.css?v=2" />
+    <link rel="stylesheet" href="css/products.css?v=6" />
+  </noscript>
 
   <!-- ===== MICROSOFT CLARITY ===== -->
   <script type="text/javascript">
-    (function (c, l, a, r, i, t, y) {
-      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
-      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
-      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
-    })(window, document, "clarity", "script", "wqieag9yv3");
+    window.addEventListener('load', function () {
+      var loadClarity = function () {
+        (function (c, l, a, r, i, t, y) {
+          c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+          t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+          y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "wqieag9yv3");
+      };
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadClarity, { timeout: 2500 });
+      } else {
+        setTimeout(loadClarity, 1500);
+      }
+    });
   </script>
 
   <!-- ===== GOOGLE ANALYTICS 4 ===== -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C27736KHYT"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-C27736KHYT');
+    window.addEventListener('load', function () {
+      var loadGa = function () {
+        var gaScript = document.createElement('script');
+        gaScript.async = true;
+        gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-C27736KHYT';
+        document.head.appendChild(gaScript);
+        gtag('js', new Date());
+        gtag('config', 'G-C27736KHYT');
+      };
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadGa, { timeout: 2500 });
+      } else {
+        setTimeout(loadGa, 1500);
+      }
+    });
   </script>
 
   <!-- ===== FACEBOOK PIXEL =====
@@ -231,7 +263,8 @@
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="#hero" class="nav-logo">
-        <img src="images/logo.png?v=2" alt="Tiệm Len Nhà Tiny" class="logo-img" />
+        <img src="images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" class="logo-img" width="160" height="160"
+          decoding="async" />
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="#thong-tin-tiny" style="--i: 1">Về Tiny</a></li>
@@ -249,7 +282,7 @@
   <!-- ===== HERO ===== -->
   <section class="hero" id="hero">
     <div class="hero-video-wrap">
-      <video autoplay muted loop playsinline preload="metadata" id="heroVideo" poster="images/yarn_hero.jpg">
+      <video autoplay muted loop playsinline preload="none" id="heroVideo" poster="images/yarn_hero_800.jpg">
         <source src="images/hero_video.mp4" type="video/mp4" media="(min-width: 769px)" />
       </video>
       <div class="hero-mobile-bg"></div>
@@ -369,8 +402,8 @@
   <section class="about section" id="ve-tiny">
     <div class="container about-grid">
       <div class="about-img-wrap">
-        <img src="images/yarn_hero.jpg" alt="Tiệm len nhà Tiny – không gian cửa hàng" class="about-img"
-          loading="lazy" />
+        <img src="images/yarn_hero_800.jpg" alt="Tiệm len nhà Tiny – không gian cửa hàng" class="about-img" width="800"
+          height="600" loading="lazy" decoding="async" />
         <div class="about-badge-card">
           <span class="badge-num">100+</span>
           <span class="badge-label">Khách hàng hài lòng</span>
@@ -405,7 +438,8 @@
         <div class="product-card" id="prod-cuon-len" onclick="openProductModal('yarn')" style="cursor: pointer;"
           data-track="product_card_click" data-category="yarn">
           <div class="product-img-wrap">
-            <img src="images/yarn_collection.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" loading="lazy" />
+            <img src="images/yarn_collection_800.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" width="800"
+              height="600" loading="lazy" decoding="async" />
             <div class="product-tag">Bán chạy</div>
           </div>
           <div class="product-info">
@@ -420,8 +454,8 @@
         <div class="product-card featured" id="prod-moc-yc" onclick="openProductModal('handmade')"
           style="cursor: pointer;" data-track="product_card_click" data-category="handmade">
           <div class="product-img-wrap">
-            <img src="images/crochet_products.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện"
-              loading="lazy" />
+            <img src="images/crochet_products_800.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện"
+              width="800" height="600" loading="lazy" decoding="async" />
             <div class="product-tag hot">Yêu thích nhất</div>
           </div>
           <div class="product-info">
@@ -436,7 +470,8 @@
         <div class="product-card" id="prod-qua-tang" onclick="openProductModal('gift')" style="cursor: pointer;"
           data-track="product_card_click" data-category="gift">
           <div class="product-img-wrap">
-            <img src="images/gift_set.jpg" alt="Bộ quà tặng handmade từ len" loading="lazy" />
+            <img src="images/gift_set_800.jpg" alt="Bộ quà tặng handmade từ len" width="800" height="600"
+              loading="lazy" decoding="async" />
             <div class="product-tag gift">Quà tặng</div>
           </div>
           <div class="product-info">
@@ -451,7 +486,8 @@
         <div class="product-card" id="prod-set" onclick="openProductModal('set')" style="cursor: pointer;"
           data-track="product_card_click" data-category="set">
           <div class="product-img-wrap">
-            <img src="images/set_kit.jpg" alt="Set tự móc gấu len đầy đủ nguyên liệu và hướng dẫn" loading="lazy" />
+            <img src="images/set_kit_800.jpg" alt="Set tự móc gấu len đầy đủ nguyên liệu và hướng dẫn" width="800"
+              height="600" loading="lazy" decoding="async" />
             <div class="product-tag hot">Mới nhất</div>
           </div>
           <div class="product-info">
@@ -510,24 +546,24 @@
       <h2 class="section-title center">Những lời nhắn nhỏ <span class="highlight">sau khi nhận hàng</span></h2>
       <div class="reviews-grid">
         <figure class="review-card feedback-card">
-          <img src="images/feedback_1.jpg" alt="Tin nhắn feedback của khách sau khi nhận đồ móc handmade"
-            loading="lazy" />
+          <img src="images/feedback_1_700.jpg" alt="Tin nhắn feedback của khách sau khi nhận đồ móc handmade"
+            width="700" height="560" loading="lazy" decoding="async" />
           <figcaption>
             <span class="review-meta">Đồ móc handmade</span>
             <strong>Khách nhắn lại sau khi nhận mẫu</strong>
           </figcaption>
         </figure>
         <figure class="review-card feedback-card featured-review">
-          <img src="images/feedback_2.jpg" alt="Tin nhắn feedback của khách sau khi mua len và phụ kiện"
-            loading="lazy" />
+          <img src="images/feedback_2_700.jpg" alt="Tin nhắn feedback của khách sau khi mua len và phụ kiện"
+            width="700" height="560" loading="lazy" decoding="async" />
           <figcaption>
             <span class="review-meta">Hoa Tặng Người Yêu</span>
             <strong>Khách nhắn lại sau khi nhận hoa</strong>
           </figcaption>
         </figure>
         <figure class="review-card feedback-card">
-          <img src="images/feedback_3.jpg" alt="Tin nhắn feedback của khách sau khi nhận set quà handmade"
-            loading="lazy" />
+          <img src="images/feedback_3_700.jpg" alt="Tin nhắn feedback của khách sau khi nhận set quà handmade"
+            width="700" height="560" loading="lazy" decoding="async" />
           <figcaption>
             <span class="review-meta">Set quà handmade</span>
             <strong>Gói quà chỉn chu, gửi ảnh trước khi giao</strong>
@@ -640,6 +676,7 @@
       <div class="map-container">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8665042831874!2d106.659918!3d10.7448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752e5513ab4357%3A0xc3f5a2e582e2c8dc!2s853%20Ba%20%C4%90%C3%ACnh%2C%20Ph%C6%B0%E1%BB%9Dng%2010%2C%20Qu%E1%BA%ADn%208%2C%20H%E1%BB%93%20Ch%C3%AD%20Minh%2C%20Vietnam!5e0!3m2!1sen!2s!4v1715060000000!5m2!1sen!2s"
+          title="Google Map"
           width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"
           referrerpolicy="no-referrer-when-downgrade">
         </iframe>
@@ -651,7 +688,8 @@
   <footer class="footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <img src="images/logo.png?v=2" alt="Logo Tiệm Len Nhà Tiny" class="logo-img footer-logo" />
+        <img src="images/logo_160.png?v=1" alt="Logo Tiệm Len Nhà Tiny" class="logo-img footer-logo" width="160"
+          height="160" loading="lazy" decoding="async" />
         <p class="footer-slogan">"Từng sợi len, một tình yêu"</p>
         <p class="footer-entity">Chủ thể bán hàng: Tiệm Len Nhà Tiny</p>
         <p class="footer-addr">📍 853 Ba Đình, Phường Chánh Hưng, TP.HCM</p>
@@ -742,9 +780,7 @@
     </div>
   </div>
 
-  <!-- Supabase JS Library -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js?v=8"></script>
+  <script type="module" src="js/main.js?v=1"></script>
 </body>
 
 </html>

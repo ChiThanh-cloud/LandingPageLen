@@ -13,7 +13,7 @@
   --cream: #FBFDFF;
   --text-dark: #1B3F5C;
   --text-mid: #5B748A;
-  --text-light: #9DBCD6;
+  --text-light: #6F8EA8;
   --shadow-sm: 0 4px 14px rgba(45, 111, 148, .07);
   --shadow-md: 0 12px 32px rgba(45, 111, 148, .10);
   --shadow-lg: 0 24px 60px rgba(45, 111, 148, .15);
@@ -89,6 +89,10 @@ ul {
 
 .section {
   padding: 96px 0;
+}
+
+section[id] {
+  scroll-margin-top: 120px;
 }
 
 .section-tag {

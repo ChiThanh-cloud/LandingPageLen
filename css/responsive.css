@@ -51,6 +51,7 @@ body.menu-open .nav-links {
 }
 
 @media (max-width: 768px) {
+
   /* H\u01b0\u1edbng A: \u1ea8n video, hi\u1ec7n \u1ea3nh t\u0129nh tr\u00ean Mobile */
   .hero-video-wrap video {
     display: none;
@@ -169,7 +170,8 @@ body.menu-open .nav-links {
   .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 16px; /* Tăng khoảng cách giữa các mục */
+    gap: 16px;
+    /* Tăng khoảng cách giữa các mục */
     position: fixed;
     inset: 0;
     background: rgba(255, 255, 255, 0.95);
@@ -177,7 +179,8 @@ body.menu-open .nav-links {
     -webkit-backdrop-filter: blur(25px);
     padding: 80px 32px 32px;
     align-items: center;
-    justify-content: center; /* Căn giữa theo chiều dọc */
+    justify-content: center;
+    /* Căn giữa theo chiều dọc */
     z-index: 999;
     opacity: 0;
     visibility: hidden;
@@ -231,7 +234,7 @@ body.menu-open .nav-links {
     z-index: 1000;
   }
 
-  .nav-links.open ~ .hamburger span {
+  .nav-links.open~.hamburger span {
     background: var(--text-dark);
   }
 
@@ -374,6 +377,7 @@ body.menu-open .nav-links {
    ACCESSIBILITY – REDUCED MOTION
    ============================================= */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

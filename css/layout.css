@@ -187,24 +187,24 @@
 }
 
 .footer-slogan {
-  color: rgba(255, 255, 255, .65);
+  color: rgba(255, 255, 255, .82);
   font-size: .9rem;
   font-style: italic;
 }
 
 .footer-entity {
-  color: rgba(255, 255, 255, .62);
+  color: rgba(255, 255, 255, .78);
   font-size: .84rem;
   font-weight: 600;
 }
 
 .footer-addr {
-  color: rgba(255, 255, 255, .45);
+  color: rgba(255, 255, 255, .72);
   font-size: .82rem;
 }
 
 .footer-hours {
-  color: rgba(255, 255, 255, .45);
+  color: rgba(255, 255, 255, .72);
   font-size: .82rem;
 }
 
@@ -216,7 +216,7 @@
 }
 
 .footer-links a {
-  color: rgba(255, 255, 255, .55);
+  color: rgba(255, 255, 255, .76);
   font-size: .88rem;
   transition: var(--transition);
 }
@@ -226,7 +226,7 @@
 }
 
 .footer-copy {
-  color: rgba(255, 255, 255, .3);
+  color: rgba(255, 255, 255, .66);
   font-size: .8rem;
   text-align: center;
   border-top: 1px solid rgba(255, 255, 255, .08);

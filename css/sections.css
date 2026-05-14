@@ -27,7 +27,7 @@
   display: none;
   position: absolute;
   inset: 0;
-  background-image: url('../images/hero_mobile_optimized.jpg');
+  background-image: url('../images/hero_mobile_optimized_768.jpg');
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -578,9 +578,9 @@
 
 .feedback-card img {
   width: 100%;
-  aspect-ratio: 5 / 4;
-  object-fit: cover;
-  border-radius: 22px;
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 16px;
   border: 1px solid var(--blue-light);
   background: var(--blue-pale);
 }
