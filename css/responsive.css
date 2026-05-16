@@ -240,19 +240,89 @@ body.menu-open .nav-links {
 
   .products-grid {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 18px;
+  }
+
+  .products .container {
+    padding-left: 23px;
+    padding-right: 23px;
+  }
+
+  .product-card {
+    border-radius: 16px;
+    border-color: rgba(190, 220, 242, .46);
+    box-shadow: 0 9px 22px rgba(45, 111, 148, .06);
+  }
+
+  .product-card:hover {
+    transform: none;
+  }
+
+  .product-img-wrap {
+    border-radius: 16px 16px 8px 8px;
+  }
+
+  .product-info {
+    padding: 14px 16px 16px;
+  }
+
+  .product-info h3 {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+    color: #22324d;
+    font-weight: 600;
+  }
+
+  .product-info p {
+    font-size: .86rem;
+    line-height: 1.58;
+    margin-bottom: 11px;
+  }
+
+  .product-price {
+    font-size: .9rem;
+    margin-bottom: 6px;
+  }
+
+  .product-tag {
+    top: 12px;
+    left: 12px;
+    font-size: .68rem;
+    padding: 4px 12px;
   }
 
   /* Product items trong modal: 2 cột khi màn hình đủ rộng */
   .product-gallery {
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    gap: 10px;
   }
 
-  /* Nút Messenger to hơn trên mobile */
+  .product-item img {
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .product-item-info {
+    padding: 9px 7px;
+  }
+
+  .product-item h4 {
+    font-size: .82rem;
+  }
+
+  .product-price-inline {
+    font-size: .94rem;
+    margin: 4px 0;
+  }
+
+  .product-item-footer {
+    padding: 0 8px 10px;
+  }
+
+  /* Nút Messenger gọn hơn trên mobile */
   .btn-messenger {
-    font-size: .9rem;
-    padding: 10px 18px;
+    font-size: .78rem;
+    padding: 8px 10px;
     min-height: 44px;
   }
 
@@ -329,6 +399,25 @@ body.menu-open .nav-links {
     font-size: .74rem;
   }
 
+  .products .section-sub {
+    font-size: .9rem;
+  }
+
+  .product-info {
+    padding: 16px;
+  }
+
+  .product-info p {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .btn-link {
+    font-size: .88rem;
+  }
+
   .product-modal-overlay {
     padding: 10px;
   }
@@ -336,7 +425,7 @@ body.menu-open .nav-links {
   .product-modal-content {
     max-height: 92dvh;
     border-radius: 20px;
-    padding: 28px 14px 20px;
+    padding: 28px 12px 18px;
   }
 
   .product-modal-close {
@@ -347,9 +436,31 @@ body.menu-open .nav-links {
   }
 
   .product-modal-title {
-    font-size: 1.55rem;
-    padding: 0 44px 12px;
-    margin-bottom: 18px;
+    font-size: 1.42rem;
+    padding: 0 38px 12px;
+    margin-bottom: 16px;
+  }
+
+  .modal-search-wrap {
+    margin-bottom: 16px;
+  }
+
+  .filter-tabs {
+    gap: 7px;
+  }
+
+  .filter-tab {
+    font-size: .76rem;
+    padding: 7px 10px;
+  }
+
+  .product-gallery {
+    gap: 8px;
+  }
+
+  .product-weight,
+  .yarn-card-count {
+    font-size: .68rem;
   }
 
   .trust-grid {
@@ -367,10 +478,7 @@ body.menu-open .nav-links {
     width: 100%;
   }
 
-  /* Modal gallery: 1 cột trên màn hình rất nhỏ */
-  .product-gallery {
-    grid-template-columns: 1fr;
-  }
+  /* Modal giữ 2 cột trên điện thoại nhỏ vì card đã được thu gọn ở trên. */
 }
 
 /* =============================================

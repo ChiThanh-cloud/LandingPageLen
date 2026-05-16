@@ -139,9 +139,12 @@ function normalizeProductText(value) {
 function setYarnListMode() {
   const { modalFilterTabs, productModal, productModalTitle } = getEls();
   const searchWrap = document.querySelector('.modal-search-wrap');
+  const modalContent = productModal?.querySelector('.product-modal-content');
 
   if (searchWrap) searchWrap.style.display = '';
-  productModal?.querySelector('.product-modal-content')?.classList.remove('yarn-detail-modal');
+  productModal?.classList.remove('yarn-detail-open');
+  modalContent?.classList.remove('yarn-detail-modal');
+  modalContent?.classList.toggle('yarn-list-modal', currentCategory === 'yarn');
   renderFilterTabs(currentCategory);
   if (productModalTitle) productModalTitle.textContent = categoryTitles[currentCategory] || 'Sản phẩm';
   if (!subCategories[currentCategory] && modalFilterTabs) modalFilterTabs.innerHTML = '';
@@ -150,9 +153,12 @@ function setYarnListMode() {
 function setYarnDetailMode(product) {
   const { modalFilterTabs, productModal, productModalTitle } = getEls();
   const searchWrap = document.querySelector('.modal-search-wrap');
+  const modalContent = productModal?.querySelector('.product-modal-content');
 
   if (searchWrap) searchWrap.style.display = 'none';
-  productModal?.querySelector('.product-modal-content')?.classList.add('yarn-detail-modal');
+  productModal?.classList.add('yarn-detail-open');
+  modalContent?.classList.add('yarn-detail-modal');
+  modalContent?.classList.remove('yarn-list-modal');
   if (modalFilterTabs) modalFilterTabs.innerHTML = '';
   if (productModalTitle) productModalTitle.textContent = product.name || 'Bảng màu';
 }
@@ -252,46 +258,48 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
     <article class="yarn-detail-view">
       <button type="button" class="yarn-back-btn" id="yarnBackBtn">← Quay lại danh sách len</button>
       <div class="yarn-detail-layout">
-        <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
-          <img src="${escapeHtml(heroImage)}" alt="${escapeHtml(product.name || 'Cuộn len')}" decoding="async">
-        </button>
-        <div class="yarn-detail-info">
-          <h3>${escapeHtml(product.name || 'Cuộn len')}</h3>
-          <div class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</div>
-          ${product.description ? `<p class="yarn-detail-description">${escapeHtml(product.description)}</p>` : ''}
-          ${detailRows.length ? `
-            <ul class="yarn-spec-list">
-              ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
-            </ul>
-          ` : ''}
-          <div class="yarn-selected-box">
-            <span>Mã đang chọn: <strong id="yarnSelectedCode">${escapeHtml(selectedCode || 'Chưa có')}</strong></span>
-            <span>Tên màu: <strong id="yarnSelectedName">${escapeHtml(selectedName || 'Chưa có')}</strong></span>
-            <span>Trạng thái: <strong id="yarnSelectedStatus">${escapeHtml(selectedStatus)}</strong></span>
+        <div class="yarn-detail-left">
+          <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
+            <img src="${escapeHtml(heroImage)}" alt="${escapeHtml(product.name || 'Cuộn len')}" decoding="async">
+          </button>
+          <div class="yarn-detail-info">
+            <h3>${escapeHtml(product.name || 'Cuộn len')}</h3>
+            <div class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</div>
+            ${product.description ? `<p class="yarn-detail-description">${escapeHtml(product.description)}</p>` : ''}
+            ${detailRows.length ? `
+              <ul class="yarn-spec-list">
+                ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
+              </ul>
+            ` : ''}
+            <div class="yarn-selected-box">
+              <span>Mã đang chọn: <strong id="yarnSelectedCode">${escapeHtml(selectedCode || 'Chưa có')}</strong></span>
+              <span>Tên màu: <strong id="yarnSelectedName">${escapeHtml(selectedName || 'Chưa có')}</strong></span>
+              <span>Trạng thái: <strong id="yarnSelectedStatus">${escapeHtml(selectedStatus)}</strong></span>
+            </div>
+            <a class="btn-messenger yarn-contact-btn ${selectedVariant ? '' : 'disabled'}" id="yarnContactBtn" href="${selectedVariant ? renderYarnContactButton(product, selectedVariant) : '#'}" target="_blank" rel="noopener">
+              Liên hệ đặt màu này
+            </a>
           </div>
-          <a class="btn-messenger yarn-contact-btn ${selectedVariant ? '' : 'disabled'}" id="yarnContactBtn" href="${selectedVariant ? renderYarnContactButton(product, selectedVariant) : '#'}" target="_blank" rel="noopener">
-            Liên hệ đặt màu này
-          </a>
         </div>
+        <section class="yarn-color-section yarn-detail-colors">
+          <h4>Mã màu</h4>
+          ${variants.length ? `
+            <div class="yarn-color-grid">
+              ${variants.map((variant) => {
+                const thumb = getVariantImage(product, variant, 'thumb');
+                const code = getVariantCode(variant);
+                const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
+                return `
+                  <button type="button" class="yarn-color-option ${active ? 'active' : ''}" data-variant-id="${variant.id}" aria-label="Chọn màu ${escapeHtml(code)}">
+                    <img src="${escapeHtml(thumb)}" alt="${escapeHtml(code)}" loading="lazy" decoding="async">
+                    <span>${escapeHtml(code || 'Màu')}</span>
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          ` : '<p class="yarn-empty-variants">Dòng len này chưa có bảng màu. Bạn liên hệ Tiny để được gửi bảng màu nhé.</p>'}
+        </section>
       </div>
-      <section class="yarn-color-section">
-        <h4>Mã màu</h4>
-        ${variants.length ? `
-          <div class="yarn-color-grid">
-            ${variants.map((variant) => {
-              const thumb = getVariantImage(product, variant, 'thumb');
-              const code = getVariantCode(variant);
-              const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
-              return `
-                <button type="button" class="yarn-color-option ${active ? 'active' : ''}" data-variant-id="${variant.id}" aria-label="Chọn màu ${escapeHtml(code)}">
-                  <img src="${escapeHtml(thumb)}" alt="${escapeHtml(code)}" loading="lazy" decoding="async">
-                  <span>${escapeHtml(code || 'Màu')}</span>
-                </button>
-              `;
-            }).join('')}
-          </div>
-        ` : '<p class="yarn-empty-variants">Dòng len này chưa có bảng màu. Bạn liên hệ Tiny để được gửi bảng màu nhé.</p>'}
-      </section>
     </article>
   `;
 
@@ -592,6 +600,7 @@ export function closeProductModal() {
   const { productModal } = getEls();
   closeImageLightbox();
   productModal?.classList.remove('active');
+  productModal?.classList.remove('yarn-detail-open');
   document.body.style.overflow = '';
 }
 
