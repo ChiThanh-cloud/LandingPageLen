@@ -504,25 +504,25 @@ function renderProducts(products) {
 
   const actionScripts = {
     yarn: {
-      label: '🎨 Xem bảng màu & Đặt',
+      label: 'Xem bảng màu & Đặt',
       msg: (name) => `Chào Tiny, mình đang quan tâm đến màu/dòng len "${name}", Tiny tư vấn số lượng và tình trạng màu này giúp mình nhé!`
     },
     handmade: {
-      label: '📏 Tư vấn Size & Dáng',
+      label: 'Tư vấn size & dáng',
       msg: (name) => `Chào Tiny, mình muốn đặt móc mẫu "${name}" theo yêu cầu riêng, Tiny tư vấn giúp mình nhé!`
     },
     set: {
-      label: '📦 Xem chi tiết Set',
+      label: 'Xem chi tiết set',
       msg: (name) => `Chào Tiny, Set "${name}" này gồm những gì và có hướng dẫn kèm theo không ạ?`
     },
     gift: {
-      label: '🎁 Tư vấn Hộp quà',
+      label: 'Tư vấn hộp quà',
       msg: (name) => `Chào Tiny, mình muốn mua set quà "${name}", Tiny có gói hộp và ghi thiệp giúp mình không?`
     }
   };
 
   const script = actionScripts[currentCategory] || {
-    label: '💬 Nhắn Mess hỏi mua',
+    label: 'Nhắn Mess hỏi mua',
     msg: (name) => `Chào Tiny, mình muốn hỏi mua: "${name}"`
   };
 

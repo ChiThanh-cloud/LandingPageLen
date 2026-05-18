@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tiệm Len Nhà Tiny - Shop Len Handmade, Set Tự Móc & Đồ Móc Theo Yêu Cầu</title>
+  <title>Tiệm Len Nhà Tiny | Shop len handmade, set tự móc & quà tặng tại TP.HCM</title>
   <meta name="description"
-    content="Tiệm Len Nhà Tiny là shop len handmade chuyên bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng handmade. Nhắn Facebook hoặc Zalo để được tư vấn màu len và đặt hàng online." />
+    content="Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, nhận tư vấn cuộn len, set tự móc, đồ móc theo yêu cầu và quà tặng handmade. Nhắn Messenger để được Tiny tư vấn mẫu, màu len và báo giá nhanh." />
   <link rel="canonical" href="https://lentiny.xyz/" />
-  <meta property="og:title" content="Tiệm Len Nhà Tiny - Cuộn Len & Móc Theo Yêu Cầu" />
+  <meta property="og:title" content="Tiệm Len Nhà Tiny | Len handmade & đồ móc theo yêu cầu" />
   <meta property="og:description"
-    content="Cuộn len chất lượng, đồ móc handmade theo yêu cầu và set quà tặng xinh xắn từ Tiệm Len Nhà Tiny." />
+    content="Shop len handmade tại TP.HCM: cuộn len, set tự móc, quà tặng và đồ móc theo yêu cầu. Nhắn Messenger để Tiny tư vấn mẫu và báo giá." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://lentiny.xyz/" />
   <meta property="og:site_name" content="Tiệm Len Nhà Tiny" />
@@ -23,9 +23,9 @@
   <meta property="og:image:alt" content="Tiệm Len Nhà Tiny handmade, len sợi, túi len, thú bông len và phụ kiện" />
   <meta property="og:logo" content="https://lentiny.xyz/images/logo.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Tiệm Len Nhà Tiny - Cuộn Len & Móc Theo Yêu Cầu" />
+  <meta name="twitter:title" content="Tiệm Len Nhà Tiny | Len handmade & đồ móc theo yêu cầu" />
   <meta name="twitter:description"
-    content="Cuộn len chất lượng, đồ móc handmade theo yêu cầu và set quà tặng xinh xắn từ Tiệm Len Nhà Tiny." />
+    content="Shop len handmade tại TP.HCM: cuộn len, set tự móc, quà tặng và đồ móc theo yêu cầu. Nhắn Messenger để Tiny tư vấn mẫu và báo giá." />
   <meta name="twitter:image" content="https://lentiny.xyz/images/og-image.jpg" />
   <link rel="preload" as="image" href="images/hero_mobile_optimized_768.jpg" media="(max-width: 768px)"
     fetchpriority="high" />
@@ -53,7 +53,7 @@
           "url": "https://lentiny.xyz/",
           "logo": "https://lentiny.xyz/images/logo.png",
           "image": "https://lentiny.xyz/images/og-image.jpg",
-          "description": "Tiệm Len Nhà Tiny chuyên cuộn len, phụ kiện đan móc, đồ móc handmade theo yêu cầu, set tự móc và quà tặng handmade.",
+          "description": "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, chuyên cuộn len, phụ kiện đan móc, đồ móc handmade theo yêu cầu, set tự móc và quà tặng handmade.",
           "telephone": "+84368903519",
           "priceRange": "8000 VND - 500000 VND",
           "address": {
@@ -85,7 +85,14 @@
           "sameAs": [
             "https://m.me/61559447375156",
             "https://zalo.me/0368903519"
-          ]
+          ],
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "telephone": "+84368903519",
+            "availableLanguage": "Vietnamese",
+            "url": "https://m.me/61559447375156"
+          }
         },
         {
           "@type": "WebSite",
@@ -405,7 +412,8 @@
       <p class="section-sub center">Từ nguyên liệu đan móc đến những món quà thành phẩm, tất cả đều sẵn sàng.</p>
 
       <div class="products-grid">
-        <div class="product-card" id="prod-cuon-len" onclick="openProductModal('yarn')" style="cursor: pointer;"
+        <div class="product-card" id="prod-cuon-len" onclick="openProductModal('yarn')" role="button" tabindex="0"
+          aria-label="Xem cuộn len và phụ kiện tại Tiệm Len Nhà Tiny" style="cursor: pointer;"
           data-track="product_card_click" data-category="yarn">
           <div class="product-img-wrap">
             <img src="images/yarn_collection_800.jpg" alt="Cuộn len các loại tại Tiệm Len Nhà Tiny" width="800"
@@ -413,7 +421,7 @@
             <div class="product-tag">Bán chạy</div>
           </div>
           <div class="product-info">
-            <h3>Cuộn Len & Phụ Kiện</h3>
+            <h3>Cuộn len &amp; phụ kiện</h3>
             <div class="product-price">Từ 8.000đ</div>
             <p>Bảng màu len siêu xinh, chất sợi mềm mịn (Cotton, Wool...). Đủ kim móc và phụ kiện để bạn tự tay làm nên
               tác phẩm của mình.</p>
@@ -421,15 +429,16 @@
           </div>
         </div>
 
-        <div class="product-card featured" id="prod-moc-yc" onclick="openProductModal('handmade')"
-          style="cursor: pointer;" data-track="product_card_click" data-category="handmade">
+        <div class="product-card featured" id="prod-moc-yc" onclick="openProductModal('handmade')" role="button"
+          tabindex="0" aria-label="Xem đồ móc đặt riêng tại Tiệm Len Nhà Tiny" style="cursor: pointer;"
+          data-track="product_card_click" data-category="handmade">
           <div class="product-img-wrap">
             <img src="images/crochet_products_800.jpg" alt="Móc theo yêu cầu – thú bông, túi xách, phụ kiện"
               width="800" height="600" loading="lazy" decoding="async" />
             <div class="product-tag hot">Yêu thích nhất</div>
           </div>
           <div class="product-info">
-            <h3>Đồ Móc Đặt Riêng</h3>
+            <h3>Đồ móc đặt riêng</h3>
             <div class="product-price quote">Báo giá theo mẫu</div>
             <p>Thú bông Amigurumi, túi xách, mũ nón... Bạn chỉ cần có ý tưởng hoặc ảnh mẫu, Tiny sẽ dùng len biến nó
               thành hiện thực.</p>
@@ -437,7 +446,8 @@
           </div>
         </div>
 
-        <div class="product-card" id="prod-qua-tang" onclick="openProductModal('gift')" style="cursor: pointer;"
+        <div class="product-card" id="prod-qua-tang" onclick="openProductModal('gift')" role="button" tabindex="0"
+          aria-label="Xem hộp quà handmade tại Tiệm Len Nhà Tiny" style="cursor: pointer;"
           data-track="product_card_click" data-category="gift">
           <div class="product-img-wrap">
             <img src="images/gift_set_800.jpg" alt="Bộ quà tặng handmade từ len" width="800" height="600"
@@ -445,7 +455,7 @@
             <div class="product-tag gift">Quà tặng</div>
           </div>
           <div class="product-info">
-            <h3>Hộp Quà Ý Nghĩa</h3>
+            <h3>Hộp quà ý nghĩa</h3>
             <div class="product-price">Từ 100.000đ</div>
             <p>Một bó hoa len không bao giờ tàn hay set hộp quà mix sẵn cực kỳ mộng mơ. Gói ghém thơm tho thay lời bạn
               muốn nói.</p>
@@ -453,7 +463,8 @@
           </div>
         </div>
 
-        <div class="product-card" id="prod-set" onclick="openProductModal('set')" style="cursor: pointer;"
+        <div class="product-card" id="prod-set" onclick="openProductModal('set')" role="button" tabindex="0"
+          aria-label="Xem set tự móc tại Tiệm Len Nhà Tiny" style="cursor: pointer;"
           data-track="product_card_click" data-category="set">
           <div class="product-img-wrap">
             <img src="images/set_kit_800.jpg" alt="Set tự móc gấu len đầy đủ nguyên liệu và hướng dẫn" width="800"
@@ -461,7 +472,7 @@
             <div class="product-tag hot">Mới nhất</div>
           </div>
           <div class="product-info">
-            <h3>Set Tự Móc</h3>
+            <h3>Set tự móc</h3>
             <div class="product-price">Từ 100.000đ</div>
             <p>Dành riêng cho người mới bắt đầu! Mỗi set đã gom đủ len, kim móc, bông nhồi và hướng dẫn cực chi tiết để
               bạn tự vọc vạch.</p>

@@ -75,6 +75,16 @@ export function initFaqAccordion() {
   });
 }
 
+export function initKeyboardCards() {
+  document.querySelectorAll('.product-card[role="button"]').forEach((card) => {
+    card.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      card.click();
+    });
+  });
+}
+
 export function initHeroVideoFallback() {
   const video = document.getElementById('heroVideo');
   if (!video) return;
@@ -109,6 +119,7 @@ export function initPageUi() {
   initMobileMenu();
   initScrollReveal();
   initFaqAccordion();
+  initKeyboardCards();
   initHeroVideoFallback();
   initActiveNavHighlight();
 }
