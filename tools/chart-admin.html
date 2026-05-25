@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tạo JSON Chart | LenTiny</title>
+  <meta name="description" content="Tool nội bộ tạo JSON chart móc len cho LenTiny." />
+  <link rel="stylesheet" href="../css/chart.css?v=4" />
+</head>
+
+<body>
+  <div class="lt-chart-system" data-page="admin">
+    <header class="lt-header">
+      <div class="lt-header-inner">
+        <a class="lt-brand" href="../chart-index.html" aria-label="Về kho chart LenTiny">
+          <img class="lt-logo" src="../images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" width="160" height="160" />
+          <span>
+            <strong>LenTiny</strong>
+            <small>Admin chart JSON</small>
+          </span>
+        </a>
+        <nav class="lt-header-nav" aria-label="Điều hướng chart admin">
+          <a class="lt-header-link" href="../index.html">Trang chủ</a>
+          <a class="lt-header-link is-primary" href="../chart-index.html">Kho chart</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lt-shell">
+      <section class="lt-list-hero">
+        <p class="lt-eyebrow">Tool nội bộ</p>
+        <h1>Tạo file chart từ ảnh chụp</h1>
+        <p>Đi theo từng bước: nhập tên chart, dán link ảnh, chia ảnh theo từng phần rồi tải file JSON để đưa lên web.</p>
+      </section>
+
+      <form id="chartAdminForm" class="lt-admin-layout">
+        <section class="lt-panel lt-admin-form" aria-label="Thông tin chart">
+          <h2>Bước 1: Thông tin chart</h2>
+          <div class="lt-form-grid">
+            <label class="lt-field">
+              <span>Tên chart</span>
+              <input name="title" value="Chart Móc Len Con Lười" required />
+              <small>Hiện ở đầu trang chi tiết và trên card trong kho chart.</small>
+            </label>
+            <label class="lt-field">
+              <span>Đường dẫn ngắn</span>
+              <input name="slug" value="con-luoi" required />
+              <small>Dùng làm tên file, ví dụ: charts/con-luoi.json.</small>
+            </label>
+            <label class="lt-field lt-span-2">
+              <span>Mô tả ngắn</span>
+              <textarea name="description" rows="3" required>Chart dễ thương cho người mới.</textarea>
+              <small>Hiện dưới tên chart và giúp người xem biết mẫu này dành cho ai.</small>
+            </label>
+            <label class="lt-field">
+              <span>Độ khó</span>
+              <input name="difficulty" type="number" min="1" max="5" value="3" required />
+            </label>
+            <label class="lt-field">
+              <span>Thời gian làm</span>
+              <input name="time" value="2-3 giờ" />
+            </label>
+            <label class="lt-field">
+              <span>Kích thước thành phẩm</span>
+              <input name="size" value="10cm" />
+            </label>
+            <label class="lt-field">
+              <span>Tag lọc trong kho chart</span>
+              <input name="tags" value="Amigurumi, Beginner" />
+              <small>Cách nhau bằng dấu phẩy, ví dụ: Amigurumi, Beginner.</small>
+            </label>
+          </div>
+
+          <h2>Bước 2: Ảnh sẽ hiện ở đâu</h2>
+          <div class="lt-form-grid">
+            <label class="lt-field">
+              <span>Ảnh bìa</span>
+              <input name="coverImage" value="" placeholder="https://res.cloudinary.com/.../cover.jpg" />
+              <small>Hiện trong kho chart và đầu trang chi tiết. Nên là ảnh thành phẩm đẹp nhất.</small>
+            </label>
+            <label class="lt-field">
+              <span>Ảnh chính của chart</span>
+              <input name="chartImage" value="" placeholder="https://res.cloudinary.com/.../chart.jpg" />
+              <small>Dùng làm ảnh mặc định nếu một phần bên dưới chưa có ảnh riêng.</small>
+            </label>
+            <label class="lt-field">
+              <span>Link inbox tư vấn set len</span>
+              <input name="messengerUrl" value="https://m.me/lentiny" />
+              <small>Link PDF không lưu trong JSON. n8n sẽ giữ link PDF và trả về sau khi khách gửi thông tin.</small>
+            </label>
+            <label class="lt-field">
+              <span>Giá set nguyên liệu</span>
+              <input name="price" value="99K" />
+            </label>
+          </div>
+
+          <h2>Bước 3: Nguyên liệu và ký hiệu</h2>
+          <div class="lt-form-grid">
+            <label class="lt-field">
+              <span>Nguyên liệu</span>
+              <textarea name="materials" rows="5">Len milk cotton
+Kim 2.5mm</textarea>
+              <small>Mỗi dòng là một nguyên liệu.</small>
+            </label>
+            <label class="lt-field">
+              <span>Ký hiệu móc</span>
+              <textarea name="abbreviations" rows="5">MR = Magic Ring
+X = Mũi đơn
+V = Tăng mũi
+A = Giảm mũi</textarea>
+              <small>Mỗi dòng theo dạng: X = Mũi đơn.</small>
+            </label>
+          </div>
+
+          <div class="lt-section-head">
+            <div>
+              <h2>Bước 4: Từng phần của chart</h2>
+              <p class="lt-small-note">Ví dụ: Phần đầu, phần thân, tay/chân. Nếu chỉ muốn hiện ảnh thì có thể bỏ trống nội dung từng hàng.</p>
+            </div>
+            <button class="lt-button lt-button-soft" type="button" id="addSectionButton">+ Thêm phần</button>
+          </div>
+          <div id="sectionsBuilder" class="lt-sections-builder"></div>
+
+          <details class="lt-advanced-fields">
+            <summary>Thông tin SEO nâng cao</summary>
+            <div class="lt-form-grid">
+              <label class="lt-field">
+                <span>Tiêu đề khi chia sẻ</span>
+                <input name="seoTitle" value="Chart Con Lười | LenTiny" />
+              </label>
+              <label class="lt-field">
+                <span>Ảnh khi chia sẻ</span>
+                <input name="socialImage" value="" placeholder="https://res.cloudinary.com/.../cover.jpg" />
+              </label>
+              <label class="lt-field lt-span-2">
+                <span>Mô tả khi chia sẻ</span>
+                <textarea name="seoDescription" rows="2">Chart móc len mobile-first</textarea>
+              </label>
+            </div>
+          </details>
+        </section>
+
+        <aside class="lt-panel lt-output-panel">
+          <h2>Tạo file và đăng lên web</h2>
+          <div class="lt-admin-actions">
+            <button class="lt-button lt-button-primary" type="button" id="generateJsonButton">Tạo JSON</button>
+            <button class="lt-button lt-button-soft" type="button" id="copyJsonButton">Copy JSON</button>
+            <button class="lt-button lt-button-soft" type="button" id="downloadJsonButton">Tải file JSON</button>
+            <a class="lt-button lt-button-soft" href="chart-pdf-builder.html" target="_blank" rel="noopener">Mở tool tạo PDF</a>
+          </div>
+          <p id="adminMessage" class="lt-small-note" role="status" aria-live="polite"></p>
+          <div id="publishGuide" class="lt-publish-guide" aria-live="polite"></div>
+          <textarea id="jsonOutput" class="lt-json-output" spellcheck="false" aria-label="JSON output"></textarea>
+        </aside>
+      </form>
+    </main>
+  </div>
+
+  <script src="../js/chart-utils.js" defer></script>
+  <script src="../js/chart-admin.js" defer></script>
+</body>
+
+</html>

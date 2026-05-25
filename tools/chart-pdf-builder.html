@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LenTiny PDF Chart Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --blue-deep: #2D6F94;
+      --blue-main: #99CCFF;
+      --blue-light: #E1F1FF;
+      --blue-pale: #F6FBFF;
+      --warm-pale: #FFF7EF;
+      --rose-soft: #F4B5AA;
+      --rose-bg: #FFE5DF;
+      --mint: #EAF8F0;
+      --mint-strong: #6FC59A;
+      --white: #ffffff;
+      --text-dark: #1B3F5C;
+      --text-mid: #5B748A;
+      --text-light: #6F8EA8;
+      --border: rgba(153, 204, 255, .44);
+      --shadow: 0 18px 46px rgba(45, 111, 148, .12);
+    }
+
+    @page {
+      size: A4;
+      margin: 9mm;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .print-container {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border: 0 !important;
+      }
+
+      .chart-block {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, var(--white) 0%, var(--blue-pale) 42%, var(--white) 100%);
+      color: var(--text-dark);
+      font-family: "Be Vietnam Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .display-font {
+      font-family: "Playfair Display", serif;
+    }
+
+    [contenteditable="true"]:focus {
+      outline: 2px dashed var(--mint-strong);
+      background: var(--mint);
+      border-radius: 6px;
+    }
+
+    .tool-button {
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      transition: opacity .18s ease;
+    }
+
+    .tool-button:hover {
+      opacity: .88;
+    }
+
+    .brand-shell {
+      border-color: var(--border);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-card {
+      border-color: var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, var(--blue-pale) 100%);
+    }
+
+    .brand-section {
+      border-color: var(--border);
+      background: rgba(246, 251, 255, .72);
+    }
+
+    .logo-mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      border: 1px solid rgba(153, 204, 255, .6);
+      background: #fff;
+      object-fit: contain;
+      padding: 4px;
+    }
+
+    .image-frame {
+      position: relative;
+      width: min(100%, 430px);
+      aspect-ratio: 9 / 16;
+      margin-inline: auto;
+      overflow: hidden;
+      border: 2px dashed var(--border);
+      border-radius: 18px;
+      background: #fff;
+      transition: border-color .18s ease, background .18s ease;
+    }
+
+    .image-frame:hover {
+      border-color: var(--blue-main);
+      background: var(--blue-pale);
+    }
+
+    .chart-image-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .watermark-text {
+      transform: translate(-50%, -50%) rotate(-35deg);
+      white-space: nowrap;
+      color: rgba(45, 111, 148, .12);
+      letter-spacing: .18em;
+    }
+  </style>
+</head>
+
+<body class="antialiased pb-12">
+  <div class="no-print sticky top-0 z-50 bg-white/95 backdrop-blur border-b px-6 py-4 shadow-sm flex flex-wrap gap-4 items-center justify-between"
+    style="border-color: var(--border);">
+    <div class="flex items-center gap-3">
+      <img src="../images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" class="w-12 h-12 rounded-full object-contain" />
+      <div>
+        <h1 class="text-base font-black" style="color: var(--blue-deep);">LenTiny PDF Chart Builder</h1>
+        <p class="text-xs" style="color: var(--text-mid);">Tool nội bộ tạo PDF chart 9:16 theo layout landing page</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex items-center gap-2 p-1.5 rounded-lg text-xs font-bold"
+        style="background: var(--blue-pale); color: var(--text-mid);">
+        <span class="px-1">Watermark</span>
+        <input id="watermark-input" type="text" value="TIỆM LEN NHÀ TINY" oninput="updateWatermarkText(this.value)"
+          class="w-40 rounded border px-2 py-1 text-xs" style="border-color: var(--border); color: var(--text-dark);" />
+        <label class="flex items-center gap-1 cursor-pointer">
+          <input id="watermark-toggle" type="checkbox" checked onchange="toggleWatermark(this.checked)" />
+          Bật
+        </label>
+      </div>
+
+      <button onclick="addChartBlock()" class="tool-button" style="background: var(--blue-deep);">Thêm ảnh chart
+        9:16</button>
+      <button onclick="window.print()" class="tool-button" style="background: var(--text-dark);">Xuất file PDF</button>
+      <button onclick="clearDraft()" class="rounded-lg px-3 py-2.5 text-xs font-black"
+        style="background: var(--blue-pale); color: var(--blue-deep);">Xóa nháp</button>
+    </div>
+  </div>
+
+  <main id="pdf-document"
+    class="print-container max-w-[210mm] min-h-[297mm] mx-auto my-6 p-8 md:p-12 rounded-2xl border brand-shell flex flex-col justify-between">
+    <div>
+      <header class="flex justify-between gap-5 items-center border-b-2 pb-4" style="border-color: var(--blue-deep);">
+        <div class="flex items-center gap-3">
+          <img src="../images/logo_160.png?v=1" alt="Logo Tiệm Len Nhà Tiny" class="logo-mark" />
+          <div>
+            <p class="text-[10px] uppercase tracking-[.18em] font-black" style="color: var(--text-light);">PDF chart
+              chính thức</p>
+            <h2 class="text-base font-black uppercase tracking-wider" style="color: var(--blue-deep);"
+              contenteditable="true" data-save-id="brand-name">Tiệm Len Nhà Tiny</h2>
+            <p class="text-[11px] font-semibold" style="color: var(--text-mid);" contenteditable="true"
+              data-save-id="brand-contact">Messenger: Tiệm Len Nhà Tiny • Zalo: 036.890.3519</p>
+          </div>
+        </div>
+
+        <div class="text-right">
+          <span class="text-[10px] uppercase tracking-widest font-black px-2 py-1 rounded-full"
+            style="color: var(--blue-deep); background: var(--blue-light);" contenteditable="true"
+            data-save-id="badge-text">Share Chart LenTiny</span>
+          <h1 class="display-font text-xl font-black mt-1" style="color: var(--text-dark);" contenteditable="true"
+            data-save-id="document-title">Tài liệu hướng dẫn móc</h1>
+          <p class="text-[10px] mt-1" style="color: var(--text-light);" contenteditable="true"
+            data-save-id="brand-slogan">Từng sợi len, một tình yêu</p>
+        </div>
+      </header>
+
+      <section class="my-4 grid grid-cols-3 gap-4 p-4 rounded-xl border brand-card">
+        <div class="col-span-2">
+          <p class="text-[10px] uppercase tracking-[.18em] font-black" style="color: var(--blue-deep);">Thông tin mẫu
+          </p>
+          <h2 class="text-lg font-black mt-1" style="color: var(--text-dark);" contenteditable="true"
+            data-save-id="pattern-name">Chart Móc Len Bé Bò</h2>
+          <p class="text-xs mt-1" style="color: var(--text-mid);" contenteditable="true" data-save-id="pattern-desc">
+            File PDF hướng dẫn từ Tiệm Len Nhà Tiny, phù hợp để lưu trên điện thoại hoặc in ra khi móc.</p>
+        </div>
+        <div class="border-l pl-4 text-xs space-y-1" style="border-color: var(--border); color: var(--text-mid);">
+          <p contenteditable="true" data-save-id="difficulty"><strong>Độ khó:</strong> 3/5</p>
+          <p contenteditable="true" data-save-id="size"><strong>Kích thước:</strong> khoảng 10-15cm</p>
+          <p contenteditable="true" data-save-id="hook-size"><strong>Kim móc:</strong> 2.0mm - 2.5mm</p>
+        </div>
+      </section>
+
+      <section class="grid grid-cols-2 gap-4 my-4">
+        <article class="border p-3 rounded-xl brand-section">
+          <h3 class="text-xs font-black uppercase tracking-wider mb-2 border-b pb-1"
+            style="color: var(--blue-deep); border-color: var(--border);">Nguyên liệu cần có</h3>
+          <ul class="text-xs space-y-1 list-disc list-inside" style="color: var(--text-mid);" contenteditable="true"
+            data-save-id="materials">
+            <li>Len milk cotton màu chính và màu phụ</li>
+            <li>Bông gòn nhồi thú</li>
+            <li>Mắt thú, kim khâu len, đánh dấu mũi</li>
+          </ul>
+        </article>
+
+        <article class="border p-3 rounded-xl brand-section">
+          <h3 class="text-xs font-black uppercase tracking-wider mb-2 border-b pb-1"
+            style="color: var(--blue-deep); border-color: var(--border);">Ký hiệu viết tắt</h3>
+          <div class="grid grid-cols-2 gap-2 text-xs" style="color: var(--text-mid);">
+            <ul class="space-y-0.5" contenteditable="true" data-save-id="symbols-col1">
+              <li><strong>MR:</strong> Vòng tròn ma thuật</li>
+              <li><strong>CH:</strong> Mũi bính</li>
+              <li><strong>X:</strong> Mũi đơn</li>
+            </ul>
+            <ul class="space-y-0.5" contenteditable="true" data-save-id="symbols-col2">
+              <li><strong>V:</strong> Tăng mũi đơn</li>
+              <li><strong>A:</strong> Giảm mũi đơn</li>
+              <li><strong>SL:</strong> Mũi dời</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="my-6">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h3 class="text-xs font-black uppercase tracking-wider" style="color: var(--blue-deep);">Công thức móc chi
+            tiết - ảnh dọc 9:16</h3>
+          <span class="no-print text-[10px] font-black px-2 py-1 rounded-full"
+            style="color: var(--blue-deep); background: var(--blue-pale);">Ảnh dọc giúp PDF dễ đọc trên điện
+            thoại</span>
+        </div>
+
+        <div id="chart-blocks-list" class="space-y-6">
+          <article class="chart-block border p-4 rounded-xl relative group brand-section">
+            <div class="no-print absolute top-3 right-3 flex items-center gap-1.5 z-20">
+              <button onclick="moveBlock(this, 'up')" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black"
+                title="Di chuyển lên">▲</button>
+              <button onclick="moveBlock(this, 'down')" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black"
+                title="Di chuyển xuống">▼</button>
+              <button onclick="deleteBlock(this)" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black"
+                title="Xóa phần này">×</button>
+            </div>
+
+            <div class="flex items-center gap-2 mb-2 pr-24">
+              <span class="w-5 h-5 rounded-full text-white text-[10px] font-black flex items-center justify-center"
+                style="background: var(--blue-deep);">1</span>
+              <h4 class="text-xs font-black uppercase tracking-wide" style="color: var(--text-dark);"
+                contenteditable="true" data-save-id="block-title-1">Phần 1: Công thức móc phần đầu</h4>
+            </div>
+
+            <div class="image-frame flex items-center justify-center p-2" id="container-block-1">
+              <div
+                class="watermark-overlay absolute pointer-events-none select-none font-black text-sm uppercase watermark-text top-1/2 left-1/2 z-10"
+                id="wm-block-1">TIỆM LEN NHÀ TINY</div>
+              <img id="preview-block-1" class="chart-image-preview rounded-xl hidden z-0" alt="Ảnh công thức chart móc" />
+              <div id="placeholder-block-1" class="text-center pointer-events-none z-0">
+                <p class="text-xs font-black" style="color: var(--blue-deep);">Tải ảnh chart 9:16</p>
+                <p class="text-[10px] mt-1" style="color: var(--text-light);">Click để chọn ảnh dọc</p>
+              </div>
+              <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                onchange="previewBlockImage(event, 'preview-block-1', 'placeholder-block-1', 'container-block-1')">
+            </div>
+          </article>
+
+          <article class="chart-block border p-4 rounded-xl relative group brand-section">
+            <div class="no-print absolute top-3 right-3 flex items-center gap-1.5 z-20">
+              <button onclick="moveBlock(this, 'up')" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black"
+                title="Di chuyển lên">▲</button>
+              <button onclick="moveBlock(this, 'down')" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black"
+                title="Di chuyển xuống">▼</button>
+              <button onclick="deleteBlock(this)" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black"
+                title="Xóa phần này">×</button>
+            </div>
+
+            <div class="flex items-center gap-2 mb-2 pr-24">
+              <span class="w-5 h-5 rounded-full text-white text-[10px] font-black flex items-center justify-center"
+                style="background: var(--blue-deep);">2</span>
+              <h4 class="text-xs font-black uppercase tracking-wide" style="color: var(--text-dark);"
+                contenteditable="true" data-save-id="block-title-2">Phần 2: Công thức móc phần thân</h4>
+            </div>
+
+            <div class="image-frame flex items-center justify-center p-2" id="container-block-2">
+              <div
+                class="watermark-overlay absolute pointer-events-none select-none font-black text-sm uppercase watermark-text top-1/2 left-1/2 z-10"
+                id="wm-block-2">TIỆM LEN NHÀ TINY</div>
+              <img id="preview-block-2" class="chart-image-preview rounded-xl hidden z-0" alt="Ảnh công thức chart móc" />
+              <div id="placeholder-block-2" class="text-center pointer-events-none z-0">
+                <p class="text-xs font-black" style="color: var(--blue-deep);">Tải ảnh chart 9:16</p>
+                <p class="text-[10px] mt-1" style="color: var(--text-light);">Click để chọn ảnh dọc</p>
+              </div>
+              <input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                onchange="previewBlockImage(event, 'preview-block-2', 'placeholder-block-2', 'container-block-2')">
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+
+    <footer class="mt-8 border-t pt-4" style="border-color: var(--border);">
+      <div class="grid grid-cols-2 gap-4 text-[10px] mb-3">
+        <div class="p-3 rounded-xl border" style="background: var(--blue-pale); border-color: var(--border); color: var(--text-mid);"
+          contenteditable="true" data-save-id="shop-info">
+          <strong style="color: var(--blue-deep);">Thông tin Tiệm Len Nhà Tiny</strong><br>
+          853 Ba Đình, Phường Chánh Hưng, TP.HCM<br>
+          Giờ mở cửa: 08:00 - 21:00, mỗi ngày
+        </div>
+        <div class="p-3 rounded-xl border" style="background: var(--warm-pale); border-color: rgba(244, 181, 170, .42); color: var(--text-mid);"
+          contenteditable="true" data-save-id="contact-info">
+          <strong style="color: var(--blue-deep);">Liên hệ tư vấn</strong><br>
+          Messenger: Tiệm Len Nhà Tiny<br>
+          Zalo: 036.890.3519
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl text-center text-[10px] border"
+        style="background: #fff; color: var(--text-mid); border-color: rgba(244, 181, 170, .42);" contenteditable="true"
+        data-save-id="copyright-notice">
+        <strong>Lưu ý bản quyền:</strong> Mẫu thiết kế này thuộc quyền sở hữu trí tuệ của
+        <strong>Tiệm Len Nhà Tiny</strong>. Vui lòng không sao chép, chỉnh sửa, chia sẻ lại hoặc thương mại hóa bản
+        vẽ/chart này lên bất kỳ nền tảng nào khi chưa được cho phép.
+      </div>
+
+      <p class="mt-3 text-center text-[10px]" style="color: var(--text-light);">© 2026 Tiệm Len Nhà Tiny. Từng sợi len,
+        một tình yêu.</p>
+    </footer>
+  </main>
+
+  <script>
+    let blockCounter = 2;
+
+    document.addEventListener("input", function (event) {
+      if (!event.target.hasAttribute("data-save-id")) return;
+      localStorage.setItem("lentiny_pdf_" + event.target.getAttribute("data-save-id"), event.target.innerHTML);
+    });
+
+    window.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll("[data-save-id]").forEach(function (element) {
+        const saved = localStorage.getItem("lentiny_pdf_" + element.getAttribute("data-save-id"));
+        if (saved) element.innerHTML = saved;
+      });
+
+      const savedWatermark = localStorage.getItem("lentiny_pdf_watermark");
+      if (savedWatermark) {
+        document.getElementById("watermark-input").value = savedWatermark;
+        updateWatermarkText(savedWatermark);
+      }
+    });
+
+    function clearDraft() {
+      if (!confirm("Xóa nháp PDF đang lưu trên máy này?")) return;
+      Object.keys(localStorage).forEach(function (key) {
+        if (key.indexOf("lentiny_pdf_") === 0) localStorage.removeItem(key);
+      });
+      window.location.reload();
+    }
+
+    function previewBlockImage(event, imgId, placeholderId, containerId) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (readerEvent) {
+        const tempImg = new Image();
+        tempImg.onload = function () {
+          const canvas = document.createElement("canvas");
+          let width = tempImg.width;
+          let height = tempImg.height;
+          const maxHeight = 1400;
+
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext("2d").drawImage(tempImg, 0, 0, width, height);
+
+          const img = document.getElementById(imgId);
+          const placeholder = document.getElementById(placeholderId);
+          const container = document.getElementById(containerId);
+          img.src = canvas.toDataURL("image/jpeg", 0.88);
+          img.classList.remove("hidden");
+          placeholder.classList.add("hidden");
+          container.classList.remove("border-dashed");
+        };
+        tempImg.src = readerEvent.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateWatermarkText(value) {
+      const text = String(value || "Tiệm Len Nhà Tiny").toUpperCase();
+      document.querySelectorAll(".watermark-overlay").forEach(function (watermark) {
+        watermark.textContent = text;
+      });
+      localStorage.setItem("lentiny_pdf_watermark", value);
+    }
+
+    function toggleWatermark(isChecked) {
+      document.querySelectorAll(".watermark-overlay").forEach(function (watermark) {
+        watermark.classList.toggle("hidden", !isChecked);
+      });
+    }
+
+    function moveBlock(button, direction) {
+      const block = button.closest(".chart-block");
+      const parent = block.parentNode;
+      if (direction === "up" && block.previousElementSibling) {
+        parent.insertBefore(block, block.previousElementSibling);
+      }
+      if (direction === "down" && block.nextElementSibling) {
+        parent.insertBefore(block.nextElementSibling, block);
+      }
+    }
+
+    function addChartBlock() {
+      blockCounter += 1;
+      const list = document.getElementById("chart-blocks-list");
+      const block = document.createElement("article");
+      const watermark = document.getElementById("watermark-input").value.toUpperCase();
+      const watermarkHidden = document.getElementById("watermark-toggle").checked ? "" : " hidden";
+      block.className = "chart-block border p-4 rounded-xl relative group brand-section";
+      block.innerHTML = [
+        '<div class="no-print absolute top-3 right-3 flex items-center gap-1.5 z-20">',
+        '<button onclick="moveBlock(this, \'up\')" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black" title="Di chuyển lên">▲</button>',
+        '<button onclick="moveBlock(this, \'down\')" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black" title="Di chuyển xuống">▼</button>',
+        '<button onclick="deleteBlock(this)" class="bg-white rounded shadow-sm w-6 h-6 text-xs font-black" title="Xóa phần này">×</button>',
+        '</div>',
+        '<div class="flex items-center gap-2 mb-2 pr-24">',
+        '<span class="w-5 h-5 rounded-full text-white text-[10px] font-black flex items-center justify-center" style="background: var(--blue-deep);">' + blockCounter + '</span>',
+        '<h4 class="text-xs font-black uppercase tracking-wide" style="color: var(--text-dark);" contenteditable="true" data-save-id="block-title-' + blockCounter + '">Phần ' + blockCounter + ': Nhấp để đổi tên phần móc</h4>',
+        '</div>',
+        '<div class="image-frame flex items-center justify-center p-2" id="container-block-' + blockCounter + '">',
+        '<div class="watermark-overlay' + watermarkHidden + ' absolute pointer-events-none select-none font-black text-sm uppercase watermark-text top-1/2 left-1/2 z-10" id="wm-block-' + blockCounter + '">' + watermark + '</div>',
+        '<img id="preview-block-' + blockCounter + '" class="chart-image-preview rounded-xl hidden z-0" alt="Ảnh công thức chart móc" />',
+        '<div id="placeholder-block-' + blockCounter + '" class="text-center pointer-events-none z-0">',
+        '<p class="text-xs font-black" style="color: var(--blue-deep);">Tải ảnh chart 9:16</p>',
+        '<p class="text-[10px] mt-1" style="color: var(--text-light);">Click để chọn ảnh dọc</p>',
+        '</div>',
+        '<input type="file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" onchange="previewBlockImage(event, \'preview-block-' + blockCounter + '\', \'placeholder-block-' + blockCounter + '\', \'container-block-' + blockCounter + '\')">',
+        '</div>'
+      ].join("");
+      list.appendChild(block);
+    }
+
+    function deleteBlock(button) {
+      button.closest(".chart-block").remove();
+    }
+  </script>
+</body>
+
+</html>

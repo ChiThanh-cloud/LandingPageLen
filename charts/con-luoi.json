@@ -1,0 +1,101 @@
+{
+  "slug": "con-luoi",
+  "title": "Chart Móc Len Con Lười",
+  "description": "Chart dễ thương cho người mới.",
+  "difficulty": 3,
+  "time": "2-3 giờ",
+  "size": "10cm",
+  "tags": ["Amigurumi", "Beginner"],
+  "coverImage": "",
+  "chartImage": "",
+  "materialSet": {
+    "price": "99K",
+    "messengerUrl": "https://m.me/lentiny"
+  },
+  "materials": [
+    "Len milk cotton",
+    "Kim 2.5mm",
+    "Bông gòn",
+    "Mắt thú",
+    "Kim khâu len"
+  ],
+  "abbreviations": [
+    {
+      "symbol": "MR",
+      "meaning": "Magic Ring"
+    },
+    {
+      "symbol": "X",
+      "meaning": "Mũi đơn"
+    },
+    {
+      "symbol": "V",
+      "meaning": "Tăng mũi"
+    },
+    {
+      "symbol": "A",
+      "meaning": "Giảm mũi"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Phần Đầu",
+      "image": "",
+      "steps": [
+        {
+          "id": "head-r1",
+          "text": "Hàng 1: MR 6X (6)"
+        },
+        {
+          "id": "head-r2",
+          "text": "Hàng 2: 6V (12)"
+        },
+        {
+          "id": "head-r3",
+          "text": "Hàng 3: 6(X,V) (18)"
+        }
+      ]
+    },
+    {
+      "title": "Phần Thân",
+      "image": "",
+      "steps": [
+        {
+          "id": "body-r1",
+          "text": "Hàng 1: MR 6X (6)"
+        },
+        {
+          "id": "body-r2",
+          "text": "Hàng 2: 6V (12)"
+        },
+        {
+          "id": "body-r3",
+          "text": "Hàng 3-6: 12X"
+        }
+      ]
+    },
+    {
+      "title": "Khâu Ráp",
+      "image": "",
+      "steps": [
+        {
+          "id": "assembly-1",
+          "text": "Gắn mắt giữa hàng 6-7"
+        },
+        {
+          "id": "assembly-2",
+          "text": "Nhồi bông vừa tay, không quá căng"
+        },
+        {
+          "id": "assembly-3",
+          "text": "Khâu đầu vào thân và giấu chỉ"
+        }
+      ]
+    }
+  ],
+  "seo": {
+    "title": "Chart Con Lười | LenTiny",
+    "description": "Chart móc len mobile-first",
+    "socialImage": ""
+  }
+}

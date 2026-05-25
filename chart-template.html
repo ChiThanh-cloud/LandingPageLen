@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chart móc len | LenTiny</title>
+  <meta name="description" content="Chart móc len tiếng Việt từ Tiệm Len Nhà Tiny." />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Chart móc len | LenTiny" />
+  <meta property="og:description" content="Chart móc len tiếng Việt từ Tiệm Len Nhà Tiny." />
+  <meta property="og:image" content="images/og-image.jpg" />
+  <meta property="og:url" content="" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Chart móc len | LenTiny" />
+  <meta name="twitter:description" content="Chart móc len tiếng Việt từ Tiệm Len Nhà Tiny." />
+  <meta name="twitter:image" content="images/og-image.jpg" />
+  <!-- TODO SEO phase sau: prerender mỗi slug thành HTML tĩnh để crawler đọc được nội dung chart trước khi JS chạy. -->
+  <link rel="stylesheet" href="css/chart.css?v=4" />
+</head>
+
+<body>
+  <div class="lt-chart-system" data-page="detail">
+    <header class="lt-header">
+      <div class="lt-header-inner">
+        <a class="lt-brand" href="chart-index.html" aria-label="Về kho chart LenTiny">
+          <img class="lt-logo" src="images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" width="160" height="160" />
+          <span>
+            <strong>LenTiny</strong>
+            <small>Tiệm Len Nhà Tiny</small>
+          </span>
+        </a>
+        <nav class="lt-header-nav" aria-label="Điều hướng chart">
+          <a class="lt-header-link" href="index.html">Trang chủ</a>
+          <a class="lt-header-link is-primary" href="chart-index.html">Kho chart</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lt-shell">
+      <div id="chartApp" class="lt-loading" role="status" aria-live="polite">
+        Đang mở chart cho bạn...
+      </div>
+    </main>
+  </div>
+
+  <script src="js/chart-utils.js" defer></script>
+  <script src="js/chart-render.js" defer></script>
+</body>
+
+</html>

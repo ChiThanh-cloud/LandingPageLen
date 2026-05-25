@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Góc Share Chart Móc Len | LenTiny</title>
+  <meta name="description" content="Góc share chart móc len tiếng Việt từ Tiệm Len Nhà Tiny: dễ đọc trên điện thoại, có thể lưu tiến độ khi móc." />
+  <link rel="stylesheet" href="css/chart.css?v=4" />
+</head>
+
+<body>
+  <div class="lt-chart-system" data-page="list">
+    <header class="lt-header">
+      <div class="lt-header-inner">
+        <a class="lt-brand" href="index.html" aria-label="Về trang chủ LenTiny">
+          <img class="lt-logo" src="images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" width="160" height="160" />
+          <span>
+            <strong>LenTiny</strong>
+            <small>Tiệm Len Nhà Tiny</small>
+          </span>
+        </a>
+        <nav class="lt-header-nav" aria-label="Điều hướng chart">
+          <a class="lt-header-link" href="index.html">Trang chủ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lt-shell">
+      <section class="lt-list-hero">
+        <p class="lt-eyebrow">Góc nhỏ cho hội mê móc</p>
+        <h1>Chart móc len dễ thương từ LenTiny</h1>
+        <p>Chọn mẫu bạn thích, mở chart trên điện thoại và tick từng hàng khi móc để khỏi lạc nhịp nha.</p>
+      </section>
+
+      <section class="lt-panel lt-list-controls" aria-label="Tìm kiếm và lọc chart">
+        <label class="lt-field">
+          <span>Tìm mẫu muốn móc</span>
+          <input id="chartSearch" type="search" placeholder="Nhập tên bé, tag hoặc kiểu chart..." autocomplete="off" />
+        </label>
+        <div>
+          <p class="lt-control-label">Chọn nhanh</p>
+          <div id="tagFilters" class="lt-filter-row"></div>
+        </div>
+      </section>
+
+      <section id="chartListApp" class="lt-card-grid" aria-live="polite">
+        <div class="lt-loading">Đang tải kho chart...</div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/chart-utils.js" defer></script>
+  <script src="js/chart-render.js" defer></script>
+</body>
+
+</html>
