@@ -77,21 +77,44 @@
           </div>
 
           <h2>Bước 2: Ảnh sẽ hiện ở đâu</h2>
+          <details class="lt-cloudinary-config" open>
+            <summary>Cấu hình upload Cloudinary</summary>
+            <div class="lt-form-grid">
+              <label class="lt-field">
+                <span>Cloud name</span>
+                <input id="cloudinaryCloudName" name="cloudinaryCloudName" value="djn2kd2hh" placeholder="Ví dụ: lentiny" autocomplete="off" />
+                <small>Lấy trong Cloudinary Dashboard. Không phải API secret.</small>
+              </label>
+              <label class="lt-field">
+                <span>Unsigned upload preset</span>
+                <input id="cloudinaryUploadPreset" name="cloudinaryUploadPreset" value="my_unsigned_preset" placeholder="Ví dụ: lentiny_chart_upload" autocomplete="off" />
+                <small>Preset unsigned để tool upload ảnh trực tiếp từ trình duyệt.</small>
+              </label>
+            </div>
+          </details>
           <div class="lt-form-grid">
             <label class="lt-field">
               <span>Ảnh bìa</span>
               <input name="coverImage" value="" placeholder="https://res.cloudinary.com/.../cover.jpg" />
+              <span class="lt-upload-row">
+                <button class="lt-button lt-button-soft lt-upload-button" type="button" data-upload-target="coverImage">Upload ảnh bìa</button>
+                <input class="lt-file-input" type="file" accept="image/*" data-file-target="coverImage" />
+              </span>
               <small>Hiện trong kho chart và đầu trang chi tiết. Nên là ảnh thành phẩm đẹp nhất.</small>
             </label>
             <label class="lt-field">
               <span>Ảnh chính của chart</span>
               <input name="chartImage" value="" placeholder="https://res.cloudinary.com/.../chart.jpg" />
+              <span class="lt-upload-row">
+                <button class="lt-button lt-button-soft lt-upload-button" type="button" data-upload-target="chartImage">Upload ảnh chính</button>
+                <input class="lt-file-input" type="file" accept="image/*" data-file-target="chartImage" />
+              </span>
               <small>Dùng làm ảnh mặc định nếu một phần bên dưới chưa có ảnh riêng.</small>
             </label>
             <label class="lt-field">
               <span>Link inbox tư vấn set len</span>
               <input name="messengerUrl" value="https://m.me/lentiny" />
-              <small>Link PDF không lưu trong JSON. n8n sẽ giữ link PDF và trả về sau khi khách gửi thông tin.</small>
+              <small>Link PDF không lưu trong JSON. Google Sheet/Apps Script sẽ giữ link PDF và trả về sau khi khách gửi thông tin.</small>
             </label>
             <label class="lt-field">
               <span>Giá set nguyên liệu</span>
@@ -136,6 +159,10 @@ A = Giảm mũi</textarea>
               <label class="lt-field">
                 <span>Ảnh khi chia sẻ</span>
                 <input name="socialImage" value="" placeholder="https://res.cloudinary.com/.../cover.jpg" />
+                <span class="lt-upload-row">
+                  <button class="lt-button lt-button-soft lt-upload-button" type="button" data-upload-target="socialImage">Upload ảnh chia sẻ</button>
+                  <input class="lt-file-input" type="file" accept="image/*" data-file-target="socialImage" />
+                </span>
               </label>
               <label class="lt-field lt-span-2">
                 <span>Mô tả khi chia sẻ</span>

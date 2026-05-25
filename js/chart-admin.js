@@ -20,8 +20,14 @@
   var output = document.getElementById("jsonOutput");
   var message = document.getElementById("adminMessage");
   var publishGuide = document.getElementById("publishGuide");
+  var cloudNameInput = document.getElementById("cloudinaryCloudName");
+  var uploadPresetInput = document.getElementById("cloudinaryUploadPreset");
   var utils = window.LenTinyChartUtils;
   var CHART_SYNC_KEY = "lentiny_chart_admin_latest";
+  var CLOUD_NAME_KEY = "lentiny_cloudinary_cloud_name";
+  var UPLOAD_PRESET_KEY = "lentiny_cloudinary_upload_preset";
+  var DEFAULT_CLOUD_NAME = "djn2kd2hh";
+  var DEFAULT_UPLOAD_PRESET = "my_unsigned_preset";
 
   if (!form || !builder || !output || !message) {
     console.error("[LenTiny ChartAdmin] Missing required admin DOM nodes.");
@@ -83,6 +89,10 @@
     });
   }
 
+  loadCloudinaryConfig();
+  bindCloudinaryConfig();
+  bindCloudinaryUploads();
+
   builder.addEventListener("click", function (event) {
     var button = event.target.closest("[data-remove-section]");
     if (!button) return;
@@ -131,6 +141,10 @@
       '<label class="lt-field">',
       '<span>Link ảnh cho phần này</span>',
       '<input name="sectionImage" value="' + escapeAttr(data.image || "") + '" placeholder="https://res.cloudinary.com/.../chart-step.jpg" />',
+      '<span class="lt-upload-row">',
+      '<button class="lt-button lt-button-soft lt-upload-button" type="button" data-upload-scope="sectionImage">Upload ảnh phần này</button>',
+      '<input class="lt-file-input" type="file" accept="image/*" data-file-scope="sectionImage" />',
+      '</span>',
       '<small>Đây là ảnh chart chụp sẽ hiện trong phần này.</small>',
       '</label>',
       '<label class="lt-field">',
@@ -237,7 +251,7 @@
       '<li><strong>Ảnh bìa:</strong> kho chart và phần mở đầu trang chi tiết.</li>',
       '<li><strong>Ảnh chính:</strong> ảnh mặc định nếu từng phần chưa có ảnh riêng.</li>',
       '<li><strong>Từng phần:</strong> hiện lần lượt trong nội dung chart.</li>',
-      '<li><strong>File PDF:</strong> không nằm trong JSON; n8n giữ link PDF theo slug và trả link sau khi khách gửi thông tin.</li>',
+      '<li><strong>File PDF:</strong> không nằm trong JSON; Google Sheet/Apps Script giữ link PDF theo slug và trả link sau khi khách gửi thông tin.</li>',
       '</ul>',
       '</div>',
       '<div class="lt-publish-steps">',
@@ -339,8 +353,133 @@
     }
   }
 
-  /* TODO Cloudinary upload: replace manual image URL fields with unsigned upload
-     widgets, then write optimized f_auto,q_auto URLs into coverImage/section images. */
+  function loadCloudinaryConfig() {
+    if (cloudNameInput) cloudNameInput.value = localStorage.getItem(CLOUD_NAME_KEY) || cloudNameInput.value || DEFAULT_CLOUD_NAME;
+    if (uploadPresetInput) uploadPresetInput.value = localStorage.getItem(UPLOAD_PRESET_KEY) || uploadPresetInput.value || DEFAULT_UPLOAD_PRESET;
+  }
+
+  function bindCloudinaryConfig() {
+    if (cloudNameInput) {
+      cloudNameInput.addEventListener("input", function () {
+        localStorage.setItem(CLOUD_NAME_KEY, clean(cloudNameInput.value));
+      });
+    }
+    if (uploadPresetInput) {
+      uploadPresetInput.addEventListener("input", function () {
+        localStorage.setItem(UPLOAD_PRESET_KEY, clean(uploadPresetInput.value));
+      });
+    }
+  }
+
+  function bindCloudinaryUploads() {
+    form.addEventListener("click", function (event) {
+      var button = event.target.closest("[data-upload-target], [data-upload-scope]");
+      if (!button) return;
+      var fileInput = getUploadFileInput(button);
+      if (fileInput) fileInput.click();
+    });
+
+    form.addEventListener("change", function (event) {
+      var fileInput = event.target.closest("[data-file-target], [data-file-scope]");
+      if (!fileInput || !fileInput.files || !fileInput.files[0]) return;
+      uploadSelectedImage(fileInput);
+    });
+  }
+
+  function getUploadFileInput(button) {
+    if (button.hasAttribute("data-upload-target")) {
+      return form.querySelector('[data-file-target="' + button.getAttribute("data-upload-target") + '"]');
+    }
+    return button.closest(".lt-field").querySelector("[data-file-scope]");
+  }
+
+  function uploadSelectedImage(fileInput) {
+    var targetInput = getUploadTargetInput(fileInput);
+    var file = fileInput.files[0];
+    var config = getCloudinaryConfig();
+
+    if (!targetInput) {
+      showMessage("Chưa tìm thấy ô để điền link ảnh.");
+      fileInput.value = "";
+      return;
+    }
+
+    if (!config.cloudName || !config.uploadPreset) {
+      showMessage("Nhập Cloud name và Upload preset trước khi upload ảnh.");
+      fileInput.value = "";
+      return;
+    }
+
+    setUploadState(fileInput, true);
+    showMessage("Đang upload " + file.name + " lên Cloudinary...");
+
+    uploadToCloudinary(file, config)
+      .then(function (imageUrl) {
+        targetInput.value = imageUrl;
+        safeGenerate();
+        showMessage("Đã upload ảnh và điền link Cloudinary.");
+      })
+      .catch(function (error) {
+        handleError("Upload Cloudinary lỗi. Kiểm tra cloud name, preset hoặc dung lượng ảnh.", error);
+      })
+      .finally(function () {
+        setUploadState(fileInput, false);
+        fileInput.value = "";
+      });
+  }
+
+  function getUploadTargetInput(fileInput) {
+    if (fileInput.hasAttribute("data-file-target")) {
+      return form.elements[fileInput.getAttribute("data-file-target")];
+    }
+    return fileInput.closest(".lt-field").querySelector('[name="sectionImage"]');
+  }
+
+  function getCloudinaryConfig() {
+    return {
+      cloudName: clean(cloudNameInput ? cloudNameInput.value : ""),
+      uploadPreset: clean(uploadPresetInput ? uploadPresetInput.value : "")
+    };
+  }
+
+  async function uploadToCloudinary(file, config) {
+    var body = new FormData();
+    body.append("file", file);
+    body.append("upload_preset", config.uploadPreset);
+    body.append("tags", "lentiny,chart-admin");
+
+    var response = await fetch("https://api.cloudinary.com/v1_1/" + encodeURIComponent(config.cloudName) + "/image/upload", {
+      method: "POST",
+      body: body
+    });
+    var data = await response.json();
+
+    if (!response.ok || !data.secure_url) {
+      throw new Error(data.error && data.error.message ? data.error.message : "Cloudinary upload failed.");
+    }
+
+    return optimizeCloudinaryUrl(data.secure_url);
+  }
+
+  function optimizeCloudinaryUrl(url) {
+    return String(url || "").replace("/upload/", "/upload/f_auto,q_auto/");
+  }
+
+  function setUploadState(fileInput, isUploading) {
+    var field = fileInput.closest(".lt-field");
+    var button = field ? field.querySelector("[data-upload-target], [data-upload-scope]") : null;
+    if (!button) return;
+    button.disabled = isUploading;
+    button.textContent = isUploading ? "Đang upload..." : getUploadButtonText(button);
+  }
+
+  function getUploadButtonText(button) {
+    var target = button.getAttribute("data-upload-target");
+    if (target === "coverImage") return "Upload ảnh bìa";
+    if (target === "chartImage") return "Upload ảnh chính";
+    if (target === "socialImage") return "Upload ảnh chia sẻ";
+    return "Upload ảnh phần này";
+  }
 
   /* TODO CMS migration: when chart volume grows, migrate JSON files into a hosted
      CMS/table while preserving this same JSON contract for the frontend renderer. */

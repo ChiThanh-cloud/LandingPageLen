@@ -814,11 +814,13 @@ body.dark-mode .lt-chart-system {
 }
 
 .lt-advanced-fields,
-.lt-publish-guide {
+.lt-publish-guide,
+.lt-cloudinary-config {
   margin-top: 14px;
 }
 
-.lt-advanced-fields {
+.lt-advanced-fields,
+.lt-cloudinary-config {
   padding: 14px;
   border: 1px dashed rgba(45, 111, 148, .32);
   border-radius: 16px;
@@ -826,14 +828,44 @@ body.dark-mode .lt-chart-system {
   color: var(--muted);
 }
 
-.lt-advanced-fields summary {
+.lt-advanced-fields summary,
+.lt-cloudinary-config summary {
   cursor: pointer;
   color: var(--ink);
   font-weight: 900;
 }
 
-.lt-advanced-fields .lt-form-grid {
+.lt-advanced-fields .lt-form-grid,
+.lt-cloudinary-config .lt-form-grid {
   margin: 14px 0 0;
+}
+
+.lt-cloudinary-config {
+  margin: 0 0 16px;
+  background: rgba(234, 248, 240, .72);
+}
+
+.lt-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.lt-upload-button {
+  min-height: 38px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: .8rem;
+}
+
+.lt-upload-button:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+.lt-file-input {
+  display: none;
 }
 
 .lt-admin-actions {
