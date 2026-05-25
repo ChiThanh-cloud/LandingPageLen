@@ -4,20 +4,21 @@
   "description": "Chart dễ thương cho người mới.",
   "difficulty": 3,
   "time": "2-3 giờ",
+  "hookSize": "2.0mm - 2.5mm",
   "size": "10cm",
-  "tags": ["Amigurumi", "Beginner"],
-  "coverImage": "",
-  "chartImage": "",
+  "tags": [
+    "Amigurumi",
+    "Beginner"
+  ],
+  "coverImage": "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto/v1779683906/lsfz9qngltqcwevg8xdg.png",
+  "chartImage": "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto/v1779683923/v6falgqq0mxzuykmptmh.jpg",
   "materialSet": {
-    "price": "99K",
-    "messengerUrl": "https://m.me/lentiny"
+    "price": "129k",
+    "messengerUrl": "https://www.facebook.com/profile.php?id=61559447375156"
   },
   "materials": [
     "Len milk cotton",
-    "Kim 2.5mm",
-    "Bông gòn",
-    "Mắt thú",
-    "Kim khâu len"
+    "Kim 2.5mm"
   ],
   "abbreviations": [
     {
@@ -39,58 +40,14 @@
   ],
   "sections": [
     {
-      "title": "Phần Đầu",
+      "title": "Phần đầu",
       "image": "",
-      "steps": [
-        {
-          "id": "head-r1",
-          "text": "Hàng 1: MR 6X (6)"
-        },
-        {
-          "id": "head-r2",
-          "text": "Hàng 2: 6V (12)"
-        },
-        {
-          "id": "head-r3",
-          "text": "Hàng 3: 6(X,V) (18)"
-        }
-      ]
+      "steps": []
     },
     {
-      "title": "Phần Thân",
+      "title": "Phần thân",
       "image": "",
-      "steps": [
-        {
-          "id": "body-r1",
-          "text": "Hàng 1: MR 6X (6)"
-        },
-        {
-          "id": "body-r2",
-          "text": "Hàng 2: 6V (12)"
-        },
-        {
-          "id": "body-r3",
-          "text": "Hàng 3-6: 12X"
-        }
-      ]
-    },
-    {
-      "title": "Khâu Ráp",
-      "image": "",
-      "steps": [
-        {
-          "id": "assembly-1",
-          "text": "Gắn mắt giữa hàng 6-7"
-        },
-        {
-          "id": "assembly-2",
-          "text": "Nhồi bông vừa tay, không quá căng"
-        },
-        {
-          "id": "assembly-3",
-          "text": "Khâu đầu vào thân và giấu chỉ"
-        }
-      ]
+      "steps": []
     }
   ],
   "seo": {
