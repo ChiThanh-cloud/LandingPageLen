@@ -174,6 +174,8 @@
 
       <button onclick="addChartBlock()" class="tool-button" style="background: var(--blue-deep);">Thêm ảnh chart
         9:16</button>
+      <button onclick="syncFromChartAdmin(true)" class="tool-button" style="background: var(--mint-strong);">Đồng bộ từ
+        admin</button>
       <button onclick="window.print()" class="tool-button" style="background: var(--text-dark);">Xuất file PDF</button>
       <button onclick="clearDraft()" class="rounded-lg px-3 py-2.5 text-xs font-black"
         style="background: var(--blue-pale); color: var(--blue-deep);">Xóa nháp</button>
@@ -220,6 +222,7 @@
           <p contenteditable="true" data-save-id="difficulty"><strong>Độ khó:</strong> 3/5</p>
           <p contenteditable="true" data-save-id="size"><strong>Kích thước:</strong> khoảng 10-15cm</p>
           <p contenteditable="true" data-save-id="hook-size"><strong>Kim móc:</strong> 2.0mm - 2.5mm</p>
+          <p contenteditable="true" data-save-id="time"><strong>Thời gian:</strong> 2-3 giờ</p>
         </div>
       </section>
 
@@ -359,10 +362,13 @@
 
   <script>
     let blockCounter = 2;
+    const CHART_SYNC_KEY = "lentiny_chart_admin_latest";
+    const PDF_DRAFT_UPDATED_KEY = "lentiny_pdf_updated_at";
 
     document.addEventListener("input", function (event) {
       if (!event.target.hasAttribute("data-save-id")) return;
       localStorage.setItem("lentiny_pdf_" + event.target.getAttribute("data-save-id"), event.target.innerHTML);
+      localStorage.setItem(PDF_DRAFT_UPDATED_KEY, String(Date.now()));
     });
 
     window.addEventListener("DOMContentLoaded", function () {
@@ -376,6 +382,8 @@
         document.getElementById("watermark-input").value = savedWatermark;
         updateWatermarkText(savedWatermark);
       }
+
+      syncFromChartAdmin(false);
     });
 
     function clearDraft() {
@@ -384,6 +392,108 @@
         if (key.indexOf("lentiny_pdf_") === 0) localStorage.removeItem(key);
       });
       window.location.reload();
+    }
+
+    function syncFromChartAdmin(force) {
+      const payload = readLatestChart();
+      if (!payload || !payload.chart) {
+        if (force) alert("Chưa có dữ liệu từ chart admin. Hãy bấm Tạo JSON trong admin trước nha.");
+        return;
+      }
+
+      const pdfUpdatedAt = Number(localStorage.getItem(PDF_DRAFT_UPDATED_KEY) || 0);
+      const chartUpdatedAt = Number(payload.savedAt || 0);
+      if (!force && pdfUpdatedAt > chartUpdatedAt) return;
+
+      applyChartToPdf(payload.chart);
+      localStorage.setItem(PDF_DRAFT_UPDATED_KEY, String(Date.now()));
+      if (force) alert("Đã đồng bộ thông tin từ chart admin sang PDF.");
+    }
+
+    function readLatestChart() {
+      try {
+        return JSON.parse(localStorage.getItem(CHART_SYNC_KEY) || "null");
+      } catch (error) {
+        console.error("[LenTiny PDF Builder] Cannot read chart admin data:", error);
+        return null;
+      }
+    }
+
+    function applyChartToPdf(chart) {
+      setText("pattern-name", chart.title || "Chart Móc Len");
+      setText("pattern-desc", chart.description || "File PDF hướng dẫn từ Tiệm Len Nhà Tiny.");
+      setHtml("difficulty", "<strong>Độ khó:</strong> " + escapeHtml(chart.difficulty || "3") + "/5");
+      setHtml("size", "<strong>Kích thước:</strong> " + escapeHtml(chart.size || "Đang cập nhật"));
+      setHtml("hook-size", "<strong>Kim móc:</strong> " + escapeHtml(chart.hookSize || "2.0mm - 2.5mm"));
+      setHtml("time", "<strong>Thời gian:</strong> " + escapeHtml(chart.time || "Đang cập nhật"));
+      setList("materials", chart.materials);
+      setSymbols(chart.abbreviations);
+      setBlocks(chart.sections || [], chart.chartImage || "");
+    }
+
+    function setText(saveId, value) {
+      const element = document.querySelector('[data-save-id="' + saveId + '"]');
+      if (!element) return;
+      element.textContent = value;
+      localStorage.setItem("lentiny_pdf_" + saveId, element.innerHTML);
+    }
+
+    function setHtml(saveId, html) {
+      const element = document.querySelector('[data-save-id="' + saveId + '"]');
+      if (!element) return;
+      element.innerHTML = html;
+      localStorage.setItem("lentiny_pdf_" + saveId, element.innerHTML);
+    }
+
+    function setList(saveId, items) {
+      const element = document.querySelector('[data-save-id="' + saveId + '"]');
+      if (!element || !Array.isArray(items) || !items.length) return;
+      element.innerHTML = items.map(function (item) {
+        return "<li>" + escapeHtml(item) + "</li>";
+      }).join("");
+      localStorage.setItem("lentiny_pdf_" + saveId, element.innerHTML);
+    }
+
+    function setSymbols(items) {
+      if (!Array.isArray(items) || !items.length) return;
+      const midpoint = Math.ceil(items.length / 2);
+      setSymbolColumn("symbols-col1", items.slice(0, midpoint));
+      setSymbolColumn("symbols-col2", items.slice(midpoint));
+    }
+
+    function setSymbolColumn(saveId, items) {
+      const element = document.querySelector('[data-save-id="' + saveId + '"]');
+      if (!element) return;
+      element.innerHTML = items.map(function (item) {
+        return "<li><strong>" + escapeHtml(item.symbol) + ":</strong> " + escapeHtml(item.meaning) + "</li>";
+      }).join("");
+      localStorage.setItem("lentiny_pdf_" + saveId, element.innerHTML);
+    }
+
+    function setBlocks(sections, defaultImage) {
+      const validSections = sections.filter(function (section) {
+        return section && (section.title || section.image || (section.steps && section.steps.length));
+      });
+      if (!validSections.length) return;
+
+      const list = document.getElementById("chart-blocks-list");
+      list.innerHTML = "";
+      blockCounter = 0;
+      validSections.forEach(function (section, index) {
+        addChartBlock({
+          title: section.title || "Phần " + (index + 1),
+          image: section.image || defaultImage || ""
+        });
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function previewBlockImage(event, imgId, placeholderId, containerId) {
@@ -446,7 +556,8 @@
       }
     }
 
-    function addChartBlock() {
+    function addChartBlock(defaults) {
+      const data = defaults || {};
       blockCounter += 1;
       const list = document.getElementById("chart-blocks-list");
       const block = document.createElement("article");
@@ -461,7 +572,7 @@
         '</div>',
         '<div class="flex items-center gap-2 mb-2 pr-24">',
         '<span class="w-5 h-5 rounded-full text-white text-[10px] font-black flex items-center justify-center" style="background: var(--blue-deep);">' + blockCounter + '</span>',
-        '<h4 class="text-xs font-black uppercase tracking-wide" style="color: var(--text-dark);" contenteditable="true" data-save-id="block-title-' + blockCounter + '">Phần ' + blockCounter + ': Nhấp để đổi tên phần móc</h4>',
+        '<h4 class="text-xs font-black uppercase tracking-wide" style="color: var(--text-dark);" contenteditable="true" data-save-id="block-title-' + blockCounter + '">' + escapeHtml(data.title || "Phần " + blockCounter + ": Nhấp để đổi tên phần móc") + '</h4>',
         '</div>',
         '<div class="image-frame flex items-center justify-center p-2" id="container-block-' + blockCounter + '">',
         '<div class="watermark-overlay' + watermarkHidden + ' absolute pointer-events-none select-none font-black text-sm uppercase watermark-text top-1/2 left-1/2 z-10" id="wm-block-' + blockCounter + '">' + watermark + '</div>',
@@ -474,6 +585,21 @@
         '</div>'
       ].join("");
       list.appendChild(block);
+      localStorage.setItem("lentiny_pdf_block-title-" + blockCounter, data.title || "Phần " + blockCounter);
+      if (data.image) {
+        setBlockImage(blockCounter, data.image);
+      }
+    }
+
+    function setBlockImage(index, imageUrl) {
+      const img = document.getElementById("preview-block-" + index);
+      const placeholder = document.getElementById("placeholder-block-" + index);
+      const container = document.getElementById("container-block-" + index);
+      if (!img || !placeholder || !container) return;
+      img.src = imageUrl;
+      img.classList.remove("hidden");
+      placeholder.classList.add("hidden");
+      container.classList.remove("border-dashed");
     }
 
     function deleteBlock(button) {

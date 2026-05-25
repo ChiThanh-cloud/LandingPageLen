@@ -16,10 +16,12 @@
   var generateButton = document.getElementById("generateJsonButton");
   var copyButton = document.getElementById("copyJsonButton");
   var downloadButton = document.getElementById("downloadJsonButton");
+  var pdfBuilderLink = document.getElementById("pdfBuilderLink");
   var output = document.getElementById("jsonOutput");
   var message = document.getElementById("adminMessage");
   var publishGuide = document.getElementById("publishGuide");
   var utils = window.LenTinyChartUtils;
+  var CHART_SYNC_KEY = "lentiny_chart_admin_latest";
 
   if (!form || !builder || !output || !message) {
     console.error("[LenTiny ChartAdmin] Missing required admin DOM nodes.");
@@ -72,6 +74,12 @@
       } catch (error) {
         handleError("Không tải được JSON.", error);
       }
+    });
+  }
+
+  if (pdfBuilderLink) {
+    pdfBuilderLink.addEventListener("click", function () {
+      safeGenerate();
     });
   }
 
@@ -146,6 +154,7 @@
       description: clean(data.get("description")),
       difficulty: Number(data.get("difficulty")) || 1,
       time: clean(data.get("time")),
+      hookSize: clean(data.get("hookSize")),
       size: clean(data.get("size")),
       tags: parseList(data.get("tags")),
       coverImage: clean(data.get("coverImage")),
@@ -168,6 +177,7 @@
        lightweight card entry to charts/index.json whenever a chart is published. */
     validateChart(chart);
     output.value = JSON.stringify(chart, null, 2);
+    saveChartForPdf(chart);
     renderPublishGuide(chart);
     showMessage("Đã tạo JSON. Tên file nên là " + slug + ".json.");
     return chart;
@@ -316,6 +326,17 @@
     link.remove();
     URL.revokeObjectURL(url);
     showMessage("Đã tải " + filename + ".");
+  }
+
+  function saveChartForPdf(chart) {
+    try {
+      localStorage.setItem(CHART_SYNC_KEY, JSON.stringify({
+        savedAt: Date.now(),
+        chart: chart
+      }));
+    } catch (error) {
+      console.error("[LenTiny ChartAdmin] Cannot save chart for PDF builder:", error);
+    }
   }
 
   /* TODO Cloudinary upload: replace manual image URL fields with unsigned upload
