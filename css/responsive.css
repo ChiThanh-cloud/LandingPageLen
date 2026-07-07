@@ -68,8 +68,8 @@ body.menu-open .nav-links {
 
   .hero-overlay {
     background:
-      linear-gradient(180deg, rgba(24, 62, 92, .03) 0%, rgba(24, 62, 92, .58) 48%, rgba(24, 62, 92, .78) 100%),
-      linear-gradient(90deg, rgba(45, 111, 148, .42), rgba(153, 204, 255, .12));
+      linear-gradient(180deg, rgba(22, 59, 82, .04) 0%, rgba(22, 59, 82, .56) 46%, rgba(22, 59, 82, .82) 100%),
+      linear-gradient(90deg, rgba(45, 111, 148, .38), rgba(232, 111, 131, .18));
   }
 
   .hero-content {
@@ -124,8 +124,7 @@ body.menu-open .nav-links {
   }
 
   .hero-microcopy {
-    font-size: .76rem;
-    margin-top: 12px;
+    display: none;
   }
 
   .hero-scroll {
@@ -133,7 +132,7 @@ body.menu-open .nav-links {
   }
 
   .section {
-    padding: 64px 0;
+    padding: 58px 0;
   }
 
   .section-title {
@@ -360,6 +359,7 @@ body.menu-open .nav-links {
   .step {
     max-width: 100%;
     width: 100%;
+    padding: 26px 18px;
   }
 
   .contact-card {

@@ -4,16 +4,16 @@
 
 :root {
   --blue-deep: #2D6F94;
-  --blue-main: #99CCFF;
-  --blue-light: #E1F1FF;
-  --blue-pale: #F6FBFF;
-  --warm-pale: #FFF7EF;
+  --blue-main: #C94F66;
+  --blue-light: #FFE1DC;
+  --blue-pale: #FFF4F1;
+  --warm-pale: #FFF8F2;
   --rose-soft: #F4B5AA;
   --white: #ffffff;
-  --cream: #FBFDFF;
-  --text-dark: #1B3F5C;
-  --text-mid: #5B748A;
-  --text-light: #6F8EA8;
+  --cream: #FFFCF8;
+  --text-dark: #163B52;
+  --text-mid: #546D7A;
+  --text-light: #78919B;
   --shadow-sm: 0 4px 14px rgba(45, 111, 148, .07);
   --shadow-md: 0 12px 32px rgba(45, 111, 148, .10);
   --shadow-lg: 0 24px 60px rgba(45, 111, 148, .15);

@@ -164,10 +164,10 @@
     }
   </script>
   <!-- CSS Modules -->
-  <link rel="stylesheet" href="css/base.css?v=4" />
+  <link rel="stylesheet" href="css/base.css?v=5" />
   <link rel="stylesheet" href="css/layout.css?v=6" />
-  <link rel="stylesheet" href="css/sections.css?v=6" />
-  <link rel="stylesheet" href="css/responsive.css?v=9" />
+  <link rel="stylesheet" href="css/sections.css?v=7" />
+  <link rel="stylesheet" href="css/responsive.css?v=10" />
   <link rel="preload" href="css/animations.css?v=2" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <link rel="preload" href="css/products.css?v=15" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript>
@@ -276,8 +276,8 @@
         Nhận đặt theo yêu cầu qua Zalo &amp; Messenger
       </p>
       <h1 class="hero-title">Len sợi, phụ kiện &amp; đồ móc handmade <span class="highlight">theo yêu cầu</span></h1>
-      <p class="hero-subtitle">Gửi ảnh mẫu để Tiny tư vấn màu, size và báo giá. Nhận móc thú bông, hoa len, túi, set quà
-        và giao toàn quốc.</p>
+      <p class="hero-subtitle">Gửi ảnh mẫu, Tiny tư vấn màu/size và báo giá nhanh. Nhận móc thú bông, hoa len, túi, set
+        quà và giao toàn quốc.</p>
       <ul class="hero-benefits" aria-label="Lợi ích khi đặt hàng tại Tiny">
         <li>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -396,9 +396,9 @@
         <p>Dù bạn đang tìm kiếm những cuộn len mềm mịn để tự đan chiếc khăn ấm, hay cần một em gấu bông "độc bản" để làm
           quà tặng – Tiny luôn ở đây, cẩn thận tỉ mẩn từng chút một để gửi đến bạn sản phẩm hoàn thiện nhất.</p>
         <ul class="about-list">
-          <li>✔ Len tuyển chọn kỹ lưỡng: Dòng len Milk, Cotton, len xù... an toàn cho cả em bé.</li>
-          <li>✔ Móc tay 100%: Nhận làm theo mẫu ảnh hoặc lên ý tưởng thiết kế riêng cho bạn.</li>
-          <li>✔ Trách nhiệm tới cùng: Luôn gửi ảnh kiểm tra trước khi giao, hỗ trợ sửa dáng nếu chưa ưng ý.</li>
+          <li>Len tuyển chọn kỹ lưỡng: Dòng len Milk, Cotton, len xù... an toàn cho cả em bé.</li>
+          <li>Móc tay 100%: Nhận làm theo mẫu ảnh hoặc lên ý tưởng thiết kế riêng cho bạn.</li>
+          <li>Trách nhiệm tới cùng: Luôn gửi ảnh kiểm tra trước khi giao, hỗ trợ sửa dáng nếu chưa ưng ý.</li>
         </ul>
         <a href="#lien-he-tu-van" class="btn btn-primary">Ghé tiệm trò chuyện</a>
       </div>
@@ -497,28 +497,58 @@
       <div class="process-steps">
         <div class="step">
           <div class="step-num">01</div>
-          <div class="step-icon">💬</div>
+          <div class="step-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+              <path d="M8 9h8" />
+              <path d="M8 13h5" />
+            </svg>
+          </div>
           <h3>Nhắn nhủ ý tưởng</h3>
           <p>Kể Tiny nghe bạn muốn món đồ thế nào qua Zalo hoặc Facebook nhé.</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">02</div>
-          <div class="step-icon">🎨</div>
+          <div class="step-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+              <path d="M12 3a9 9 0 0 0 0 18h1.5a2.5 2.5 0 0 0 0-5H12a2 2 0 0 1 0-4h3a6 6 0 0 0 0-9z" />
+            </svg>
+          </div>
           <h3>Chốt màu & Dáng</h3>
           <p>Tiny sẽ gửi bảng màu len, tư vấn cách phối màu sao cho xinh nhất.</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">03</div>
-          <div class="step-icon">🧶</div>
+          <div class="step-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M4.7 9.2c4.2-.7 8.8 1.1 12.4 5" />
+              <path d="M7.2 5.9c4.6 1.1 7.9 4.2 9.9 9.2" />
+              <path d="M6.8 17.7c1.5-4.4 4.7-7.8 9.7-10.1" />
+            </svg>
+          </div>
           <h3>Tỉ mỉ móc tay</h3>
           <p>Tiny bắt tay vào làm và sẽ gửi ảnh cập nhật để bạn xem hình hài bé nó ra sao.</p>
         </div>
         <div class="step-arrow">→</div>
         <div class="step">
           <div class="step-num">04</div>
-          <div class="step-icon">📦</div>
+          <div class="step-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m21 8-9-5-9 5 9 5 9-5Z" />
+              <path d="M3 8v8l9 5 9-5V8" />
+              <path d="M12 13v8" />
+            </svg>
+          </div>
           <h3>Giao tới tận tay</h3>
           <p>Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!</p>
         </div>
@@ -556,58 +586,6 @@
             <strong>Gói quà chỉn chu, gửi ảnh trước khi giao</strong>
           </figcaption>
         </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== SHOP INFO (SEO SUPPORT) ===== -->
-  <section class="shop-info section" id="thong-tin-tiny">
-    <div class="container shop-info-inner">
-      <h2 class="section-title center">Thông tin về <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
-      <p class="shop-info-lead">
-        Tiệm Len Nhà Tiny là <strong>shop len handmade</strong> chuyên bán <strong>cuộn len</strong>, <strong>set tự
-          móc</strong>, <strong>túi móc handmade</strong>, <strong>thú len</strong>, <strong>đồ móc theo yêu cầu</strong>
-        và <strong>quà tặng handmade</strong>. Shop phù hợp cho người mới tập móc len, khách muốn mua set len tự làm
-        hoặc cần đặt sản phẩm handmade theo sở thích.
-      </p>
-      <p class="shop-info-lead">
-        Tiny tập trung vào phong cách dễ thương, mềm dịu và ấm áp. Khách có thể nhắn <strong>Facebook Messenger</strong>
-        hoặc <strong>Zalo</strong> để được <strong>tư vấn màu len</strong>, mẫu sản phẩm, cách chọn set tự móc và đặt
-        hàng theo nhu cầu.
-      </p>
-      <ul class="shop-info-list">
-        <li><strong>Sản phẩm chính:</strong> cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu, quà
-          tặng handmade.</li>
-        <li><strong>Phạm vi phục vụ:</strong> nhận đơn online toàn quốc, tư vấn trước khi chốt đơn.</li>
-        <li><strong>Kênh liên hệ chính:</strong> Facebook Messenger và Zalo của Tiệm Len Nhà Tiny.</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ===== QUICK FAQ ===== -->
-  <section class="shop-info-faq section" id="cau-hoi-nhanh-tiny" aria-label="Câu hỏi nhanh về Tiệm Len Nhà Tiny">
-    <div class="container shop-info-inner">
-      <h2 class="section-title center">Câu hỏi nhanh về <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
-      <div class="shop-info-faq-list">
-        <details class="shop-info-faq-item">
-          <summary>Tiệm Len Nhà Tiny bán gì?</summary>
-          <p>Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng
-            handmade.</p>
-        </details>
-        <details class="shop-info-faq-item">
-          <summary>Tiệm Len Nhà Tiny phù hợp với ai?</summary>
-          <p>Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần
-            tư vấn phối màu len.</p>
-        </details>
-        <details class="shop-info-faq-item">
-          <summary>Có thể đặt đồ móc theo yêu cầu không?</summary>
-          <p>Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng.
-          </p>
-        </details>
-        <details class="shop-info-faq-item">
-          <summary>Shop có giao hàng toàn quốc không?</summary>
-          <p>Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc.</p>
-        </details>
       </div>
     </div>
   </section>
@@ -667,7 +645,7 @@
     <div class="container">
       <p class="section-tag center">Đặt hàng ngay hôm nay</p>
       <h2 class="section-title center">Liên hệ <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
-      <p class="section-sub center">Tiny luôn sẵn sàng tư vấn và hỗ trợ bạn — đừng ngại nhắn nhé! 🩷</p>
+      <p class="section-sub center">Gửi ảnh mẫu hoặc mô tả món bạn muốn, Tiny sẽ tư vấn màu len và báo giá trước khi làm.</p>
       <div class="contact-cards">
         <a href="https://m.me/61559447375156" target="_blank" rel="noopener" class="contact-card" id="contact-fb"
           data-track="contact_facebook_click">
@@ -702,7 +680,11 @@
         </a>
       </div>
       <div class="contact-address">
-        <span class="address-icon">📍</span>
+        <svg class="address-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 0 1 16 0Z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
         <p>853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh</p>
       </div>
       <p class="contact-map-link">
@@ -725,6 +707,54 @@
     </div>
   </section>
 
+  <!-- ===== SHOP INFO (SEO SUPPORT) ===== -->
+  <section class="shop-info section" id="thong-tin-tiny">
+    <div class="container shop-info-inner">
+      <p class="section-tag center">Về Tiny</p>
+      <h2 class="section-title center">Thông tin về <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
+      <p class="shop-info-lead">
+        Tiệm Len Nhà Tiny là <strong>shop len handmade</strong> chuyên bán <strong>cuộn len</strong>, <strong>set tự
+          móc</strong>, <strong>túi móc handmade</strong>, <strong>thú len</strong>, <strong>đồ móc theo yêu cầu</strong>
+        và <strong>quà tặng handmade</strong>. Shop phù hợp cho người mới tập móc len, khách muốn mua set len tự làm
+        hoặc cần đặt sản phẩm handmade theo sở thích.
+      </p>
+      <ul class="shop-info-list">
+        <li><strong>Sản phẩm chính:</strong> cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu, quà
+          tặng handmade.</li>
+        <li><strong>Phạm vi phục vụ:</strong> nhận đơn online toàn quốc, tư vấn trước khi chốt đơn.</li>
+        <li><strong>Kênh liên hệ chính:</strong> Facebook Messenger và Zalo của Tiệm Len Nhà Tiny.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== QUICK FAQ ===== -->
+  <section class="shop-info-faq section" id="cau-hoi-nhanh-tiny" aria-label="Câu hỏi nhanh về Tiệm Len Nhà Tiny">
+    <div class="container shop-info-inner">
+      <h2 class="section-title center">Câu hỏi nhanh về <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
+      <div class="shop-info-faq-list">
+        <details class="shop-info-faq-item">
+          <summary>Tiệm Len Nhà Tiny bán gì?</summary>
+          <p>Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng
+            handmade.</p>
+        </details>
+        <details class="shop-info-faq-item">
+          <summary>Tiệm Len Nhà Tiny phù hợp với ai?</summary>
+          <p>Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần
+            tư vấn phối màu len.</p>
+        </details>
+        <details class="shop-info-faq-item">
+          <summary>Có thể đặt đồ móc theo yêu cầu không?</summary>
+          <p>Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng.
+          </p>
+        </details>
+        <details class="shop-info-faq-item">
+          <summary>Shop có giao hàng toàn quốc không?</summary>
+          <p>Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
     <div class="container footer-inner">
@@ -733,7 +763,7 @@
           height="160" loading="lazy" decoding="async" />
         <p class="footer-slogan">"Từng sợi len, một tình yêu"</p>
         <p class="footer-entity">Chủ thể bán hàng: Tiệm Len Nhà Tiny</p>
-        <p class="footer-addr">📍 853 Ba Đình, Phường Chánh Hưng, TP.HCM</p>
+        <p class="footer-addr">853 Ba Đình, Phường Chánh Hưng, TP.HCM</p>
         <p class="footer-hours">Giờ mở cửa: 08:00 - 21:00, mỗi ngày</p>
       </div>
       <div class="footer-links">
@@ -752,7 +782,7 @@
         <a href="#" onclick="openPolicyModal('refund'); return false;" data-track="policy_refund_click">Đổi trả &amp;
           hoàn tiền</a>
       </div>
-      <p class="footer-copy">© 2026 Tiệm Len Nhà Tiny. Handmade with 🩷</p>
+      <p class="footer-copy">© 2026 Tiệm Len Nhà Tiny. Handmade with care.</p>
     </div>
   </footer>
 
