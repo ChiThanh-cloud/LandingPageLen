@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /tools/
+
 Disallow: /admin.html
-Disallow: /product-color-extractor.html
+Disallow: /tools/
 
 Sitemap: https://lentiny.xyz/sitemap.xml
