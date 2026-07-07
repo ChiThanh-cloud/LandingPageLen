@@ -13,7 +13,7 @@
   <div class="lt-chart-system" data-page="admin">
     <header class="lt-header">
       <div class="lt-header-inner">
-        <a class="lt-brand" href="../chart-index.html" aria-label="Về kho chart LenTiny">
+        <a class="lt-brand" href="../index.html" aria-label="Về trang chủ LenTiny">
           <img class="lt-logo" src="../images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" width="160" height="160" />
           <span>
             <strong>LenTiny</strong>
@@ -22,7 +22,9 @@
         </a>
         <nav class="lt-header-nav" aria-label="Điều hướng chart admin">
           <a class="lt-header-link" href="../index.html">Trang chủ</a>
-          <a class="lt-header-link is-primary" href="../chart-index.html">Kho chart</a>
+          <a class="lt-header-link" href="../blog.html">Blog</a>
+          <a class="lt-header-link" href="media-upload.html">Upload ảnh</a>
+          <a class="lt-header-link is-primary" href="chart-pdf-builder.html">PDF builder</a>
         </nav>
       </div>
     </header>
@@ -41,7 +43,7 @@
             <label class="lt-field">
               <span>Tên chart</span>
               <input name="title" value="Chart Móc Len Con Lười" required />
-              <small>Hiện ở đầu trang chi tiết và trên card trong kho chart.</small>
+              <small>Dùng để tạo dữ liệu chart nội bộ hoặc xuất PDF.</small>
             </label>
             <label class="lt-field">
               <span>Đường dẫn ngắn</span>
@@ -70,9 +72,9 @@
               <input name="size" value="10cm" />
             </label>
             <label class="lt-field">
-              <span>Tag lọc trong kho chart</span>
+              <span>Tag cho blog/PDF</span>
               <input name="tags" value="Amigurumi, Beginner" />
-              <small>Cách nhau bằng dấu phẩy, ví dụ: Amigurumi, Beginner.</small>
+              <small>Cách nhau bằng dấu phẩy, ví dụ: Free Chart, Beginner.</small>
             </label>
           </div>
 
@@ -100,7 +102,7 @@
                 <button class="lt-button lt-button-soft lt-upload-button" type="button" data-upload-target="coverImage">Upload ảnh bìa</button>
                 <input class="lt-file-input" type="file" accept="image/*" data-file-target="coverImage" />
               </span>
-              <small>Hiện trong kho chart và đầu trang chi tiết. Nên là ảnh thành phẩm đẹp nhất.</small>
+              <small>Dùng cho ảnh cover bài blog và cover PDF. Nên là ảnh thành phẩm đẹp nhất.</small>
             </label>
             <label class="lt-field">
               <span>Ảnh chính của chart</span>
@@ -114,7 +116,7 @@
             <label class="lt-field">
               <span>Link inbox tư vấn set len</span>
               <input name="messengerUrl" value="https://m.me/lentiny" />
-              <small>Link PDF không lưu trong JSON. Google Sheet/Apps Script sẽ giữ link PDF và trả về sau khi khách gửi thông tin.</small>
+              <small>Dùng làm CTA trong bài blog hoặc PDF chart.</small>
             </label>
             <label class="lt-field">
               <span>Giá set nguyên liệu</span>
@@ -179,6 +181,7 @@ A = Giảm mũi</textarea>
             <button class="lt-button lt-button-soft" type="button" id="copyJsonButton">Copy JSON</button>
             <button class="lt-button lt-button-soft" type="button" id="downloadJsonButton">Tải file JSON</button>
             <a class="lt-button lt-button-soft" href="chart-pdf-builder.html" target="_blank" rel="noopener" id="pdfBuilderLink">Mở tool tạo PDF</a>
+            <a class="lt-button lt-button-soft" href="../blog.html" target="_blank" rel="noopener">Mở blog</a>
           </div>
           <p id="adminMessage" class="lt-small-note" role="status" aria-live="polite"></p>
           <div id="publishGuide" class="lt-publish-guide" aria-live="polite"></div>

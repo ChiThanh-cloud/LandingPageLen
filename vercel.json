@@ -1,14 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/chart",
-      "destination": "/chart-index.html"
-    },
-    {
-      "source": "/chart/:slug",
-      "destination": "/chart-template.html"
-    }
-  ],
   "headers": [
     {
       "source": "/sitemap.xml",

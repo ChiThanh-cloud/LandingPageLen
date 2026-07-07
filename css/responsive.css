@@ -159,12 +159,27 @@ body.menu-open .nav-links {
     margin-top: 16px;
   }
 
-  .shop-info-faq-item {
-    padding: 15px 16px;
+  .shop-info-faq-item summary {
+    padding: 15px 48px 15px 16px;
+    font-size: .92rem;
   }
 
-  .shop-info-faq-item h3 {
-    font-size: .92rem;
+  .shop-info-faq-item summary::after {
+    right: 14px;
+  }
+
+  .shop-info-faq-item p {
+    padding: 0 16px 16px;
+  }
+
+  .home-blog-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .home-blog-actions .btn {
+    width: 100%;
+    justify-content: center;
   }
 
   .nav-links {

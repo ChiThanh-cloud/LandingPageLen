@@ -2,20 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://lentiny.xyz/</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://lentiny.xyz/chart</loc>
-    <lastmod>2026-05-20</lastmod>
+    <loc>https://lentiny.xyz/blog.html</loc>
+    <lastmod>2026-07-07</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://lentiny.xyz/chart/be-bo</loc>
-    <lastmod>2026-05-20</lastmod>
+    <loc>https://lentiny.xyz/posts/vi-sao-qua-len-handmade-duoc-yeu-thich.html</loc>
+    <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://lentiny.xyz/posts/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://lentiny.xyz/posts/moc-thu-len-theo-anh-mat-bao-lau.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://lentiny.xyz/posts/cach-bao-quan-thu-len-handmade-de-luon-dep.html</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
   </url>
 </urlset>

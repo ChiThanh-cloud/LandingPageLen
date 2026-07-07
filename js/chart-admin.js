@@ -187,8 +187,8 @@
       }
     };
 
-    /* TODO Auto update index.json: after serverless/admin storage exists, write a
-       lightweight card entry to charts/index.json whenever a chart is published. */
+    /* TODO Auto save: after serverless/admin storage exists, write chart JSON
+       directly to the internal chart source folder whenever a chart is published. */
     validateChart(chart);
     output.value = JSON.stringify(chart, null, 2);
     saveChartForPdf(chart);
@@ -231,7 +231,8 @@
     if (!publishGuide) return;
 
     var chartPath = "charts/" + chart.slug + ".json";
-    var detailPath = "chart-template.html?slug=" + chart.slug;
+    var blogPath = "posts/" + chart.slug + ".html";
+    var pdfPath = "assets/pdf/" + chart.slug + ".pdf";
     var prettyTags = chart.tags.length ? chart.tags.join(", ") : "Chưa có tag";
     var indexEntry = {
       slug: chart.slug,
@@ -247,24 +248,25 @@
       '<div class="lt-placement-preview">',
       '<h3>Ảnh và nội dung sẽ nằm ở đâu?</h3>',
       '<ul>',
-      '<li><strong>Tên chart:</strong> đầu trang chi tiết và card kho chart.</li>',
-      '<li><strong>Ảnh bìa:</strong> kho chart và phần mở đầu trang chi tiết.</li>',
+      '<li><strong>Tên chart:</strong> dùng làm tên file JSON và tiêu đề khi xuất nội dung.</li>',
+      '<li><strong>Ảnh bìa:</strong> dùng cho cover khi bạn chuyển chart thành bài blog hoặc PDF.</li>',
       '<li><strong>Ảnh chính:</strong> ảnh mặc định nếu từng phần chưa có ảnh riêng.</li>',
-      '<li><strong>Từng phần:</strong> hiện lần lượt trong nội dung chart.</li>',
-      '<li><strong>File PDF:</strong> không nằm trong JSON; Google Sheet/Apps Script giữ link PDF theo slug và trả link sau khi khách gửi thông tin.</li>',
+      '<li><strong>Từng phần:</strong> giữ thứ tự nội dung để copy sang bài blog hoặc file PDF.</li>',
+      '<li><strong>File PDF:</strong> lưu riêng trong <code>' + escapeHtml(pdfPath) + '</code> rồi link từ bài blog.</li>',
       '</ul>',
       '</div>',
       '<div class="lt-publish-steps">',
-      '<h3>Sau khi tải file JSON</h3>',
+      '<h3>Luồng đăng blog + PDF</h3>',
       '<ol>',
       '<li>Đặt tên file là <code>' + escapeHtml(chart.slug) + '.json</code>.</li>',
-      '<li>Đưa file vào thư mục <code>' + escapeHtml(chartPath) + '</code>.</li>',
-      '<li>Thêm card này vào <code>charts/index.json</code>.</li>',
-      '<li>Mở <code>' + escapeHtml(detailPath) + '</code> để kiểm tra.</li>',
+      '<li>Lưu file vào <code>' + escapeHtml(chartPath) + '</code> nếu cần giữ dữ liệu nguồn.</li>',
+      '<li>Dùng dữ liệu này để viết bài blog tại <code>' + escapeHtml(blogPath) + '</code>.</li>',
+      '<li>Mở <a href="chart-pdf-builder.html" target="_blank" rel="noopener">tool tạo PDF</a>, bấm <strong>Đồng bộ từ admin</strong>, xuất PDF rồi lưu vào <code>' + escapeHtml(pdfPath) + '</code>.</li>',
+      '<li>Trong bài blog, đặt nút PDF trỏ tới <code>../' + escapeHtml(pdfPath) + '</code>.</li>',
       '</ol>',
       '</div>',
       '<div class="lt-index-card">',
-      '<h3>Card thêm vào charts/index.json</h3>',
+      '<h3>Dữ liệu tóm tắt</h3>',
       '<pre>' + escapeHtml(JSON.stringify(indexEntry, null, 2)) + '</pre>',
       '<p class="lt-small-note">Tag hiện tại: ' + escapeHtml(prettyTags) + '</p>',
       '</div>'

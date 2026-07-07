@@ -165,9 +165,9 @@
   </script>
   <!-- CSS Modules -->
   <link rel="stylesheet" href="css/base.css?v=4" />
-  <link rel="stylesheet" href="css/layout.css?v=5" />
-  <link rel="stylesheet" href="css/sections.css?v=5" />
-  <link rel="stylesheet" href="css/responsive.css?v=8" />
+  <link rel="stylesheet" href="css/layout.css?v=6" />
+  <link rel="stylesheet" href="css/sections.css?v=6" />
+  <link rel="stylesheet" href="css/responsive.css?v=9" />
   <link rel="preload" href="css/animations.css?v=2" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <link rel="preload" href="css/products.css?v=15" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <noscript>
@@ -248,7 +248,8 @@
         <li><a href="#bo-suu-tap" style="--i: 2">Bộ sưu tập</a></li>
         <li><a href="#quy-trinh-dat-hang" style="--i: 3">Cách đặt hàng</a></li>
         <li><a href="#khach-chia-se" style="--i: 4">Khách chia sẻ</a></li>
-        <li><a href="#lien-he-tu-van" class="nav-cta" style="--i: 5" data-track="nav_order_click">Tư vấn ngay</a></li>
+        <li><a href="blog.html" style="--i: 5">Blog</a></li>
+        <li><a href="#lien-he-tu-van" class="nav-cta" style="--i: 6" data-track="nav_order_click">Tư vấn ngay</a></li>
       </ul>
       <button class="hamburger" id="hamburger" aria-label="Mở menu">
         <span></span><span></span><span></span>
@@ -480,21 +481,6 @@
           </div>
         </div>
 
-        <a class="product-card featured" id="prod-share-chart" href="chart-index.html"
-          aria-label="Vào góc Share Chart móc len miễn phí của Tiệm Len Nhà Tiny" data-track="share_chart_card_click"
-          data-category="chart">
-          <div class="product-img-wrap">
-            <img src="images/crochet_products_800.jpg" alt="Share chart móc len miễn phí cho thú bông và đồ handmade từ Tiệm Len Nhà Tiny"
-              width="800" height="600" loading="lazy" decoding="async" />
-            <div class="product-tag">Share Chart</div>
-          </div>
-          <div class="product-info">
-            <h3>Share Chart</h3>
-            <div class="product-price quote">Miễn phí + PDF</div>
-            <p>Chọn template chart, xem preview từng bước trên điện thoại và nhập SĐT/Zalo để nhận bản PDF đầy đủ.</p>
-            <span class="btn-link">Xem kho chart miễn phí →</span>
-          </div>
-        </a>
       </div>
     </div>
   </section>
@@ -599,25 +585,75 @@
     <div class="container shop-info-inner">
       <h2 class="section-title center">Câu hỏi nhanh về <span class="highlight">Tiệm Len Nhà Tiny</span></h2>
       <div class="shop-info-faq-list">
-        <div class="shop-info-faq-item">
-          <h3>1. Tiệm Len Nhà Tiny bán gì?</h3>
+        <details class="shop-info-faq-item">
+          <summary>Tiệm Len Nhà Tiny bán gì?</summary>
           <p>Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng
             handmade.</p>
-        </div>
-        <div class="shop-info-faq-item">
-          <h3>2. Tiệm Len Nhà Tiny phù hợp với ai?</h3>
+        </details>
+        <details class="shop-info-faq-item">
+          <summary>Tiệm Len Nhà Tiny phù hợp với ai?</summary>
           <p>Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần
             tư vấn phối màu len.</p>
-        </div>
-        <div class="shop-info-faq-item">
-          <h3>3. Có thể đặt đồ móc theo yêu cầu không?</h3>
+        </details>
+        <details class="shop-info-faq-item">
+          <summary>Có thể đặt đồ móc theo yêu cầu không?</summary>
           <p>Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng.
           </p>
-        </div>
-        <div class="shop-info-faq-item">
-          <h3>4. Shop có giao hàng toàn quốc không?</h3>
+        </details>
+        <details class="shop-info-faq-item">
+          <summary>Shop có giao hàng toàn quốc không?</summary>
           <p>Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc.</p>
-        </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURED BLOG ===== -->
+  <section class="home-blog section" id="blog-noi-bat">
+    <div class="container">
+      <p class="section-tag center">Góc đọc nhanh</p>
+      <h2 class="section-title center">Blog nổi bật từ <span class="highlight">LenTiny</span></h2>
+      <p class="section-sub center">Một vài bài nhẹ nhàng giúp bạn chọn quà, chọn len và chăm món đồ handmade lâu đẹp hơn.</p>
+      <div class="home-blog-grid">
+        <article class="home-blog-card">
+          <a class="home-blog-media" href="posts/vi-sao-qua-len-handmade-duoc-yeu-thich.html">
+            <img src="images/crochet_products_800.jpg" alt="Đồ len handmade dễ thương dùng làm quà tặng" width="800"
+              height="600" loading="lazy" decoding="async" />
+          </a>
+          <div class="home-blog-body">
+            <p class="home-blog-meta"><time datetime="2026-05-25">25/05/2026</time></p>
+            <h3><a href="posts/vi-sao-qua-len-handmade-duoc-yeu-thich.html">Vì sao quà len handmade được yêu thích?</a></h3>
+            <p>Gợi ý lý do món quà bằng len luôn có cảm giác riêng và dễ thương.</p>
+            <a class="home-blog-link" href="posts/vi-sao-qua-len-handmade-duoc-yeu-thich.html">Đọc bài →</a>
+          </div>
+        </article>
+        <article class="home-blog-card">
+          <a class="home-blog-media" href="posts/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.html">
+            <img src="images/yarn_collection_800.jpg" alt="Các cuộn len nhiều màu cho người mới học móc" width="800"
+              height="600" loading="lazy" decoding="async" />
+          </a>
+          <div class="home-blog-body">
+            <p class="home-blog-meta"><time datetime="2026-05-25">25/05/2026</time></p>
+            <h3><a href="posts/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.html">Người mới học móc len nên chọn loại len nào?</a></h3>
+            <p>So sánh milk cotton, len nhung, cotton và acrylic cho người mới.</p>
+            <a class="home-blog-link" href="posts/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.html">Đọc bài →</a>
+          </div>
+        </article>
+        <article class="home-blog-card">
+          <a class="home-blog-media" href="posts/moc-thu-len-theo-anh-mat-bao-lau.html">
+            <img src="images/gift_set_800.jpg" alt="Quà handmade bằng len đặt móc theo yêu cầu" width="800"
+              height="600" loading="lazy" decoding="async" />
+          </a>
+          <div class="home-blog-body">
+            <p class="home-blog-meta"><time datetime="2026-05-26">26/05/2026</time></p>
+            <h3><a href="posts/moc-thu-len-theo-anh-mat-bao-lau.html">Móc thú len theo ảnh mất bao lâu?</a></h3>
+            <p>Các yếu tố ảnh hưởng tới thời gian làm thú len custom theo ảnh.</p>
+            <a class="home-blog-link" href="posts/moc-thu-len-theo-anh-mat-bao-lau.html">Đọc bài →</a>
+          </div>
+        </article>
+      </div>
+      <div class="home-blog-actions">
+        <a href="blog.html" class="btn btn-primary">Xem tất cả bài viết</a>
       </div>
     </div>
   </section>
@@ -702,6 +738,7 @@
         <a href="#quy-trinh-dat-hang">Cách đặt hàng</a>
         <a href="#khach-chia-se">Khách chia sẻ</a>
         <a href="#lien-he-tu-van">Liên hệ tư vấn</a>
+        <a href="blog.html">Blog chart len</a>
         <a href="#" onclick="openPolicyModal('privacy'); return false;" data-track="policy_privacy_click">Chính sách bảo
           mật</a>
         <a href="#" onclick="openPolicyModal('terms'); return false;" data-track="policy_terms_click">Điều khoản dịch
@@ -753,6 +790,9 @@
       <span class="float-label">Messenger</span>
     </a>
   </div>
+
+  <a href="https://m.me/61559447375156" target="_blank" rel="noopener" class="mobile-cta-bar"
+    id="mobile-cta-bar" data-track="mobile_sticky_cta_click">Nhắn Tiny báo giá ngay →</a>
 
   <!-- ===== PRODUCT MODAL ===== -->
   <div class="product-modal-overlay" id="productModal">

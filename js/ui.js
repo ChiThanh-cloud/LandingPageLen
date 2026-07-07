@@ -2,6 +2,7 @@ export function initFloatingButtons() {
   const navbar = document.getElementById('navbar');
   const floatTopBtn = document.getElementById('float-top');
   const floatButtons = document.querySelector('.float-buttons');
+  const mobileCtaBar = document.getElementById('mobile-cta-bar');
 
   if (!navbar) return;
 
@@ -13,6 +14,7 @@ export function initFloatingButtons() {
     navbar.classList.toggle('scrolled', window.scrollY > 60);
     floatTopBtn?.classList.toggle('is-hidden', inHero);
     floatButtons?.classList.toggle('is-mobile-hero', isMobile && inHero);
+    mobileCtaBar?.classList.toggle('is-hidden', !isMobile || inHero);
   }
 
   window.addEventListener('scroll', updateFloatingButtons, { passive: true });
@@ -43,7 +45,7 @@ export function initMobileMenu() {
 
 export function initScrollReveal() {
   const revealEls = document.querySelectorAll(
-    '.trust-item, .product-card, .step, .review-card, .faq-item, .about-grid, .contact-card'
+    '.trust-item, .product-card, .step, .review-card, .faq-item, .shop-info-faq-item, .home-blog-card, .about-grid, .contact-card'
   );
 
   if (!revealEls.length || !('IntersectionObserver' in window)) {
