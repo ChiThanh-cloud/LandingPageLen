@@ -74,3 +74,106 @@
   opacity: 1;
   transform: none;
 }
+
+/* =============================================
+   MICRO-INTERACTIONS
+   ============================================= */
+.btn,
+.nav-links a,
+.product-card,
+.contact-card,
+.home-blog-card,
+.shop-info-faq-item,
+.review-card,
+.step,
+.float-btn,
+.mobile-cta-bar,
+.blog-button,
+.blog-card,
+.blog-related-card {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn,
+.product-card,
+.contact-card,
+.home-blog-card,
+.shop-info-faq-item summary,
+.review-card,
+.step,
+.float-btn,
+.mobile-cta-bar,
+.blog-button,
+.blog-card,
+.blog-related-card {
+  transition-duration: .26s;
+  transition-timing-function: cubic-bezier(.16, 1, .3, 1);
+}
+
+.btn:active,
+.btn.is-pressing,
+.blog-button:active,
+.blog-button.is-pressing,
+.mobile-cta-bar:active,
+.mobile-cta-bar.is-pressing {
+  transform: translateY(1px) scale(.985);
+}
+
+.product-card:active,
+.product-card.is-pressing,
+.contact-card:active,
+.contact-card.is-pressing,
+.home-blog-card:active,
+.home-blog-card.is-pressing,
+.review-card:active,
+.review-card.is-pressing,
+.step:active,
+.step.is-pressing,
+.blog-card:active,
+.blog-card.is-pressing,
+.blog-related-card:active,
+.blog-related-card.is-pressing {
+  transform: translateY(1px) scale(.992);
+}
+
+.shop-info-faq-item summary:active,
+.shop-info-faq-item summary.is-pressing {
+  background: rgba(255, 244, 241, .86);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover,
+  .blog-button:hover {
+    filter: saturate(1.06);
+  }
+
+  .shop-info-faq-item:hover {
+    border-color: rgba(201, 79, 102, .34);
+    box-shadow: var(--shadow-md);
+  }
+
+  .home-blog-link:hover,
+  .btn-link:hover {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

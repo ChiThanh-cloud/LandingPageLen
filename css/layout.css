@@ -81,6 +81,18 @@
   transform: scaleX(1);
 }
 
+.nav-links a.active-nav {
+  color: #FFD7C8;
+}
+
+.navbar.scrolled .nav-links a.active-nav {
+  color: var(--blue-deep);
+}
+
+.nav-links a.active-nav::after {
+  transform: scaleX(1);
+}
+
 .nav-links a.nav-cta {
   background: linear-gradient(135deg, var(--blue-deep), var(--blue-main));
   color: var(--white) !important;

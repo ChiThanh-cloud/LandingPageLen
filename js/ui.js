@@ -28,10 +28,14 @@ export function initMobileMenu() {
 
   if (!hamburger || !navLinks) return;
 
+  hamburger.setAttribute('aria-expanded', 'false');
+  hamburger.setAttribute('aria-controls', navLinks.id || 'navLinks');
+
   hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('open');
-    hamburger.classList.toggle('active');
-    document.body.classList.toggle('menu-open');
+    const isOpen = navLinks.classList.toggle('open');
+    hamburger.classList.toggle('active', isOpen);
+    document.body.classList.toggle('menu-open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
   });
 
   navLinks.querySelectorAll('a').forEach((anchor) => {
@@ -39,6 +43,7 @@ export function initMobileMenu() {
       navLinks.classList.remove('open');
       hamburger.classList.remove('active');
       document.body.classList.remove('menu-open');
+      hamburger.setAttribute('aria-expanded', 'false');
     });
   });
 }
@@ -116,6 +121,39 @@ export function initActiveNavHighlight() {
   }, { passive: true });
 }
 
+export function initPressFeedback() {
+  const interactiveSelector = [
+    '.btn',
+    '.nav-links a',
+    '.product-card[role="button"]',
+    '.contact-card',
+    '.home-blog-card',
+    '.shop-info-faq-item summary',
+    '.review-card',
+    '.step',
+    '.float-btn',
+    '.mobile-cta-bar',
+    '.blog-button',
+    '.blog-card',
+    '.blog-related-card'
+  ].join(',');
+
+  document.addEventListener('pointerdown', (event) => {
+    const target = event.target.closest(interactiveSelector);
+    if (!target || target.matches('[disabled], [aria-disabled="true"]')) return;
+
+    target.classList.add('is-pressing');
+
+    const clearPress = () => {
+      window.setTimeout(() => target.classList.remove('is-pressing'), 90);
+    };
+
+    target.addEventListener('pointerup', clearPress, { once: true });
+    target.addEventListener('pointercancel', clearPress, { once: true });
+    target.addEventListener('pointerleave', clearPress, { once: true });
+  }, { passive: true });
+}
+
 export function initPageUi() {
   initFloatingButtons();
   initMobileMenu();
@@ -124,4 +162,5 @@ export function initPageUi() {
   initKeyboardCards();
   initHeroVideoFallback();
   initActiveNavHighlight();
+  initPressFeedback();
 }
