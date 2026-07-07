@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Ảnh Blog | LenTiny</title>
+  <meta name="description" content="Tool nội bộ upload ảnh blog LenTiny lên Cloudinary và lấy link ảnh đã tối ưu." />
+  <link rel="stylesheet" href="../css/chart.css?v=4" />
+  <style>
+    .lt-media-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .lt-media-preview {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--warm-pale);
+      min-height: 240px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 850;
+      text-align: center;
+      padding: 18px;
+    }
+
+    .lt-media-preview img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      border-radius: 14px;
+    }
+
+    .lt-output-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+    }
+
+    .lt-output-item {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .lt-output-item code {
+      display: block;
+      overflow-wrap: anywhere;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.45;
+    }
+
+    .lt-output-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    @media (min-width: 860px) {
+      .lt-media-grid {
+        grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="lt-chart-system" data-page="admin">
+    <header class="lt-header">
+      <div class="lt-header-inner">
+        <a class="lt-brand" href="../index.html" aria-label="Về trang chủ LenTiny">
+          <img class="lt-logo" src="../images/logo_160.png?v=1" alt="Tiệm Len Nhà Tiny" width="160" height="160" />
+          <span>
+            <strong>LenTiny</strong>
+            <small>Upload ảnh blog</small>
+          </span>
+        </a>
+        <nav class="lt-header-nav" aria-label="Điều hướng tool ảnh">
+          <a class="lt-header-link" href="../blog.html">Blog</a>
+          <a class="lt-header-link" href="chart-admin.html">Chart admin</a>
+          <a class="lt-header-link is-primary" href="media-upload.html">Upload ảnh</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="lt-shell">
+      <section class="lt-list-hero">
+        <p class="lt-eyebrow">Tool nội bộ</p>
+        <h1>Upload ảnh lên Cloudinary</h1>
+        <p>Chọn ảnh từ máy, tool sẽ upload lên Cloudinary và tạo sẵn link đã nén để dán vào card blog, ảnh đầu bài hoặc og:image.</p>
+      </section>
+
+      <section class="lt-panel lt-admin-form" aria-label="Upload ảnh Cloudinary">
+        <div class="lt-media-grid">
+          <div>
+            <h2>Cấu hình</h2>
+            <div class="lt-form-grid">
+              <label class="lt-field">
+                <span>Cloud name</span>
+                <input id="mediaCloudName" value="djn2kd2hh" autocomplete="off" />
+                <small>Lấy trong Cloudinary Dashboard. Không phải API secret.</small>
+              </label>
+              <label class="lt-field">
+                <span>Unsigned upload preset</span>
+                <input id="mediaUploadPreset" value="my_unsigned_preset" autocomplete="off" />
+                <small>Dùng preset unsigned để upload trực tiếp từ trình duyệt.</small>
+              </label>
+              <label class="lt-field">
+                <span>Chọn ảnh</span>
+                <input id="mediaFile" type="file" accept="image/*" />
+                <small>Cloudinary sẽ giữ ảnh gốc; các link bên dưới dùng f_auto, q_auto để tự nén khi hiển thị.</small>
+              </label>
+            </div>
+            <div class="lt-upload-row">
+              <button class="lt-button lt-button-primary" type="button" id="mediaUploadButton">Upload ảnh</button>
+              <button class="lt-button lt-button-soft" type="button" id="mediaClearButton">Xóa kết quả</button>
+            </div>
+            <p class="lt-small-note" id="mediaMessage">Chọn ảnh rồi bấm upload nha.</p>
+          </div>
+
+          <div>
+            <h2>Preview</h2>
+            <div class="lt-media-preview" id="mediaPreview">Chưa có ảnh upload.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lt-panel lt-output-panel" aria-label="Link ảnh đã tối ưu">
+        <h2>Link để dán vào blog</h2>
+        <div class="lt-output-list" id="mediaOutput">
+          <p class="lt-small-note">Sau khi upload, link card, hero và og:image sẽ hiện ở đây.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/media-upload.js" defer></script>
+</body>
+
+</html>
