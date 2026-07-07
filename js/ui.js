@@ -86,8 +86,17 @@ export function initKeyboardCards() {
   document.querySelectorAll('.product-card[role="button"]').forEach((card) => {
     card.addEventListener('keydown', (event) => {
       if (event.key !== 'Enter' && event.key !== ' ') return;
+      if (event.target.closest('a, button, input, select, textarea')) return;
       event.preventDefault();
       card.click();
+    });
+  });
+}
+
+export function initNestedProductLinks() {
+  document.querySelectorAll('.product-card a[href]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.stopPropagation();
     });
   });
 }
@@ -160,6 +169,7 @@ export function initPageUi() {
   initScrollReveal();
   initFaqAccordion();
   initKeyboardCards();
+  initNestedProductLinks();
   initHeroVideoFallback();
   initActiveNavHighlight();
   initPressFeedback();
