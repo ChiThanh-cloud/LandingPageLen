@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
+import Image from "next/image";
 import type { BlogPost, PostSection, RichText } from "@/types/post";
 
 function renderRichText(content: RichText) {
@@ -81,6 +82,17 @@ function Section({ section }: { section: PostSection }) {
           {section.ctaLabel}
         </a>
       </section>
+    );
+  }
+
+  if (section.type === "image") {
+    return (
+      <figure className="blog-content-card blog-image-section" style={{ margin: "2rem 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: "800px", aspectRatio: "4/3", borderRadius: "12px", overflow: "hidden" }}>
+          <Image src={section.src} alt={section.alt} fill style={{ objectFit: "cover" }} sizes="(max-width: 768px) 100vw, 800px" />
+        </div>
+        {section.caption ? <figcaption style={{ marginTop: "0.75rem", fontSize: "0.9rem", color: "var(--color-text-light)", fontStyle: "italic", textAlign: "center" }}>{section.caption}</figcaption> : null}
+      </figure>
     );
   }
 

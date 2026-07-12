@@ -48,6 +48,12 @@ export type PostSection =
       type: "related";
       title: string;
       links: RelatedPostLink[];
+    }
+  | {
+      type: "image";
+      src: string;
+      alt: string;
+      caption?: string;
     };
 
 export type BlogPost = {

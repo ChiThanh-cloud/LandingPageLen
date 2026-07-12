@@ -49,7 +49,7 @@ export function BlogPostPage({ post }: { post: BlogPost }) {
         </section>
 
         <div className="blog-media blog-post-media">
-          <Image src={post.image} alt={post.imageAlt} width={800} height={1000} priority />
+          <Image src={post.image} alt={post.imageAlt} width={800} height={1000} priority style={{ width: "100%", height: "auto" }} />
         </div>
 
         <PostSections post={post} />

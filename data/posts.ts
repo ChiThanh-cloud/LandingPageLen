@@ -38,6 +38,11 @@ export const posts: BlogPost[] = [
         ]
       },
       {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/4A3AD8AF-5DE8-4134-960F-9D080123E1B7_xseyvg.png",
+        alt: "Đồ handmade được làm riêng thật tỉ mỉ"
+      },
+      {
         type: "subsections",
         title: "Quà len handmade có cảm giác rất cá nhân",
         subsections: [
@@ -198,6 +203,11 @@ export const posts: BlogPost[] = [
         ]
       },
       {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/DEB01327-5113-4043-9C5E-44C2261A5B87_wybxnj.png",
+        alt: "Người mới bắt đầu học móc len"
+      },
+      {
         type: "subsections",
         title: "Những loại len dễ gặp khi học móc len",
         subsections: [
@@ -240,6 +250,11 @@ export const posts: BlogPost[] = [
             ]
           }
         ]
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/AA453E42-8CD3-43DC-BFB6-B9CC78D797D6_roglwi.png",
+        alt: "Các loại len cơ bản để học móc"
       },
       {
         type: "list",
@@ -334,9 +349,14 @@ export const posts: BlogPost[] = [
           [
             "→ Xem thêm: ",
             { type: "link", text: "Set tự móc len trọn gói", href: "/san-pham/set-tu-moc" },
-            " - gợi ý bộ nguyên liệu dành cho người mới."
+            "Cần tư vấn thêm về chọn len hoặc đặt len cho người mới? Nhắn Tiny nhé."
           ]
         ]
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/tiny-products/fg2yrufsqutvey68brj3.png",
+        alt: "Móc những mũi len cơ bản đầu tiên"
       },
       {
         type: "related",
@@ -395,6 +415,11 @@ export const posts: BlogPost[] = [
         ]
       },
       {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/70CA70C8-3C04-44DA-B984-FB3B958880A6_w1rej5.png",
+        alt: "Nhận móc thú len theo ảnh custom"
+      },
+      {
         type: "subsections",
         title: "Quy trình custom thú len theo ảnh tại LenTiny",
         subsections: [
@@ -431,6 +456,11 @@ export const posts: BlogPost[] = [
             ]
           }
         ]
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/7F448BB5-3BEE-4655-BE95-FE23AB5CCFB2_ytmak7.png",
+        alt: "Sản phẩm thú len custom hoàn thiện"
       },
       {
         type: "subsections",
