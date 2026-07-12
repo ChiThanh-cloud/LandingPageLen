@@ -18,9 +18,9 @@
   background: rgba(251, 253, 255, .96);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 8px 32px rgba(45, 111, 148, .12);
+  box-shadow: 0 8px 32px rgba(106, 154, 194, .12);
   border-radius: 20px;
-  border: 1px solid rgba(153, 204, 255, .44);
+  border: 1px solid rgba(214, 235, 254, .44);
   padding: 10px 0;
 }
 
@@ -98,7 +98,7 @@
   color: var(--white) !important;
   padding: 10px 24px;
   border-radius: 100px;
-  box-shadow: 0 4px 14px rgba(45, 111, 148, .22);
+  box-shadow: 0 4px 14px rgba(106, 154, 194, .22);
 }
 
 .nav-links a.nav-cta::after {
@@ -107,7 +107,7 @@
 
 .nav-links a.nav-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(45, 111, 148, .28);
+  box-shadow: 0 8px 20px rgba(106, 154, 194, .28);
 }
 
 .hamburger {
@@ -321,8 +321,8 @@
 }
 
 .top-float {
-  background: rgba(156, 210, 228, 0.28);
-  border: 1.5px solid rgba(40, 88, 105, 0.25);
+  background: rgba(214, 235, 254, 0.28);
+  border: 1.5px solid rgba(106, 154, 194, 0.25);
   color: #285869;
   backdrop-filter: blur(8px);
 }
@@ -373,10 +373,10 @@
     height: 44px;
     padding: 0;
     border-radius: 50%;
-    background: rgba(156, 210, 228, 0.92);
+    background: rgba(214, 235, 254, 0.92);
     color: #285869;
-    border: 1.5px solid rgba(40, 88, 105, 0.3);
-    box-shadow: 0 10px 24px rgba(36, 67, 74, .2);
+    border: 1.5px solid rgba(106, 154, 194, 0.3);
+    box-shadow: 0 10px 24px rgba(106, 154, 194, .2);
   }
 
   .top-float svg {
@@ -405,7 +405,7 @@
     color: var(--white);
     font-size: .96rem;
     font-weight: 800;
-    box-shadow: 0 12px 30px rgba(53, 107, 120, .28);
+    box-shadow: 0 12px 30px rgba(106, 154, 194, .28);
     transform: translateY(0);
     opacity: 1;
     transition: var(--transition);

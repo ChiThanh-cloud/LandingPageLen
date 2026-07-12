@@ -14,16 +14,16 @@ body.blog-body {
   --blog-text: #1b3f5c;
   --blog-muted: #5b748a;
   --blog-soft: #6f8ea8;
-  --blog-border: rgba(153, 204, 255, .44);
-  --blog-shadow: 0 16px 42px rgba(45, 111, 148, .11);
-  --blog-shadow-soft: 0 8px 22px rgba(45, 111, 148, .08);
+  --blog-border: rgba(214, 235, 254, .44);
+  --blog-shadow: 0 16px 42px rgba(106, 154, 194, .11);
+  --blog-shadow-soft: 0 8px 22px rgba(106, 154, 194, .08);
   --blog-radius: 18px;
   --blog-radius-lg: 28px;
   --blog-max: 1120px;
   margin: 0;
   color: var(--blog-text);
   background:
-    radial-gradient(circle at top left, rgba(255, 229, 223, .58), transparent 34rem),
+    radial-gradient(circle at top left, rgba(238, 246, 255, .58), transparent 34rem),
     linear-gradient(180deg, var(--blog-white) 0%, var(--blog-blue-pale) 48%, var(--blog-white) 100%);
   font-family: "Be Vietnam Pro", "Noto Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.65;
@@ -69,7 +69,7 @@ body.blog-body {
   height: 100%;
   border-radius: 0 999px 999px 0;
   background: linear-gradient(90deg, var(--blog-blue-deep), var(--blog-rose-soft));
-  box-shadow: 0 4px 12px rgba(45, 111, 148, .22);
+  box-shadow: 0 4px 12px rgba(106, 154, 194, .22);
 }
 
 .blog-shell {
@@ -267,7 +267,7 @@ body.blog-body {
 
 .blog-filter.blog-active {
   background: var(--blog-blue-light);
-  border-color: rgba(45, 111, 148, .28);
+  border-color: rgba(106, 154, 194, .28);
 }
 
 .blog-grid {
@@ -291,7 +291,7 @@ body.blog-body {
   aspect-ratio: 4 / 3;
   border-radius: var(--blog-radius-lg) var(--blog-radius-lg) 14px 14px;
   background:
-    linear-gradient(135deg, rgba(225, 241, 255, .92), rgba(255, 229, 223, .92)),
+    linear-gradient(135deg, rgba(225, 241, 255, .92), rgba(238, 246, 255, .92)),
     var(--blog-warm-pale);
 }
 
@@ -403,7 +403,7 @@ body.blog-body {
 .blog-button-primary {
   background: linear-gradient(135deg, var(--blog-blue-deep), var(--blog-blue-main));
   color: var(--blog-white);
-  box-shadow: 0 10px 24px rgba(45, 111, 148, .22);
+  box-shadow: 0 10px 24px rgba(106, 154, 194, .22);
 }
 
 .blog-button-soft {
@@ -539,7 +539,7 @@ body.blog-body {
   grid-template-columns: 70px 1fr;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(153, 204, 255, .28);
+  border-bottom: 1px solid rgba(214, 235, 254, .28);
 }
 
 .blog-abbrev dt {
@@ -561,7 +561,7 @@ body.blog-body {
 }
 
 .blog-product-callout {
-  border: 1px solid rgba(45, 111, 148, .2);
+  border: 1px solid rgba(106, 154, 194, .2);
   border-radius: var(--blog-radius-lg);
   background:
     linear-gradient(135deg, rgba(246, 251, 255, .96), rgba(255, 247, 239, .96)),
@@ -594,7 +594,7 @@ body.blog-body {
   border-style: dashed;
   border-width: 2px;
   background:
-    linear-gradient(135deg, rgba(225, 241, 255, .92), rgba(255, 229, 223, .82)),
+    linear-gradient(135deg, rgba(225, 241, 255, .92), rgba(238, 246, 255, .82)),
     var(--blog-warm-pale);
 }
 
@@ -617,7 +617,7 @@ body.blog-body {
 
 .blog-related-card:hover {
   transform: translateY(-2px);
-  border-color: rgba(153, 204, 255, .72);
+  border-color: rgba(214, 235, 254, .72);
   box-shadow: var(--blog-shadow-soft);
 }
 
@@ -638,7 +638,7 @@ body.blog-body {
   right: 0;
   height: 3px;
   z-index: 9999;
-  background: rgba(153, 204, 255, .18);
+  background: rgba(214, 235, 254, .18);
   pointer-events: none;
 }
 
@@ -675,7 +675,7 @@ body.blog-body {
 
 .blog-related-card:hover .blog-related-body {
   background: var(--blog-white);
-  border-color: rgba(45, 111, 148, .38);
+  border-color: rgba(106, 154, 194, .38);
 }
 
 .blog-related-body p {
@@ -749,7 +749,7 @@ body.blog-body {
 
   .blog-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(153, 204, 255, .72);
+    border-color: rgba(214, 235, 254, .72);
     box-shadow: var(--blog-shadow);
   }
 }
