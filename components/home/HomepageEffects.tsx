@@ -4,11 +4,12 @@ import { useEffect } from "react";
 
 export function HomepageEffects() {
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const revealEls = document.querySelectorAll(
       ".trust-item, .product-card, .step, .review-card, .shop-info-faq-item, .home-blog-card, .about-grid, .contact-card"
     );
 
-    if (!revealEls.length || !("IntersectionObserver" in window)) {
+    if (prefersReducedMotion || !revealEls.length || !("IntersectionObserver" in window)) {
       revealEls.forEach((el) => el.classList.add("visible"));
       return;
     }
@@ -19,7 +20,7 @@ export function HomepageEffects() {
       (entries) => {
         entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            window.setTimeout(() => entry.target.classList.add("visible"), index * 80);
+            window.setTimeout(() => entry.target.classList.add("visible"), Math.min(index * 70, 240));
             observer.unobserve(entry.target);
           }
         });
@@ -32,14 +33,27 @@ export function HomepageEffects() {
   }, []);
 
   useEffect(() => {
-    const video = document.getElementById("heroVideo");
+    const video = document.getElementById("heroVideo") as HTMLVideoElement | null;
+    const updateVideoForViewport = () => {
+      if (!video) return;
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        video.pause();
+      } else if (video.paused) {
+        video.play().catch(() => undefined);
+      }
+    };
     const fallback = () => {
       const wrap = document.querySelector<HTMLElement>(".hero-video-wrap");
-      if (wrap) wrap.style.background = "linear-gradient(135deg, #2d1f28 0%, #c96a8a 100%)";
+      if (wrap) wrap.style.background = "linear-gradient(135deg, #24434A 0%, #73A6B0 100%)";
     };
 
+    updateVideoForViewport();
+    window.addEventListener("resize", updateVideoForViewport);
     video?.addEventListener("error", fallback);
-    return () => video?.removeEventListener("error", fallback);
+    return () => {
+      window.removeEventListener("resize", updateVideoForViewport);
+      video?.removeEventListener("error", fallback);
+    };
   }, []);
 
   useEffect(() => {

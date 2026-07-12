@@ -22,7 +22,7 @@ export function Footer() {
           <p className="footer-hours">Hotline/Zalo: 036.890.3519</p>
         </div>
         <div className="footer-links">
-          <Link href="/#thong-tin-tiny">Về Tiny</Link>
+          <Link href="/#ve-tiny">Về Tiny</Link>
           <Link href="/#bo-suu-tap">Bộ sưu tập</Link>
           <Link href="/#quy-trinh-dat-hang">Cách đặt hàng</Link>
           <Link href="/#khach-chia-se">Khách chia sẻ</Link>

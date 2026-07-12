@@ -15,15 +15,14 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { href: "/#thong-tin-tiny", label: "Về Tiny", styleIndex: 1 },
-  { href: "/#bo-suu-tap", label: "Bộ sưu tập", styleIndex: 2 },
-  { href: "/#quy-trinh-dat-hang", label: "Cách đặt hàng", styleIndex: 3 },
-  { href: "/#khach-chia-se", label: "Khách chia sẻ", styleIndex: 4 },
-  { href: "/blog", label: "Blog", styleIndex: 5 },
+  { href: "/#bo-suu-tap", label: "Sản phẩm", styleIndex: 1 },
+  { href: "/#quy-trinh-dat-hang", label: "Đặt theo yêu cầu", styleIndex: 2 },
+  { href: "/#khach-chia-se", label: "Khách hàng", styleIndex: 3 },
+  { href: "/blog", label: "Blog", styleIndex: 4 },
   {
     href: "/#lien-he-tu-van",
-    label: "Tư vấn ngay",
-    styleIndex: 6,
+    label: "Nhắn Tiny",
+    styleIndex: 5,
     className: "nav-cta",
     trackKey: "nav_order_click"
   }
@@ -36,6 +35,26 @@ export function Header() {
   useEffect(() => {
     document.body.classList.toggle("menu-open", isOpen);
     return () => document.body.classList.remove("menu-open");
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    const closeOnDesktop = () => {
+      if (window.matchMedia("(min-width: 769px)").matches) setIsOpen(false);
+    };
+
+    document.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("resize", closeOnDesktop);
+
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("resize", closeOnDesktop);
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -69,7 +88,13 @@ export function Header() {
             priority
           />
         </Link>
-        <ul className={`nav-links${isOpen ? " open" : ""}`} id="navLinks">
+        <ul
+          className={`nav-links${isOpen ? " open" : ""}`}
+          id="navLinks"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeMenu();
+          }}
+        >
           {navItems.map((item) => (
             <li key={item.href}>
               <Link

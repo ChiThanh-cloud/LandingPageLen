@@ -67,7 +67,6 @@ export function FloatingContact() {
           data-track-handled="true"
           onClick={() => trackSiteEvent("float_zalo_click", { label: "Zalo", href: zaloUrl })}
         >
-          <div className="msg-badge">+1</div>
           <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
             <text
               x="50%"
@@ -121,7 +120,7 @@ export function FloatingContact() {
           })
         }
       >
-        Nhắn Tiny báo giá ngay →
+        Gửi mẫu để Tiny báo giá
       </a>
     </>
   );

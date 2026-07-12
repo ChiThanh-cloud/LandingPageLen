@@ -3,17 +3,26 @@
    ============================================= */
 
 :root {
-  --blue-deep: #2D6F94;
-  --blue-main: #C94F66;
-  --blue-light: #FFE1DC;
-  --blue-pale: #FFF4F1;
-  --warm-pale: #FFF8F2;
-  --rose-soft: #F4B5AA;
+  --primary-700: #356B78;
+  --primary-600: #4F8390;
+  --primary-500: #73A6B0;
+  --primary-300: #A9CED3;
+  --primary-200: #CDE5E8;
+  --primary-100: #EAF5F6;
+  --primary-50: #F5FAFA;
+  --accent-peach: #F3C9BC;
+  --accent-cream: #FFF8F1;
+  --blue-deep: var(--primary-700);
+  --blue-main: var(--primary-600);
+  --blue-light: var(--primary-200);
+  --blue-pale: var(--primary-100);
+  --warm-pale: var(--accent-cream);
+  --rose-soft: var(--accent-peach);
   --white: #ffffff;
   --cream: #FFFCF8;
-  --text-dark: #163B52;
-  --text-mid: #546D7A;
-  --text-light: #78919B;
+  --text-dark: #24434A;
+  --text-mid: #597178;
+  --text-light: #7C9399;
   --shadow-sm: 0 4px 14px rgba(45, 111, 148, .07);
   --shadow-md: 0 12px 32px rgba(45, 111, 148, .10);
   --shadow-lg: 0 24px 60px rgba(45, 111, 148, .15);
@@ -64,6 +73,11 @@ body {
   color: var(--text-dark);
   background: var(--white);
   overflow-x: hidden;
+}
+
+body.menu-open,
+body.product-modal-open {
+  overflow: hidden;
 }
 
 img {

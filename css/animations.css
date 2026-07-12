@@ -1,45 +1,6 @@
 /* =============================================
    ANIMATIONS
    ============================================= */
-@keyframes zalo-shake {
-  0%, 80%, 100% { transform: scale(1); }
-  82%, 86% { transform: scale(1.05) rotate(-2deg); }
-  84%, 88% { transform: scale(1.05) rotate(2deg); }
-}
-
-@keyframes pulse-zalo {
-  0% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.7); }
-  70% { box-shadow: 0 0 0 15px rgba(0, 104, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 104, 255, 0); }
-}
-
-@keyframes pulse-fb {
-  0% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0.7); }
-  70% { box-shadow: 0 0 0 15px rgba(24, 119, 242, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(24, 119, 242, 0); }
-}
-
-.msg-badge {
-  position: absolute;
-  top: -8px;
-  left: 24px;
-  background: #ff3b30;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 100px;
-  border: 2px solid #fff;
-  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
-  animation: badgePop 0.5s cubic-bezier(0.17, 0.89, 0.32, 1.49);
-  z-index: 10;
-}
-
-@keyframes badgePop {
-  from { transform: scale(0); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -66,8 +27,8 @@
 
 .reveal {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity .7s ease, transform .7s ease;
+  transform: translateY(16px);
+  transition: opacity .55s ease, transform .55s ease;
 }
 
 .reveal.visible {
@@ -138,7 +99,7 @@
 
 .shop-info-faq-item summary:active,
 .shop-info-faq-item summary.is-pressing {
-  background: rgba(255, 244, 241, .86);
+  background: rgba(234, 245, 246, .86);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -148,7 +109,7 @@
   }
 
   .shop-info-faq-item:hover {
-    border-color: rgba(201, 79, 102, .34);
+    border-color: rgba(79, 131, 144, .34);
     box-shadow: var(--shadow-md);
   }
 

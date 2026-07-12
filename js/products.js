@@ -392,6 +392,7 @@ export async function openProductModal(type) {
   productModalTitle.textContent = categoryTitles[type] || 'Sản phẩm';
 
   productModal.classList.add('active');
+  document.body.classList.add('product-modal-open');
   document.body.style.overflow = 'hidden';
 
   setYarnListMode();
@@ -581,10 +582,10 @@ function renderProducts(products) {
   });
 
   const categoryNotes = {
-    yarn: '💡 Mách nhỏ: Chọn loại len bạn thích, Tiny sẽ gửi bảng màu nhé!',
-    handmade: '💡 Mách nhỏ: Bạn có thể đặt theo mẫu hoặc chia sẻ ảnh ý tưởng riêng!',
-    set: '💡 Mách nhỏ: Mỗi Set đã gom đủ nguyên liệu và có hướng dẫn!',
-    gift: '💡 Mách nhỏ: Tiny có thể ghi thiệp tay và gói hộp thêm nhé!'
+    yarn: 'Mách nhỏ: Chọn loại len bạn thích, Tiny sẽ gửi bảng màu nhé!',
+    handmade: 'Mách nhỏ: Bạn có thể đặt theo mẫu hoặc chia sẻ ảnh ý tưởng riêng!',
+    set: 'Mách nhỏ: Mỗi Set đã gom đủ nguyên liệu và có hướng dẫn!',
+    gift: 'Mách nhỏ: Tiny có thể ghi thiệp tay và gói hộp thêm nhé!'
   };
 
   if (categoryNotes[currentCategory]) {
@@ -601,6 +602,7 @@ export function closeProductModal() {
   closeImageLightbox();
   productModal?.classList.remove('active');
   productModal?.classList.remove('yarn-detail-open');
+  document.body.classList.remove('product-modal-open');
   document.body.style.overflow = '';
 }
 

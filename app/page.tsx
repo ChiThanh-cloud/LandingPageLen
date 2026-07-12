@@ -226,11 +226,10 @@ export default function HomePage() {
             Nhận đặt theo yêu cầu qua Zalo &amp; Messenger
           </p>
           <h1 className="hero-title">
-            Len sợi, phụ kiện &amp; đồ móc handmade <span className="highlight">theo yêu cầu</span>
+            Món quà len được làm riêng cho <span className="highlight">người bạn thương</span>
           </h1>
           <p className="hero-subtitle">
-            Gửi ảnh mẫu, Tiny tư vấn màu/size và báo giá nhanh. Nhận móc thú bông, hoa len, túi, set quà và giao toàn
-            quốc.
+            Gửi Tiny ảnh mẫu hoặc ý tưởng, tụi mình sẽ tư vấn màu sắc, kích thước và hoàn thiện từng sản phẩm bằng tay.
           </p>
           <ul className="hero-benefits" aria-label="Lợi ích khi đặt hàng tại Tiny">
             <li><CheckIcon /> Làm theo ảnh mẫu</li>
@@ -239,10 +238,10 @@ export default function HomePage() {
           </ul>
           <div className="hero-btns">
             <a href={messengerConsultUrl} target="_blank" rel="noopener" className="btn btn-primary" data-track="hero_messenger_click">
-              Nhắn tư vấn mẫu ngay
+              Gửi mẫu để Tiny báo giá
             </a>
             <a href="#bo-suu-tap" className="btn btn-outline" data-track="hero_view_products_click">
-              Xem mẫu đã làm
+              Xem sản phẩm Tiny đã làm
             </a>
           </div>
           <p className="hero-microcopy">
