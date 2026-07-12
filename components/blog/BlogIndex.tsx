@@ -105,8 +105,9 @@ export function BlogIndex({ posts }: BlogIndexProps) {
                 href={`/blog/${post.slug}`}
                 data-fallback="Ảnh bài viết LenTiny"
                 aria-label={post.h1}
+                style={{ aspectRatio: "4/3", position: "relative", display: "block", overflow: "hidden" }}
               >
-                <Image src={post.image} alt={post.imageAlt} width={800} height={1000} loading="lazy" />
+                <Image src={post.image} alt={post.imageAlt} fill style={{ objectFit: "cover" }} sizes="(max-width: 768px) 100vw, 400px" loading="lazy" />
               </Link>
               <div className="blog-card-body">
                 <div className="blog-card-meta">
