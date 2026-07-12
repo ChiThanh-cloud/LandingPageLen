@@ -2,3 +2,11 @@
 .agent
 product-color-extractor.html
 supabase
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+.env*
+*.log
+*.tmp

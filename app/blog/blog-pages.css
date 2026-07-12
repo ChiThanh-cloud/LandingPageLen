@@ -1,0 +1,94 @@
+.blog-index-page,
+.blog-article-page {
+  --blog-blue-deep: #2d6f94;
+  --blog-blue-main: #99ccff;
+  --blog-blue-light: #e1f1ff;
+  --blog-blue-pale: #f6fbff;
+  --blog-warm-pale: #fff7ef;
+  --blog-rose-soft: #f4b5aa;
+  --blog-rose-pale: #ffe5df;
+  --blog-mint-pale: #eaf8f0;
+  --blog-mint: #6fc59a;
+  --blog-white: #ffffff;
+  --blog-text: #1b3f5c;
+  --blog-muted: #5b748a;
+  --blog-soft: #6f8ea8;
+  --blog-border: rgba(153, 204, 255, .44);
+  --blog-shadow: 0 16px 42px rgba(45, 111, 148, .11);
+  --blog-shadow-soft: 0 8px 22px rgba(45, 111, 148, .08);
+  --blog-radius: 18px;
+  --blog-radius-lg: 28px;
+  --blog-max: 1120px;
+  min-height: 100vh;
+  padding: 112px 0 64px;
+  color: var(--blog-text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 229, 223, .58), transparent 34rem),
+    linear-gradient(180deg, var(--blog-white) 0%, var(--blog-blue-pale) 48%, var(--blog-white) 100%);
+  line-height: 1.65;
+}
+
+.blog-index-page .blog-panel {
+  margin-top: 18px;
+}
+
+.blog-index-page .blog-grid {
+  margin-top: 18px;
+}
+
+.blog-index-page .blog-empty.blog-show {
+  display: block;
+}
+
+.blog-article-page .blog-post-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blog-content-card + .blog-content-card,
+.blog-content-card + .blog-product-callout,
+.blog-product-callout + .blog-content-card,
+.blog-related + .blog-cta {
+  margin-top: 18px;
+}
+
+.blog-content-card h3 {
+  margin: 18px 0 8px;
+  color: var(--blog-text);
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.blog-content-card p:last-child {
+  margin-bottom: 0;
+}
+
+.blog-content-card a,
+.blog-product-callout a {
+  color: var(--blog-blue-deep);
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.blog-content-card a:hover,
+.blog-product-callout a:hover {
+  color: #245978;
+}
+
+.blog-list strong {
+  color: var(--blog-text);
+}
+
+.blog-related {
+  padding: 18px;
+}
+
+@media (max-width: 768px) {
+  .blog-index-page,
+  .blog-article-page {
+    padding-top: 96px;
+  }
+}
