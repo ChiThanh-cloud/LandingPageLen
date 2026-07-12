@@ -10,5 +10,7 @@ out
 .vercel
 *.tsbuildinfo
 .env*
+!.env.example
 *.log
 *.tmp
+manifests/

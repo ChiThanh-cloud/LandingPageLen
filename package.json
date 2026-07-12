@@ -7,7 +7,9 @@
     "lint": "eslint .",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "cloudinary:blog-assets": "tsx scripts/cloudinary-blog-assets.ts",
+    "cloudinary:blog-rollback": "tsx scripts/cloudinary-blog-rollback.ts"
   },
   "dependencies": {
     "next": "16.2.10",
@@ -18,8 +20,11 @@
     "@types/node": "26.1.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "cloudinary": "^2.10.0",
+    "dotenv": "^17.4.2",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.10",
+    "tsx": "^4.23.0",
     "typescript": "5.9.3"
   }
 }

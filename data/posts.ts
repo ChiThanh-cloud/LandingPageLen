@@ -22,7 +22,7 @@ export const posts: BlogPost[] = [
       "Một món quà nhỏ bằng len có thể mang theo rất nhiều sự tỉ mỉ, dịu dàng và cảm giác được làm riêng cho người nhận.",
     excerpt:
       "Một bài mở đầu nhẹ nhàng về giá trị của đồ len handmade và cảm giác ấm áp khi tặng quà làm bằng tay.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_1_yviiqk.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/vi-sao-qua-len-handmade-duoc-yeu-thich/cover.png",
     imageAlt: "Đồ len handmade dễ thương dùng làm quà tặng",
     sections: [
       {
@@ -39,7 +39,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "image",
-        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/4A3AD8AF-5DE8-4134-960F-9D080123E1B7_xseyvg.png",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/vi-sao-qua-len-handmade-duoc-yeu-thich/image-01.png",
         alt: "Đồ handmade được làm riêng thật tỉ mỉ"
       },
       {
@@ -185,10 +185,8 @@ export const posts: BlogPost[] = [
       "Chọn đúng len và đúng kim móc sẽ giúp buổi học đầu tiên nhẹ nhàng hơn, mũi móc dễ nhìn hơn và thành phẩm ra form xinh hơn.",
     excerpt:
       "Giải thích milk cotton, len nhung, cotton, acrylic và cách chọn kim móc theo từng sản phẩm.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_2_l0nwdy.png?v=1",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao/cover.png?v=1",
     imageAlt: "Các cuộn len nhiều màu cho người mới học móc",
-    ogImage:
-      "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,c_fill,w_800,h_1000/v1783440313/ok1ydpmrflcgekwgsyye.png",
     sections: [
       {
         type: "paragraphs",
@@ -204,7 +202,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "image",
-        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/DEB01327-5113-4043-9C5E-44C2261A5B87_wybxnj.png",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao/image-01.png",
         alt: "Người mới bắt đầu học móc len"
       },
       {
@@ -253,7 +251,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "image",
-        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/AA453E42-8CD3-43DC-BFB6-B9CC78D797D6_roglwi.png",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao/image-02.png",
         alt: "Các loại len cơ bản để học móc"
       },
       {
@@ -355,7 +353,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "image",
-        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/tiny-products/fg2yrufsqutvey68brj3.png",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao/image-03.png",
         alt: "Móc những mũi len cơ bản đầu tiên"
       },
       {
@@ -398,9 +396,8 @@ export const posts: BlogPost[] = [
       "Một bé thú len custom cần thời gian để xem ảnh, chọn màu, lên form, móc từng chi tiết và chỉnh lại cho giống tinh thần của mẫu nhất có thể.",
     excerpt:
       "Giải thích quy trình custom thú len theo ảnh và những yếu tố ảnh hưởng đến thời gian hoàn thiện.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_3_anzlnv.png?v=1",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/cover.png?v=1",
     imageAlt: "Quà handmade bằng len đặt móc theo yêu cầu",
-    ogImage: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783440185/dlpge3elo1s9nsr1kndl.png",
     sections: [
       {
         type: "paragraphs",
@@ -416,7 +413,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "image",
-        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/70CA70C8-3C04-44DA-B984-FB3B958880A6_w1rej5.png",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/image-01.png",
         alt: "Nhận móc thú len theo ảnh custom"
       },
       {
@@ -459,7 +456,7 @@ export const posts: BlogPost[] = [
       },
       {
         type: "image",
-        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/7F448BB5-3BEE-4655-BE95-FE23AB5CCFB2_ytmak7.png",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/image-02.png",
         alt: "Sản phẩm thú len custom hoàn thiện"
       },
       {
@@ -583,10 +580,8 @@ export const posts: BlogPost[] = [
     lead: "Thú len handmade sẽ ở bên bạn lâu hơn nếu được giữ sạch, tránh ẩm, tránh nắng gắt và được nâng niu đúng cách.",
     excerpt:
       "Mẹo giữ thú len sạch, tránh bụi ẩm, nắng gắt và không bị mất form sau thời gian sử dụng.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_23_PM_vtorpu.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/cach-bao-quan-thu-len-handmade-de-luon-dep/cover.png",
     imageAlt: "Thú len handmade cần được bảo quản nhẹ nhàng",
-    ogImage:
-      "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,c_fill,w_800,h_1000/v1783440196/vs0ops3weoutiuklmoap.png",
     sections: [
       {
         type: "paragraphs",
