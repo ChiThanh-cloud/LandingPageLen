@@ -25,6 +25,14 @@ const nextConfig = {
         statusCode: 301
       }
     ];
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      }
+    ]
   }
 };
 
