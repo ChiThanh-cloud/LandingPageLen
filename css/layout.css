@@ -314,12 +314,10 @@
 
 .zalo-float {
   background: linear-gradient(135deg, #0068ff, #339dff);
-  animation: zalo-shake 3s infinite ease-in-out, pulse-zalo 2s infinite;
 }
 
 .fb-float {
   background: linear-gradient(135deg, #1877f2, #42a5f5);
-  animation: pulse-fb 2s infinite 1s; /* Bắt đầu trễ 1 giây để so le với Zalo */
 }
 
 .top-float {
@@ -344,34 +342,66 @@
 }
 
 @media (max-width: 768px) {
+  .float-buttons {
+    right: 16px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    gap: 0;
+  }
+
+  .zalo-float,
+  .fb-float {
+    display: none;
+  }
+
+  .top-float {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(36, 67, 74, .92);
+    box-shadow: 0 10px 24px rgba(36, 67, 74, .2);
+  }
+
+  .top-float svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .float-btn:hover {
+    transform: none;
+  }
+
   .mobile-cta-bar {
     position: fixed;
     left: 14px;
     right: 14px;
-    bottom: max(14px, env(safe-area-inset-bottom));
+    bottom: max(12px, env(safe-area-inset-bottom));
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 54px;
-    padding: 14px 18px;
+    padding: 13px 18px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #F97316, #EA580C);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
     color: var(--white);
+    font-size: .96rem;
     font-weight: 800;
-    box-shadow: 0 14px 32px rgba(234, 88, 12, .28);
+    box-shadow: 0 12px 30px rgba(53, 107, 120, .28);
     transform: translateY(0);
     opacity: 1;
     transition: var(--transition);
   }
 
-  .mobile-cta-bar.is-hidden {
+  .mobile-cta-bar.is-hidden,
+  body.menu-open .mobile-cta-bar,
+  body.product-modal-open .mobile-cta-bar {
     opacity: 0;
     pointer-events: none;
     transform: translateY(16px);
   }
 
   body {
-    padding-bottom: 74px;
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
   }
 }

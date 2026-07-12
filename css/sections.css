@@ -3,7 +3,7 @@
    ============================================= */
 .hero {
   position: relative;
-  min-height: 96vh;
+  min-height: 96svh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,7 +27,7 @@
   display: none;
   position: absolute;
   inset: 0;
-  background-image: url('../images/hero_mobile_optimized_768.jpg');
+  background-image: url('/images/hero_mobile_optimized_768.jpg');
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -38,8 +38,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(22, 59, 82, .82) 0%, rgba(45, 111, 148, .58) 48%, rgba(232, 111, 131, .24) 100%),
-    linear-gradient(180deg, rgba(22, 59, 82, .12) 0%, rgba(22, 59, 82, .58) 100%);
+    linear-gradient(90deg, rgba(36, 67, 74, .84) 0%, rgba(53, 107, 120, .62) 48%, rgba(169, 206, 211, .25) 100%),
+    linear-gradient(180deg, rgba(36, 67, 74, .12) 0%, rgba(36, 67, 74, .58) 100%);
 }
 
 .hero-content {
@@ -127,12 +127,12 @@
 }
 
 .hero .btn-primary {
-  background: linear-gradient(135deg, #F97316, #EA580C);
-  box-shadow: 0 12px 30px rgba(249, 115, 22, .35);
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+  box-shadow: 0 12px 30px rgba(53, 107, 120, .32);
 }
 
 .hero .btn-primary:hover {
-  box-shadow: 0 16px 36px rgba(249, 115, 22, .45);
+  box-shadow: 0 16px 36px rgba(53, 107, 120, .4);
 }
 
 .hero-microcopy {

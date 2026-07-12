@@ -1,4 +1,14 @@
 .DS_Store
-.agent
+
+.agent/
+__pycache__/
 product-color-extractor.html
 supabase
+node_modules
+.next
+out
+.vercel
+*.tsbuildinfo
+.env*
+*.log
+*.tmp
