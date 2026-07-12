@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-Disallow: /admin.html
-Disallow: /tools/
-
-Sitemap: https://lentiny.xyz/sitemap.xml

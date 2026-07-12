@@ -1,90 +1,98 @@
-# Production Cleanup Proposal
+# Production Cleanup Record
 
 Date: 2026-07-12
-Branch: migration/nextjs
+Branch: main
 
-This file is a non-destructive cleanup proposal. Nothing below was deleted.
+This document records what was removed from the repository after the Next.js migration and what must remain for the production app.
 
-## Keep For Production Next.js
+## Current Production Shape
 
-- `app/`
-- `components/`
-- `data/`
-- `types/`
-- `public/`
-- `css/`
-- `js/products.js`
-- `package.json`
-- `package-lock.json`
-- `next.config.mjs`
-- `tsconfig.json`
-- `eslint.config.mjs`
-- `next-env.d.ts`
+The public website is now the Next.js app:
 
-Notes:
+- `app/` - App Router routes, metadata, sitemap, robots.
+- `components/` - shared layout, homepage, blog, and product components.
+- `data/` - static product, blog, and site data.
+- `types/` - TypeScript content models.
+- `public/images/` - runtime image assets served at `/images/...`.
+- `public/admin.html`, `public/tools/`, `public/charts/`, `public/assets/`, `public/css/`, `public/js/` - internal static admin/chart/media tools served by Next.js public assets.
+- `css/` - global styles imported by `app/layout.tsx`.
+- `js/` - small legacy modules still used by React components.
+- `lib/` - shared tracking helper.
+- Admin/chart/media tools are still kept because they are still used, but they now live under `public/` so production can serve `/admin.html`, `/chart-admin.html`, `/tools/...`, `/charts/...`, and `/assets/...`.
 
-- `css/` is still imported by the Next.js app.
-- `js/products.js` is still used by the homepage product modal.
-- `public/images/` is the runtime image source for Next.js.
+## Removed From Git
 
-## Can Remove After Production Deploy Is Verified
-
-These are legacy static-site files and folders. Keep them until the Next.js production deployment, redirects, sitemap, and Search Console checks are confirmed.
+These were replaced by Next.js routes or duplicate production assets:
 
 - `index.html`
 - `blog.html`
 - `posts/`
 - `san-pham/`
-- `images/`
+- root `images/` duplicates
 - `sitemap.xml`
 - `robots.txt`
+- `js/analytics.js`
+- `js/blog.js`
+- `js/main.js`
+- `public/.gitkeep`
 
 Reason:
 
-- The Next.js app now owns `/`, `/blog`, `/blog/[slug]`, `/san-pham/[slug]`, `/sitemap.xml`, and `/robots.txt`.
-- Old `.html` URLs should remain protected by 301 redirects before legacy files are removed.
-- `images/` has been copied into `public/images/`, but keeping it temporarily preserves rollback safety.
+- `/`, `/blog`, `/blog/[slug]`, `/san-pham/[slug]`, `/sitemap.xml`, and `/robots.txt` are now owned by `app/`.
+- Duplicate root `images/` was removed because `public/images/` is the production asset source.
 
-## Should Split Or Archive Separately
+## Still Kept Because Production Uses Them
 
-These are admin/tooling files, not part of the public frontend migration.
-
-- `admin.html`
-- `admin.js`
-- `chart-admin.html`
-- `tools/`
-- `charts/`
-- `assets/`
-- `supabase/`
+- `css/base.css`
+- `css/layout.css`
+- `css/sections.css`
+- `css/animations.css`
+- `css/products.css`
+- `css/responsive.css`
+- `css/blog.css`
+- `js/config.js`
+- `js/policy-modal.js`
+- `js/products.js`
 - `js/supabase-client.js`
-- `js/chart-admin.js`
-- `js/chart-utils.js`
-- `js/media-upload.js`
-- `css/admin.css`
-- `css/chart.css`
-
-Recommendation:
-
-- Move them to a separate internal/admin project or archive branch after confirming whether they are still used.
-- Do not ship them as public production assets unless they are intentionally protected and maintained.
-
-## Safe Local Cleanup Candidate
-
-- `.agent/skills/ui-ux-pro-max/scripts/__pycache__/`
+- `public/admin.html`
+- `public/admin.js`
+- `public/chart-admin.html`
+- `public/tools/`
+- `public/charts/`
+- `public/assets/`
+- `public/css/admin.css`
+- `public/css/chart.css`
+- `public/js/chart-admin.js`
+- `public/js/chart-utils.js`
+- `public/js/media-upload.js`
 
 Reason:
 
-- Python bytecode cache generated while using the local UI skill.
-- Safe to delete, but it was left untouched because cleanup requires explicit approval.
+- CSS files are imported by `app/layout.tsx`.
+- `ProductShowcase` still imports `js/products.js`.
+- Product modal loading still depends on `js/config.js` and `js/supabase-client.js`.
+- Policy modal still depends on `js/policy-modal.js`.
+- Admin/chart/media tools are still used and are served as static public assets.
+- Tool pages reference `public/images/logo_160.png` through the production `/images/...` path shape.
 
-## Not Recommended To Delete Yet
+## Local-Only / Ignored
 
-- `docs/`
-- `.agent/`
-- `vercel.json`
+- `.agent/` is ignored because it is a local Codex/UI skill folder, not production source.
+- `supabase/` is ignored and remains local-only unless a future backend/admin workflow needs it.
+- `.DS_Store`, `*.tsbuildinfo`, `.next/`, `node_modules/`, `.vercel/`, `out/`, logs, temp files, and env files are ignored.
 
-Reason:
+## Next Cleanup Candidate
 
-- `docs/` records migration context.
-- `.agent/` contains the requested local UI skill.
-- `vercel.json` still documents existing security/header behavior and should only be changed after final deployment review.
+The remaining `js/` modules can be converted to React/TypeScript later:
+
+- `js/products.js` -> `components/home/ProductModal.tsx` plus typed data/client.
+- `js/policy-modal.js` -> fully controlled React modal.
+- `js/config.js` / `js/supabase-client.js` -> typed client module under `lib/`.
+
+Do this only after another visual and functional smoke test, because the product modal currently depends on these modules.
+
+Admin/tool hardening can be handled as a separate pass:
+
+- Add real authentication/protection in front of `/admin.html` and `/tools/...`, or
+- Move internal tools under protected Next.js routes, or
+- Move them to a separate internal repository/project when the workflow grows.

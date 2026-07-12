@@ -321,7 +321,22 @@
 }
 
 .top-float {
-  background: linear-gradient(135deg, var(--text-dark), var(--blue-deep));
+  background: rgba(156, 210, 228, 0.28);
+  border: 1.5px solid rgba(40, 88, 105, 0.25);
+  color: #285869;
+  backdrop-filter: blur(8px);
+}
+
+.top-float .float-label {
+  color: #285869;
+  text-shadow: none;
+}
+
+.top-float svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 1.8;
+  color: #285869;
 }
 
 .top-float.is-hidden {
@@ -358,13 +373,16 @@
     height: 44px;
     padding: 0;
     border-radius: 50%;
-    background: rgba(36, 67, 74, .92);
+    background: rgba(156, 210, 228, 0.92);
+    color: #285869;
+    border: 1.5px solid rgba(40, 88, 105, 0.3);
     box-shadow: 0 10px 24px rgba(36, 67, 74, .2);
   }
 
   .top-float svg {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
+    stroke-width: 1.8;
   }
 
   .float-btn:hover {

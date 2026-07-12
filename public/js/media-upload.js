@@ -95,12 +95,12 @@
     var urls = [
       {
         label: "Card blog 800x1000",
-        note: "Dán vào img src trong blog.html.",
+        note: "Dán vào image/card của data bài blog Next.js.",
         url: makeTransform(url, "f_auto,q_auto,c_fill,w_800,h_1000")
       },
       {
         label: "Hero bài viết 1200x900",
-        note: "Dán vào img src trong file posts/*.html.",
+        note: "Dán vào hero image của bài trong data/posts.ts.",
         url: makeTransform(url, "f_auto,q_auto,c_fill,w_1200,h_900")
       },
       {

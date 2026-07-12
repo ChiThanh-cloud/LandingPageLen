@@ -230,9 +230,9 @@
   function renderPublishGuide(chart) {
     if (!publishGuide) return;
 
-    var chartPath = "charts/" + chart.slug + ".json";
-    var blogPath = "posts/" + chart.slug + ".html";
-    var pdfPath = "assets/pdf/" + chart.slug + ".pdf";
+    var chartPath = "/charts/" + chart.slug + ".json";
+    var blogPath = "/blog/" + chart.slug;
+    var pdfPath = "/assets/pdf/" + chart.slug + ".pdf";
     var prettyTags = chart.tags.length ? chart.tags.join(", ") : "Chưa có tag";
     var indexEntry = {
       slug: chart.slug,
@@ -262,7 +262,7 @@
       '<li>Lưu file vào <code>' + escapeHtml(chartPath) + '</code> nếu cần giữ dữ liệu nguồn.</li>',
       '<li>Dùng dữ liệu này để viết bài blog tại <code>' + escapeHtml(blogPath) + '</code>.</li>',
       '<li>Mở <a href="chart-pdf-builder.html" target="_blank" rel="noopener">tool tạo PDF</a>, bấm <strong>Đồng bộ từ admin</strong>, xuất PDF rồi lưu vào <code>' + escapeHtml(pdfPath) + '</code>.</li>',
-      '<li>Trong bài blog, đặt nút PDF trỏ tới <code>../' + escapeHtml(pdfPath) + '</code>.</li>',
+      '<li>Trong bài blog, đặt nút PDF trỏ tới <code>' + escapeHtml(pdfPath) + '</code>.</li>',
       '</ol>',
       '</div>',
       '<div class="lt-index-card">',

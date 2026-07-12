@@ -147,23 +147,23 @@ const homeJsonLd = {
 };
 
 const trustItems = [
-  ["Nhận làm theo mẫu", "Gửi ảnh để tư vấn màu & size"],
-  ["Gửi ảnh kiểm tra", "Xem sản phẩm trước khi giao"],
-  ["Giao hàng toàn quốc", "Đóng gói kỹ, dễ làm quà tặng"],
-  ["Tư vấn miễn phí", "Hỗ trợ qua Zalo & Messenger"]
-];
+  ["Nhận làm theo mẫu", "Gửi ảnh để tư vấn màu & size", LucideIconImage],
+  ["Gửi ảnh kiểm tra", "Xem sản phẩm trước khi giao", LucideIconCameraCheck],
+  ["Giao hàng toàn quốc", "Đóng gói kỹ, dễ làm quà tặng", LucideIconTruck],
+  ["Tư vấn miễn phí", "Hỗ trợ qua Zalo & Messenger", LucideIconMessagesSquare]
+] as const;
 
 const processSteps = [
-  ["01", "Nhắn nhủ ý tưởng", "Kể Tiny nghe bạn muốn món đồ thế nào qua Zalo hoặc Facebook nhé."],
-  ["02", "Chốt màu & Dáng", "Tiny sẽ gửi bảng màu len, tư vấn cách phối màu sao cho xinh nhất."],
-  ["03", "Tỉ mỉ móc tay", "Tiny bắt tay vào làm và sẽ gửi ảnh cập nhật để bạn xem hình hài bé nó ra sao."],
-  ["04", "Giao tới tận tay", "Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!"]
-];
+  ["01", "Nhắn nhủ ý tưởng", "Kể Tiny nghe bạn muốn món đồ thế nào qua Zalo hoặc Facebook nhé.", LucideIconMessageCircleHeart],
+  ["02", "Chốt màu & Dáng", "Tiny sẽ gửi bảng màu len, tư vấn cách phối màu sao cho xinh nhất.", LucideIconPalette],
+  ["03", "Tỉ mỉ móc tay", "Tiny bắt tay vào làm và sẽ gửi ảnh cập nhật để bạn xem hình hài bé nó ra sao.", LucideIconYarnBall],
+  ["04", "Giao tới tận tay", "Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!", LucideIconPackageCheck]
+] as const;
 
 const blogCards = [
   {
     href: "/blog/vi-sao-qua-len-handmade-duoc-yeu-thich",
-    image: "/images/crochet_products_800.jpg",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_1_yviiqk.png",
     alt: "Đồ len handmade dễ thương dùng làm quà tặng",
     date: "2026-05-25",
     dateLabel: "25/05/2026",
@@ -172,7 +172,7 @@ const blogCards = [
   },
   {
     href: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
-    image: "/images/yarn_collection_800.jpg",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_4_e6h1c3.png",
     alt: "Các cuộn len nhiều màu cho người mới học móc",
     date: "2026-05-25",
     dateLabel: "25/05/2026",
@@ -181,7 +181,7 @@ const blogCards = [
   },
   {
     href: "/blog/moc-thu-len-theo-anh-mat-bao-lau",
-    image: "/images/gift_set_800.jpg",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_5_l0s07g.png",
     alt: "Quà handmade bằng len đặt móc theo yêu cầu",
     date: "2026-05-26",
     dateLabel: "26/05/2026",
@@ -198,10 +198,120 @@ function CheckIcon() {
   );
 }
 
-function SimpleIcon() {
+function LucideIconImage() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+      <circle cx="9" cy="9" r="2" />
+      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+    </svg>
+  );
+}
+
+function LucideIconCameraCheck() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" />
+      <circle cx="12" cy="13" r="3" />
+    </svg>
+  );
+}
+
+function LucideIconTruck() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+      <path d="M15 18H9" />
+      <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+      <circle cx="17" cy="18" r="2" />
+      <circle cx="7" cy="18" r="2" />
+    </svg>
+  );
+}
+
+function LucideIconMessagesSquare() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+      <path d="M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1" />
+    </svg>
+  );
+}
+
+function LucideIconMessageCircleHeart() {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+      <path d="M7.828 13.07A3 3 0 0 1 12 8.764a3 3 0 0 1 5.004 2.224 3 3 0 0 1-.832 2.083l-3.447 3.62a1 1 0 0 1-1.45-.001z" />
+    </svg>
+  );
+}
+
+function LucideIconPalette() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" />
+      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function LucideIconYarnBall() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="8" />
+      <path d="M4.7 9.2c4.2-.7 8.8 1.1 12.4 5" />
+      <path d="M7.2 5.9c4.6 1.1 7.9 4.2 9.9 9.2" />
+      <path d="M6.8 17.7c1.5-4.4 4.7-7.8 9.7-10.1" />
+    </svg>
+  );
+}
+
+function LucideIconPackageCheck() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 22V12" />
+      <path d="m16 17 2 2 4-4" />
+      <path d="M21 11.127V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.32-.753" />
+      <path d="M3.29 7 12 12l8.71-5" />
+      <path d="m7.5 4.27 8.997 5.148" />
+    </svg>
+  );
+}
+
+function LucideIconPhone() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" />
+    </svg>
+  );
+}
+
+function LucideIconMapPin() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function LucideIconClock() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </svg>
+  );
+}
+
+function MessengerBrandIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32" aria-hidden="true">
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
     </svg>
   );
 }
@@ -222,7 +332,7 @@ export default function HomePage() {
         </div>
         <div className="hero-content">
           <p className="hero-badge">
-            <SimpleIcon />
+            <LucideIconClock />
             Nhận đặt theo yêu cầu qua Zalo &amp; Messenger
           </p>
           <h1 className="hero-title">
@@ -253,9 +363,9 @@ export default function HomePage() {
 
       <section className="trust-bar">
         <div className="container trust-grid">
-          {trustItems.map(([title, desc]) => (
+          {trustItems.map(([title, desc, IconComponent]) => (
             <div className="trust-item" key={title}>
-              <span className="trust-icon"><SimpleIcon /></span>
+              <span className="trust-icon"><IconComponent /></span>
               <div>
                 <strong>{title}</strong>
                 <p>{desc}</p>
@@ -303,11 +413,11 @@ export default function HomePage() {
           <p className="section-tag center">Cách thức đặt hàng</p>
           <h2 className="section-title center">Hành trình làm ra <span className="highlight">món quà của bạn</span></h2>
           <div className="process-steps">
-            {processSteps.map(([num, title, desc], index) => (
+            {processSteps.map(([num, title, desc, IconComponent], index) => (
               <Fragment key={num}>
                 <div className="step">
                   <div className="step-num">{num}</div>
-                  <div className="step-icon" aria-hidden="true"><SimpleIcon /></div>
+                  <div className="step-icon" aria-hidden="true"><IconComponent /></div>
                   <h3>{title}</h3>
                   <p>{desc}</p>
                 </div>
@@ -373,7 +483,7 @@ export default function HomePage() {
           <p className="section-sub center">Gửi ảnh mẫu hoặc mô tả món bạn muốn, Tiny sẽ tư vấn màu len và báo giá trước khi làm.</p>
           <div className="contact-cards">
             <a href="https://m.me/61559447375156" target="_blank" rel="noopener" className="contact-card" id="contact-fb" data-track="contact_facebook_click">
-              <div className="contact-card-icon fb-icon"><SimpleIcon /></div>
+              <div className="contact-card-icon fb-icon"><MessengerBrandIcon /></div>
               <div className="contact-card-info">
                 <strong>Messenger</strong>
                 <span>Nhắn tin trực tiếp qua Messenger</span>
@@ -396,11 +506,13 @@ export default function HomePage() {
               <span className="contact-arrow">→</span>
             </a>
           </div>
+          <div className="contact-phone">
+            <span className="contact-info-icon" aria-hidden="true"><LucideIconPhone /></span>
+            <span className="phone-label">Điện thoại / Zalo:</span>
+            <p><a href="https://zalo.me/0368903519" target="_blank" rel="noopener" style={{ color: "inherit", textDecoration: "none" }}>036.890.3519</a></p>
+          </div>
           <div className="contact-address">
-            <svg className="address-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 0 1 16 0Z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
+            <span className="address-icon" aria-hidden="true"><LucideIconMapPin /></span>
             <p>853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh</p>
           </div>
           <p className="contact-map-link">
@@ -409,7 +521,8 @@ export default function HomePage() {
             </a>
           </p>
           <div className="contact-hours">
-            <span className="hours-label">Giờ mở cửa</span>
+            <span className="contact-info-icon" aria-hidden="true"><LucideIconClock /></span>
+            <span className="hours-label">Giờ mở cửa:</span>
             <p>08:00 - 21:00, mỗi ngày</p>
           </div>
           <div className="map-container">
