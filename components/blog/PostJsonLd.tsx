@@ -46,17 +46,7 @@ export function PostJsonLd({ post }: { post: BlogPost }) {
           "@type": "Organization",
           name: post.author
         },
-        publisher: {
-          "@type": "LocalBusiness",
-          "@id": `${siteConfig.url}/#business`,
-          name: siteConfig.name,
-          url: siteConfig.url,
-          logo: {
-            "@type": "ImageObject",
-            url: `${siteConfig.url}/images/logo.png`
-          },
-          telephone: siteConfig.phone
-        },
+        publisher: { "@id": `${siteConfig.url}/#business` },
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": url

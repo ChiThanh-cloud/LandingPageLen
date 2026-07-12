@@ -111,7 +111,7 @@ export function BlogIndex({ posts }: BlogIndexProps) {
               </Link>
               <div className="blog-card-body">
                 <div className="blog-card-meta">
-                  {post.category} - {formatDate(post.publishedAt)}
+                  {post.category} - <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
                 </div>
                 <h2 className="blog-card-title">
                   <Link href={`/blog/${post.slug}`}>{post.h1}</Link>

@@ -8,9 +8,12 @@ export const siteConfig = {
   phoneDisplay: "0368.903.519",
   phoneDisplayDotted: "036.890.3519",
   address: "853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh",
-  businessHours: "9:00 - 21:00 hằng ngày",
+  businessHours: "09:00 - 21:00 hằng ngày",
+  businessHoursOpens: "09:00",
+  businessHoursCloses: "21:00",
   messengerUrl: "https://m.me/61559447375156",
   zaloUrl: "https://zalo.me/0368903519",
   gaId: "G-C27736KHYT",
-  clarityId: "wqieag9yv3"
+  clarityId: "wqieag9yv3",
+  updatedAt: "2026-07-13"
 } as const;

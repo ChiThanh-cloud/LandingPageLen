@@ -1,7 +1,6 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
+import Image from "next/image";
 import Link from "next/link";
 import type { KeyboardEvent } from "react";
 import { useEffect } from "react";
@@ -155,7 +154,7 @@ export function ProductShowcase() {
             onKeyDown={(event) => handleCardKeyDown(event, product.type)}
           >
             <div className="product-img-wrap">
-              <img src={product.image} alt={product.imageAlt} width="800" height="600" loading="lazy" decoding="async" />
+              <Image src={product.image} alt={product.imageAlt} width={800} height={600} sizes="(max-width: 768px) 100vw, 50vw" />
               <div className={["product-tag", product.tagClassName].filter(Boolean).join(" ")}>{product.tag}</div>
             </div>
             <div className="product-info">

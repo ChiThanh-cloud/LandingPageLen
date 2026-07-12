@@ -19,6 +19,14 @@ function absoluteImage(path: string) {
   return `${siteConfig.url}${path}`;
 }
 
+function getOgImage(path: string) {
+  const url = absoluteImage(path);
+  if (url.includes("res.cloudinary.com")) {
+    return url.replace("/image/upload/", "/image/upload/c_fill,w_1200,h_630,g_auto/");
+  }
+  return url;
+}
+
 export function generateStaticParams() {
   return posts.map((post) => ({
     slug: post.slug
@@ -34,7 +42,7 @@ export async function generateMetadata({ params }: BlogPostRouteProps): Promise<
   }
 
   const canonical = postUrl(post.slug);
-  const image = absoluteImage(post.ogImage || post.image);
+  const image = getOgImage(post.ogImage || post.image);
 
   return {
     title: {
@@ -58,8 +66,8 @@ export async function generateMetadata({ params }: BlogPostRouteProps): Promise<
       images: [
         {
           url: image,
-          width: 800,
-          height: 1000,
+          width: 1200,
+          height: 630,
           alt: post.imageAlt
         }
       ]

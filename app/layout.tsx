@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Be_Vietnam_Pro, Playfair_Display } from "next/font/google";
+import { siteConfig } from "@/data/site";
 import "../css/base.css";
 import "../css/layout.css";
 import "../css/sections.css";
@@ -17,21 +19,46 @@ import { PolicyModalHost } from "@/components/layout/PolicyModalHost";
 import { SiteTracking } from "@/components/layout/SiteTracking";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Tiệm Len Nhà Tiny",
-    template: "%s | Tiệm Len Nhà Tiny"
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`
   },
   description: "Tiệm Len Nhà Tiny - len handmade, set tự móc và quà tặng thủ công.",
-  applicationName: "Tiệm Len Nhà Tiny",
+  applicationName: siteConfig.name,
   icons: {
     icon: "/images/favicon.png",
     shortcut: "/images/favicon.png",
     apple: "/images/logo.png"
   },
   openGraph: {
-    siteName: "Tiệm Len Nhà Tiny"
+    siteName: siteConfig.name,
+    type: "website",
+    locale: siteConfig.locale
+  },
+  twitter: {
+    card: "summary_large_image"
+  },
+  robots: {
+    index: true,
+    follow: true
   }
 };
+
+const playfair = Playfair_Display({
+  subsets: ["vietnamese"],
+  weight: ["400", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-playfair"
+});
+
+const beVietnam = Be_Vietnam_Pro({
+  subsets: ["vietnamese"],
+  weight: ["300", "400", "500", "600"],
+  display: "swap",
+  variable: "--font-be-vietnam"
+});
 
 export default function RootLayout({
   children
@@ -39,14 +66,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi" data-scroll-behavior="smooth">
+    <html lang="vi" data-scroll-behavior="smooth" className={`${playfair.variable} ${beVietnam.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Be+Vietnam+Pro:wght@300;400;500;600&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>
         <SiteTracking />

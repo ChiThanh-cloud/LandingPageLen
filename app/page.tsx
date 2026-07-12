@@ -1,16 +1,16 @@
-/* eslint-disable @next/next/no-img-element */
-
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 import { HomepageEffects } from "@/components/home/HomepageEffects";
 import { ProductShowcase } from "@/components/home/ProductShowcase";
+import { posts } from "@/data/posts";
+import { siteConfig } from "@/data/site";
 
 const messengerConsultUrl =
   "https://m.me/61559447375156?text=Ch%C3%A0o%20Tiny%2C%20m%C3%ACnh%20mu%E1%BB%91n%20t%C6%B0%20v%E1%BA%A5n%20%C4%91%E1%BA%B7t%20len%2F%C4%91%E1%BB%93%20m%C3%B3c%20handmade.%20M%C3%ACnh%20c%C3%B3%20th%E1%BB%83%20g%E1%BB%ADi%20%E1%BA%A3nh%20m%E1%BA%ABu%20%C4%91%E1%BB%83%20Tiny%20b%C3%A1o%20gi%C3%A1%20gi%C3%BAp%20m%C3%ACnh%20kh%C3%B4ng%3F";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lentiny.xyz"),
   title: "Tiệm Len Nhà Tiny | Shop len handmade, set tự móc & quà tặng tại TP.HCM",
   description:
     "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, nhận tư vấn cuộn len, set tự móc, đồ móc theo yêu cầu và quà tặng handmade. Nhắn Messenger để được Tiny tư vấn mẫu, màu len và báo giá nhanh.",
@@ -47,14 +47,15 @@ const homeJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "LocalBusiness",
-      "@id": "https://lentiny.xyz/#business",
-      name: "Tiệm Len Nhà Tiny",
-      url: "https://lentiny.xyz/",
-      logo: "https://lentiny.xyz/images/logo.png",
-      image: "https://lentiny.xyz/images/og-image.jpg",
+      "@type": ["Store", "LocalBusiness"],
+      "@id": `${siteConfig.url}/#business`,
+      name: siteConfig.name,
+      alternateName: siteConfig.shortName,
+      url: `${siteConfig.url}/`,
+      logo: `${siteConfig.url}/images/logo.png`,
+      image: `${siteConfig.url}/images/og-image.jpg`,
       description:
-        "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, chuyên cuộn len, phụ kiện đan móc, đồ móc handmade theo yêu cầu, set tự móc và quà tặng handmade.",
+        "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, chuyên bán cuộn len, phụ kiện đan móc, đồ móc handmade theo yêu cầu, set tự móc và quà tặng handmade.",
       telephone: "+84368903519",
       priceRange: "8000 VND - 500000 VND",
       address: {
@@ -68,42 +69,26 @@ const homeJsonLd = {
         {
           "@type": "OpeningHoursSpecification",
           dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-          opens: "08:00",
-          closes: "21:00"
+          opens: siteConfig.businessHoursOpens,
+          closes: siteConfig.businessHoursCloses
         }
       ],
-      sameAs: ["https://m.me/61559447375156", "https://zalo.me/0368903519"],
+      sameAs: [siteConfig.messengerUrl, siteConfig.zaloUrl],
       contactPoint: {
         "@type": "ContactPoint",
         contactType: "customer support",
         telephone: "+84368903519",
         availableLanguage: "Vietnamese",
-        url: "https://m.me/61559447375156"
+        url: siteConfig.messengerUrl
       }
     },
     {
       "@type": "WebSite",
-      "@id": "https://lentiny.xyz/#website",
-      url: "https://lentiny.xyz/",
-      name: "Tiệm Len Nhà Tiny",
-      publisher: { "@id": "https://lentiny.xyz/#business" },
-      inLanguage: "vi-VN"
-    },
-    {
-      "@type": "Store",
-      "@id": "https://lentiny.xyz/#store",
-      name: "Tiệm Len Nhà Tiny",
-      alternateName: "Len Tiny",
-      description:
-        "Tiệm Len Nhà Tiny là shop len handmade chuyên bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng handmade.",
-      url: "https://lentiny.xyz/",
-      areaServed: "VN",
-      contactPoint: {
-        "@type": "ContactPoint",
-        contactType: "customer support",
-        availableLanguage: "Vietnamese"
-      },
-      sameAs: ["https://m.me/61559447375156", "https://zalo.me/0368903519"]
+      "@id": `${siteConfig.url}/#website`,
+      url: `${siteConfig.url}/`,
+      name: siteConfig.name,
+      publisher: { "@id": `${siteConfig.url}/#business` },
+      inLanguage: siteConfig.language
     },
     {
       "@type": "FAQPage",
@@ -160,35 +145,9 @@ const processSteps = [
   ["04", "Giao tới tận tay", "Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!", LucideIconPackageCheck]
 ] as const;
 
-const blogCards = [
-  {
-    href: "/blog/vi-sao-qua-len-handmade-duoc-yeu-thich",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_1_yviiqk.png",
-    alt: "Đồ len handmade dễ thương dùng làm quà tặng",
-    date: "2026-05-25",
-    dateLabel: "25/05/2026",
-    title: "Vì sao quà len handmade được yêu thích?",
-    desc: "Gợi ý lý do món quà bằng len luôn có cảm giác riêng và dễ thương."
-  },
-  {
-    href: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_2_l0nwdy.png?v=1",
-    alt: "Các cuộn len nhiều màu cho người mới học móc",
-    date: "2026-05-25",
-    dateLabel: "25/05/2026",
-    title: "Người mới học móc len nên chọn loại len nào?",
-    desc: "So sánh milk cotton, len nhung, cotton và acrylic cho người mới."
-  },
-  {
-    href: "/blog/moc-thu-len-theo-anh-mat-bao-lau",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_3_anzlnv.png?v=1",
-    alt: "Quà handmade bằng len đặt móc theo yêu cầu",
-    date: "2026-05-26",
-    dateLabel: "26/05/2026",
-    title: "Móc thú len theo ảnh mất bao lâu?",
-    desc: "Các yếu tố ảnh hưởng tới thời gian làm thú len custom theo ảnh."
-  }
-];
+const latestPosts = [...posts]
+  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+  .slice(0, 3);
 
 function CheckIcon() {
   return (
@@ -371,7 +330,7 @@ export default function HomePage() {
       <section className="about section" id="ve-tiny">
         <div className="container about-grid">
           <div className="about-img-wrap">
-            <img src="/images/yarn_hero_800.jpg" alt="Không gian Tiệm Len Nhà Tiny với len sợi và đồ móc handmade tại TP.HCM" className="about-img" width="800" height="600" loading="lazy" decoding="async" />
+            <Image src="/images/yarn_hero_800.jpg" alt="Không gian Tiệm Len Nhà Tiny với len sợi và đồ móc handmade tại TP.HCM" className="about-img" width={800} height={600} sizes="(max-width: 768px) 100vw, 50vw" />
             <div className="about-badge-card">
               <span className="badge-num">100+</span>
               <span className="badge-label">Khách hàng hài lòng</span>
@@ -432,7 +391,7 @@ export default function HomePage() {
               ["/images/feedback_3_700.jpg", "Feedback khách hàng sau khi nhận set quà handmade từ Tiệm Len Nhà Tiny", "Set quà handmade", "Gói quà chỉn chu, gửi ảnh trước khi giao"]
             ].map(([src, alt, meta, text], index) => (
               <figure className={`review-card feedback-card${index === 1 ? " featured-review" : ""}`} key={src}>
-                <img src={src} alt={alt} width="700" height="560" loading="lazy" decoding="async" />
+                <Image src={src} alt={alt} width={700} height={560} sizes="(max-width: 768px) 100vw, 33vw" />
                 <figcaption>
                   <span className="review-meta">{meta}</span>
                   <strong>{text}</strong>
@@ -449,19 +408,24 @@ export default function HomePage() {
           <h2 className="section-title center">Blog nổi bật từ <span className="highlight">LenTiny</span></h2>
           <p className="section-sub center">Một vài bài nhẹ nhàng giúp bạn chọn quà, chọn len và chăm món đồ handmade lâu đẹp hơn.</p>
           <div className="home-blog-grid">
-            {blogCards.map((post) => (
-              <article className="home-blog-card" key={post.href}>
-                <Link className="home-blog-media" href={post.href}>
-                  <img src={post.image} alt={post.alt} width="800" height="600" loading="lazy" decoding="async" />
-                </Link>
-                <div className="home-blog-body">
-                  <p className="home-blog-meta"><time dateTime={post.date}>{post.dateLabel}</time></p>
-                  <h3><Link href={post.href}>{post.title}</Link></h3>
-                  <p>{post.desc}</p>
-                  <Link className="home-blog-link" href={post.href}>Đọc bài →</Link>
-                </div>
-              </article>
-            ))}
+            {latestPosts.map((post) => {
+              const href = `/blog/${post.slug}`;
+              const d = new Date(post.publishedAt);
+              const dateLabel = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}/${d.getFullYear()}`;
+              return (
+                <article className="home-blog-card" key={href}>
+                  <Link className="home-blog-media" href={href}>
+                    <Image src={post.image} alt={post.imageAlt || post.title} width={800} height={600} sizes="(max-width: 768px) 100vw, 33vw" />
+                  </Link>
+                  <div className="home-blog-body">
+                    <p className="home-blog-meta"><time dateTime={post.publishedAt}>{dateLabel}</time></p>
+                    <h3><Link href={href}>{post.title}</Link></h3>
+                    <p>{post.excerpt || post.description}</p>
+                    <Link className="home-blog-link" href={href}>Đọc bài →</Link>
+                  </div>
+                </article>
+              );
+            })}
           </div>
           <div className="home-blog-actions">
             <Link href="/blog" className="btn btn-primary">Xem tất cả bài viết</Link>
@@ -511,7 +475,7 @@ export default function HomePage() {
           <div className="contact-hours">
             <span className="contact-info-icon" aria-hidden="true"><LucideIconClock /></span>
             <span className="hours-label">Giờ mở cửa:</span>
-            <p>08:00 - 21:00, mỗi ngày</p>
+            <p>{siteConfig.businessHours}</p>
           </div>
           <div className="map-container">
             <iframe

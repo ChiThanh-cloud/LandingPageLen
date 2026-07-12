@@ -14,13 +14,7 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
     name: product.title,
     description: product.description,
     url,
-    publisher: {
-      "@type": "LocalBusiness",
-      "@id": `${siteConfig.url}/#business`,
-      name: siteConfig.name,
-      telephone: siteConfig.phone,
-      address: siteConfig.address
-    }
+    publisher: { "@id": `${siteConfig.url}/#business` }
   };
 
   const offerableNode =
@@ -66,19 +60,23 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
       },
       pageNode,
       offerableNode,
-      {
-        "@type": "FAQPage",
-        mainEntity: product.faq.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer
-          }
-        }))
-      }
     ]
   };
+
+  if (product.faq && product.faq.length > 0) {
+    jsonLd["@graph"].push({
+      "@type": "FAQPage",
+      // @ts-expect-error - mainEntity expects Question[]
+      mainEntity: product.faq.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.answer
+        }
+      }))
+    });
+  }
 
   return (
     <script

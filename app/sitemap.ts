@@ -9,7 +9,7 @@ function absoluteUrl(path: string) {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseLastModified = "2026-07-12";
+  const baseLastModified = siteConfig.updatedAt || "2026-07-12";
 
   return [
     {
