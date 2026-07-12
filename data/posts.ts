@@ -22,7 +22,7 @@ export const posts: BlogPost[] = [
       "Một món quà nhỏ bằng len có thể mang theo rất nhiều sự tỉ mỉ, dịu dàng và cảm giác được làm riêng cho người nhận.",
     excerpt:
       "Một bài mở đầu nhẹ nhàng về giá trị của đồ len handmade và cảm giác ấm áp khi tặng quà làm bằng tay.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783864354/ChatGPT_Image_Jul_12_2026_08_51_18_PM_1_yviiqk.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_1_yviiqk.png",
     imageAlt: "Đồ len handmade dễ thương dùng làm quà tặng",
     sections: [
       {
@@ -180,7 +180,7 @@ export const posts: BlogPost[] = [
       "Chọn đúng len và đúng kim móc sẽ giúp buổi học đầu tiên nhẹ nhàng hơn, mũi móc dễ nhìn hơn và thành phẩm ra form xinh hơn.",
     excerpt:
       "Giải thích milk cotton, len nhung, cotton, acrylic và cách chọn kim móc theo từng sản phẩm.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783864355/ChatGPT_Image_Jul_12_2026_08_51_18_PM_4_e6h1c3.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_2_l0nwdy.png",
     imageAlt: "Các cuộn len nhiều màu cho người mới học móc",
     ogImage:
       "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,c_fill,w_800,h_1000/v1783440313/ok1ydpmrflcgekwgsyye.png",
@@ -378,7 +378,7 @@ export const posts: BlogPost[] = [
       "Một bé thú len custom cần thời gian để xem ảnh, chọn màu, lên form, móc từng chi tiết và chỉnh lại cho giống tinh thần của mẫu nhất có thể.",
     excerpt:
       "Giải thích quy trình custom thú len theo ảnh và những yếu tố ảnh hưởng đến thời gian hoàn thiện.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783864355/ChatGPT_Image_Jul_12_2026_08_51_18_PM_5_l0s07g.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_3_anzlnv.png",
     imageAlt: "Quà handmade bằng len đặt móc theo yêu cầu",
     ogImage: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783440185/dlpge3elo1s9nsr1kndl.png",
     sections: [
@@ -553,7 +553,7 @@ export const posts: BlogPost[] = [
     lead: "Thú len handmade sẽ ở bên bạn lâu hơn nếu được giữ sạch, tránh ẩm, tránh nắng gắt và được nâng niu đúng cách.",
     excerpt:
       "Mẹo giữ thú len sạch, tránh bụi ẩm, nắng gắt và không bị mất form sau thời gian sử dụng.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783864354/ChatGPT_Image_Jul_12_2026_08_51_18_PM_1_yviiqk.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_23_PM_vtorpu.png",
     imageAlt: "Thú len handmade cần được bảo quản nhẹ nhàng",
     ogImage:
       "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,c_fill,w_800,h_1000/v1783440196/vs0ops3weoutiuklmoap.png",

@@ -172,7 +172,7 @@ const blogCards = [
   },
   {
     href: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_4_e6h1c3.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_2_l0nwdy.png",
     alt: "Các cuộn len nhiều màu cho người mới học móc",
     date: "2026-05-25",
     dateLabel: "25/05/2026",
@@ -181,7 +181,7 @@ const blogCards = [
   },
   {
     href: "/blog/moc-thu-len-theo-anh-mat-bao-lau",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_5_l0s07g.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_3_anzlnv.png",
     alt: "Quà handmade bằng len đặt móc theo yêu cầu",
     date: "2026-05-26",
     dateLabel: "26/05/2026",
