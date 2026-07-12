@@ -180,7 +180,7 @@ export const posts: BlogPost[] = [
       "Chọn đúng len và đúng kim móc sẽ giúp buổi học đầu tiên nhẹ nhàng hơn, mũi móc dễ nhìn hơn và thành phẩm ra form xinh hơn.",
     excerpt:
       "Giải thích milk cotton, len nhung, cotton, acrylic và cách chọn kim móc theo từng sản phẩm.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_2_l0nwdy.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_2_l0nwdy.png?v=1",
     imageAlt: "Các cuộn len nhiều màu cho người mới học móc",
     ogImage:
       "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,c_fill,w_800,h_1000/v1783440313/ok1ydpmrflcgekwgsyye.png",
@@ -378,7 +378,7 @@ export const posts: BlogPost[] = [
       "Một bé thú len custom cần thời gian để xem ảnh, chọn màu, lên form, móc từng chi tiết và chỉnh lại cho giống tinh thần của mẫu nhất có thể.",
     excerpt:
       "Giải thích quy trình custom thú len theo ảnh và những yếu tố ảnh hưởng đến thời gian hoàn thiện.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_3_anzlnv.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Jul_12_2026_08_51_18_PM_3_anzlnv.png?v=1",
     imageAlt: "Quà handmade bằng len đặt móc theo yêu cầu",
     ogImage: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1783440185/dlpge3elo1s9nsr1kndl.png",
     sections: [
