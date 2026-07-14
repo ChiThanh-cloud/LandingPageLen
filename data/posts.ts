@@ -22,7 +22,7 @@ export const posts: BlogPost[] = [
       "Một món quà nhỏ bằng len có thể mang theo rất nhiều sự tỉ mỉ, dịu dàng và cảm giác được làm riêng cho người nhận.",
     excerpt:
       "Một bài mở đầu nhẹ nhàng về giá trị của đồ len handmade và cảm giác ấm áp khi tặng quà làm bằng tay.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/vi-sao-qua-len-handmade-duoc-yeu-thich/cover.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/images/B7FE0C11-3AEE-4E71-B246-C91EE6914B50_knnama/vi-sao-qua-len-handmade-duoc-yeu-thich.png",
     imageAlt: "Đồ len handmade dễ thương dùng làm quà tặng",
     sections: [
       {
@@ -185,7 +185,7 @@ export const posts: BlogPost[] = [
       "Chọn đúng len và đúng kim móc sẽ giúp buổi học đầu tiên nhẹ nhàng hơn, mũi móc dễ nhìn hơn và thành phẩm ra form xinh hơn.",
     excerpt:
       "Giải thích milk cotton, len nhung, cotton, acrylic và cách chọn kim móc theo từng sản phẩm.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao/cover.png?v=1",
+    image: "https://res.cloudinary.com/djn2kd2hh/images/6631B3C3-6B0C-4006-9317-DC5D4203B47F_ahk36d/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.png",
     imageAlt: "Các cuộn len nhiều màu cho người mới học móc",
     sections: [
       {
@@ -580,7 +580,7 @@ export const posts: BlogPost[] = [
     lead: "Thú len handmade sẽ ở bên bạn lâu hơn nếu được giữ sạch, tránh ẩm, tránh nắng gắt và được nâng niu đúng cách.",
     excerpt:
       "Mẹo giữ thú len sạch, tránh bụi ẩm, nắng gắt và không bị mất form sau thời gian sử dụng.",
-    image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/cach-bao-quan-thu-len-handmade-de-luon-dep/cover.png",
+    image: "https://res.cloudinary.com/djn2kd2hh/images/EE87E0C9-D516-4B4E-A4A2-3B58F09C2FC6_jtioyc/cach-bao-quan-thu-len-handmade-de-luon-dep.png",
     imageAlt: "Thú len handmade cần được bảo quản nhẹ nhàng",
     sections: [
       {

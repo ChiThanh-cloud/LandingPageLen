@@ -17,56 +17,68 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
     publisher: { "@id": `${siteConfig.url}/#business` }
   };
 
-  const offerableNode =
-    product.kind === "service"
-      ? {
-          "@type": "Service",
-          name: product.schemaName,
-          description: product.schemaDescription,
-          provider: { "@id": `${siteConfig.url}/#business` },
-          areaServed: "VN",
-          serviceType: "Handmade crochet custom order"
+  const graph: Array<Record<string, unknown>> = [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Trang chủ",
+          item: siteConfig.url
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: product.name,
+          item: url
         }
-      : {
-          "@type": "Product",
-          name: product.schemaName,
-          image: absoluteUrl(product.image),
-          description: product.schemaDescription,
-          brand: {
-            "@type": "Brand",
-            name: siteConfig.name
-          }
-        };
+      ]
+    },
+    pageNode
+  ];
+
+  if (product.kind === "service") {
+    graph.push({
+      "@type": "Service",
+      "@id": `${url}#service`,
+      name: product.schemaName,
+      description: product.schemaDescription,
+      image: absoluteUrl(product.image),
+      url,
+      provider: { "@id": `${siteConfig.url}/#business` },
+      areaServed: "VN",
+      serviceType: "Handmade crochet custom order"
+    });
+  } else if (product.kind === "product" && product.offer && product.offer.price > 0) {
+    graph.push({
+      "@type": "Product",
+      name: product.schemaName,
+      image: absoluteUrl(product.image),
+      description: product.schemaDescription,
+      brand: {
+        "@type": "Brand",
+        name: siteConfig.name
+      },
+      offers: {
+        "@type": "Offer",
+        url,
+        price: product.offer.price,
+        priceCurrency: product.offer.priceCurrency,
+        availability: `https://schema.org/${product.offer.availability}`,
+        itemCondition: "https://schema.org/NewCondition"
+      }
+    });
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Trang chủ",
-            item: siteConfig.url
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: product.name,
-            item: url
-          }
-        ]
-      },
-      pageNode,
-      offerableNode,
-    ]
+    "@graph": graph
   };
 
   if (product.faq && product.faq.length > 0) {
     jsonLd["@graph"].push({
       "@type": "FAQPage",
-      // @ts-expect-error - mainEntity expects Question[]
       mainEntity: product.faq.map((item) => ({
         "@type": "Question",
         name: item.question,

@@ -440,7 +440,7 @@ export const products: ProductEntry[] = [
   },
   {
     slug: "hoa-len-handmade",
-    kind: "product",
+    kind: "service",
     name: "Hoa len handmade",
     title: "Hoa Len Handmade - Bó Hoa Len Tặng Sinh Nhật, Người Yêu | Tiệm Len Nhà Tiny",
     description:
@@ -457,9 +457,9 @@ export const products: ProductEntry[] = [
     imageAlt:
       "Hộp quà hoa len handmade và thú len từ Tiệm Len Nhà Tiny, phù hợp làm quà sinh nhật và quà kỷ niệm",
     updatedAt: "2026-07-07",
-    schemaName: "Hoa len handmade",
+    schemaName: "Dịch vụ đặt hoa len handmade theo yêu cầu",
     schemaDescription:
-      "Bó hoa len handmade được móc thủ công, bền đẹp, không tàn. Có thể phối màu theo yêu cầu, đặt bó nhỏ, bó lớn hoặc mẫu riêng.",
+      "Dịch vụ đặt hoa len handmade theo yêu cầu. Bó hoa len móc thủ công, bền đẹp, không tàn. Phối màu và kiểu dáng riêng theo mong muốn của khách hàng.",
     legacyPhoneFound: "0909.281.029",
     legacyHadOffer: true,
     sections: [
@@ -517,7 +517,7 @@ export const products: ProductEntry[] = [
       },
       {
         type: "text",
-        title: "Giá tham khảo hoa len handmade",
+        title: "Giá hoa len được báo theo mẫu",
         paragraphs: [
           "Giá hoa len tùy theo kích thước bó, số lượng hoa, loại hoa và độ chi tiết. Một bó hoa nhỏ vài bông đơn giản sẽ có giá khác một bó lớn nhiều hoa phối màu phức tạp.",
           "Nhắn Zalo 0368.903.519 để Tiny tư vấn mẫu hoa phù hợp với ngân sách và dịp tặng của bạn. Tiny sẽ gợi ý bó hoa vừa đẹp vừa phù hợp nhất."

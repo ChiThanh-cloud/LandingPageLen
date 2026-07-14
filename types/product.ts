@@ -1,5 +1,11 @@
 export type ProductKind = "product" | "service";
 
+export type ProductOffer = {
+  price: number;
+  priceCurrency: "VND";
+  availability: "InStock" | "PreOrder" | "LimitedAvailability" | "OutOfStock";
+};
+
 export type ProductFaq = {
   question: string;
   answer: string;
@@ -90,6 +96,7 @@ export type ProductEntry = {
   schemaDescription: string;
   sections: ProductSection[];
   faq: ProductFaq[];
+  offer?: ProductOffer;
   legacyPhoneFound?: string;
   legacyHadOffer?: boolean;
 };

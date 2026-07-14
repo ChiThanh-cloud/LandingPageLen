@@ -22,7 +22,12 @@ function absoluteImage(path: string) {
 function getOgImage(path: string) {
   const url = absoluteImage(path);
   if (url.includes("res.cloudinary.com")) {
-    return url.replace("/image/upload/", "/image/upload/c_fill,w_1200,h_630,g_auto/");
+    if (url.includes("/image/upload/")) {
+      return url.replace("/image/upload/", "/image/upload/c_fill,w_1200,h_630,g_auto/");
+    }
+    if (url.includes("/images/")) {
+      return url.replace("/images/", "/images/c_fill,w_1200,h_630,g_auto/");
+    }
   }
   return url;
 }
