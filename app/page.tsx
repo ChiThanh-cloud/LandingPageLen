@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 import { HomepageEffects } from "@/components/home/HomepageEffects";
+import { HeroMedia } from "@/components/home/HeroMedia";
 import { ProductShowcase } from "@/components/home/ProductShowcase";
 import { posts } from "@/data/posts";
 import { siteConfig } from "@/data/site";
@@ -275,13 +276,7 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }} />
 
       <section className="hero" id="hero">
-        <div className="hero-video-wrap">
-          <video autoPlay muted loop playsInline preload="none" id="heroVideo" poster="/images/yarn_hero_800.jpg">
-            <source src="/images/hero_video.mp4" type="video/mp4" media="(min-width: 769px)" />
-          </video>
-          <div className="hero-mobile-bg" />
-          <div className="hero-overlay" />
-        </div>
+        <HeroMedia />
         <div className="hero-content">
           <p className="hero-badge">
             <LucideIconClock />

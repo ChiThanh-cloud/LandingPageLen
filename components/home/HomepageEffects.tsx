@@ -5,108 +5,73 @@ import { useEffect } from "react";
 export function HomepageEffects() {
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const revealEls = document.querySelectorAll(
+    const revealEls = Array.from(document.querySelectorAll<HTMLElement>(
       ".trust-item, .product-card, .step, .review-card, .shop-info-faq-item, .home-blog-card, .about-grid, .contact-card"
-    );
+    ));
 
     if (prefersReducedMotion || !revealEls.length || !("IntersectionObserver" in window)) {
       revealEls.forEach((el) => el.classList.add("visible"));
       return;
     }
 
-    revealEls.forEach((el) => el.classList.add("reveal"));
+    revealEls.forEach((el, index) => {
+      el.classList.add("reveal");
+      el.style.setProperty("--reveal-delay", `${Math.min(index * 40, 180)}ms`);
+    });
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry, index) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            window.setTimeout(() => entry.target.classList.add("visible"), Math.min(index * 70, 240));
+            entry.target.classList.add("visible");
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12 }
+      { rootMargin: "0px 0px -8%", threshold: 0.08 }
     );
 
+    document.documentElement.classList.add("motion-ready");
     revealEls.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const video = document.getElementById("heroVideo") as HTMLVideoElement | null;
-    const updateVideoForViewport = () => {
-      if (!video) return;
-      if (window.matchMedia("(max-width: 768px)").matches) {
-        video.pause();
-      } else if (video.paused) {
-        video.play().catch(() => undefined);
-      }
-    };
-    const fallback = () => {
-      const wrap = document.querySelector<HTMLElement>(".hero-video-wrap");
-      if (wrap) wrap.style.background = "linear-gradient(135deg, #24434A 0%, #73A6B0 100%)";
-    };
-
-    updateVideoForViewport();
-    window.addEventListener("resize", updateVideoForViewport);
-    video?.addEventListener("error", fallback);
     return () => {
-      window.removeEventListener("resize", updateVideoForViewport);
-      video?.removeEventListener("error", fallback);
+      observer.disconnect();
+      document.documentElement.classList.remove("motion-ready");
+      revealEls.forEach((el) => el.style.removeProperty("--reveal-delay"));
     };
   }, []);
 
   useEffect(() => {
-    const updateActiveNav = () => {
-      const sections = document.querySelectorAll("section[id]");
-      const navAnchors = document.querySelectorAll<HTMLAnchorElement>('.nav-links a[href^="/#"]');
-      let current = "";
+    if (!("IntersectionObserver" in window)) return;
 
-      sections.forEach((section) => {
-        if (window.scrollY >= (section as HTMLElement).offsetTop - 120) current = section.id;
-      });
+    const navAnchors = Array.from(document.querySelectorAll<HTMLAnchorElement>('.nav-links a[href^="/#"]'));
+    const sectionMap = new Map(
+      navAnchors
+        .map((anchor) => {
+          const id = anchor.getAttribute("href")?.slice(2);
+          const section = id ? document.getElementById(id) : null;
+          return section && id ? [id, section] as const : null;
+        })
+        .filter((entry): entry is readonly [string, HTMLElement] => entry !== null)
+    );
 
+    const setActive = (id: string) => {
       navAnchors.forEach((anchor) => {
-        anchor.classList.toggle("active-nav", anchor.getAttribute("href") === `/#${current}`);
+        anchor.classList.toggle("active-nav", anchor.getAttribute("href") === `/#${id}`);
       });
     };
 
-    updateActiveNav();
-    window.addEventListener("scroll", updateActiveNav, { passive: true });
-    return () => window.removeEventListener("scroll", updateActiveNav);
-  }, []);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible?.target.id) setActive(visible.target.id);
+      },
+      { rootMargin: "-18% 0px -62%", threshold: [0, 0.15, 0.4] }
+    );
 
-  useEffect(() => {
-    const interactiveSelector = [
-      ".btn",
-      ".nav-links a",
-      ".product-card[role='button']",
-      ".contact-card",
-      ".home-blog-card",
-      ".shop-info-faq-item summary",
-      ".review-card",
-      ".step",
-      ".float-btn",
-      ".mobile-cta-bar",
-      ".blog-button",
-      ".blog-card",
-      ".blog-related-card"
-    ].join(",");
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = (event.target as Element | null)?.closest<HTMLElement>(interactiveSelector);
-      if (!target || target.matches("[disabled], [aria-disabled='true']")) return;
-
-      target.classList.add("is-pressing");
-      const clearPress = () => window.setTimeout(() => target.classList.remove("is-pressing"), 90);
-
-      target.addEventListener("pointerup", clearPress, { once: true });
-      target.addEventListener("pointercancel", clearPress, { once: true });
-      target.addEventListener("pointerleave", clearPress, { once: true });
-    };
-
-    document.addEventListener("pointerdown", handlePointerDown, { passive: true });
-    return () => document.removeEventListener("pointerdown", handlePointerDown);
+    sectionMap.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   return null;

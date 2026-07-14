@@ -76,12 +76,6 @@
   transition: var(--transition);
 }
 
-.product-modal-close:hover {
-  background: var(--blue-main);
-  color: var(--white);
-  transform: rotate(90deg);
-}
-
 .product-modal-title {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
@@ -110,10 +104,6 @@
   height: 220px;
   object-fit: cover;
   transition: transform .5s ease;
-}
-
-.product-item:hover img {
-  transform: none;
 }
 
 .product-item h4 {
@@ -192,11 +182,6 @@
   transition: background .2s, transform .2s;
   white-space: nowrap;
 }
-.btn-messenger:hover {
-  background: #006edb;
-  transform: scale(1.04);
-}
-
 /* Ghi chú hết hàng */
 .product-outstock-note {
   font-size: 0.78rem;
@@ -272,12 +257,23 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .product-modal-close:hover {
+    background: var(--blue-main);
+    color: var(--white);
+    transform: rotate(90deg);
+  }
+
   .product-item:hover img {
-    transform: scale(1.04);
+    transform: scale(1.02);
   }
 
   .product-img-button:hover img {
-    transform: scale(1.04);
+    transform: scale(1.02);
+  }
+
+  .btn-messenger:hover {
+    background: #006edb;
+    transform: translateY(-1px);
   }
 }
 
@@ -356,21 +352,22 @@
 
 /* 3. Skeleton Loading */
 .skeleton {
-  background: #eee;
-  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background: #eef2f4;
   border-radius: 8px;
-  background-size: 200% 100%;
-  animation: shine 1.5s linear infinite;
+  animation: skeletonPulse 1.2s ease-in-out infinite alternate;
 }
 
 .skeleton-img { width: 100%; aspect-ratio: 1; border-radius: 16px; margin-bottom: 16px; }
 .skeleton-text { height: 20px; width: 80%; margin-bottom: 10px; }
 .skeleton-btn { height: 45px; width: 100%; border-radius: 100px; }
 
-@keyframes shine { to { background-position-x: -200%; } }
+@keyframes skeletonPulse {
+  from { opacity: .58; }
+  to { opacity: 1; }
+}
 
 @keyframes modalIn {
-  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -615,6 +612,15 @@
 }
 
 @media (max-width: 720px) {
+  .product-modal-overlay,
+  .policy-modal,
+  .modal-search-wrap,
+  .filter-tab,
+  .product-modal-overlay.yarn-detail-open .product-modal-close {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .product-modal-content {
     padding-left: max(15px, env(safe-area-inset-left));
     padding-right: max(15px, env(safe-area-inset-right));
@@ -627,8 +633,6 @@
     margin: -8px -4px 16px;
     padding: 7px 4px 9px;
     background: rgba(255, 255, 255, .90);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
   }
 
   .search-box {
@@ -672,8 +676,6 @@
     font-size: .76rem;
     font-weight: 560;
     box-shadow: 0 2px 8px rgba(45, 111, 148, .035);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
   }
 
   .filter-tab.active {
@@ -745,12 +747,6 @@
     transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
   }
 
-  .btn-messenger:hover {
-    transform: translateY(-1px);
-    background: linear-gradient(135deg, #367493, #73b2df);
-    box-shadow: 0 6px 14px rgba(45, 111, 148, .12);
-  }
-
   .btn-messenger:active {
     transform: scale(.98);
   }
@@ -784,8 +780,6 @@
     height: 46px;
     background: rgba(255, 255, 255, .82);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
   }
 
   .product-modal-overlay.yarn-detail-open .yarn-detail-view {
@@ -935,12 +929,14 @@
   border: 1px solid transparent;
 }
 
-.filter-tab:hover {
-  background: var(--blue-light);
-}
-
 .filter-tab.active {
   background: var(--blue-main);
   color: var(--white);
   box-shadow: 0 4px 12px rgba(153, 204, 255, 0.28);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .filter-tab:hover {
+    background: var(--blue-light);
+  }
 }

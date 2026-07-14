@@ -12,20 +12,26 @@ export function FloatingContact() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const updateFloatingState = () => {
-      const heroHeight = document.getElementById("hero")?.offsetHeight || 0;
-      setInHero(heroHeight > 0 && window.scrollY < heroHeight);
-      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-    };
+    const mobileQuery = window.matchMedia("(max-width: 768px)");
+    const updateMobile = () => setIsMobile(mobileQuery.matches);
+    updateMobile();
+    mobileQuery.addEventListener("change", updateMobile);
 
-    updateFloatingState();
-    window.addEventListener("scroll", updateFloatingState, { passive: true });
-    window.addEventListener("resize", updateFloatingState);
+    return () => mobileQuery.removeEventListener("change", updateMobile);
+  }, []);
 
-    return () => {
-      window.removeEventListener("scroll", updateFloatingState);
-      window.removeEventListener("resize", updateFloatingState);
-    };
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    if (!hero || !("IntersectionObserver" in window)) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setInHero(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
   }, []);
 
   return (

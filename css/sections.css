@@ -16,22 +16,21 @@
   z-index: 0;
 }
 
-.hero-video-wrap video {
+.hero-poster,
+.hero-video {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Ảnh nền thay thế video trên Mobile */
-.hero-mobile-bg {
-  display: none;
-  position: absolute;
-  inset: 0;
-  background-image: url('/images/hero_mobile_optimized_768.jpg');
-  background-position: center center;
-  background-size: cover;
-  background-repeat: no-repeat;
+.hero-poster {
   z-index: 0;
+}
+
+.hero-video {
+  z-index: 1;
 }
 
 .hero-overlay {
@@ -40,6 +39,7 @@
   background:
     linear-gradient(90deg, rgba(42, 60, 74, .84) 0%, rgba(106, 154, 194, .62) 48%, rgba(189, 224, 254, .25) 100%),
     linear-gradient(180deg, rgba(42, 60, 74, .12) 0%, rgba(42, 60, 74, .58) 100%);
+  z-index: 2;
 }
 
 .hero-content {
@@ -48,7 +48,7 @@
   width: min(100%, 960px);
   text-align: left;
   padding: 112px 24px 72px;
-  animation: fadeUp .9s ease both;
+  animation: fadeUp var(--motion-slow) var(--motion-ease-out) both;
 }
 
 .hero-badge {
@@ -131,10 +131,6 @@
   box-shadow: 0 12px 30px rgba(106, 154, 194, .32);
 }
 
-.hero .btn-primary:hover {
-  box-shadow: 0 16px 36px rgba(106, 154, 194, .4);
-}
-
 .hero-microcopy {
   color: rgba(255, 255, 255, .78);
   font-size: .85rem;
@@ -200,10 +196,6 @@
 
 .trust-item:last-child {
   border-right: none;
-}
-
-.trust-item:hover {
-  background: var(--blue-pale);
 }
 
 .trust-icon {
@@ -365,11 +357,6 @@
   transition: var(--transition);
 }
 
-.home-blog-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-
 .home-blog-media {
   display: block;
   aspect-ratio: 4 / 3;
@@ -382,10 +369,6 @@
   height: 100%;
   object-fit: cover;
   transition: transform .45s ease;
-}
-
-.home-blog-card:hover .home-blog-media img {
-  transform: scale(1.04);
 }
 
 .home-blog-body {
@@ -404,11 +387,6 @@
   color: var(--text-dark);
   font-size: 1.08rem;
   line-height: 1.35;
-}
-
-.home-blog-card h3 a:hover,
-.home-blog-link:hover {
-  color: var(--blue-deep);
 }
 
 .home-blog-card p {
@@ -551,12 +529,6 @@
   border-radius: 20px;
 }
 
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
-  border-color: rgba(214, 235, 254, .72);
-}
-
 .product-card.featured {
   border: 1px solid rgba(106, 154, 194, .72);
   box-shadow: 0 14px 36px rgba(106, 154, 194, .12);
@@ -573,10 +545,6 @@
   height: 100%;
   object-fit: cover;
   transition: transform .8s cubic-bezier(.16, 1, .3, 1);
-}
-
-.product-card:hover .product-img-wrap img {
-  transform: scale(1.04);
 }
 
 .product-tag {
@@ -665,11 +633,6 @@
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--blue-light);
   transition: var(--transition);
-}
-
-.step:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-md);
 }
 
 .step-num {
@@ -767,11 +730,6 @@
   color: var(--text-dark);
   font-size: .94rem;
   line-height: 1.5;
-}
-
-.review-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
 }
 
 .review-card.featured-review {
@@ -978,12 +936,6 @@
   transition: var(--transition);
 }
 
-.contact-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--blue-deep);
-}
-
 .contact-card-icon {
   width: 64px;
   height: 64px;
@@ -1036,11 +988,44 @@
   transition: var(--transition);
 }
 
-.contact-card:hover .contact-arrow {
-  color: var(--blue-deep);
-  transform: translateX(4px);
-}
+@media (hover: hover) and (pointer: fine) {
+  .hero .btn-primary:hover {
+    box-shadow: 0 16px 36px rgba(106, 154, 194, .4);
+  }
 
+  .trust-item:hover {
+    background: var(--blue-pale);
+  }
+
+  .home-blog-card:hover,
+  .product-card:hover,
+  .step:hover,
+  .review-card:hover,
+  .contact-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .product-card:hover,
+  .contact-card:hover {
+    border-color: var(--blue-deep);
+  }
+
+  .home-blog-card:hover .home-blog-media img,
+  .product-card:hover .product-img-wrap img {
+    transform: scale(1.02);
+  }
+
+  .home-blog-card h3 a:hover,
+  .home-blog-link:hover {
+    color: var(--blue-deep);
+  }
+
+  .contact-card:hover .contact-arrow {
+    color: var(--blue-deep);
+    transform: translateX(3px);
+  }
+}
 .contact-phone,
 .contact-address,
 .contact-hours {

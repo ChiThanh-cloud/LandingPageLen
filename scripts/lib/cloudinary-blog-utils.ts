@@ -11,6 +11,16 @@ export interface CloudinaryConfig {
   apiSecret: string;
 }
 
+export type CloudinaryApiError = {
+  http_code?: number;
+  error?: { http_code?: number };
+  message?: string;
+};
+
+export function asCloudinaryApiError(error: unknown): CloudinaryApiError {
+  return typeof error === "object" && error !== null ? (error as CloudinaryApiError) : {};
+}
+
 export function validateConfig(): CloudinaryConfig {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
   const apiKey = process.env.CLOUDINARY_API_KEY;

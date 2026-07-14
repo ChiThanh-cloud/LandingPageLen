@@ -73,9 +73,11 @@
   text-underline-offset: 3px;
 }
 
-.blog-content-card a:hover,
-.blog-product-callout a:hover {
-  color: #245978;
+@media (hover: hover) and (pointer: fine) {
+  .blog-content-card a:hover,
+  .blog-product-callout a:hover {
+    color: #245978;
+  }
 }
 
 .blog-list strong {

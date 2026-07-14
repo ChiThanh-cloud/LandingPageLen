@@ -63,8 +63,10 @@
   transition: var(--transition);
 }
 
-.footer-policy-link:hover {
-  color: var(--blue-light);
+@media (hover: hover) and (pointer: fine) {
+  .footer-policy-link:hover {
+    color: var(--blue-light);
+  }
 }
 
 .product-detail-link {
@@ -76,10 +78,6 @@
 .product-modal-actions {
   text-align: center;
   margin-top: 24px;
-}
-
-.hero-mobile-bg {
-  background-image: url("/images/hero_mobile_optimized_768.jpg");
 }
 
 @media (max-width: 768px) {

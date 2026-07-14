@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import test from "node:test";
-import { parseCloudinaryUrl, buildCloudinaryUrl } from "./cloudinary-blog-utils";
+import { parseCloudinaryUrl } from "./cloudinary-blog-utils";
 
 test("Cloudinary URL Parser", async (t) => {
   const cloudName = "djn2kd2hh";

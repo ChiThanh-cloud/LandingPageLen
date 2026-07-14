@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { trackSiteEvent } from "@/lib/siteTracking";
 
@@ -31,10 +31,23 @@ const navItems: NavItem[] = [
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(true);
+  const navRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLUListElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
 
   useEffect(() => {
     document.body.classList.toggle("menu-open", isOpen);
-    return () => document.body.classList.remove("menu-open");
+    if (isOpen) {
+      menuRef.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    } else if (wasOpenRef.current) {
+      toggleRef.current?.focus();
+    }
+    wasOpenRef.current = isOpen;
+
+    return () => {
+      document.body.classList.remove("menu-open");
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -44,39 +57,43 @@ export function Header() {
       if (event.key === "Escape") setIsOpen(false);
     };
 
-    const closeOnDesktop = () => {
-      if (window.matchMedia("(min-width: 769px)").matches) setIsOpen(false);
+    const closeOnOutsidePress = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (target && !navRef.current?.contains(target)) setIsOpen(false);
     };
 
+    const desktopQuery = window.matchMedia("(min-width: 769px)");
+    const closeOnDesktop = () => desktopQuery.matches && setIsOpen(false);
+
     document.addEventListener("keydown", closeOnEscape);
-    window.addEventListener("resize", closeOnDesktop);
+    document.addEventListener("pointerdown", closeOnOutsidePress);
+    desktopQuery.addEventListener("change", closeOnDesktop);
 
     return () => {
       document.removeEventListener("keydown", closeOnEscape);
-      window.removeEventListener("resize", closeOnDesktop);
+      document.removeEventListener("pointerdown", closeOnOutsidePress);
+      desktopQuery.removeEventListener("change", closeOnDesktop);
     };
   }, [isOpen]);
 
   useEffect(() => {
-    const updateScrolled = () => {
-      const hasHero = Boolean(document.getElementById("hero"));
-      setIsScrolled(!hasHero || window.scrollY > 60);
-    };
+    const hero = document.getElementById("hero");
+    if (!hero || !("IntersectionObserver" in window)) {
+      return;
+    }
 
-    updateScrolled();
-    window.addEventListener("scroll", updateScrolled, { passive: true });
-    window.addEventListener("resize", updateScrolled);
-
-    return () => {
-      window.removeEventListener("scroll", updateScrolled);
-      window.removeEventListener("resize", updateScrolled);
-    };
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsScrolled(!entry.isIntersecting),
+      { rootMargin: "-60px 0px 0px", threshold: 0 }
+    );
+    observer.observe(hero);
+    return () => observer.disconnect();
   }, []);
 
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className={`navbar${isScrolled ? " scrolled" : ""}`} id="navbar">
+    <nav ref={navRef} className={`navbar${isScrolled ? " scrolled" : ""}`} id="navbar">
       <div className="nav-container">
         <Link href="/" className="nav-logo" aria-label="Về trang chủ Tiệm Len Nhà Tiny" onClick={closeMenu}>
           <Image
@@ -89,6 +106,7 @@ export function Header() {
           />
         </Link>
         <ul
+          ref={menuRef}
           className={`nav-links${isOpen ? " open" : ""}`}
           id="navLinks"
           onClick={(event) => {
@@ -119,6 +137,7 @@ export function Header() {
           ))}
         </ul>
         <button
+          ref={toggleRef}
           className={`hamburger${isOpen ? " active" : ""}`}
           id="hamburger"
           type="button"

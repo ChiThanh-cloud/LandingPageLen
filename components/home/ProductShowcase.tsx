@@ -175,7 +175,12 @@ export function ProductShowcase() {
       </div>
 
       <div className="product-modal-overlay" id="productModal">
-        <div className="product-modal-content">
+        <div
+          className="product-modal-content"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="productModalTitle"
+        >
           <button className="product-modal-close" type="button" aria-label="Đóng danh sách sản phẩm" onClick={closeModal}>
             x
           </button>

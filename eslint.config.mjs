@@ -25,11 +25,13 @@ export default defineConfig([
     "san-pham/**",
     "supabase/**",
     "tools/**",
+    "ui-ux-pro-max-skill/**",
     "admin.js",
     "admin.html",
     "blog.html",
     "chart-admin.html",
     "index.html",
-    "product-color-extractor.html"
+    "product-color-extractor.html",
+    "check_images.js"
   ])
 ]);

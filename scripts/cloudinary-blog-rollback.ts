@@ -1,7 +1,13 @@
 import fs from "fs";
 import path from "path";
 import { v2 as cloudinary } from "cloudinary";
-import { validateConfig, ManifestState, delay, saveManifest } from "./lib/cloudinary-blog-utils";
+import {
+  asCloudinaryApiError,
+  validateConfig,
+  ManifestState,
+  delay,
+  saveManifest
+} from "./lib/cloudinary-blog-utils";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -35,12 +41,13 @@ async function main() {
     for (const asset of renamedAssets) {
       try {
         await cloudinary.api.resource(asset.newPublicId);
-      } catch (e: any) {
-        if (e?.http_code === 404 || e?.error?.http_code === 404) {
+      } catch (error: unknown) {
+        const apiError = asCloudinaryApiError(error);
+        if (apiError.http_code === 404 || apiError.error?.http_code === 404) {
           console.error(`[Preflight Error] Asset to rollback does not exist: ${asset.newPublicId}`);
           process.exit(1);
         }
-        throw e;
+        throw error;
       }
     }
   }
@@ -69,8 +76,9 @@ async function main() {
       asset.status = "rolled-back";
       saveManifest(manifestDir, manifestState);
       await delay(250);
-    } catch (e: any) {
-      console.error(`[Error] Failed to rollback ${asset.newPublicId}:`, e.message);
+    } catch (error: unknown) {
+      const apiError = asCloudinaryApiError(error);
+      console.error(`[Error] Failed to rollback ${asset.newPublicId}:`, apiError.message ?? error);
       hasError = true;
       break;
     }

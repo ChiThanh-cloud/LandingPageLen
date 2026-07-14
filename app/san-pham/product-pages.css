@@ -65,9 +65,11 @@
   transition: transform .2s, box-shadow .2s;
 }
 
-.sp-zalo-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 104, 255, .25);
+@media (hover: hover) and (pointer: fine) {
+  .sp-zalo-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 104, 255, .25);
+  }
 }
 
 .sp-steps {

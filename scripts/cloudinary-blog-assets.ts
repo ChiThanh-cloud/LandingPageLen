@@ -10,7 +10,8 @@ import {
   createManifestDir, 
   saveManifest, 
   backupSourceFile, 
-  ManifestState 
+  ManifestState,
+  asCloudinaryApiError
 } from "./lib/cloudinary-blog-utils";
 
 async function main() {
@@ -23,7 +24,7 @@ async function main() {
   console.log(`[Preflight] Validating credentials for cloud: ${config.cloudName}`);
   try {
     await cloudinary.api.ping();
-  } catch (err) {
+  } catch {
     console.error("Cloudinary ping failed! Invalid credentials.");
     process.exit(1);
   }
@@ -102,14 +103,15 @@ async function main() {
     let sourceExists = true;
     try {
       await cloudinary.api.resource(parsed!.publicId);
-    } catch (e: any) {
-      if (e?.http_code === 404 || e?.error?.http_code === 404) {
+    } catch (error: unknown) {
+      const apiError = asCloudinaryApiError(error);
+      if (apiError.http_code === 404 || apiError.error?.http_code === 404) {
         // Automatically skip dead links by default to prevent blocking the rest of the batch
         console.warn(`[Preflight Warn] Asset not found ON CLOUDINARY (404): ${parsed!.publicId}.`);
         console.warn(`   -> The URL exists in code, but the image is deleted/missing from Cloudinary. Skipping it.`);
         sourceExists = false;
       } else {
-        throw e;
+        throw error;
       }
     }
 
@@ -121,9 +123,10 @@ async function main() {
       await cloudinary.api.resource(newPublicId);
       console.error(`[Preflight Error] Target asset already exists: ${newPublicId}`);
       process.exit(1);
-    } catch (e: any) {
-      if (e?.http_code !== 404 && e?.error?.http_code !== 404) {
-        throw e;
+    } catch (error: unknown) {
+      const apiError = asCloudinaryApiError(error);
+      if (apiError.http_code !== 404 && apiError.error?.http_code !== 404) {
+        throw error;
       }
       // 404 is expected for target!
     }
@@ -181,8 +184,9 @@ async function main() {
       saveManifest(manifestDir, manifestState);
       
       await delay(250); // 200-300ms delay as requested
-    } catch (e: any) {
-      console.error(`[Error] Failed to rename ${asset.oldPublicId}:`, e.message);
+    } catch (error: unknown) {
+      const apiError = asCloudinaryApiError(error);
+      console.error(`[Error] Failed to rename ${asset.oldPublicId}:`, apiError.message ?? error);
       asset.status = "failed";
       hasError = true;
       manifestState.status = "partial";
