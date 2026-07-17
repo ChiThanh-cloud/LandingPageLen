@@ -2,6 +2,234 @@ import type { BlogPost } from "@/types/post";
 
 export const posts: BlogPost[] = [
   {
+    slug: "qua-tot-nghiep-handmade-y-nghia",
+    title: "Quà Tốt Nghiệp Handmade Làm Riêng Theo Ngân Sách | LenTiny",
+    description:
+      "Đặt quà tốt nghiệp handmade theo mẫu và ngân sách. Tiny tư vấn màu, báo giá, xác nhận lịch làm và gửi ảnh thành phẩm trước khi giao.",
+    ogTitle: "Quà Tốt Nghiệp Handmade Làm Riêng, Duyệt Mẫu Trước Khi Giao",
+    ogDescription:
+      "Gửi ngày cần nhận, ngân sách và sở thích người nhận. Tiny gợi ý mẫu, báo giá và xác nhận lịch trước khi làm.",
+    category: "Quà tốt nghiệp handmade",
+    tags: ["qua-handmade", "huong-dan"],
+    searchText:
+      "quà tốt nghiệp quà tốt nghiệp handmade quà tốt nghiệp cho bạn nữ quà tốt nghiệp cho bạn nam hoa len tốt nghiệp thú len đội mũ cử nhân quà ra trường",
+    publishedAt: "2026-07-17",
+    updatedAt: "2026-07-17",
+    author: "LenTiny",
+    eyebrow: "Quà tốt nghiệp - Đặt làm riêng",
+    breadcrumbLabel: "Quà tốt nghiệp handmade",
+    h1: "Quà tốt nghiệp handmade làm riêng, rõ mẫu và ngân sách trước khi chốt",
+    lead:
+      "Bạn chỉ cần gửi ngày cần nhận, khoảng ngân sách và màu người nhận thích. Tiny kiểm tra lịch, gợi ý mẫu, báo giá trước khi làm và gửi ảnh thành phẩm để bạn duyệt.",
+    excerpt:
+      "Gửi ngày nhận và ngân sách để Tiny tư vấn mẫu quà tốt nghiệp handmade, báo giá và xác nhận lịch trước khi làm.",
+    image:
+      "https://res.cloudinary.com/djn2kd2hh/image/upload/v1784302075/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/qua-tot-nghiep-handmade-lam-rieng.jpg",
+    imageAlt: "Gấu len đội mũ cử nhân, bó hoa len và giấy chứng nhận làm quà tốt nghiệp handmade",
+    ogImage:
+      "https://res.cloudinary.com/djn2kd2hh/image/upload/v1784302075/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/qua-tot-nghiep-handmade-lam-rieng.jpg",
+    heroCta: {
+      primaryLabel: "Gửi ngày nhận và ngân sách",
+      secondaryLabel: "Xem cách đặt theo yêu cầu",
+      secondaryHref: "/san-pham/thu-len-theo-yeu-cau"
+    },
+    sections: [
+      {
+        type: "list",
+        title: "Trước khi chốt, bạn sẽ biết rõ 4 điều",
+        intro: [
+          "Một món quà làm riêng chỉ đáng đặt khi bạn không phải đoán về mẫu, chi phí hay ngày nhận. Tiny xác nhận từng phần trước khi bắt đầu làm."
+        ],
+        items: [
+          {
+            label: "Mẫu nào phù hợp",
+            text: "Tiny dựa vào người nhận, phong cách và ảnh tham khảo để đề xuất một đến ba hướng phù hợp, không gửi một danh sách dài để bạn tự chọn."
+          },
+          {
+            label: "Màu sắc và chi tiết",
+            text: "Màu len, kiểu hoa, nhân vật và phụ kiện được thống nhất trước khi móc để thành phẩm gần với điều bạn hình dung."
+          },
+          {
+            label: "Chi phí dự kiến",
+            text: "Bạn nêu khoảng ngân sách trước. Tiny chỉ tư vấn những phương án phù hợp và báo giá rõ trước khi xác nhận đơn."
+          },
+          {
+            label: "Có kịp ngày nhận hay không",
+            text: "Tiny kiểm tra lịch làm và thời gian giao hàng theo địa chỉ của bạn trước khi chốt, đặc biệt trong mùa tốt nghiệp."
+          }
+        ]
+      },
+      {
+        type: "callout",
+        kicker: "Kiểm tra trước, quyết định sau",
+        title: "Gửi ngày nhận và ngân sách để Tiny kiểm tra đơn",
+        text:
+          "Bạn chưa cần biết chính xác phải mua mẫu nào. Tiny sẽ kiểm tra lịch, hỏi thêm sở thích người nhận và gửi phương án phù hợp để bạn cân nhắc trước khi xác nhận.",
+        ctaLabel: "Kiểm tra lịch làm quà"
+      },
+      {
+        type: "paragraphs",
+        title: "Quà tốt nghiệp handmade đáng đặt khi thật sự mang dấu ấn người nhận",
+        paragraphs: [
+          [
+            "Ngày tốt nghiệp chỉ diễn ra một lần, nên người tặng thường không lo thiếu lựa chọn mà lo chọn nhầm: món quà có hợp người nhận không, lên ảnh có đẹp không và có kịp trao trong buổi lễ không. Một món đồ handmade giải quyết được những băn khoăn đó khi mẫu được làm theo màu, phong cách và câu chuyện thật của người nhận."
+          ],
+          [
+            "Bạn có thể chọn màu áo cử nhân, màu người nhận thường dùng, một nhân vật gắn với biệt danh hoặc một chi tiết trong ảnh kỷ niệm. Tiny sẽ giúp giữ lại những điểm có ý nghĩa và lược bớt phần trang trí không cần thiết để món quà trông chỉn chu, không bị rối."
+          ],
+          [
+            "Nếu cần món quà trang trọng, dễ cầm khi chụp ảnh, bạn có thể tham khảo ",
+            { type: "link", text: "hoa len handmade", href: "/san-pham/hoa-len-handmade" },
+            ". Nếu muốn làm theo nhân vật, thú cưng hoặc ý tưởng riêng, Tiny có nhận ",
+            { type: "link", text: "móc thú len theo yêu cầu", href: "/san-pham/thu-len-theo-yeu-cau" },
+            " và sẽ trao đổi độ chi tiết trước khi báo giá."
+          ]
+        ]
+      },
+      {
+        type: "subsections",
+        title: "Ba hướng quà dễ chốt theo đúng nhu cầu",
+        subsections: [
+          {
+            title: "Hoa len: chỉn chu, dễ trao và giữ được lâu",
+            paragraphs: [
+              [
+                "Hoa len phù hợp khi bạn muốn món quà trông trang trọng trong lễ tốt nghiệp nhưng người nhận vẫn có thể giữ lại sau buổi lễ. Tiny có thể phối theo màu áo, màu trường hoặc màu yêu thích. Bó hoa sẽ được cân đối theo nhu cầu cầm chụp ảnh và khoảng ngân sách bạn đưa ra."
+              ]
+            ]
+          },
+          {
+            title: "Thú len làm riêng: cá nhân và dễ gợi nhớ",
+            paragraphs: [
+              [
+                "Thú len đội mũ cử nhân hợp với người thích sự dễ thương hoặc khi hai bạn có biệt danh, nhân vật hay thú cưng gắn với một kỷ niệm. Bạn gửi ảnh tham khảo, Tiny sẽ cho biết chi tiết nào có thể thể hiện bằng len, thời gian cần thiết và mức chi phí tương ứng."
+              ]
+            ]
+          },
+          {
+            title: "Set quà: đủ đầy mà không phải tự ghép từng món",
+            paragraphs: [
+              [
+                "Nếu bạn muốn món quà có cả phần để trao trong lễ và một món nhỏ để người nhận giữ lại, set hoa len kèm thú mini là lựa chọn gọn gàng. Tiny phối các món theo cùng một bảng màu và báo tổng chi phí để bạn không phải tự mua rồi ghép từng phần."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        type: "subsections",
+        title: "Những băn khoăn thường gặp trước khi đặt",
+        subsections: [
+          {
+            title: "Sợ thành phẩm không giống điều mình nghĩ",
+            paragraphs: [
+              [
+                "Tiny sẽ hỏi rõ màu, kích thước và chi tiết quan trọng trước khi làm. Với mẫu theo ảnh, Tiny trao đổi trước phần nào có thể tái hiện bằng len. Khi hoàn thiện, bạn được nhận ảnh kiểm tra trước khi sản phẩm được đóng gói và giao đi."
+              ]
+            ]
+          },
+          {
+            title: "Sợ đặt rồi không kịp ngày lễ",
+            paragraphs: [
+              [
+                "Bạn hãy gửi ngày cần nhận và tỉnh thành giao hàng ngay từ tin nhắn đầu tiên. Tiny kiểm tra cả thời gian làm lẫn thời gian vận chuyển trước khi xác nhận. Nếu lịch quá sát, Tiny sẽ nói rõ để bạn không phải chờ trong mơ hồ."
+              ]
+            ]
+          },
+          {
+            title: "Không biết ngân sách của mình chọn được mẫu nào",
+            paragraphs: [
+              [
+                "Bạn không cần hỏi giá từng món. Chỉ cần nói khoảng ngân sách, Tiny sẽ đề xuất kích thước và độ chi tiết phù hợp. Giá được báo trước khi làm; Tiny không tự thêm phụ kiện làm phát sinh chi phí khi chưa trao đổi với bạn."
+              ]
+            ]
+          },
+          {
+            title: "Không chắc người nhận thích kiểu nào",
+            paragraphs: [
+              [
+                "Hãy gửi cho Tiny vài thông tin đơn giản: mối quan hệ của hai bạn, màu người nhận hay dùng, phong cách dễ thương hay tối giản và món đồ họ thường thích. Từ đó, Tiny thu hẹp còn một vài phương án thật sự hợp thay vì để bạn tự đoán."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        type: "list",
+        title: "Tiny phù hợp với bạn nếu",
+        items: [
+          {
+            label: "Bạn muốn làm riêng",
+            text: "Món quà cần theo màu, nhân vật, ảnh mẫu hoặc câu chuyện của người nhận thay vì mua một mẫu giống nhiều người."
+          },
+          {
+            label: "Bạn cần biết giá trước",
+            text: "Ngân sách được trao đổi từ đầu và phương án được điều chỉnh theo mức bạn thấy phù hợp."
+          },
+          {
+            label: "Bạn cần đúng ngày",
+            text: "Lịch làm và thời gian giao được kiểm tra trước khi chốt, không nhận đơn khi chưa đánh giá khả năng hoàn thành."
+          },
+          {
+            label: "Bạn muốn xem trước thành phẩm",
+            text: "Tiny gửi ảnh kiểm tra trước khi đóng gói để bạn yên tâm hơn khi món quà được trao thay lời chúc."
+          }
+        ]
+      },
+      {
+        type: "list",
+        title: "Quy trình chốt đơn rõ ràng, không vòng vo",
+        items: [
+          { label: "1. Gửi thông tin", text: "Ngày cần nhận, ngân sách, tỉnh thành giao và vài nét về người nhận." },
+          { label: "2. Nhận phương án", text: "Tiny kiểm tra lịch rồi gửi mẫu, màu và mức giá phù hợp để bạn chọn." },
+          { label: "3. Xác nhận đơn", text: "Hai bên thống nhất mẫu, chi tiết, chi phí và mốc hoàn thành trước khi Tiny bắt đầu làm." },
+          { label: "4. Duyệt thành phẩm", text: "Tiny gửi ảnh sản phẩm hoàn thiện, sau đó mới đóng gói và giao theo thông tin đã xác nhận." }
+        ]
+      },
+      {
+        type: "paragraphs",
+        title: "Nên đặt quà tốt nghiệp trước bao lâu?",
+        paragraphs: [
+          [
+            "Đồ móc handmade cần thời gian chọn màu, móc từng chi tiết, ráp sản phẩm và kiểm tra form. Mẫu càng lớn hoặc càng cá nhân hóa thì càng nên đặt sớm, đặc biệt vào mùa tốt nghiệp khi nhiều đơn có cùng ngày cần nhận."
+          ],
+          [
+            "Nếu ngày lễ đã gần, bạn vẫn nên gửi lịch cụ thể để Tiny kiểm tra. Tiny sẽ tư vấn theo khả năng hoàn thành thực tế; trường hợp không kịp, shop báo thẳng để bạn chủ động chọn phương án khác."
+          ]
+        ]
+      },
+      {
+        type: "callout",
+        kicker: "Sẵn sàng kiểm tra đơn",
+        title: "Gửi 4 thông tin, Tiny tư vấn phương án phù hợp ngay",
+        text:
+          "Hãy gửi ngày cần nhận, tỉnh thành giao hàng, khoảng ngân sách và màu hoặc phong cách người nhận thích. Tiny kiểm tra lịch, gợi ý mẫu và báo giá để bạn quyết định trên thông tin rõ ràng.",
+        ctaLabel: "Gửi thông tin để kiểm tra đơn"
+      },
+      {
+        type: "related",
+        title: "Đọc thêm trước khi chọn quà",
+        links: [
+          {
+            slug: "vi-sao-qua-len-handmade-duoc-yeu-thich",
+            title: "Vì sao quà len handmade ngày càng được yêu thích?",
+            text: "Hiểu vì sao một món quà làm bằng tay thường có cảm giác riêng hơn."
+          },
+          {
+            slug: "moc-thu-len-theo-anh-mat-bao-lau",
+            title: "Móc thú len theo ảnh mất bao lâu?",
+            text: "Xem quy trình và chuẩn bị thông tin trước khi đặt mẫu custom."
+          },
+          {
+            slug: "cach-bao-quan-thu-len-handmade-de-luon-dep",
+            title: "Cách bảo quản thú len handmade để luôn đẹp",
+            text: "Gửi kèm người nhận vài mẹo nhỏ để món quà được giữ lâu hơn."
+          }
+        ]
+      }
+    ]
+  },
+  {
     slug: "vi-sao-qua-len-handmade-duoc-yeu-thich",
     title: "Vì Sao Quà Len Handmade Ngày Càng Được Yêu Thích? | LenTiny",
     description:

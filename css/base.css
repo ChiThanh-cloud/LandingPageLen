@@ -3,29 +3,30 @@
    ============================================= */
 
 :root {
-  --primary-700: #4a7c9d;
-  --primary-600: #6a9ac2;
-  --primary-500: #8bbce6;
-  --primary-300: #badcfc;
-  --primary-200: #d6ebfe;
-  --primary-100: #eef6ff;
-  --primary-50:  #f8fbff;
-  --accent-peach: #f1f6fa;
+  /* ── Pastel Blue Palette – LenTiny ── */
+  --primary-700: #1e5fa8;   /* xanh đậm, button primary, icon */
+  --primary-600: #2563a8;   /* xanh trung chính */
+  --primary-500: #5ba3d9;   /* xanh pastel trung – accent */
+  --primary-300: #c8e3f7;   /* xanh pastel nhạt – border, chip */
+  --primary-200: #dceefb;   /* xanh pastel rất nhạt – card bg */
+  --primary-100: #e8f4fd;   /* xanh trắng nhạt – section bg */
+  --primary-50:  #f4faff;   /* xanh trắng rất nhạt – page bg */
+  --accent-peach: #f0f7ff;
   --accent-cream: #ffffff;
   --blue-deep: var(--primary-700);
-  --blue-main: var(--primary-600);
+  --blue-main: var(--primary-500);
   --blue-light: var(--primary-200);
   --blue-pale: var(--primary-100);
   --warm-pale: var(--accent-peach);
   --rose-soft: var(--primary-100);
   --white: #ffffff;
-  --cream: #fbfdff;
-  --text-dark: #2a3c4a;
-  --text-mid: #5c7487;
-  --text-light: #89a3b8;
-  --shadow-sm: 0 8px 24px rgba(106, 154, 194, 0.08);
-  --shadow-md: 0 16px 40px rgba(106, 154, 194, 0.12);
-  --shadow-lg: 0 24px 64px rgba(106, 154, 194, 0.16);
+  --cream: #f7fbff;
+  --text-dark: #1a3a5c;   /* xanh navy đậm – chữ chính */
+  --text-mid:  #4a6b86;   /* xanh xám – chữ phụ */
+  --text-light: #7398b4;  /* xanh nhạt – placeholder, meta */
+  --shadow-sm: 0 8px 24px rgba(37, 99, 168, 0.08);
+  --shadow-md: 0 16px 40px rgba(37, 99, 168, 0.12);
+  --shadow-lg: 0 24px 64px rgba(37, 99, 168, 0.16);
   --radius: 20px;
   --radius-lg: 32px;
   --motion-fast: 160ms;

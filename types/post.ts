@@ -76,6 +76,11 @@ export type BlogPost = {
   image: string;
   imageAlt: string;
   ogImage?: string;
+  heroCta?: {
+    primaryLabel: string;
+    secondaryLabel: string;
+    secondaryHref: string;
+  };
   sections: PostSection[];
   legacyPhoneFound?: string;
 };

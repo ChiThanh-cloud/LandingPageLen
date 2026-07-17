@@ -28,6 +28,21 @@ export function BlogPostPage({ post }: { post: BlogPost }) {
           <p className="blog-eyebrow">{post.eyebrow}</p>
           <h1 className="blog-post-title">{post.h1}</h1>
           <p className="blog-post-lead">{post.lead}</p>
+          {post.heroCta ? (
+            <div className="blog-cta-actions" aria-label="Chọn quà tốt nghiệp">
+              <a
+                className="blog-button blog-button-primary"
+                href={siteConfig.messengerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {post.heroCta.primaryLabel}
+              </a>
+              <Link className="blog-button blog-button-soft" href={post.heroCta.secondaryHref}>
+                {post.heroCta.secondaryLabel}
+              </Link>
+            </div>
+          ) : null}
           <div className="blog-info-grid" aria-label="Thông tin bài viết">
             <div className="blog-info-item">
               <span className="blog-info-label">Ngày đăng</span>
@@ -49,15 +64,24 @@ export function BlogPostPage({ post }: { post: BlogPost }) {
         </section>
 
         <div className="blog-media blog-post-media">
-          <Image src={post.image} alt={post.imageAlt} width={800} height={1000} priority />
+          <Image
+            src={post.image}
+            alt={post.imageAlt}
+            width={1200}
+            height={900}
+            sizes="(max-width: 920px) 100vw, 800px"
+            priority
+          />
         </div>
 
         <PostSections post={post} />
 
         <section className="blog-cta">
-          <h2>Cần Tiny tư vấn thêm về đồ len handmade?</h2>
+          <h2>{post.heroCta ? "Sẵn sàng kiểm tra và chốt đơn?" : "Cần Tiny tư vấn thêm về đồ len handmade?"}</h2>
           <p className="blog-text">
-            Nhắn Tiny qua Messenger hoặc Zalo để được gợi ý mẫu len, set tự móc hoặc món quà handmade phù hợp.
+            {post.heroCta
+              ? "Gửi ngày cần nhận, ngân sách và phong cách người nhận. Tiny sẽ kiểm tra lịch, gợi ý mẫu và báo giá trước khi bạn xác nhận."
+              : "Nhắn Tiny qua Messenger hoặc Zalo để được gợi ý mẫu len, set tự móc hoặc món quà handmade phù hợp."}
           </p>
           <div className="blog-cta-actions">
             <a
@@ -66,7 +90,7 @@ export function BlogPostPage({ post }: { post: BlogPost }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Nhắn Tiny
+              {post.heroCta?.primaryLabel ?? "Nhắn Tiny"}
             </a>
             <a className="blog-button blog-button-soft" href={siteConfig.zaloUrl} target="_blank" rel="noopener noreferrer">
               Zalo {siteConfig.phoneDisplay}

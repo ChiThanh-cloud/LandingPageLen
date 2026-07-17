@@ -15,5 +15,5 @@ export const siteConfig = {
   zaloUrl: "https://zalo.me/0368903519",
   gaId: "G-C27736KHYT",
   clarityId: "wqieag9yv3",
-  updatedAt: "2026-07-13"
+  updatedAt: "2026-07-17"
 } as const;

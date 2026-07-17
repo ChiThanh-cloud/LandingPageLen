@@ -414,7 +414,7 @@ export default function HomePage() {
                   </Link>
                   <div className="home-blog-body">
                     <p className="home-blog-meta"><time dateTime={post.publishedAt}>{dateLabel}</time></p>
-                    <h3><Link href={href}>{post.title}</Link></h3>
+                    <h3><Link href={href}>{post.h1}</Link></h3>
                     <p>{post.excerpt || post.description}</p>
                     <Link className="home-blog-link" href={href}>Đọc bài →</Link>
                   </div>

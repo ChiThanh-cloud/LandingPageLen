@@ -4,7 +4,8 @@ export const metadata: Metadata = {
   title: "Migration Status",
   robots: {
     index: false,
-    follow: false
+    follow: false,
+    nocache: true
   }
 };
 

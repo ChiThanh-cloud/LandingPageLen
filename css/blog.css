@@ -1,30 +1,32 @@
 /* LenTiny static blog styles. All selectors use blog-* to avoid landing CSS collisions. */
 
 body.blog-body {
-  --blog-blue-deep: #2d6f94;
-  --blog-blue-main: #99ccff;
-  --blog-blue-light: #e1f1ff;
-  --blog-blue-pale: #f6fbff;
-  --blog-warm-pale: #fff7ef;
-  --blog-rose-soft: #f4b5aa;
-  --blog-rose-pale: #ffe5df;
-  --blog-mint-pale: #eaf8f0;
-  --blog-mint: #6fc59a;
+  /* ── Pastel Blue Palette ── */
+  --blog-blue-deep: #2563a8;        /* xanh đậm vừa – dùng cho chữ accent, icon */
+  --blog-blue-main: #5ba3d9;        /* xanh pastel trung – button, highlight */
+  --blog-blue-light: #c8e3f7;       /* xanh pastel nhạt – border, chip nền */
+  --blog-blue-pale: #e8f4fd;        /* xanh pastel rất nhạt – card nền, bg nhẹ */
+  --blog-warm-pale: #f0f7ff;        /* xanh trắng – fallback bg */
+  --blog-rose-soft: #7c9ec4;        /* xanh slate – thay rose, dùng cho brand note */
+  --blog-rose-pale: #d6eaf8;        /* xanh nhạt thay rose-pale */
+  --blog-mint-pale: #dff0e8;        /* xanh lá pastel nhạt – tag guide */
+  --blog-mint: #4eab80;             /* xanh lá pastel – bullet, accent phụ */
   --blog-white: #ffffff;
-  --blog-text: #1b3f5c;
-  --blog-muted: #5b748a;
-  --blog-soft: #6f8ea8;
-  --blog-border: rgba(214, 235, 254, .44);
-  --blog-shadow: 0 16px 42px rgba(106, 154, 194, .11);
-  --blog-shadow-soft: 0 8px 22px rgba(106, 154, 194, .08);
+  --blog-text: #1a3a5c;             /* xanh navy đậm – chữ chính, dễ đọc */
+  --blog-muted: #4a6b86;            /* xanh xám – chữ phụ, mô tả */
+  --blog-soft: #7398b4;             /* xanh nhạt hơn – meta, label */
+  --blog-border: rgba(91, 163, 217, .22);
+  --blog-shadow: 0 16px 42px rgba(37, 99, 168, .09);
+  --blog-shadow-soft: 0 8px 22px rgba(37, 99, 168, .07);
   --blog-radius: 18px;
   --blog-radius-lg: 28px;
   --blog-max: 1120px;
   margin: 0;
   color: var(--blog-text);
   background:
-    radial-gradient(circle at top left, rgba(238, 246, 255, .58), transparent 34rem),
-    linear-gradient(180deg, var(--blog-white) 0%, var(--blog-blue-pale) 48%, var(--blog-white) 100%);
+    radial-gradient(ellipse at top left, rgba(200, 227, 247, .45), transparent 38rem),
+    radial-gradient(ellipse at bottom right, rgba(232, 244, 253, .38), transparent 32rem),
+    linear-gradient(180deg, #f7fbff 0%, var(--blog-blue-pale) 50%, #f7fbff 100%);
   font-family: "Be Vietnam Pro", "Noto Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.65;
 }
@@ -185,7 +187,7 @@ body.blog-body {
 .blog-post-hero {
   padding: clamp(22px, 5vw, 44px);
   background:
-    linear-gradient(135deg, rgba(225, 241, 255, .86), rgba(255, 247, 239, .9)),
+    linear-gradient(135deg, rgba(200, 227, 247, .72), rgba(232, 244, 253, .88)),
     var(--blog-white);
 }
 
@@ -294,7 +296,7 @@ body.blog-body {
   aspect-ratio: 4 / 3;
   border-radius: var(--blog-radius-lg) var(--blog-radius-lg) 14px 14px;
   background:
-    linear-gradient(135deg, rgba(225, 241, 255, .92), rgba(238, 246, 255, .92)),
+    linear-gradient(135deg, rgba(200, 227, 247, .88), rgba(232, 244, 253, .92)),
     var(--blog-warm-pale);
 }
 
@@ -398,9 +400,9 @@ body.blog-body {
 }
 
 .blog-button-primary {
-  background: linear-gradient(135deg, var(--blog-blue-deep), var(--blog-blue-main));
+  background: linear-gradient(135deg, #1e5fa8, var(--blog-blue-main));
   color: var(--blog-white);
-  box-shadow: 0 10px 24px rgba(106, 154, 194, .22);
+  box-shadow: 0 10px 24px rgba(37, 99, 168, .22);
 }
 
 .blog-button-soft {
@@ -553,10 +555,10 @@ body.blog-body {
 }
 
 .blog-product-callout {
-  border: 1px solid rgba(106, 154, 194, .2);
+  border: 1px solid rgba(91, 163, 217, .22);
   border-radius: var(--blog-radius-lg);
   background:
-    linear-gradient(135deg, rgba(246, 251, 255, .96), rgba(255, 247, 239, .96)),
+    linear-gradient(135deg, rgba(232, 244, 253, .94), rgba(215, 234, 248, .88)),
     var(--blog-white);
   box-shadow: var(--blog-shadow-soft);
 }
@@ -586,7 +588,7 @@ body.blog-body {
   border-style: dashed;
   border-width: 2px;
   background:
-    linear-gradient(135deg, rgba(225, 241, 255, .92), rgba(238, 246, 255, .82)),
+    linear-gradient(135deg, rgba(200, 227, 247, .78), rgba(232, 244, 253, .72)),
     var(--blog-warm-pale);
 }
 
@@ -634,7 +636,7 @@ body.blog-body {
   display: block;
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--blog-blue-deep), var(--blog-blue-main));
+  background: linear-gradient(90deg, #1e5fa8, var(--blog-blue-main), #a8d4f0);
   border-radius: 0 2px 2px 0;
   transform: scaleX(0);
   transform-origin: left center;
