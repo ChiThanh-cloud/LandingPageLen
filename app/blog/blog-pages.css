@@ -76,8 +76,13 @@
   display: block;
   width: 100%;
   max-width: 800px;
+  padding: 0;
+  border: 0;
   color: inherit;
+  background: transparent;
+  font: inherit;
   text-decoration: none;
+  cursor: zoom-in;
 }
 
 .blog-image-section.is-portrait .blog-image-link {
@@ -134,6 +139,83 @@
   border-radius: 14px;
 }
 
+.blog-image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: grid;
+  place-items: center;
+  padding:
+    max(16px, env(safe-area-inset-top))
+    max(16px, env(safe-area-inset-right))
+    max(16px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  background: rgba(8, 26, 42, .92);
+  backdrop-filter: blur(8px);
+}
+
+.blog-image-lightbox-dialog {
+  position: relative;
+  width: min(100%, 1120px);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.blog-image-lightbox-dialog.is-portrait {
+  width: min(100%, 760px);
+}
+
+.blog-image-lightbox-frame {
+  position: relative;
+  width: 100%;
+  height: min(78dvh, 900px);
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--blog-white);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .34);
+}
+
+.blog-image-lightbox-frame img {
+  object-fit: contain;
+}
+
+.blog-image-lightbox-dialog p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--blog-white);
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.blog-image-lightbox-close {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  z-index: 1;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--blog-blue-deep);
+  background: var(--blog-white);
+  box-shadow: var(--blog-shadow);
+  font: inherit;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.blog-image-lightbox-close:focus-visible {
+  outline: 3px solid var(--blog-blue-main);
+  outline-offset: 3px;
+}
+
 .blog-content-card a,
 .blog-product-callout a {
   color: var(--blog-blue-deep);
@@ -186,5 +268,23 @@
     bottom: 10px;
     padding: 8px 10px;
     font-size: .78rem;
+  }
+
+  .blog-image-lightbox {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .blog-image-lightbox-frame {
+    height: min(76dvh, 720px);
+    border-radius: 14px;
+  }
+
+  .blog-image-lightbox-dialog p {
+    padding: 0 8px;
+    font-size: .84rem;
   }
 }

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
-import Image from "next/image";
 import type { BlogPost, PostSection, RichText } from "@/types/post";
+import { BlogImageLightbox } from "./BlogImageLightbox";
 
 function renderRichText(content: RichText) {
   return content.map((part, index) => {
@@ -86,29 +86,14 @@ function Section({ section }: { section: PostSection }) {
   }
 
   if (section.type === "image") {
-    const orientationClass = section.orientation === "portrait" ? " is-portrait" : "";
-
     return (
-      <figure className={`blog-content-card blog-image-section${orientationClass}`}>
-        <a
-          className="blog-image-link"
-          href={section.fullSrc || section.src}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Xem ảnh đầy đủ: ${section.alt}`}
-        >
-          <span className="blog-image-frame">
-            <Image
-              src={section.src}
-              alt={section.alt}
-              fill
-              sizes={section.orientation === "portrait" ? "(max-width: 768px) 100vw, 640px" : "(max-width: 768px) 100vw, 800px"}
-            />
-          </span>
-          <span className="blog-image-view">Xem ảnh đầy đủ</span>
-        </a>
-        {section.caption ? <figcaption>{section.caption}</figcaption> : null}
-      </figure>
+      <BlogImageLightbox
+        src={section.src}
+        fullSrc={section.fullSrc || section.src}
+        alt={section.alt}
+        caption={section.caption}
+        orientation={section.orientation}
+      />
     );
   }
 
