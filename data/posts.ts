@@ -18,11 +18,11 @@ export const posts: BlogPost[] = [
     author: "LenTiny",
     eyebrow: "Quà tốt nghiệp - Đặt làm riêng",
     breadcrumbLabel: "Quà tốt nghiệp handmade",
-    h1: "Quà tốt nghiệp handmade làm riêng, rõ mẫu và ngân sách trước khi chốt",
+    h1: "Quà tốt nghiệp handmade theo ngân sách và sở thích người nhận",
     lead:
-      "Bạn chỉ cần gửi ngày cần nhận, khoảng ngân sách và màu người nhận thích. Tiny kiểm tra lịch, gợi ý mẫu, báo giá trước khi làm và gửi ảnh thành phẩm để bạn duyệt.",
+      "Gửi Tiny ngày cần nhận, tỉnh hoặc thành phố giao hàng, khoảng ngân sách và màu hoặc sở thích của người nhận. Tiny sẽ kiểm tra lịch, gợi ý mẫu và báo giá trước khi bắt đầu làm.",
     excerpt:
-      "Gửi ngày nhận và ngân sách để Tiny tư vấn mẫu quà tốt nghiệp handmade, báo giá và xác nhận lịch trước khi làm.",
+      "Chọn hoa len, thú len hoặc set quà theo ngân sách; Tiny kiểm tra lịch, thống nhất mẫu và báo giá trước khi làm.",
     image:
       "https://res.cloudinary.com/djn2kd2hh/image/upload/v1784302075/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/qua-tot-nghiep-handmade-lam-rieng.jpg",
     imageAlt: "Gấu len đội mũ cử nhân, bó hoa len và giấy chứng nhận làm quà tốt nghiệp handmade",
@@ -35,120 +35,127 @@ export const posts: BlogPost[] = [
     },
     sections: [
       {
+        type: "subsections",
+        title: "Chọn nhanh quà tốt nghiệp handmade theo nhu cầu",
+        subsections: [
+          {
+            title: "Hoa len tốt nghiệp",
+            paragraphs: [
+              [
+                "Phù hợp khi bạn muốn món quà trang trọng, dễ cầm chụp ảnh và giữ được lâu. Tiny có thể phối ",
+                { type: "link", text: "hoa len handmade", href: "/san-pham/hoa-len-handmade" },
+                " theo màu áo cử nhân, màu trường hoặc màu người nhận thích."
+              ]
+            ]
+          },
+          {
+            title: "Thú len đội mũ cử nhân",
+            paragraphs: [
+              [
+                "Phù hợp khi bạn muốn món quà cá nhân hơn hoặc người nhận thích một nhân vật, con vật hay thú cưng cụ thể. Với mẫu ",
+                { type: "link", text: "thú len làm theo yêu cầu", href: "/san-pham/thu-len-theo-yeu-cau" },
+                ", Tiny sẽ trao đổi trước phần có thể tái hiện bằng len."
+              ]
+            ]
+          },
+          {
+            title: "Set hoa kèm thú len mini",
+            paragraphs: [
+              [
+                "Phù hợp khi bạn muốn món quà trông đầy đặn nhưng không phải tự ghép từng món. Hoa, thú mini và phụ kiện được phối cùng bảng màu, sau đó điều chỉnh số chi tiết theo ngân sách."
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,w_1086/v1784302978/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/hoa-len-xanh-tot-nghiep.png",
+        alt: "Bó hoa len xanh làm quà tốt nghiệp handmade theo màu người nhận",
+        caption: "Bó hoa len tông xanh phù hợp khi cần món quà trang trọng và dễ cầm chụp ảnh trong lễ tốt nghiệp.",
+        fullSrc: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1784302978/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/hoa-len-xanh-tot-nghiep.png",
+        orientation: "portrait"
+      },
+      {
         type: "list",
-        title: "Trước khi chốt, bạn sẽ biết rõ 4 điều",
+        title: "Chọn quà tốt nghiệp theo ngân sách",
         intro: [
-          "Một món quà làm riêng chỉ đáng đặt khi bạn không phải đoán về mẫu, chi phí hay ngày nhận. Tiny xác nhận từng phần trước khi bắt đầu làm."
+          "Tiny sẽ đề xuất phương án trong khoảng ngân sách bạn đưa ra và báo giá trước khi xác nhận đơn. Mức giá không tự thay đổi nếu chưa thống nhất thêm chi tiết."
         ],
         items: [
           {
-            label: "Mẫu nào phù hợp",
-            text: "Tiny dựa vào người nhận, phong cách và ảnh tham khảo để đề xuất một đến ba hướng phù hợp, không gửi một danh sách dài để bạn tự chọn."
+            label: "Ngân sách gọn",
+            text: "Ưu tiên một món chính, giảm kích thước hoặc lược bớt chi tiết phụ nhưng vẫn giữ màu và điểm nhận diện quan trọng."
           },
           {
-            label: "Màu sắc và chi tiết",
-            text: "Màu len, kiểu hoa, nhân vật và phụ kiện được thống nhất trước khi móc để thành phẩm gần với điều bạn hình dung."
+            label: "Ngân sách vừa",
+            text: "Có thể tăng số hoa, thêm phụ kiện hoặc kết hợp một thú len mini để set quà đầy đặn hơn."
           },
           {
-            label: "Chi phí dự kiến",
-            text: "Bạn nêu khoảng ngân sách trước. Tiny chỉ tư vấn những phương án phù hợp và báo giá rõ trước khi xác nhận đơn."
-          },
-          {
-            label: "Có kịp ngày nhận hay không",
-            text: "Tiny kiểm tra lịch làm và thời gian giao hàng theo địa chỉ của bạn trước khi chốt, đặc biệt trong mùa tốt nghiệp."
+            label: "Ngân sách linh hoạt",
+            text: "Phù hợp với mẫu làm riêng, set đồng bộ màu hoặc nhiều chi tiết cá nhân hóa theo ảnh và sở thích người nhận."
           }
         ]
       },
       {
-        type: "callout",
-        kicker: "Kiểm tra trước, quyết định sau",
-        title: "Gửi ngày nhận và ngân sách để Tiny kiểm tra đơn",
-        text:
-          "Bạn chưa cần biết chính xác phải mua mẫu nào. Tiny sẽ kiểm tra lịch, hỏi thêm sở thích người nhận và gửi phương án phù hợp để bạn cân nhắc trước khi xác nhận.",
-        ctaLabel: "Kiểm tra lịch làm quà"
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,w_1086/v1784302978/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/hoa-len-huong-duong-tot-nghiep.png",
+        alt: "Bó hoa len hướng dương và hoa hồng làm quà tốt nghiệp theo ngân sách",
+        caption: "Màu hoa, số lượng và phụ kiện có thể điều chỉnh để tạo phương án phù hợp với ngân sách đã trao đổi.",
+        fullSrc: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1784302978/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/hoa-len-huong-duong-tot-nghiep.png",
+        orientation: "portrait"
       },
       {
-        type: "paragraphs",
-        title: "Quà tốt nghiệp handmade đáng đặt khi thật sự mang dấu ấn người nhận",
-        paragraphs: [
-          [
-            "Ngày tốt nghiệp chỉ diễn ra một lần, nên người tặng thường không lo thiếu lựa chọn mà lo chọn nhầm: món quà có hợp người nhận không, lên ảnh có đẹp không và có kịp trao trong buổi lễ không. Một món đồ handmade giải quyết được những băn khoăn đó khi mẫu được làm theo màu, phong cách và câu chuyện thật của người nhận."
-          ],
-          [
-            "Bạn có thể chọn màu áo cử nhân, màu người nhận thường dùng, một nhân vật gắn với biệt danh hoặc một chi tiết trong ảnh kỷ niệm. Tiny sẽ giúp giữ lại những điểm có ý nghĩa và lược bớt phần trang trí không cần thiết để món quà trông chỉn chu, không bị rối."
-          ],
-          [
-            "Nếu cần món quà trang trọng, dễ cầm khi chụp ảnh, bạn có thể tham khảo ",
-            { type: "link", text: "hoa len handmade", href: "/san-pham/hoa-len-handmade" },
-            ". Nếu muốn làm theo nhân vật, thú cưng hoặc ý tưởng riêng, Tiny có nhận ",
-            { type: "link", text: "móc thú len theo yêu cầu", href: "/san-pham/thu-len-theo-yeu-cau" },
-            " và sẽ trao đổi độ chi tiết trước khi báo giá."
-          ]
+        type: "list",
+        title: "Bạn sẽ biết rõ gì trước khi chốt?",
+        items: [
+          { label: "Mẫu", text: "Tiny gửi phương án phù hợp với loại quà, người nhận và ảnh tham khảo." },
+          { label: "Màu và chi tiết", text: "Hai bên thống nhất tông màu, kích thước và phần cần cá nhân hóa trước khi làm." },
+          { label: "Giá", text: "Chi phí được báo trước; Tiny không tự thêm phụ kiện hoặc khoản phát sinh chưa trao đổi." },
+          { label: "Lịch nhận", text: "Tiny kiểm tra lịch làm và thời gian giao tới tỉnh hoặc thành phố của bạn trước khi nhận đơn." }
         ]
       },
       {
-        type: "subsections",
-        title: "Ba hướng quà dễ chốt theo đúng nhu cầu",
-        subsections: [
-          {
-            title: "Hoa len: chỉn chu, dễ trao và giữ được lâu",
-            paragraphs: [
-              [
-                "Hoa len phù hợp khi bạn muốn món quà trông trang trọng trong lễ tốt nghiệp nhưng người nhận vẫn có thể giữ lại sau buổi lễ. Tiny có thể phối theo màu áo, màu trường hoặc màu yêu thích. Bó hoa sẽ được cân đối theo nhu cầu cầm chụp ảnh và khoảng ngân sách bạn đưa ra."
-              ]
-            ]
-          },
-          {
-            title: "Thú len làm riêng: cá nhân và dễ gợi nhớ",
-            paragraphs: [
-              [
-                "Thú len đội mũ cử nhân hợp với người thích sự dễ thương hoặc khi hai bạn có biệt danh, nhân vật hay thú cưng gắn với một kỷ niệm. Bạn gửi ảnh tham khảo, Tiny sẽ cho biết chi tiết nào có thể thể hiện bằng len, thời gian cần thiết và mức chi phí tương ứng."
-              ]
-            ]
-          },
-          {
-            title: "Set quà: đủ đầy mà không phải tự ghép từng món",
-            paragraphs: [
-              [
-                "Nếu bạn muốn món quà có cả phần để trao trong lễ và một món nhỏ để người nhận giữ lại, set hoa len kèm thú mini là lựa chọn gọn gàng. Tiny phối các món theo cùng một bảng màu và báo tổng chi phí để bạn không phải tự mua rồi ghép từng phần."
-              ]
-            ]
-          }
-        ]
+        type: "image",
+        src: "https://res.cloudinary.com/djn2kd2hh/image/upload/f_auto,q_auto,w_1200/v1784302978/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/bup-be-len-lam-rieng.png",
+        alt: "Búp bê len đôi làm theo nhân vật và màu sắc riêng cho quà tốt nghiệp",
+        caption: "Mẫu làm riêng được trao đổi về nhân vật, màu và chi tiết trước khi Tiny bắt đầu thực hiện.",
+        fullSrc: "https://res.cloudinary.com/djn2kd2hh/image/upload/v1784302978/lentiny/blog/qua-tot-nghiep-handmade-y-nghia/bup-be-len-lam-rieng.png",
+        orientation: "landscape"
       },
       {
         type: "subsections",
-        title: "Những băn khoăn thường gặp trước khi đặt",
+        title: "Bốn lo ngại thường gặp trước khi đặt",
         subsections: [
           {
-            title: "Sợ thành phẩm không giống điều mình nghĩ",
+            title: "Sợ thành phẩm không đúng ý",
             paragraphs: [
               [
-                "Tiny sẽ hỏi rõ màu, kích thước và chi tiết quan trọng trước khi làm. Với mẫu theo ảnh, Tiny trao đổi trước phần nào có thể tái hiện bằng len. Khi hoàn thiện, bạn được nhận ảnh kiểm tra trước khi sản phẩm được đóng gói và giao đi."
+                "Tiny thống nhất màu và chi tiết quan trọng trước khi làm. Với mẫu theo ảnh, shop trao đổi rõ phần có thể tái hiện bằng len và gửi ảnh thành phẩm trước khi đóng gói."
               ]
             ]
           },
           {
-            title: "Sợ đặt rồi không kịp ngày lễ",
+            title: "Sợ không kịp ngày tốt nghiệp",
             paragraphs: [
               [
-                "Bạn hãy gửi ngày cần nhận và tỉnh thành giao hàng ngay từ tin nhắn đầu tiên. Tiny kiểm tra cả thời gian làm lẫn thời gian vận chuyển trước khi xác nhận. Nếu lịch quá sát, Tiny sẽ nói rõ để bạn không phải chờ trong mơ hồ."
+                "Hãy gửi ngày cần nhận và tỉnh hoặc thành phố giao hàng ngay từ đầu. Tiny chỉ nhận đơn sau khi kiểm tra thời gian làm và vận chuyển; nếu không kịp, shop sẽ báo rõ để bạn chủ động."
               ]
             ]
           },
           {
-            title: "Không biết ngân sách của mình chọn được mẫu nào",
+            title: "Không biết ngân sách chọn được mẫu nào",
             paragraphs: [
               [
-                "Bạn không cần hỏi giá từng món. Chỉ cần nói khoảng ngân sách, Tiny sẽ đề xuất kích thước và độ chi tiết phù hợp. Giá được báo trước khi làm; Tiny không tự thêm phụ kiện làm phát sinh chi phí khi chưa trao đổi với bạn."
+                "Bạn chỉ cần đưa khoảng ngân sách. Tiny sẽ điều chỉnh kích thước, số chi tiết và cách phối set trong khoảng đó rồi báo giá trước khi xác nhận."
               ]
             ]
           },
           {
-            title: "Không chắc người nhận thích kiểu nào",
+            title: "Không biết người nhận thích gì",
             paragraphs: [
               [
-                "Hãy gửi cho Tiny vài thông tin đơn giản: mối quan hệ của hai bạn, màu người nhận hay dùng, phong cách dễ thương hay tối giản và món đồ họ thường thích. Từ đó, Tiny thu hẹp còn một vài phương án thật sự hợp thay vì để bạn tự đoán."
+                "Cho Tiny biết người nhận thích phong cách dễ thương hay tối giản, màu thường dùng hoặc một nhân vật họ quan tâm. Từ đó shop sẽ thu hẹp còn một vài hướng phù hợp."
               ]
             ]
           }
@@ -156,55 +163,33 @@ export const posts: BlogPost[] = [
       },
       {
         type: "list",
-        title: "Tiny phù hợp với bạn nếu",
+        title: "Quy trình đặt quà trong 4 bước",
         items: [
-          {
-            label: "Bạn muốn làm riêng",
-            text: "Món quà cần theo màu, nhân vật, ảnh mẫu hoặc câu chuyện của người nhận thay vì mua một mẫu giống nhiều người."
-          },
-          {
-            label: "Bạn cần biết giá trước",
-            text: "Ngân sách được trao đổi từ đầu và phương án được điều chỉnh theo mức bạn thấy phù hợp."
-          },
-          {
-            label: "Bạn cần đúng ngày",
-            text: "Lịch làm và thời gian giao được kiểm tra trước khi chốt, không nhận đơn khi chưa đánh giá khả năng hoàn thành."
-          },
-          {
-            label: "Bạn muốn xem trước thành phẩm",
-            text: "Tiny gửi ảnh kiểm tra trước khi đóng gói để bạn yên tâm hơn khi món quà được trao thay lời chúc."
-          }
-        ]
-      },
-      {
-        type: "list",
-        title: "Quy trình chốt đơn rõ ràng, không vòng vo",
-        items: [
-          { label: "1. Gửi thông tin", text: "Ngày cần nhận, ngân sách, tỉnh thành giao và vài nét về người nhận." },
-          { label: "2. Nhận phương án", text: "Tiny kiểm tra lịch rồi gửi mẫu, màu và mức giá phù hợp để bạn chọn." },
-          { label: "3. Xác nhận đơn", text: "Hai bên thống nhất mẫu, chi tiết, chi phí và mốc hoàn thành trước khi Tiny bắt đầu làm." },
-          { label: "4. Duyệt thành phẩm", text: "Tiny gửi ảnh sản phẩm hoàn thiện, sau đó mới đóng gói và giao theo thông tin đã xác nhận." }
+          { label: "1. Gửi thông tin", text: "Ngày cần nhận, nơi giao, ngân sách và sở thích người nhận." },
+          { label: "2. Nhận phương án", text: "Tiny kiểm tra lịch rồi gợi ý loại quà, màu và chi tiết phù hợp." },
+          { label: "3. Xác nhận mẫu và giá", text: "Hai bên thống nhất nội dung đơn và chi phí trước khi bắt đầu làm." },
+          { label: "4. Duyệt thành phẩm", text: "Tiny gửi ảnh kiểm tra, sau đó mới đóng gói và giao theo thông tin đã xác nhận." }
         ]
       },
       {
         type: "paragraphs",
-        title: "Nên đặt quà tốt nghiệp trước bao lâu?",
+        title: "Nên hỏi lịch làm quà tốt nghiệp trước bao lâu?",
         paragraphs: [
           [
-            "Đồ móc handmade cần thời gian chọn màu, móc từng chi tiết, ráp sản phẩm và kiểm tra form. Mẫu càng lớn hoặc càng cá nhân hóa thì càng nên đặt sớm, đặc biệt vào mùa tốt nghiệp khi nhiều đơn có cùng ngày cần nhận."
+            "Với mẫu đơn giản, bạn nên hỏi lịch trước khoảng 5–7 ngày để Tiny có thời gian kiểm tra màu, làm sản phẩm và tính thời gian giao hàng. Mẫu lớn hoặc có nhiều chi tiết nên được hỏi sớm hơn."
           ],
           [
-            "Nếu ngày lễ đã gần, bạn vẫn nên gửi lịch cụ thể để Tiny kiểm tra. Tiny sẽ tư vấn theo khả năng hoàn thành thực tế; trường hợp không kịp, shop báo thẳng để bạn chủ động chọn phương án khác."
+            "Trong mùa tốt nghiệp, Tiny chỉ nhận số lượng phù hợp với khả năng hoàn thành. Nếu lịch quá sát hoặc không thể giao kịp, shop sẽ báo rõ để bạn chủ động chọn phương án khác."
           ]
         ]
       },
       {
         type: "callout",
-        kicker: "Sẵn sàng kiểm tra đơn",
-        title: "Gửi 4 thông tin, Tiny tư vấn phương án phù hợp ngay",
+        kicker: "Kiểm tra lịch trước khi nhận đơn",
+        title: "Gửi thông tin để Tiny kiểm tra lịch và gợi ý mẫu",
         text:
-          "Hãy gửi ngày cần nhận, tỉnh thành giao hàng, khoảng ngân sách và màu hoặc phong cách người nhận thích. Tiny kiểm tra lịch, gợi ý mẫu và báo giá để bạn quyết định trên thông tin rõ ràng.",
-        ctaLabel: "Gửi thông tin để kiểm tra đơn"
+          "Bạn chỉ cần gửi ngày cần nhận, tỉnh hoặc thành phố giao hàng, khoảng ngân sách và màu hoặc sở thích người nhận. Tiny sẽ phản hồi phương án phù hợp và báo giá trước khi làm.",
+        ctaLabel: "Gửi thông tin để Tiny kiểm tra lịch"
       },
       {
         type: "related",

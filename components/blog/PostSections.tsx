@@ -86,12 +86,28 @@ function Section({ section }: { section: PostSection }) {
   }
 
   if (section.type === "image") {
+    const orientationClass = section.orientation === "portrait" ? " is-portrait" : "";
+
     return (
-      <figure className="blog-content-card blog-image-section" style={{ margin: "2rem 0", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: "800px", aspectRatio: "4/3", borderRadius: "12px", overflow: "hidden" }}>
-          <Image src={section.src} alt={section.alt} fill style={{ objectFit: "cover" }} sizes="(max-width: 768px) 100vw, 800px" />
-        </div>
-        {section.caption ? <figcaption style={{ marginTop: "0.75rem", fontSize: "0.9rem", color: "var(--color-text-light)", fontStyle: "italic", textAlign: "center" }}>{section.caption}</figcaption> : null}
+      <figure className={`blog-content-card blog-image-section${orientationClass}`}>
+        <a
+          className="blog-image-link"
+          href={section.fullSrc || section.src}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Xem ảnh đầy đủ: ${section.alt}`}
+        >
+          <span className="blog-image-frame">
+            <Image
+              src={section.src}
+              alt={section.alt}
+              fill
+              sizes={section.orientation === "portrait" ? "(max-width: 768px) 100vw, 640px" : "(max-width: 768px) 100vw, 800px"}
+            />
+          </span>
+          <span className="blog-image-view">Xem ảnh đầy đủ</span>
+        </a>
+        {section.caption ? <figcaption>{section.caption}</figcaption> : null}
       </figure>
     );
   }

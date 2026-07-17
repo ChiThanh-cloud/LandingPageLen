@@ -54,6 +54,8 @@ export type PostSection =
       src: string;
       alt: string;
       caption?: string;
+      fullSrc?: string;
+      orientation?: "landscape" | "portrait";
     };
 
 export type BlogPost = {
