@@ -77,10 +77,10 @@ export function BlogPostPage({ post }: { post: BlogPost }) {
         <PostSections post={post} />
 
         <section className="blog-cta">
-          <h2>{post.heroCta ? "Sẵn sàng kiểm tra và chốt đơn?" : "Cần Tiny tư vấn thêm về đồ len handmade?"}</h2>
+          <h2>{post.heroCta ? "Đã hình dung món quà bạn muốn dành tặng?" : "Cần Tiny tư vấn thêm về đồ len handmade?"}</h2>
           <p className="blog-text">
             {post.heroCta
-              ? "Gửi ngày cần nhận, ngân sách và phong cách người nhận. Tiny sẽ kiểm tra lịch, gợi ý mẫu và báo giá trước khi bạn xác nhận."
+              ? "Kể Tiny nghe ngày bạn muốn trao quà, khoảng giá cảm thấy phù hợp và phong cách người nhận. Tiny sẽ kiểm tra lịch, gợi ý mẫu và báo giá trước khi bạn quyết định."
               : "Nhắn Tiny qua Messenger hoặc Zalo để được gợi ý mẫu len, set tự móc hoặc món quà handmade phù hợp."}
           </p>
           <div className="blog-cta-actions">
