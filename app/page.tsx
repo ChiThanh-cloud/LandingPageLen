@@ -16,14 +16,14 @@ export const metadata: Metadata = {
   description:
     "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, nhận tư vấn cuộn len, set tự móc, đồ móc theo yêu cầu và quà tặng handmade. Nhắn Messenger để được Tiny tư vấn mẫu, màu len và báo giá nhanh.",
   alternates: {
-    canonical: "/"
+    canonical: siteConfig.url
   },
   openGraph: {
     title: "Tiệm Len Nhà Tiny | Len handmade & đồ móc theo yêu cầu",
     description:
       "Shop len handmade tại TP.HCM: cuộn len, set tự móc, quà tặng và đồ móc theo yêu cầu. Nhắn Messenger để Tiny tư vấn mẫu và báo giá.",
     type: "website",
-    url: "/",
+    url: siteConfig.url,
     siteName: "Tiệm Len Nhà Tiny",
     locale: "vi_VN",
     images: [
@@ -65,6 +65,11 @@ const homeJsonLd = {
         addressLocality: "Thành phố Hồ Chí Minh",
         addressCountry: "VN"
       },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: 10.7441,
+        longitude: 106.6895
+      },
       areaServed: { "@type": "Country", name: "Việt Nam" },
       openingHoursSpecification: [
         {
@@ -89,46 +94,16 @@ const homeJsonLd = {
       url: `${siteConfig.url}/`,
       name: siteConfig.name,
       publisher: { "@id": `${siteConfig.url}/#business` },
-      inLanguage: siteConfig.language
+      inLanguage: siteConfig.language,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${siteConfig.url}/blog?q={search_term_string}`
+        },
+        "query-input": "required name=search_term_string"
+      }
     },
-    {
-      "@type": "FAQPage",
-      "@id": "https://lentiny.xyz/#cau-hoi-nhanh-tiny",
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Tiệm Len Nhà Tiny bán gì?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng handmade."
-          }
-        },
-        {
-          "@type": "Question",
-          name: "Tiệm Len Nhà Tiny phù hợp với ai?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần tư vấn phối màu len."
-          }
-        },
-        {
-          "@type": "Question",
-          name: "Có thể đặt đồ móc theo yêu cầu không?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng."
-          }
-        },
-        {
-          "@type": "Question",
-          name: "Shop có giao hàng toàn quốc không?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc."
-          }
-        }
-      ]
-    }
   ]
 };
 

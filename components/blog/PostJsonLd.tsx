@@ -43,8 +43,14 @@ export function PostJsonLd({ post }: { post: BlogPost }) {
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
         author: {
-          "@type": "Organization",
-          name: post.author
+          "@type": "Person",
+          name: "Tiny",
+          url: siteConfig.url,
+          worksFor: {
+            "@type": "Organization",
+            name: siteConfig.name,
+            url: siteConfig.url
+          }
         },
         publisher: { "@id": `${siteConfig.url}/#business` },
         mainEntityOfPage: {

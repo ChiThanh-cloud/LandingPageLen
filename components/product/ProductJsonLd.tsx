@@ -47,7 +47,7 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
       image: absoluteUrl(product.image),
       url,
       provider: { "@id": `${siteConfig.url}/#business` },
-      areaServed: "VN",
+      areaServed: { "@type": "Country", name: "Việt Nam" },
       serviceType: "Handmade crochet custom order"
     });
   } else if (product.kind === "product" && product.offer && product.offer.price > 0) {
@@ -66,7 +66,11 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
         price: product.offer.price,
         priceCurrency: product.offer.priceCurrency,
         availability: `https://schema.org/${product.offer.availability}`,
-        itemCondition: "https://schema.org/NewCondition"
+        itemCondition: "https://schema.org/NewCondition",
+        seller: {
+          "@type": "Organization",
+          name: siteConfig.name
+        }
       }
     });
   }
@@ -75,20 +79,6 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
     "@context": "https://schema.org",
     "@graph": graph
   };
-
-  if (product.faq && product.faq.length > 0) {
-    jsonLd["@graph"].push({
-      "@type": "FAQPage",
-      mainEntity: product.faq.map((item) => ({
-        "@type": "Question",
-        name: item.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: item.answer
-        }
-      }))
-    });
-  }
 
   return (
     <script

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     default: siteConfig.name,
     template: `%s | ${siteConfig.name}`
   },
-  description: "Tiệm Len Nhà Tiny - len handmade, set tự móc và quà tặng thủ công.",
+  description: "Tiệm Len Nhà Tiny – shop len handmade tại TP.HCM chuyên tư vấn cuộn len, set tự móc, đồ móc theo yêu cầu và quà tặng handmade. Nhắn Messenger để được Tiny báo giá nhanh.",
   applicationName: siteConfig.name,
   icons: {
     icon: "/images/favicon.png",
