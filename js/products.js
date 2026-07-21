@@ -260,7 +260,7 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
       <div class="yarn-detail-layout">
         <div class="yarn-detail-left">
           <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
-            <img src="${escapeHtml(heroImage)}" alt="Ảnh sản phẩm ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny" decoding="async">
+            <img src="${escapeHtml(heroImage || '/images/logo_160.png')}" alt="Ảnh sản phẩm ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny" decoding="async" onerror="this.onerror=null;this.src='/images/logo_160.png';">
           </button>
           <div class="yarn-detail-info">
             <h3>${escapeHtml(product.name || 'Cuộn len')}</h3>
@@ -291,7 +291,7 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
                 const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
                 return `
                   <button type="button" class="yarn-color-option ${active ? 'active' : ''}" data-variant-id="${variant.id}" aria-label="Chọn màu ${escapeHtml(code)}">
-                    <img src="${escapeHtml(thumb)}" alt="Màu ${escapeHtml(code || 'len')} của ${escapeHtml(product.name || 'dòng len')} tại Tiệm Len Nhà Tiny" loading="lazy" decoding="async">
+                    <img src="${escapeHtml(thumb || '/images/logo_160.png')}" alt="Màu ${escapeHtml(code || 'len')} của ${escapeHtml(product.name || 'dòng len')} tại Tiệm Len Nhà Tiny" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/logo_160.png';">
                     <span>${escapeHtml(code || 'Màu')}</span>
                   </button>
                 `;
@@ -537,8 +537,8 @@ function renderProducts(products) {
     const weightHtml = item.weight ? `<span class="product-weight">${escapeHtml(item.weight)}</span>` : '';
     const itemNameRaw = item.name || 'Sản phẩm';
     const itemName = escapeHtml(itemNameRaw);
-    const imageUrl = getProductImageUrl(item);
-    const thumbImageUrl = getProductThumbImageUrl(item);
+    const imageUrl = getProductImageUrl(item) || '/images/logo_160.png';
+    const thumbImageUrl = getProductThumbImageUrl(item) || '/images/logo_160.png';
     const displayPrice = formatProductPrice(getProductPrice(item));
     const priceHtml = displayPrice
       ? `<div class="product-price-inline">${currentCategory === 'yarn' ? 'Từ ' : ''}${displayPrice}</div>`
@@ -555,7 +555,7 @@ function renderProducts(products) {
 
     div.innerHTML = `
       <button class="product-img-wrap product-img-button" type="button" aria-label="Xem ảnh lớn: ${itemName}">
-        <img src="${escapeHtml(thumbImageUrl)}" alt="Ảnh sản phẩm ${itemName} tại Tiệm Len Nhà Tiny" loading="lazy" decoding="async" ${outOfStock ? 'style="filter:grayscale(60%);opacity:.7"' : ''}>
+        <img src="${escapeHtml(thumbImageUrl)}" alt="Ảnh sản phẩm ${itemName} tại Tiệm Len Nhà Tiny" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/logo_160.png';" ${outOfStock ? 'style="filter:grayscale(60%);opacity:.7"' : ''}>
         ${stockBadge}
       </button>
       <div class="product-item-info">
