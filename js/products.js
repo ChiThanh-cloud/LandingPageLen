@@ -161,6 +161,10 @@ function setYarnDetailMode(product) {
   modalContent?.classList.remove('yarn-list-modal');
   if (modalFilterTabs) modalFilterTabs.innerHTML = '';
   if (productModalTitle) productModalTitle.textContent = product.name || 'Bảng màu';
+
+  // Lock scroll and hide floating buttons
+  document.body.classList.add('yarn-modal-open');
+  document.documentElement.classList.add('yarn-modal-open');
 }
 
 async function fetchYarnVariants(productId) {
@@ -286,13 +290,13 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
     <article class="yarn-detail-view">
 
       <!-- Mobile-only sticky header -->
-      <div class="yarn-mobile-header" aria-label="Điều hướng chi tiết len">
+      <header class="yarn-mobile-header">
         <button type="button" class="yarn-mobile-back-btn" id="yarnMobileBackBtn" aria-label="Quay lại danh sách len">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-          Danh sách len
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
+        <h2 class="yarn-mobile-header-title">Danh sách len</h2>
         <button type="button" class="yarn-mobile-close-btn" id="yarnMobileCloseBtn" aria-label="Đóng">×</button>
-      </div>
+      </header>
 
       <!-- Scrollable content -->
       <div class="yarn-detail-scroll">
@@ -359,7 +363,7 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
 
       </div><!-- end .yarn-detail-scroll -->
 
-      <!-- Mobile-only sticky bottom action bar -->
+      <!-- Mobile-only bottom action bar (absolute, anchored to yarn-detail-view) -->
       <div class="yarn-mobile-action-bar">
         <div class="yarn-action-price" id="yarnActionPrice">${escapeHtml(selectedPrice)}</div>
         <a class="btn-messenger yarn-action-btn ${selectedVariant ? '' : 'disabled'}"
@@ -698,6 +702,8 @@ export function closeProductModal() {
   productModal?.classList.remove('active');
   productModal?.classList.remove('yarn-detail-open');
   document.body.classList.remove('product-modal-open');
+  document.body.classList.remove('yarn-modal-open');
+  document.documentElement.classList.remove('yarn-modal-open');
   document.body.style.overflow = '';
 }
 
