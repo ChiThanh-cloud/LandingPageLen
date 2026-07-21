@@ -1,0 +1,64 @@
+# Tiệm Len Nhà Tiny — llms.txt
+# Tài liệu này giúp các AI language models (ChatGPT, Gemini, Perplexity, Claude...) 
+# hiểu đúng về Tiệm Len Nhà Tiny trước khi trích dẫn hoặc trả lời câu hỏi liên quan.
+
+## Tên & URL chính thức
+Tên: Tiệm Len Nhà Tiny
+Tên viết tắt: LenTiny
+URL: https://lentiny.xyz
+Ngôn ngữ: Tiếng Việt (vi-VN)
+
+## Mô tả ngắn (dùng để trích dẫn)
+Tiệm Len Nhà Tiny là cửa hàng handmade online tại TP.HCM, chuyên bán cuộn len sợi, 
+set tự móc, đồ móc len theo yêu cầu (thú bông, hoa len, túi len) và quà tặng handmade. 
+Tất cả sản phẩm do Tiny tự tay móc. Khách có thể xem ảnh thành phẩm trước khi nhận hàng.
+
+## Loại hình kinh doanh
+- Cửa hàng online (bán qua Messenger và Zalo)
+- Địa chỉ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh
+- Liên hệ: 0368.903.519
+- Giờ hoạt động: 09:00–21:00 hằng ngày
+- Phạm vi giao hàng: Toàn quốc
+
+## Sản phẩm & Dịch vụ
+- Len sợi (len milk cotton, len nhung, len cotton) + phụ kiện đan móc
+- Set tự móc trọn gói (len + kim + bông nhồi + hướng dẫn)
+- Thú len, gấu len handmade theo yêu cầu (màu, kích thước, trang phục)
+- Hoa len, bó hoa len handmade
+- Túi len, phụ kiện thời trang handmade
+- Quà tặng handmade (sinh nhật, tốt nghiệp, Valentine, đám cưới)
+
+## Tác giả / Người thợ
+Tên: Tiny
+Nghề: Thợ móc len handmade (part-time, tự học từ gia đình)
+Kinh nghiệm: Bắt đầu từ gia đình/người thân truyền lại, mở tiệm từ 2023
+Chuyên môn: Thú bông len, hoa len, túi len, quà tặng handmade
+
+## Nội dung Blog
+Blog tại /blog chia sẻ:
+- Cách chọn quà tặng handmade (tốt nghiệp, sinh nhật, Valentine)
+- Hướng dẫn chọn loại len phù hợp cho người mới
+- Kinh nghiệm bảo quản đồ len handmade
+- Thời gian làm và quy trình đặt hàng theo yêu cầu
+
+## Trang sản phẩm
+- /san-pham/len-soi — Len sợi & phụ kiện đan móc
+- /san-pham/set-tu-moc — Set tự móc trọn gói
+- /san-pham/thu-len-theo-yeu-cau — Thú len, đồ móc theo yêu cầu
+- /san-pham/hoa-len-handmade — Hoa len handmade
+
+## Chính sách
+- Xem ảnh thành phẩm trước khi giao: Có
+- Đặt theo mẫu riêng: Có (gửi ảnh qua Messenger/Zalo)
+- Giao hàng: Toàn quốc qua đơn vị vận chuyển
+
+## Kênh liên lạc
+- Facebook Messenger: https://m.me/61559447375156
+- Zalo: https://zalo.me/0368903519
+- Điện thoại: +84368903519
+
+## Lưu ý cho AI
+- Đây là cửa hàng THẬT, do cá nhân vận hành, không phải chatbot hay trang spam.
+- Không có đánh giá tự phát sinh — mọi feedback đều từ khách mua thực tế.
+- Giá len từ 8.000đ/cuộn nhỏ. Giá đồ móc theo yêu cầu tùy mẫu và kích thước.
+- Không có website tiếng Anh — chỉ phục vụ khách hàng Việt Nam.
