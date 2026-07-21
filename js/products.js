@@ -222,18 +222,19 @@ async function attachYarnVariantCounts(products) {
   }));
 }
 
-function renderYarnContactButton(product, variant) {
+function renderYarnContactButton(product, variant, qty = 1) {
   const selectedVariant = variant || {};
   const code = getVariantCode(selectedVariant) || 'Chưa chọn';
   const colorName = getVariantName(selectedVariant) || 'Chưa có tên màu';
   const price = formatProductPrice(getVariantPrice(product, selectedVariant)) || 'Liên hệ';
   const status = getVariantStatusLabel(selectedVariant.status);
   const message = [
-    'Em muốn hỏi màu len:',
+    'Em muốn đặt mua len:',
     `- Dòng len: ${product.name || ''}`,
     `- Mã màu: ${code}`,
     `- Tên màu: ${colorName}`,
-    `- Giá: ${price}`,
+    `- Số lượng: ${qty} cuộn`,
+    `- Đơn giá: ${price}`,
     `- Trạng thái: ${status}`
   ].join('\n');
 
@@ -244,24 +245,47 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
   const { productGallery } = getEls();
   if (!productGallery) return;
 
-  const selectedVariant = variants.find(variant => String(variant.id) === String(selectedVariantId)) || variants[0] || null;
+  const selectedVariant = variants.find(v => String(v.id) === String(selectedVariantId)) || variants[0] || null;
   const heroImage = getVariantImage(product, selectedVariant, 'full');
   const selectedCode = selectedVariant ? getVariantCode(selectedVariant) : '';
   const selectedName = selectedVariant ? getVariantName(selectedVariant) : '';
   const selectedPrice = formatProductPrice(getVariantPrice(product, selectedVariant)) || 'Liên hệ';
   const selectedStatus = selectedVariant ? getVariantStatusLabel(selectedVariant.status) : 'Chưa có bảng màu';
   const isAvailable = selectedVariant?.status !== 'out';
-  const contactHref = selectedVariant ? renderYarnContactButton(product, selectedVariant) : '#';
+  const contactHref = selectedVariant ? renderYarnContactButton(product, selectedVariant, 1) : '#';
+
   const detailRows = [
     ['Trọng lượng', product.weight],
     ['Kích cỡ sợi', product.yarn_size],
     ['Kim đan', product.knitting_needle],
     ['Kim móc', product.crochet_hook],
     ['Xuất xứ', product.origin]
-  ].filter(([, value]) => value);
+  ].filter(([, v]) => v);
 
-  const colorOptionsHtml = variants.length ? `
-    <div class="yarn-color-grid">
+  // Build thumbnail list from all variants
+  const thumbnailsHtml = variants.length ? variants.map((variant) => {
+    const thumb = getVariantImage(product, variant, 'thumb');
+    const code = getVariantCode(variant);
+    const name = getVariantName(variant);
+    const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
+    const isOut = variant.status === 'out';
+    return `
+      <button type="button"
+        class="yarn-thumbnail-button ${active ? 'is-active' : ''} ${isOut ? 'is-out' : ''}"
+        data-variant-id="${variant.id}"
+        aria-label="Chọn màu ${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
+        aria-pressed="${active ? 'true' : 'false'}">
+        <img src="${escapeHtml(thumb || '/images/logo_160.png')}"
+          alt="Màu ${escapeHtml(code || 'len')}"
+          loading="lazy" decoding="async"
+          onerror="this.onerror=null;this.src='/images/logo_160.png';">
+        <span class="yarn-thumbnail-code">${escapeHtml(code || '?')}</span>
+      </button>`;
+  }).join('') : '';
+
+  // Build color option grid (for purchase panel)
+  const colorGridHtml = variants.length ? `
+    <div class="yarn-color-grid" role="group" aria-label="Chọn mã màu">
       ${variants.map((variant) => {
         const thumb = getVariantImage(product, variant, 'thumb');
         const code = getVariantCode(variant);
@@ -272,42 +296,42 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
           <button type="button"
             class="yarn-color-option ${active ? 'active' : ''} ${isOut ? 'is-out' : ''}"
             data-variant-id="${variant.id}"
-            aria-label="Chọn màu ${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
+            aria-label="Màu ${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
             aria-pressed="${active ? 'true' : 'false'}">
             ${active ? '<span class="yarn-color-check" aria-hidden="true">✓</span>' : ''}
             <img src="${escapeHtml(thumb || '/images/logo_160.png')}"
-              alt="Màu ${escapeHtml(code || 'len')} của ${escapeHtml(product.name || 'dòng len')}"
+              alt="Màu ${escapeHtml(code || 'len')}"
               loading="lazy" decoding="async"
               onerror="this.onerror=null;this.src='/images/logo_160.png';">
-            <span>${escapeHtml(code || 'Màu')}</span>
-          </button>
-        `;
+            <span>${escapeHtml(code || '?')}</span>
+          </button>`;
       }).join('')}
     </div>
-  ` : '<p class="yarn-empty-variants">Dòng len này chưa có bảng màu. Bạn liên hệ Tiny để được gửi bảng màu nhé.</p>';
+  ` : '<p class="yarn-empty-variants">Dòng len chưa có bảng màu. Liên hệ Tiny để được gửi nhé.</p>';
 
   productGallery.innerHTML = `
     <article class="yarn-detail-view">
 
-      <!-- Mobile-only sticky header -->
-      <header class="yarn-mobile-header">
-        <button type="button" class="yarn-mobile-back-btn" id="yarnMobileBackBtn" aria-label="Quay lại danh sách len">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <h2 class="yarn-mobile-header-title">Danh sách len</h2>
-        <button type="button" class="yarn-mobile-close-btn" id="yarnMobileCloseBtn" aria-label="Đóng">×</button>
+      <!-- Sticky header (always visible) -->
+      <header class="yarn-detail-header">
+        <button type="button" class="yarn-detail-back" id="yarnDetailBack"
+          aria-label="Quay lại danh sách len">←</button>
+        <span class="yarn-detail-header-title">Chi tiết sản phẩm</span>
+        <button type="button" class="yarn-detail-close" id="yarnDetailClose"
+          aria-label="Đóng">×</button>
       </header>
 
-      <!-- Scrollable content -->
-      <div class="yarn-detail-scroll">
+      <!-- E-commerce layout -->
+      <div class="yarn-commerce-detail">
 
-        <!-- Desktop: 2-column layout -->
-        <div class="yarn-detail-layout">
-
-          <!-- Left: image -->
-          <div class="yarn-detail-left">
-            <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
+        <!-- Gallery column -->
+        <section class="yarn-gallery" aria-label="Ảnh sản phẩm">
+          <!-- Main image -->
+          <div class="yarn-main-image-wrap">
+            <button type="button" class="yarn-main-image-btn" id="yarnDetailImageBtn"
+              aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
               <img id="yarnDetailHeroImg"
+                class="yarn-main-image"
                 src="${escapeHtml(heroImage || '/images/logo_160.png')}"
                 alt="Ảnh sản phẩm ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny"
                 decoding="async"
@@ -315,108 +339,178 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
             </button>
           </div>
 
-          <!-- Right: info -->
-          <div class="yarn-detail-info">
-            <h3>${escapeHtml(product.name || 'Cuộn len')}</h3>
-            <div class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</div>
-            ${product.description ? `<p class="yarn-detail-description">${escapeHtml(product.description)}</p>` : ''}
-            ${detailRows.length ? `
-              <ul class="yarn-spec-list">
-                ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
-              </ul>
-            ` : ''}
+          <!-- Thumbnail strip -->
+          ${thumbnailsHtml ? `
+          <div class="yarn-thumbnail-list" id="yarnThumbnailList" aria-label="Danh sách mã màu">
+            ${thumbnailsHtml}
+          </div>` : ''}
+        </section>
 
-            <!-- Variant info card -->
-            <div class="yarn-selected-box">
-              <div class="yarn-selected-row">
-                <span class="yarn-selected-label">Mã màu</span>
-                <strong id="yarnSelectedCode">${escapeHtml(selectedCode || '–')}</strong>
-              </div>
-              <div class="yarn-selected-row">
-                <span class="yarn-selected-label">Tên màu</span>
-                <strong id="yarnSelectedName">${escapeHtml(selectedName || '–')}</strong>
-              </div>
-              <div class="yarn-selected-row">
-                <span class="yarn-selected-label">Trạng thái</span>
+        <!-- Purchase panel column -->
+        <section class="yarn-purchase-panel" aria-label="Thông tin đặt mua">
+
+          <!-- Product title -->
+          <h2 class="yarn-product-title">${escapeHtml(product.name || 'Cuộn len')}</h2>
+
+          <!-- Short meta -->
+          <div class="yarn-product-meta">
+            ${product.weight ? `<p>Trọng lượng: <strong>${escapeHtml(product.weight)}</strong></p>` : ''}
+            ${product.yarn_size ? `<p>Kích cỡ sợi: <strong>${escapeHtml(product.yarn_size)}</strong></p>` : ''}
+            ${product.origin ? `<p>Xuất xứ: <strong>${escapeHtml(product.origin)}</strong></p>` : ''}
+          </div>
+
+          <!-- Price box -->
+          <div class="yarn-price-box">
+            <p class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</p>
+            <p class="yarn-price-note">Giá mỗi cuộn / Liên hệ để biết giá sỉ</p>
+          </div>
+
+          <!-- Color section title -->
+          <h3 class="yarn-section-title">Mã màu</h3>
+
+          <!-- Color grid -->
+          ${colorGridHtml}
+
+          <!-- Selected variant info -->
+          <div class="yarn-selected-variant" id="yarnSelectedVariant">
+            <div class="yarn-selected-field">
+              <span class="yarn-selected-field-label">Mã màu</span>
+              <span class="yarn-selected-field-value" id="yarnSelectedCode">${escapeHtml(selectedCode || '–')}</span>
+            </div>
+            <div class="yarn-selected-field">
+              <span class="yarn-selected-field-label">Tên màu</span>
+              <span class="yarn-selected-field-value" id="yarnSelectedName">${escapeHtml(selectedName || '–')}</span>
+            </div>
+            <div class="yarn-selected-field">
+              <span class="yarn-selected-field-label">Trạng thái</span>
+              <span class="yarn-selected-field-value">
                 <span id="yarnSelectedStatus" class="yarn-status-badge ${isAvailable ? 'is-available' : 'is-out'}">
                   <span class="yarn-status-dot" aria-hidden="true"></span>
                   ${escapeHtml(selectedStatus)}
                 </span>
-              </div>
+              </span>
             </div>
-
-            <!-- Desktop contact button (hidden on mobile, action bar handles it) -->
-            <a class="btn-messenger yarn-contact-btn yarn-contact-desktop ${selectedVariant ? '' : 'disabled'}"
-              id="yarnContactBtn"
-              href="${contactHref}"
-              target="_blank" rel="noopener">
-              Liên hệ đặt màu này
-            </a>
           </div>
-        </div>
 
-        <!-- Color grid -->
-        <section class="yarn-color-section yarn-detail-colors">
-          <h4>Mã màu</h4>
-          ${colorOptionsHtml}
+          <!-- Quantity -->
+          <div class="yarn-quantity-row">
+            <span class="yarn-quantity-label">Số lượng</span>
+            <div class="yarn-quantity" role="group" aria-label="Chọn số lượng">
+              <button type="button" class="yarn-qty-btn" id="yarnQtyMinus" aria-label="Giảm số lượng">−</button>
+              <input type="number" class="yarn-qty-input" id="yarnQtyInput"
+                min="1" max="99" value="1" aria-label="Số lượng cuộn len">
+              <button type="button" class="yarn-qty-btn" id="yarnQtyPlus" aria-label="Tăng số lượng">+</button>
+            </div>
+          </div>
+
+          <!-- Contact button -->
+          <a class="yarn-contact-btn ${!selectedVariant || !isAvailable ? 'disabled' : ''}"
+            id="yarnContactBtn"
+            href="${contactHref}"
+            target="_blank" rel="noopener">
+            ${isAvailable ? '💬 Liên hệ đặt màu này' : '💬 Liên hệ đặt trước'}
+          </a>
+
+          <!-- Description & specs -->
+          ${product.description ? `
+          <div class="yarn-detail-description-section">
+            <h3 class="yarn-section-title">Mô tả</h3>
+            <p class="yarn-detail-description">${escapeHtml(product.description)}</p>
+          </div>` : ''}
+
+          ${detailRows.length ? `
+          <div class="yarn-detail-specs">
+            <h3 class="yarn-section-title">Thông số kỹ thuật</h3>
+            <ul class="yarn-spec-list">
+              ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
+            </ul>
+          </div>` : ''}
+
         </section>
-
-      </div><!-- end .yarn-detail-scroll -->
-
-      <!-- Mobile-only bottom action bar (absolute, anchored to yarn-detail-view) -->
-      <div class="yarn-mobile-action-bar">
-        <div class="yarn-action-price" id="yarnActionPrice">${escapeHtml(selectedPrice)}</div>
-        <a class="btn-messenger yarn-action-btn ${selectedVariant ? '' : 'disabled'}"
-          id="yarnActionContactBtn"
-          href="${contactHref}"
-          target="_blank" rel="noopener"
-          aria-label="Liên hệ đặt màu ${escapeHtml(selectedCode || '')}">
-          ${isAvailable ? 'Liên hệ đặt màu' : 'Liên hệ đặt trước'}
-        </a>
       </div>
-
     </article>
   `;
 
+  // ── Event listeners ──
+
+  // Lightbox
   document.getElementById('yarnDetailImageBtn')?.addEventListener('click', () => {
     openImageLightbox(heroImage, product.name || 'Cuộn len');
   });
 
-  // Desktop back button (kept for layout compatibility but now hidden on mobile)
-  document.getElementById('yarnBackBtn')?.addEventListener('click', () => {
+  // Back button
+  document.getElementById('yarnDetailBack')?.addEventListener('click', () => {
     setYarnListMode();
     fetchAndRenderProducts();
   });
 
-  // Mobile header — back
-  document.getElementById('yarnMobileBackBtn')?.addEventListener('click', () => {
-    setYarnListMode();
-    fetchAndRenderProducts();
-  });
-
-  // Mobile header — close modal
-  document.getElementById('yarnMobileCloseBtn')?.addEventListener('click', () => {
+  // Close button
+  document.getElementById('yarnDetailClose')?.addEventListener('click', () => {
     closeProductModal();
   });
 
-  // Color grid — click + scrollIntoView
-  productGallery.querySelectorAll('.yarn-color-option').forEach((button) => {
-    button.addEventListener('click', () => {
-      renderYarnVariantDetail(product, variants, button.dataset.variantId);
-      // After re-render, scroll active item into view
+  // Helper: rebuild contact URL with current quantity
+  function getContactHref(qty) {
+    return selectedVariant ? renderYarnContactButton(product, selectedVariant, qty) : '#';
+  }
+
+  // Quantity controls
+  const qtyInput = document.getElementById('yarnQtyInput');
+  const qtyMinus = document.getElementById('yarnQtyMinus');
+  const qtyPlus  = document.getElementById('yarnQtyPlus');
+  const contactBtn = document.getElementById('yarnContactBtn');
+
+  function updateContactQty() {
+    const qty = Math.max(1, parseInt(qtyInput?.value || '1', 10) || 1);
+    if (qtyInput) qtyInput.value = qty;
+    if (contactBtn && selectedVariant) {
+      contactBtn.href = getContactHref(qty);
+    }
+  }
+
+  qtyMinus?.addEventListener('click', () => {
+    const v = Math.max(1, (parseInt(qtyInput?.value || '1', 10) || 1) - 1);
+    if (qtyInput) qtyInput.value = v;
+    updateContactQty();
+  });
+
+  qtyPlus?.addEventListener('click', () => {
+    const v = (parseInt(qtyInput?.value || '1', 10) || 1) + 1;
+    if (qtyInput) qtyInput.value = v;
+    updateContactQty();
+  });
+
+  qtyInput?.addEventListener('change', updateContactQty);
+  qtyInput?.addEventListener('input', updateContactQty);
+
+  // Color grid click
+  productGallery.querySelectorAll('.yarn-color-option, .yarn-thumbnail-button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const qty = parseInt(document.getElementById('yarnQtyInput')?.value || '1', 10) || 1;
+      renderYarnVariantDetail(product, variants, btn.dataset.variantId);
+      // After re-render, scroll active thumbnail into view
       requestAnimationFrame(() => {
-        const activeBtn = productGallery.querySelector('.yarn-color-option.active');
-        activeBtn?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        const activeThumb = productGallery.querySelector('.yarn-thumbnail-button.is-active');
+        activeThumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        const activeOpt = productGallery.querySelector('.yarn-color-option.active');
+        activeOpt?.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+        // Restore qty
+        const input = document.getElementById('yarnQtyInput');
+        if (input) { input.value = qty; updateContactQty(); }
       });
     });
   });
 
-  // On initial render, scroll active item into view (mobile horizontal scroll)
+  // Initial scroll to active thumbnail
   requestAnimationFrame(() => {
-    const activeBtn = productGallery.querySelector('.yarn-color-option.active');
-    activeBtn?.scrollIntoView({ behavior: 'instant', inline: 'center', block: 'nearest' });
+    const activeThumb = productGallery.querySelector('.yarn-thumbnail-button.is-active');
+    activeThumb?.scrollIntoView({ behavior: 'instant', inline: 'center', block: 'nearest' });
   });
 }
+
+
+
+
 
 async function openYarnProductDetail(product) {
   const { productGallery } = getEls();
