@@ -246,6 +246,8 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
   const selectedName = selectedVariant ? getVariantName(selectedVariant) : '';
   const selectedPrice = formatProductPrice(getVariantPrice(product, selectedVariant)) || 'Liên hệ';
   const selectedStatus = selectedVariant ? getVariantStatusLabel(selectedVariant.status) : 'Chưa có bảng màu';
+  const isAvailable = selectedVariant?.status !== 'out';
+  const contactHref = selectedVariant ? renderYarnContactButton(product, selectedVariant) : '#';
   const detailRows = [
     ['Trọng lượng', product.weight],
     ['Kích cỡ sợi', product.yarn_size],
@@ -254,14 +256,62 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
     ['Xuất xứ', product.origin]
   ].filter(([, value]) => value);
 
+  const colorOptionsHtml = variants.length ? `
+    <div class="yarn-color-grid">
+      ${variants.map((variant) => {
+        const thumb = getVariantImage(product, variant, 'thumb');
+        const code = getVariantCode(variant);
+        const name = getVariantName(variant);
+        const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
+        const isOut = variant.status === 'out';
+        return `
+          <button type="button"
+            class="yarn-color-option ${active ? 'active' : ''} ${isOut ? 'is-out' : ''}"
+            data-variant-id="${variant.id}"
+            aria-label="Chọn màu ${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
+            aria-pressed="${active ? 'true' : 'false'}">
+            ${active ? '<span class="yarn-color-check" aria-hidden="true">✓</span>' : ''}
+            <img src="${escapeHtml(thumb || '/images/logo_160.png')}"
+              alt="Màu ${escapeHtml(code || 'len')} của ${escapeHtml(product.name || 'dòng len')}"
+              loading="lazy" decoding="async"
+              onerror="this.onerror=null;this.src='/images/logo_160.png';">
+            <span>${escapeHtml(code || 'Màu')}</span>
+          </button>
+        `;
+      }).join('')}
+    </div>
+  ` : '<p class="yarn-empty-variants">Dòng len này chưa có bảng màu. Bạn liên hệ Tiny để được gửi bảng màu nhé.</p>';
+
   productGallery.innerHTML = `
     <article class="yarn-detail-view">
-      <button type="button" class="yarn-back-btn" id="yarnBackBtn">← Quay lại danh sách len</button>
-      <div class="yarn-detail-layout">
-        <div class="yarn-detail-left">
-          <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
-            <img src="${escapeHtml(heroImage || '/images/logo_160.png')}" alt="Ảnh sản phẩm ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny" decoding="async" onerror="this.onerror=null;this.src='/images/logo_160.png';">
-          </button>
+
+      <!-- Mobile-only sticky header -->
+      <div class="yarn-mobile-header" aria-label="Điều hướng chi tiết len">
+        <button type="button" class="yarn-mobile-back-btn" id="yarnMobileBackBtn" aria-label="Quay lại danh sách len">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          Danh sách len
+        </button>
+        <button type="button" class="yarn-mobile-close-btn" id="yarnMobileCloseBtn" aria-label="Đóng">×</button>
+      </div>
+
+      <!-- Scrollable content -->
+      <div class="yarn-detail-scroll">
+
+        <!-- Desktop: 2-column layout -->
+        <div class="yarn-detail-layout">
+
+          <!-- Left: image -->
+          <div class="yarn-detail-left">
+            <button type="button" class="yarn-detail-image product-img-button" id="yarnDetailImageBtn" aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
+              <img id="yarnDetailHeroImg"
+                src="${escapeHtml(heroImage || '/images/logo_160.png')}"
+                alt="Ảnh sản phẩm ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny"
+                decoding="async"
+                onerror="this.onerror=null;this.src='/images/logo_160.png';">
+            </button>
+          </div>
+
+          <!-- Right: info -->
           <div class="yarn-detail-info">
             <h3>${escapeHtml(product.name || 'Cuộn len')}</h3>
             <div class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</div>
@@ -271,35 +321,56 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
                 ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
               </ul>
             ` : ''}
+
+            <!-- Variant info card -->
             <div class="yarn-selected-box">
-              <span>Mã đang chọn: <strong id="yarnSelectedCode">${escapeHtml(selectedCode || 'Chưa có')}</strong></span>
-              <span>Tên màu: <strong id="yarnSelectedName">${escapeHtml(selectedName || 'Chưa có')}</strong></span>
-              <span>Trạng thái: <strong id="yarnSelectedStatus">${escapeHtml(selectedStatus)}</strong></span>
+              <div class="yarn-selected-row">
+                <span class="yarn-selected-label">Mã màu</span>
+                <strong id="yarnSelectedCode">${escapeHtml(selectedCode || '–')}</strong>
+              </div>
+              <div class="yarn-selected-row">
+                <span class="yarn-selected-label">Tên màu</span>
+                <strong id="yarnSelectedName">${escapeHtml(selectedName || '–')}</strong>
+              </div>
+              <div class="yarn-selected-row">
+                <span class="yarn-selected-label">Trạng thái</span>
+                <span id="yarnSelectedStatus" class="yarn-status-badge ${isAvailable ? 'is-available' : 'is-out'}">
+                  <span class="yarn-status-dot" aria-hidden="true"></span>
+                  ${escapeHtml(selectedStatus)}
+                </span>
+              </div>
             </div>
-            <a class="btn-messenger yarn-contact-btn ${selectedVariant ? '' : 'disabled'}" id="yarnContactBtn" href="${selectedVariant ? renderYarnContactButton(product, selectedVariant) : '#'}" target="_blank" rel="noopener">
+
+            <!-- Desktop contact button (hidden on mobile, action bar handles it) -->
+            <a class="btn-messenger yarn-contact-btn yarn-contact-desktop ${selectedVariant ? '' : 'disabled'}"
+              id="yarnContactBtn"
+              href="${contactHref}"
+              target="_blank" rel="noopener">
               Liên hệ đặt màu này
             </a>
           </div>
         </div>
+
+        <!-- Color grid -->
         <section class="yarn-color-section yarn-detail-colors">
           <h4>Mã màu</h4>
-          ${variants.length ? `
-            <div class="yarn-color-grid">
-              ${variants.map((variant) => {
-                const thumb = getVariantImage(product, variant, 'thumb');
-                const code = getVariantCode(variant);
-                const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
-                return `
-                  <button type="button" class="yarn-color-option ${active ? 'active' : ''}" data-variant-id="${variant.id}" aria-label="Chọn màu ${escapeHtml(code)}">
-                    <img src="${escapeHtml(thumb || '/images/logo_160.png')}" alt="Màu ${escapeHtml(code || 'len')} của ${escapeHtml(product.name || 'dòng len')} tại Tiệm Len Nhà Tiny" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='/images/logo_160.png';">
-                    <span>${escapeHtml(code || 'Màu')}</span>
-                  </button>
-                `;
-              }).join('')}
-            </div>
-          ` : '<p class="yarn-empty-variants">Dòng len này chưa có bảng màu. Bạn liên hệ Tiny để được gửi bảng màu nhé.</p>'}
+          ${colorOptionsHtml}
         </section>
+
+      </div><!-- end .yarn-detail-scroll -->
+
+      <!-- Mobile-only sticky bottom action bar -->
+      <div class="yarn-mobile-action-bar">
+        <div class="yarn-action-price" id="yarnActionPrice">${escapeHtml(selectedPrice)}</div>
+        <a class="btn-messenger yarn-action-btn ${selectedVariant ? '' : 'disabled'}"
+          id="yarnActionContactBtn"
+          href="${contactHref}"
+          target="_blank" rel="noopener"
+          aria-label="Liên hệ đặt màu ${escapeHtml(selectedCode || '')}">
+          ${isAvailable ? 'Liên hệ đặt màu' : 'Liên hệ đặt trước'}
+        </a>
       </div>
+
     </article>
   `;
 
@@ -307,15 +378,39 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
     openImageLightbox(heroImage, product.name || 'Cuộn len');
   });
 
+  // Desktop back button (kept for layout compatibility but now hidden on mobile)
   document.getElementById('yarnBackBtn')?.addEventListener('click', () => {
     setYarnListMode();
     fetchAndRenderProducts();
   });
 
+  // Mobile header — back
+  document.getElementById('yarnMobileBackBtn')?.addEventListener('click', () => {
+    setYarnListMode();
+    fetchAndRenderProducts();
+  });
+
+  // Mobile header — close modal
+  document.getElementById('yarnMobileCloseBtn')?.addEventListener('click', () => {
+    closeProductModal();
+  });
+
+  // Color grid — click + scrollIntoView
   productGallery.querySelectorAll('.yarn-color-option').forEach((button) => {
     button.addEventListener('click', () => {
       renderYarnVariantDetail(product, variants, button.dataset.variantId);
+      // After re-render, scroll active item into view
+      requestAnimationFrame(() => {
+        const activeBtn = productGallery.querySelector('.yarn-color-option.active');
+        activeBtn?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
     });
+  });
+
+  // On initial render, scroll active item into view (mobile horizontal scroll)
+  requestAnimationFrame(() => {
+    const activeBtn = productGallery.querySelector('.yarn-color-option.active');
+    activeBtn?.scrollIntoView({ behavior: 'instant', inline: 'center', block: 'nearest' });
   });
 }
 
