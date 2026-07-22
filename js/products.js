@@ -245,14 +245,16 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
   const { productGallery } = getEls();
   if (!productGallery) return;
 
-  const selectedVariant = variants.find(v => String(v.id) === String(selectedVariantId)) || variants[0] || null;
-  const heroImage = getVariantImage(product, selectedVariant, 'full');
-  const selectedCode = selectedVariant ? getVariantCode(selectedVariant) : '';
-  const selectedName = selectedVariant ? getVariantName(selectedVariant) : '';
-  const selectedPrice = formatProductPrice(getVariantPrice(product, selectedVariant)) || 'Liên hệ';
-  const selectedStatus = selectedVariant ? getVariantStatusLabel(selectedVariant.status) : 'Chưa có bảng màu';
-  const isAvailable = selectedVariant?.status !== 'out';
-  const contactHref = selectedVariant ? renderYarnContactButton(product, selectedVariant, 1) : '#';
+  // ── If already rendered, just swap the active variant (no full re-render) ──
+  if (productGallery.querySelector('.yarn-detail-view')) {
+    _switchYarnVariant(productGallery, product, variants, selectedVariantId);
+    return;
+  }
+
+  // ── First render ──
+  let currentVariant = variants.find(v => String(v.id) === String(selectedVariantId)) || variants[0] || null;
+  const heroImage = getVariantImage(product, currentVariant, 'full');
+  const selectedPrice = formatProductPrice(getVariantPrice(product, currentVariant)) || 'Liên hệ';
 
   const detailRows = [
     ['Trọng lượng', product.weight],
@@ -262,18 +264,18 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
     ['Xuất xứ', product.origin]
   ].filter(([, v]) => v);
 
-  // Build thumbnail list from all variants
-  const thumbnailsHtml = variants.length ? variants.map((variant) => {
+  // Thumbnail grid (wrapping, one entry per variant)
+  const thumbnailsHtml = variants.map((variant) => {
     const thumb = getVariantImage(product, variant, 'thumb');
     const code = getVariantCode(variant);
     const name = getVariantName(variant);
-    const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
+    const active = currentVariant && String(variant.id) === String(currentVariant.id);
     const isOut = variant.status === 'out';
     return `
       <button type="button"
         class="yarn-thumbnail-button ${active ? 'is-active' : ''} ${isOut ? 'is-out' : ''}"
         data-variant-id="${variant.id}"
-        aria-label="Chọn màu ${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
+        aria-label="${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
         aria-pressed="${active ? 'true' : 'false'}">
         <img src="${escapeHtml(thumb || '/images/logo_160.png')}"
           alt="Màu ${escapeHtml(code || 'len')}"
@@ -281,38 +283,12 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
           onerror="this.onerror=null;this.src='/images/logo_160.png';">
         <span class="yarn-thumbnail-code">${escapeHtml(code || '?')}</span>
       </button>`;
-  }).join('') : '';
-
-  // Build color option grid (for purchase panel)
-  const colorGridHtml = variants.length ? `
-    <div class="yarn-color-grid" role="group" aria-label="Chọn mã màu">
-      ${variants.map((variant) => {
-        const thumb = getVariantImage(product, variant, 'thumb');
-        const code = getVariantCode(variant);
-        const name = getVariantName(variant);
-        const active = selectedVariant && String(variant.id) === String(selectedVariant.id);
-        const isOut = variant.status === 'out';
-        return `
-          <button type="button"
-            class="yarn-color-option ${active ? 'active' : ''} ${isOut ? 'is-out' : ''}"
-            data-variant-id="${variant.id}"
-            aria-label="Màu ${escapeHtml(code)}${name ? ' – ' + escapeHtml(name) : ''}"
-            aria-pressed="${active ? 'true' : 'false'}">
-            ${active ? '<span class="yarn-color-check" aria-hidden="true">✓</span>' : ''}
-            <img src="${escapeHtml(thumb || '/images/logo_160.png')}"
-              alt="Màu ${escapeHtml(code || 'len')}"
-              loading="lazy" decoding="async"
-              onerror="this.onerror=null;this.src='/images/logo_160.png';">
-            <span>${escapeHtml(code || '?')}</span>
-          </button>`;
-      }).join('')}
-    </div>
-  ` : '<p class="yarn-empty-variants">Dòng len chưa có bảng màu. Liên hệ Tiny để được gửi nhé.</p>';
+  }).join('');
 
   productGallery.innerHTML = `
     <article class="yarn-detail-view">
 
-      <!-- Sticky header (always visible) -->
+      <!-- Header -->
       <header class="yarn-detail-header">
         <button type="button" class="yarn-detail-back" id="yarnDetailBack"
           aria-label="Quay lại danh sách len">←</button>
@@ -321,111 +297,44 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
           aria-label="Đóng">×</button>
       </header>
 
-      <!-- E-commerce layout -->
+      <!-- Content -->
       <div class="yarn-commerce-detail">
 
-        <!-- Gallery column -->
+        <!-- Gallery: main image + thumbnail grid -->
         <section class="yarn-gallery" aria-label="Ảnh sản phẩm">
-          <!-- Main image -->
           <div class="yarn-main-image-wrap">
             <button type="button" class="yarn-main-image-btn" id="yarnDetailImageBtn"
               aria-label="Xem ảnh lớn: ${escapeHtml(product.name || 'Cuộn len')}">
               <img id="yarnDetailHeroImg"
                 class="yarn-main-image"
                 src="${escapeHtml(heroImage || '/images/logo_160.png')}"
-                alt="Ảnh sản phẩm ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny"
+                alt="Ảnh ${escapeHtml(product.name || 'cuộn len')} tại Tiệm Len Nhà Tiny"
                 decoding="async"
                 onerror="this.onerror=null;this.src='/images/logo_160.png';">
             </button>
           </div>
-
-          <!-- Thumbnail strip -->
           ${thumbnailsHtml ? `
-          <div class="yarn-thumbnail-list" id="yarnThumbnailList" aria-label="Danh sách mã màu">
+          <div class="yarn-thumbnail-list" id="yarnThumbnailList" aria-label="Chọn mã màu">
             ${thumbnailsHtml}
-          </div>` : ''}
+          </div>` : '<p class="yarn-empty-variants">Chưa có bảng màu.</p>'}
         </section>
 
-        <!-- Purchase panel column -->
-        <section class="yarn-purchase-panel" aria-label="Thông tin đặt mua">
-
-          <!-- Product title -->
+        <!-- Info panel: name + price + specs only -->
+        <section class="yarn-purchase-panel" aria-label="Thông tin sản phẩm">
           <h2 class="yarn-product-title">${escapeHtml(product.name || 'Cuộn len')}</h2>
 
-          <!-- Short meta -->
-          <div class="yarn-product-meta">
-            ${product.weight ? `<p>Trọng lượng: <strong>${escapeHtml(product.weight)}</strong></p>` : ''}
-            ${product.yarn_size ? `<p>Kích cỡ sợi: <strong>${escapeHtml(product.yarn_size)}</strong></p>` : ''}
-            ${product.origin ? `<p>Xuất xứ: <strong>${escapeHtml(product.origin)}</strong></p>` : ''}
-          </div>
-
-          <!-- Price box -->
           <div class="yarn-price-box">
-            <p class="yarn-detail-price" id="yarnDetailPrice">${escapeHtml(selectedPrice)}</p>
+            <p class="yarn-detail-price">${escapeHtml(selectedPrice)}</p>
             <p class="yarn-price-note">Giá mỗi cuộn / Liên hệ để biết giá sỉ</p>
           </div>
 
-          <!-- Color section title -->
-          <h3 class="yarn-section-title">Mã màu</h3>
-
-          <!-- Color grid -->
-          ${colorGridHtml}
-
-          <!-- Selected variant info -->
-          <div class="yarn-selected-variant" id="yarnSelectedVariant">
-            <div class="yarn-selected-field">
-              <span class="yarn-selected-field-label">Mã màu</span>
-              <span class="yarn-selected-field-value" id="yarnSelectedCode">${escapeHtml(selectedCode || '–')}</span>
-            </div>
-            <div class="yarn-selected-field">
-              <span class="yarn-selected-field-label">Tên màu</span>
-              <span class="yarn-selected-field-value" id="yarnSelectedName">${escapeHtml(selectedName || '–')}</span>
-            </div>
-            <div class="yarn-selected-field">
-              <span class="yarn-selected-field-label">Trạng thái</span>
-              <span class="yarn-selected-field-value">
-                <span id="yarnSelectedStatus" class="yarn-status-badge ${isAvailable ? 'is-available' : 'is-out'}">
-                  <span class="yarn-status-dot" aria-hidden="true"></span>
-                  ${escapeHtml(selectedStatus)}
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <!-- Quantity -->
-          <div class="yarn-quantity-row">
-            <span class="yarn-quantity-label">Số lượng</span>
-            <div class="yarn-quantity" role="group" aria-label="Chọn số lượng">
-              <button type="button" class="yarn-qty-btn" id="yarnQtyMinus" aria-label="Giảm số lượng">−</button>
-              <input type="number" class="yarn-qty-input" id="yarnQtyInput"
-                min="1" max="99" value="1" aria-label="Số lượng cuộn len">
-              <button type="button" class="yarn-qty-btn" id="yarnQtyPlus" aria-label="Tăng số lượng">+</button>
-            </div>
-          </div>
-
-          <!-- Contact button -->
-          <a class="yarn-contact-btn ${!selectedVariant || !isAvailable ? 'disabled' : ''}"
-            id="yarnContactBtn"
-            href="${contactHref}"
-            target="_blank" rel="noopener">
-            ${isAvailable ? '💬 Liên hệ đặt màu này' : '💬 Liên hệ đặt trước'}
-          </a>
-
-          <!-- Description & specs -->
           ${product.description ? `
-          <div class="yarn-detail-description-section">
-            <h3 class="yarn-section-title">Mô tả</h3>
-            <p class="yarn-detail-description">${escapeHtml(product.description)}</p>
-          </div>` : ''}
+          <p class="yarn-detail-description">${escapeHtml(product.description)}</p>` : ''}
 
           ${detailRows.length ? `
-          <div class="yarn-detail-specs">
-            <h3 class="yarn-section-title">Thông số kỹ thuật</h3>
-            <ul class="yarn-spec-list">
-              ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
-            </ul>
-          </div>` : ''}
-
+          <ul class="yarn-spec-list">
+            ${detailRows.map(([label, value]) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</li>`).join('')}
+          </ul>` : ''}
         </section>
       </div>
     </article>
@@ -433,83 +342,52 @@ function renderYarnVariantDetail(product, variants, selectedVariantId) {
 
   // ── Event listeners ──
 
-  // Lightbox
+  // Lightbox (always use current src so it reflects the selected variant)
   document.getElementById('yarnDetailImageBtn')?.addEventListener('click', () => {
-    openImageLightbox(heroImage, product.name || 'Cuộn len');
+    const img = document.getElementById('yarnDetailHeroImg');
+    openImageLightbox(img?.src || heroImage, product.name || 'Cuộn len');
   });
 
-  // Back button
+  // Back
   document.getElementById('yarnDetailBack')?.addEventListener('click', () => {
     setYarnListMode();
     fetchAndRenderProducts();
   });
 
-  // Close button
+  // Close
   document.getElementById('yarnDetailClose')?.addEventListener('click', () => {
     closeProductModal();
   });
 
-  // Helper: rebuild contact URL with current quantity
-  function getContactHref(qty) {
-    return selectedVariant ? renderYarnContactButton(product, selectedVariant, qty) : '#';
-  }
-
-  // Quantity controls
-  const qtyInput = document.getElementById('yarnQtyInput');
-  const qtyMinus = document.getElementById('yarnQtyMinus');
-  const qtyPlus  = document.getElementById('yarnQtyPlus');
-  const contactBtn = document.getElementById('yarnContactBtn');
-
-  function updateContactQty() {
-    const qty = Math.max(1, parseInt(qtyInput?.value || '1', 10) || 1);
-    if (qtyInput) qtyInput.value = qty;
-    if (contactBtn && selectedVariant) {
-      contactBtn.href = getContactHref(qty);
-    }
-  }
-
-  qtyMinus?.addEventListener('click', () => {
-    const v = Math.max(1, (parseInt(qtyInput?.value || '1', 10) || 1) - 1);
-    if (qtyInput) qtyInput.value = v;
-    updateContactQty();
-  });
-
-  qtyPlus?.addEventListener('click', () => {
-    const v = (parseInt(qtyInput?.value || '1', 10) || 1) + 1;
-    if (qtyInput) qtyInput.value = v;
-    updateContactQty();
-  });
-
-  qtyInput?.addEventListener('change', updateContactQty);
-  qtyInput?.addEventListener('input', updateContactQty);
-
-  // Color grid click
-  productGallery.querySelectorAll('.yarn-color-option, .yarn-thumbnail-button').forEach((btn) => {
+  // Thumbnail clicks — DOM-only update, no re-render
+  productGallery.querySelectorAll('.yarn-thumbnail-button').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const qty = parseInt(document.getElementById('yarnQtyInput')?.value || '1', 10) || 1;
-      renderYarnVariantDetail(product, variants, btn.dataset.variantId);
-      // After re-render, scroll active thumbnail into view
-      requestAnimationFrame(() => {
-        const activeThumb = productGallery.querySelector('.yarn-thumbnail-button.is-active');
-        activeThumb?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        const activeOpt = productGallery.querySelector('.yarn-color-option.active');
-        activeOpt?.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
-        // Restore qty
-        const input = document.getElementById('yarnQtyInput');
-        if (input) { input.value = qty; updateContactQty(); }
-      });
+      _switchYarnVariant(productGallery, product, variants, btn.dataset.variantId);
     });
-  });
-
-  // Initial scroll to active thumbnail
-  requestAnimationFrame(() => {
-    const activeThumb = productGallery.querySelector('.yarn-thumbnail-button.is-active');
-    activeThumb?.scrollIntoView({ behavior: 'instant', inline: 'center', block: 'nearest' });
   });
 }
 
+/** Update hero image + active thumbnail without re-rendering the whole modal */
+function _switchYarnVariant(productGallery, product, variants, selectedVariantId) {
+  const variant = variants.find(v => String(v.id) === String(selectedVariantId)) || variants[0];
+  if (!variant) return;
 
+  // Swap hero image
+  const newImage = getVariantImage(product, variant, 'full');
+  const heroImg = productGallery.querySelector('#yarnDetailHeroImg');
+  if (heroImg && newImage) heroImg.src = newImage;
 
+  // Update active thumbnail
+  productGallery.querySelectorAll('.yarn-thumbnail-button').forEach(b => {
+    const isActive = String(b.dataset.variantId) === String(variant.id);
+    b.classList.toggle('is-active', isActive);
+    b.setAttribute('aria-pressed', String(isActive));
+  });
+
+  // Scroll the newly active thumb into view
+  const activeBtn = productGallery.querySelector('.yarn-thumbnail-button.is-active');
+  activeBtn?.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+}
 
 
 async function openYarnProductDetail(product) {

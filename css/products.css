@@ -504,20 +504,13 @@
 }
 
 .yarn-thumbnail-list {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
   gap: 10px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none; /* Firefox */
-}
-
-.yarn-thumbnail-list::-webkit-scrollbar {
-  display: none;
+  margin-top: 12px;
 }
 
 .yarn-thumbnail-button {
-  flex: 0 0 70px;
-  scroll-snap-align: start;
   border: 2px solid transparent;
   border-radius: 8px;
   padding: 2px;
@@ -1134,15 +1127,13 @@
     overflow: hidden;
   }
 
-  /* Thumbnail strip */
+  /* Thumbnail grid: wrap, not horizontal scroll */
   .product-modal-overlay.yarn-detail-open .yarn-thumbnail-list {
-    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 8px;
-    padding-bottom: 2px;
-  }
-
-  .product-modal-overlay.yarn-detail-open .yarn-thumbnail-button {
-    flex: 0 0 60px;
+    overflow: visible;
+    margin-top: 10px;
   }
 
   /* ── Purchase panel: normal flow, no special positioning ── */
@@ -1228,13 +1219,6 @@
     padding: 14px 20px;
     border-radius: 14px;
     margin-top: 4px;
-  }
-
-  /* ── Hide floating buttons when yarn modal open ── */
-  body.yarn-modal-open .float-buttons,
-  body.yarn-modal-open .mobile-cta-bar {
-    display: none !important;
-    pointer-events: none;
   }
 
   /* ── Scroll lock on html/body ── */
