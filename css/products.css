@@ -986,7 +986,7 @@
     transform: scale(.98);
   }
 
-  /* ── Yarn Detail: Full-screen modal ── */
+  /* ── Yarn Detail: Full-screen modal overlay ── */
   .product-modal-overlay.yarn-detail-open {
     position: fixed;
     inset: 0;
@@ -1003,6 +1003,7 @@
     -webkit-backdrop-filter: none;
   }
 
+  /* Modal content: full height, flex column, no overflow — let children manage scroll */
   .product-modal-overlay.yarn-detail-open .product-modal-content.yarn-detail-modal {
     position: relative;
     width: 100%;
@@ -1022,137 +1023,211 @@
     background: var(--white);
   }
 
+  /* Hide built-in modal title & close button */
   .product-modal-overlay.yarn-detail-open .product-modal-title,
   .product-modal-overlay.yarn-detail-open .product-modal-close {
     display: none;
   }
 
-  /* ── Yarn Detail: article wrapper ── */
+  /* productGallery (#productGallery) is set to display:grid globally.
+     Override so it fills the modal and passes height down to yarn-detail-view */
+  .product-modal-overlay.yarn-detail-open .product-gallery {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 0;
+  }
+
+  /* Article = flex column filling the modal */
   .product-modal-overlay.yarn-detail-open .yarn-detail-view {
     display: flex;
     flex-direction: column;
+    width: 100%;
     height: 100%;
-    background: var(--cream);
+    overflow: hidden;
   }
 
-  /* ── Mobile Sticky Header ── */
+  /* ── Sticky Header ── */
   .product-modal-overlay.yarn-detail-open .yarn-detail-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: env(safe-area-inset-top) 12px 0;
-    min-height: calc(56px + env(safe-area-inset-top));
+    padding-top: env(safe-area-inset-top);
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    min-height: calc(52px + env(safe-area-inset-top));
     background: var(--white);
-    border-bottom: 1px solid var(--blue-pale);
+    border-bottom: 1px solid rgba(153, 204, 255, .3);
     flex-shrink: 0;
     z-index: 10;
   }
 
   .yarn-detail-back,
   .yarn-detail-close {
-    width: 40px;
-    height: 40px;
+    min-width: 44px;
+    min-height: 44px;
     border: none;
     background: transparent;
     color: var(--text-dark);
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    border-radius: 8px;
+    touch-action: manipulation;
+  }
+
+  .yarn-detail-back:active,
+  .yarn-detail-close:active {
+    background: var(--blue-pale);
   }
 
   .yarn-detail-header-title {
+    flex: 1;
+    text-align: center;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-dark);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 8px;
   }
 
-  /* ── Layout: single column ── */
+  /* ── Scrollable body: takes remaining height and scrolls vertically ── */
   .product-modal-overlay.yarn-detail-open .yarn-commerce-detail {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    padding: 0;
+    flex: 1 1 0;
+    min-height: 0;
+    display: block;            /* single column: gallery then purchase panel stack naturally */
     overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    box-sizing: border-box;
   }
 
+  /* ── Gallery: fixed height portion, NOT stretching ── */
   .product-modal-overlay.yarn-detail-open .yarn-gallery {
     position: relative;
     background: var(--white);
-    padding: 16px;
-    border-bottom: 1px solid var(--blue-pale);
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(153, 204, 255, .2);
+  }
+
+  /* Constrain main image: max 45% of viewport height so purchase panel is always visible */
+  .product-modal-overlay.yarn-detail-open .yarn-main-image {
+    width: 100%;
+    max-height: 42dvh;
+    aspect-ratio: auto;       /* override desktop 1/1 to let max-height work */
+    object-fit: contain;
+    border-radius: 12px;
+    display: block;
   }
 
   .product-modal-overlay.yarn-detail-open .yarn-main-image-wrap {
     box-shadow: none;
+    background: transparent;
+    border-radius: 12px;
+    overflow: hidden;
   }
 
+  /* Thumbnail strip */
+  .product-modal-overlay.yarn-detail-open .yarn-thumbnail-list {
+    margin-top: 10px;
+    gap: 8px;
+    padding-bottom: 2px;
+  }
+
+  .product-modal-overlay.yarn-detail-open .yarn-thumbnail-button {
+    flex: 0 0 60px;
+  }
+
+  /* ── Purchase panel: normal flow, no special positioning ── */
   .product-modal-overlay.yarn-detail-open .yarn-purchase-panel {
     background: var(--white);
-    padding: 20px 16px;
-    gap: 24px;
+    padding: 16px 16px max(20px, env(safe-area-inset-bottom));
+    gap: 16px;
   }
 
   .product-modal-overlay.yarn-detail-open .yarn-product-title {
-    font-size: 1.4rem;
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    line-height: 1.25;
   }
 
-  /* Make price box stand out on mobile */
   .product-modal-overlay.yarn-detail-open .yarn-price-box {
-    margin-top: -8px;
+    padding: 12px 14px;
   }
 
-  /* Horizontal color grid for mobile to save vertical space */
+  .product-modal-overlay.yarn-detail-open .yarn-detail-price {
+    font-size: clamp(1.3rem, 6vw, 1.6rem);
+  }
+
+  /* Horizontal scroll color grid */
   .product-modal-overlay.yarn-detail-open .yarn-color-grid {
     display: flex;
+    flex-wrap: nowrap;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
-    gap: 12px;
-    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    padding-bottom: 6px;
     scrollbar-width: none;
   }
-  
+
   .product-modal-overlay.yarn-detail-open .yarn-color-grid::-webkit-scrollbar {
     display: none;
   }
 
   .product-modal-overlay.yarn-detail-open .yarn-color-option {
-    flex: 0 0 76px;
+    flex: 0 0 72px;
+    min-width: 72px;
     scroll-snap-align: start;
-    min-width: 76px;
   }
 
+  /* Selected variant: single column rows */
   .product-modal-overlay.yarn-detail-open .yarn-selected-variant {
     grid-template-columns: 1fr;
-    gap: 8px;
-    padding: 12px;
+    gap: 0;
+    padding: 10px 12px;
+    background: var(--blue-pale);
+    border-radius: 10px;
   }
 
   .product-modal-overlay.yarn-detail-open .yarn-selected-field {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding: 8px 0;
+    gap: 12px;
   }
+
   .product-modal-overlay.yarn-detail-open .yarn-selected-field:last-child {
     border-bottom: none;
     padding-bottom: 0;
   }
 
+  .product-modal-overlay.yarn-detail-open .yarn-selected-field:first-child {
+    padding-top: 0;
+  }
+
+  /* Quantity row full-width */
   .product-modal-overlay.yarn-detail-open .yarn-quantity-row {
     justify-content: space-between;
   }
 
+  /* Contact button: full width, safe area padding at bottom */
   .product-modal-overlay.yarn-detail-open .yarn-contact-btn {
-    position: sticky;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    z-index: 20;
-    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
     font-size: 1rem;
-    padding: 12px 20px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    margin-top: 4px;
   }
 
   /* ── Hide floating buttons when yarn modal open ── */
@@ -1162,7 +1237,7 @@
     pointer-events: none;
   }
 
-  /* ── Scroll lock ── */
+  /* ── Scroll lock on html/body ── */
   html.yarn-modal-open,
   body.yarn-modal-open {
     overflow: hidden;
