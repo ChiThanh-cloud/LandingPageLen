@@ -15,7 +15,7 @@ export const posts: BlogPost[] = [
       "quà tốt nghiệp quà tốt nghiệp handmade quà tốt nghiệp cho bạn nữ quà tốt nghiệp cho bạn nam hoa len tốt nghiệp thú len đội mũ cử nhân quà ra trường",
     publishedAt: "2026-07-17",
     updatedAt: "2026-07-18",
-    author: "LenTiny",
+    author: "Tiny",
     eyebrow: "Quà tốt nghiệp - Đặt làm riêng",
     breadcrumbLabel: "Quà tốt nghiệp handmade",
     h1: "Quà tốt nghiệp handmade dành riêng cho người bạn muốn chúc mừng",
@@ -227,7 +227,7 @@ export const posts: BlogPost[] = [
     searchText: "quà len handmade đồ len handmade quà handmade dễ thương chart móc len lentiny",
     publishedAt: "2026-05-25",
     updatedAt: "2026-07-07",
-    author: "LenTiny",
+    author: "Tiny",
     eyebrow: "Quà handmade - Cảm hứng len",
     breadcrumbLabel: "Quà len handmade",
     h1: "Vì sao quà len handmade ngày càng được yêu thích?",
@@ -236,6 +236,7 @@ export const posts: BlogPost[] = [
     excerpt:
       "Một bài mở đầu nhẹ nhàng về giá trị của đồ len handmade và cảm giác ấm áp khi tặng quà làm bằng tay.",
     image: "https://res.cloudinary.com/djn2kd2hh/images/B7FE0C11-3AEE-4E71-B246-C91EE6914B50_knnama/vi-sao-qua-len-handmade-duoc-yeu-thich.png",
+    ogImage: "https://res.cloudinary.com/djn2kd2hh/images/c_fill,w_1200,h_630,g_auto/B7FE0C11-3AEE-4E71-B246-C91EE6914B50_knnama/vi-sao-qua-len-handmade-duoc-yeu-thich.png",
     imageAlt: "Đồ len handmade dễ thương dùng làm quà tặng",
     sections: [
       {
@@ -246,7 +247,7 @@ export const posts: BlogPost[] = [
             "Có những món quà không cần quá lớn hay quá đắt tiền mới khiến người nhận nhớ lâu. Đôi khi, chỉ một bé gấu len, một bó hoa móc len, một chiếc móc khóa nhỏ xinh cũng đủ làm người ta mỉm cười vì cảm giác: “À, món này được làm riêng cho mình.”"
           ],
           [
-            "Đó cũng là lý do quà len handmade ngày càng được yêu thích. Không chỉ vì dễ thương, đồ len còn mang theo sự chậm rãi, tỉ mỉ và ấm áp của người làm."
+            "Đó cũng là lý do quà len handmade ngày càng được yêu thích. Qua 3 năm nhận đơn tại Tiệm Len Nhà Tiny — với hơn 300 đơn custom và hơn 80% khách quay lại đặt lần 2 — Tiny nhận ra: điều làm người nhận nhớ lâu không phải giá tiền, mà là cảm giác món quà được nghĩ đến riêng cho họ."
           ]
         ]
       },
@@ -390,7 +391,7 @@ export const posts: BlogPost[] = [
       "người mới học móc len nên chọn loại len nào milk cotton len nhung cotton acrylic kim móc thú bông hoa len móc khóa",
     publishedAt: "2026-05-25",
     updatedAt: "2026-07-07",
-    author: "LenTiny",
+    author: "Tiny",
     eyebrow: "Hướng dẫn - Len cho người mới",
     breadcrumbLabel: "Chọn len cho người mới",
     h1: "Người mới học móc len nên chọn loại len nào?",
@@ -399,6 +400,7 @@ export const posts: BlogPost[] = [
     excerpt:
       "Giải thích milk cotton, len nhung, cotton, acrylic và cách chọn kim móc theo từng sản phẩm.",
     image: "https://res.cloudinary.com/djn2kd2hh/images/6631B3C3-6B0C-4006-9317-DC5D4203B47F_ahk36d/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.png",
+    ogImage: "https://res.cloudinary.com/djn2kd2hh/images/c_fill,w_1200,h_630,g_auto/6631B3C3-6B0C-4006-9317-DC5D4203B47F_ahk36d/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.png",
     imageAlt: "Các cuộn len nhiều màu cho người mới học móc",
     sections: [
       {
@@ -601,12 +603,12 @@ export const posts: BlogPost[] = [
       "móc thú len theo ảnh mất bao lâu custom thú len đặt móc theo yêu cầu thú bông len handmade kích thước màu len phụ kiện",
     publishedAt: "2026-05-26",
     updatedAt: "2026-07-07",
-    author: "LenTiny",
+    author: "Tiny",
     eyebrow: "Quà handmade - Đặt móc theo yêu cầu",
     breadcrumbLabel: "Móc thú len theo ảnh",
     h1: "Móc thú len theo ảnh mất bao lâu?",
     lead:
-      "Một bé thú len custom cần thời gian để xem ảnh, chọn màu, lên form, móc từng chi tiết và chỉnh lại cho giống tinh thần của mẫu nhất có thể.",
+      "Mẫu đơn giản thường mất 5–7 ngày; mẫu phức tạp hoặc nhiều chi tiết có thể 14–21 ngày. Thời gian cụ thể phụ thuộc vào ảnh mẫu, kích thước và lịch làm hiện tại của Tiny — nên hỏi lịch trước khi chốt ngày trao quà.",
     excerpt:
       "Giải thích quy trình custom thú len theo ảnh và những yếu tố ảnh hưởng đến thời gian hoàn thiện.",
     image: "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/cover.png?v=1",
@@ -786,7 +788,7 @@ export const posts: BlogPost[] = [
       "cách bảo quản thú len handmade vệ sinh thú len tránh bụi ẩm nắng gắt giữ form thú bông len đồ len handmade",
     publishedAt: "2026-05-26",
     updatedAt: "2026-07-07",
-    author: "LenTiny",
+    author: "Tiny",
     eyebrow: "Quà handmade - Chăm đồ len",
     breadcrumbLabel: "Bảo quản thú len handmade",
     h1: "Cách bảo quản thú len handmade để luôn đẹp",
@@ -794,6 +796,7 @@ export const posts: BlogPost[] = [
     excerpt:
       "Mẹo giữ thú len sạch, tránh bụi ẩm, nắng gắt và không bị mất form sau thời gian sử dụng.",
     image: "https://res.cloudinary.com/djn2kd2hh/images/EE87E0C9-D516-4B4E-A4A2-3B58F09C2FC6_jtioyc/cach-bao-quan-thu-len-handmade-de-luon-dep.png",
+    ogImage: "https://res.cloudinary.com/djn2kd2hh/images/c_fill,w_1200,h_630,g_auto/EE87E0C9-D516-4B4E-A4A2-3B58F09C2FC6_jtioyc/cach-bao-quan-thu-len-handmade-de-luon-dep.png",
     imageAlt: "Thú len handmade cần được bảo quản nhẹ nhàng",
     sections: [
       {

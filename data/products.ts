@@ -298,10 +298,10 @@ export const products: ProductEntry[] = [
     name: "Thú len theo yêu cầu",
     title: "Đặt Móc Thú Len Theo Yêu Cầu, Theo Ảnh - Tiệm Len Nhà Tiny",
     description:
-      "Nhận móc thú len theo ảnh, theo mẫu, theo nhân vật riêng. Phù hợp làm quà sinh nhật, quà couple, quà kỷ niệm. Nhắn Zalo 0368.903.519 để đặt hàng.",
+      "Nhận móc thú len theo ảnh, theo mẫu, theo nhân vật riêng. Phù hợp làm quà sinh nhật, quà tốt nghiệp, quà couple, quà kỷ niệm. Tiny đã hoàn thành 300+ đơn custom, hơn 80% khách quay lại đặt lần 2. Nhắn Zalo 0368.903.519 để đặt hàng.",
     ogTitle: "Đặt Móc Thú Len Theo Yêu Cầu, Theo Ảnh - Tiệm Len Nhà Tiny",
     ogDescription:
-      "Móc thú len theo ảnh, theo mẫu riêng, theo nhân vật yêu thích. Quà sinh nhật, couple, kỷ niệm siêu đáng yêu. Nhắn Zalo 0368.903.519.",
+      "Móc thú len theo ảnh, theo mẫu riêng, theo nhân vật yêu thích. Quà sinh nhật, tốt nghiệp, couple siêu đáng yêu. 300+ đơn đã hoàn thành. Nhắn Zalo 0368.903.519.",
     category: "Đặt móc",
     eyebrow: "Đặt móc - Handmade theo yêu cầu",
     h1: "Đặt móc thú len theo ảnh - thú bông len handmade riêng tại Tiệm Len Nhà Tiny",
@@ -442,15 +442,15 @@ export const products: ProductEntry[] = [
     slug: "hoa-len-handmade",
     kind: "service",
     name: "Hoa len handmade",
-    title: "Hoa Len Handmade - Bó Hoa Len Tặng Sinh Nhật, Người Yêu | Tiệm Len Nhà Tiny",
+    title: "Hoa Len Handmade - Tặng Sinh Nhật, Tốt Nghiệp, Valentine | Tiệm Len Nhà Tiny",
     description:
-      "Hoa len handmade bền đẹp, không tàn, phối màu theo yêu cầu. Phù hợp tặng sinh nhật, Valentine, 8/3, tốt nghiệp. Đặt bó nhỏ, bó lớn hoặc mẫu riêng tại Tiệm Len Nhà Tiny.",
-    ogTitle: "Hoa Len Handmade - Bó Hoa Len Tặng Sinh Nhật, Người Yêu | Tiệm Len Nhà Tiny",
+      "Hoa len handmade bền đẹp, không tàn, phối màu theo yêu cầu. Phù hợp tặng sinh nhật, tốt nghiệp, Valentine, 8/3. Đặt bó nhỏ, bó lớn hoặc mẫu riêng tại Tiệm Len Nhà Tiny. Giá từ 80.000đ.",
+    ogTitle: "Hoa Len Handmade - Tặng Sinh Nhật, Tốt Nghiệp, Valentine | Tiệm Len Nhà Tiny",
     ogDescription:
-      "Hoa len handmade bền, đẹp, không tàn. Tặng sinh nhật, Valentine, 8/3, tốt nghiệp. Có thể phối màu và chọn mẫu riêng. Nhắn Zalo 0368.903.519.",
+      "Hoa len handmade bền, đẹp, không tàn. Tặng sinh nhật, tốt nghiệp, Valentine, 8/3. Phối màu theo yêu cầu. Giá từ 80.000đ. Nhắn Zalo 0368.903.519.",
     category: "Quà tặng",
     eyebrow: "Quà tặng - Hoa len",
-    h1: "Hoa len handmade - bó hoa không bao giờ tàn từ Tiệm Len Nhà Tiny",
+    h1: "Hoa len handmade - bó hoa tặng sinh nhật, tốt nghiệp từ Tiệm Len Nhà Tiny",
     lead:
       "Hoa len không cần nước, không héo theo mùa và có thể được giữ lại lâu dài như một kỷ niệm. Đó là lý do bó hoa len handmade ngày càng được chọn làm quà tặng cho những dịp đặc biệt.",
     image: "/images/gift_set_800.jpg",
@@ -459,7 +459,7 @@ export const products: ProductEntry[] = [
     updatedAt: "2026-07-07",
     schemaName: "Dịch vụ đặt hoa len handmade theo yêu cầu",
     schemaDescription:
-      "Dịch vụ đặt hoa len handmade theo yêu cầu. Bó hoa len móc thủ công, bền đẹp, không tàn. Phối màu và kiểu dáng riêng theo mong muốn của khách hàng.",
+      "Dịch vụ đặt hoa len handmade theo yêu cầu. Bó hoa len móc thủ công, bền đẹp, không tàn. Phối màu và kiểu dáng riêng. Phù hợp tặng sinh nhật, tốt nghiệp, Valentine. Giá từ 80.000đ.",
     legacyPhoneFound: "0909.281.029",
     legacyHadOffer: true,
     sections: [
