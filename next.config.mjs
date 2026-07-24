@@ -26,6 +26,20 @@ const nextConfig = {
       }
     ];
   },
+  async headers() {
+    return [
+      {
+        // Force text/xml for sitemap — Google Sitemap parser requires this MIME type
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/xml; charset=utf-8"
+          }
+        ]
+      }
+    ];
+  },
   images: {
     remotePatterns: [
       {
