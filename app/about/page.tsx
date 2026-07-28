@@ -219,7 +219,7 @@ export default function AboutPage() {
           </div>
           <aside className="about-story-quote" aria-label="Châm ngôn của Tiny">
             <blockquote>
-              "Mỗi mũi móc đều cần sự tập trung, kiên nhẫn và cả tình cảm."
+              &ldquo;Mỗi mũi móc đều cần sự tập trung, kiên nhẫn và cả tình cảm.&rdquo;
             </blockquote>
             <cite>— Tiny, Tiệm Len Nhà Tiny</cite>
           </aside>

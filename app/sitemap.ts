@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
-import { posts } from "@/data/posts";
 import { products } from "@/data/products";
 import { siteConfig } from "@/data/site";
+import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
 
 function absoluteUrl(path: string) {
   if (path.startsWith("http")) return path;
@@ -10,6 +10,11 @@ function absoluteUrl(path: string) {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseLastModified = siteConfig.updatedAt || "2026-07-12";
+  const posts = getAllPostMetadata();
+  const blogLastModified = posts.reduce<string>(
+    (latest, post) => (post.updatedAt > latest ? post.updatedAt : latest),
+    baseLastModified
+  );
 
   return [
     {
@@ -34,7 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${siteConfig.url}/blog`,
-      lastModified: baseLastModified,
+      lastModified: blogLastModified,
       changeFrequency: "weekly",
       priority: 0.8,
       images: [`${siteConfig.url}/images/og-image.jpg`]

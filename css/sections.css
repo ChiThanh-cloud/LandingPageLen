@@ -37,8 +37,8 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(42, 60, 74, .84) 0%, rgba(106, 154, 194, .62) 48%, rgba(189, 224, 254, .25) 100%),
-    linear-gradient(180deg, rgba(42, 60, 74, .12) 0%, rgba(42, 60, 74, .58) 100%);
+    linear-gradient(90deg, rgba(26, 40, 64, .82) 0%, rgba(59, 111, 160, .55) 50%, rgba(184, 210, 234, .20) 100%),
+    linear-gradient(180deg, rgba(26, 40, 64, .08) 0%, rgba(26, 40, 64, .52) 100%);
   z-index: 2;
 }
 
@@ -111,7 +111,7 @@
 }
 
 .hero-benefits svg {
-  color: #FFD7C8;
+  color: #C8E3F7;
   flex-shrink: 0;
 }
 
@@ -205,16 +205,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(214, 235, 254, 0.28);
+  background: var(--primary-100);
   border-radius: 12px;
-  color: #285869;
+  color: var(--primary-700);
 }
 
 .trust-icon svg {
   width: 26px;
   height: 26px;
   stroke-width: 1.8;
-  color: #285869;
+  color: var(--primary-700);
 }
 
 .trust-item strong {
@@ -566,7 +566,7 @@
 }
 
 .product-tag.gift {
-  background: linear-gradient(135deg, #7b5ea7, #b48ecf);
+  background: linear-gradient(135deg, #3b7fc4, #6ab2e8);
 }
 
 .product-info {
@@ -574,8 +574,9 @@
 }
 
 .product-info h3 {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 1.08rem;
+  font-weight: 700;
   margin-bottom: 8px;
   color: var(--text-dark);
 }
@@ -583,7 +584,7 @@
 .product-price {
   display: inline-flex;
   align-items: center;
-  color: #B45309;
+  color: #3b6fa0;
   background: var(--warm-pale);
   border: 1px solid rgba(106, 154, 194, .55);
   border-radius: 100px;
@@ -651,16 +652,16 @@
   justify-content: center;
   margin-bottom: 16px;
   border-radius: 18px;
-  color: #285869;
-  background: rgba(214, 235, 254, 0.28);
-  box-shadow: inset 0 0 0 1px rgba(106, 154, 194, .14);
+  color: var(--primary-700);
+  background: var(--primary-100);
+  box-shadow: inset 0 0 0 1px rgba(59, 111, 160, .12);
 }
 
 .step-icon svg {
   width: 28px;
   height: 28px;
   stroke-width: 1.8;
-  color: #285869;
+  color: var(--primary-700);
 }
 
 .step h3 {
@@ -1081,9 +1082,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(214, 235, 254, 0.28);
+  background: var(--primary-100);
   border-radius: 50%;
-  color: #285869;
+  color: var(--primary-700);
   flex-shrink: 0;
 }
 
@@ -1092,5 +1093,26 @@
   width: 24px;
   height: 24px;
   stroke-width: 1.8;
-  color: #285869;
+  color: var(--primary-700);
+}
+
+.contact-map-link {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.contact-map-link a {
+  color: var(--primary-600);
+  font-size: .88rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--primary-300);
+  text-underline-offset: 3px;
+  transition: var(--transition);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contact-map-link a:hover {
+    color: var(--primary-700);
+  }
 }

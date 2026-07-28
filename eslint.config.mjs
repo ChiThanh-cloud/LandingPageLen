@@ -12,6 +12,7 @@ export default defineConfig([
   },
   globalIgnores([
     ".agent/**",
+    ".agents/**",
     ".next/**",
     "assets/**",
     "charts/**",

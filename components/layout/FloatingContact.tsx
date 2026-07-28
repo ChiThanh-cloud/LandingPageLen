@@ -113,23 +113,38 @@ export function FloatingContact() {
           <span className="float-label">Messenger</span>
         </a>
       </div>
-      <a
-        href={messengerUrl}
-        target="_blank"
-        rel="noopener"
-        className={`mobile-cta-bar${!isMobile || inHero ? " is-hidden" : ""}`}
+      <div
         id="mobile-cta-bar"
-        data-track="mobile_sticky_cta_click"
-        data-track-handled="true"
-        onClick={() =>
-          trackSiteEvent("mobile_sticky_cta_click", {
-            label: "Nhắn Tiny báo giá ngay",
-            href: messengerUrl
-          })
-        }
+        className={`mobile-cta-bar${!isMobile || inHero ? " is-hidden" : ""}`}
       >
-        Gửi mẫu để Tiny báo giá
-      </a>
+        <a
+          href={messengerUrl}
+          target="_blank"
+          rel="noopener"
+          className="mobile-cta-btn mobile-cta-primary"
+          data-track="mobile_sticky_cta_click"
+          data-track-handled="true"
+          onClick={() =>
+            trackSiteEvent("mobile_sticky_cta_click", {
+              label: "Nhắn Tiny báo giá ngay",
+              href: messengerUrl
+            })
+          }
+        >
+          Nhắn Messenger
+        </a>
+        <a
+          href={zaloUrl}
+          target="_blank"
+          rel="noopener"
+          className="mobile-cta-btn mobile-cta-secondary"
+          data-track="float_zalo_click"
+          data-track-handled="true"
+          onClick={() => trackSiteEvent("float_zalo_click", { label: "Zalo", href: zaloUrl })}
+        >
+          Nhắn Zalo
+        </a>
+      </div>
     </>
   );
 }

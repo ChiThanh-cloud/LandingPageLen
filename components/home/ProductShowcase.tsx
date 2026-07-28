@@ -161,13 +161,12 @@ export function ProductShowcase() {
               <h3>{product.title}</h3>
               <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
               <p>{product.description}</p>
-              <span className="btn-link">{product.modalLabel}</span>
               <Link
-                className="btn-link product-detail-link"
+                className="product-detail-link"
                 href={product.detailHref}
                 onClick={(event) => event.stopPropagation()}
               >
-                {product.detailLabel}
+                Xem chi tiết →
               </Link>
             </div>
           </div>

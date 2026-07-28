@@ -3,32 +3,33 @@
    ============================================= */
 
 :root {
-  /* ── Pastel Blue Palette – LenTiny ── */
-  --primary-700: #1e5fa8;   /* xanh đậm, button primary, icon */
-  --primary-600: #2563a8;   /* xanh trung chính */
-  --primary-500: #5ba3d9;   /* xanh pastel trung – accent */
-  --primary-300: #c8e3f7;   /* xanh pastel nhạt – border, chip */
-  --primary-200: #dceefb;   /* xanh pastel rất nhạt – card bg */
-  --primary-100: #e8f4fd;   /* xanh trắng nhạt – section bg */
-  --primary-50:  #f4faff;   /* xanh trắng rất nhạt – page bg */
-  --accent-peach: #f0f7ff;
-  --accent-cream: #ffffff;
+  /* ── Soft Pastel Blue Palette – LenTiny ── */
+  --primary-700: #3b6fa0;   /* blue đậm – CTA chính, icon */
+  --primary-600: #5b8ec4;   /* blue trung – button, link */
+  --primary-500: #85aed6;   /* blue nhạt – accent */
+  --primary-300: #b8d2ea;   /* border nhạt */
+  --primary-200: #d6e8f5;   /* card bg border */
+  --primary-100: #edf5fb;   /* section bg */
+  --primary-50:  #f5f9fd;   /* page bg */
+  --accent-peach: #f5f9ff;
+  --accent-cream: #f5f9ff;
   --blue-deep: var(--primary-700);
   --blue-main: var(--primary-500);
   --blue-light: var(--primary-200);
   --blue-pale: var(--primary-100);
   --warm-pale: var(--accent-peach);
   --rose-soft: var(--primary-100);
+  --warm-accent: #5b8ec4;   /* blue pastel trung – highlight, accent */
   --white: #ffffff;
-  --cream: #f7fbff;
-  --text-dark: #1a3a5c;   /* xanh navy đậm – chữ chính */
-  --text-mid:  #4a6b86;   /* xanh xám – chữ phụ */
-  --text-light: #7398b4;  /* xanh nhạt – placeholder, meta */
-  --shadow-sm: 0 8px 24px rgba(37, 99, 168, 0.08);
-  --shadow-md: 0 16px 40px rgba(37, 99, 168, 0.12);
-  --shadow-lg: 0 24px 64px rgba(37, 99, 168, 0.16);
-  --radius: 20px;
-  --radius-lg: 32px;
+  --cream: #f5f9ff;
+  --text-dark: #1e2f45;   /* xanh đen – chữ chính */
+  --text-mid:  #4a607a;   /* blue xám – chữ phụ */
+  --text-light: #7a9ab5;  /* blue nhạt – placeholder, meta */
+  --shadow-sm: 0 8px 24px rgba(59, 111, 160, 0.08);
+  --shadow-md: 0 16px 40px rgba(59, 111, 160, 0.12);
+  --shadow-lg: 0 24px 64px rgba(59, 111, 160, 0.16);
+  --radius: 16px;
+  --radius-lg: 24px;
   --motion-fast: 160ms;
   --motion-base: 220ms;
   --motion-slow: 420ms;
@@ -97,15 +98,16 @@ section[id] {
 
 .section-tag {
   display: inline-block;
-  font-size: .8rem;
+  font-size: .78rem;
   font-weight: 700;
-  letter-spacing: .15em;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--blue-deep);
-  background: var(--blue-pale);
-  padding: 8px 20px;
+  color: var(--primary-700);
+  background: var(--primary-100);
+  padding: 7px 18px;
   border-radius: 100px;
   margin-bottom: 16px;
+  border: 1px solid var(--primary-300);
 }
 
 .section-tag.center {
@@ -138,7 +140,7 @@ section[id] {
 }
 
 .highlight {
-  color: var(--blue-main);
+  color: var(--warm-accent);
   font-style: italic;
 }
 
@@ -156,20 +158,19 @@ section[id] {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--blue-deep), var(--blue-main));
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
   color: var(--white);
-  box-shadow: 0 8px 24px rgba(106, 154, 194, 0.22);
+  box-shadow: 0 8px 24px rgba(59, 111, 160, 0.20);
 }
 
 .btn-outline {
   background: transparent;
   color: var(--white);
-  border-color: rgba(255, 255, 255, .7);
-  backdrop-filter: blur(8px);
+  border-color: rgba(255, 255, 255, .75);
 }
 
 .btn-link {
-  color: var(--blue-deep);
+  color: var(--primary-700);
   font-weight: 600;
   font-size: .9rem;
   transition: var(--transition);
@@ -178,7 +179,7 @@ section[id] {
 @media (hover: hover) and (pointer: fine) {
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(106, 154, 194, 0.30);
+    box-shadow: 0 12px 32px rgba(59, 111, 160, 0.28);
   }
 
   .btn-outline:hover {

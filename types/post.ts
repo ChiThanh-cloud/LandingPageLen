@@ -58,7 +58,14 @@ export type PostSection =
       orientation?: "landscape" | "portrait";
     };
 
-export type BlogPost = {
+export type BlogCtaType =
+  | "custom-order"
+  | "gift"
+  | "starter-kit"
+  | "product-care"
+  | "general";
+
+export type BlogPostMeta = {
   slug: string;
   title: string;
   description: string;
@@ -78,11 +85,20 @@ export type BlogPost = {
   image: string;
   imageAlt: string;
   ogImage?: string;
+  categorySlug?: string;
+  status?: "draft" | "published";
+  featured?: boolean;
+  ctaType?: BlogCtaType;
   heroCta?: {
     primaryLabel: string;
     secondaryLabel: string;
     secondaryHref: string;
   };
-  sections: PostSection[];
   legacyPhoneFound?: string;
 };
+
+export type LegacyBlogPost = BlogPostMeta & {
+  sections: PostSection[];
+};
+
+export type BlogPost = LegacyBlogPost;

@@ -1,12 +1,12 @@
 import { siteConfig } from "@/data/site";
-import type { BlogPost } from "@/types/post";
+import type { BlogPostMeta } from "@/types/post";
 
 function absoluteUrl(path: string) {
   if (path.startsWith("http")) return path;
   return `${siteConfig.url}${path}`;
 }
 
-export function PostJsonLd({ post }: { post: BlogPost }) {
+export function PostJsonLd({ post }: { post: BlogPostMeta }) {
   const url = `${siteConfig.url}/blog/${post.slug}`;
   const imageUrl = absoluteUrl(post.ogImage || post.image);
 

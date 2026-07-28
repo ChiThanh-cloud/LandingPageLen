@@ -323,7 +323,6 @@ export default function HomePage() {
 
       <section className="products section" id="bo-suu-tap">
         <div className="container">
-          <p className="section-tag center">Góc nhỏ của Tiny</p>
           <h2 className="section-title center">Tiny có thể làm gì <span className="highlight">giúp bạn?</span></h2>
           <p className="section-sub center">Từ nguyên liệu đan móc đến những món quà thành phẩm, tất cả đều sẵn sàng.</p>
           <ProductShowcase />
@@ -332,7 +331,6 @@ export default function HomePage() {
 
       <section className="process section" id="quy-trinh-dat-hang">
         <div className="container">
-          <p className="section-tag center">Cách thức đặt hàng</p>
           <h2 className="section-title center">Hành trình làm ra <span className="highlight">món quà của bạn</span></h2>
           <div className="process-steps">
             {processSteps.map(([num, title, desc, IconComponent], index) => (
@@ -374,7 +372,6 @@ export default function HomePage() {
 
       <section className="home-blog section" id="blog-noi-bat">
         <div className="container">
-          <p className="section-tag center">Góc đọc nhanh</p>
           <h2 className="section-title center">Blog nổi bật từ <span className="highlight">LenTiny</span></h2>
           <p className="section-sub center">Một vài bài nhẹ nhàng giúp bạn chọn quà, chọn len và chăm món đồ handmade lâu đẹp hơn.</p>
           <div className="home-blog-grid">
@@ -464,7 +461,6 @@ export default function HomePage() {
 
       <section className="shop-info section" id="thong-tin-tiny">
         <div className="container shop-info-inner">
-          <p className="section-tag center">Về Tiny</p>
           <h2 className="section-title center">Thông tin về <span className="highlight">Tiệm Len Nhà Tiny</span></h2>
           <p className="shop-info-lead">
             Tiệm Len Nhà Tiny là <strong>shop len handmade</strong> chuyên bán <strong>cuộn len</strong>, <strong>set tự móc</strong>, <strong>túi móc handmade</strong>, <strong>thú len</strong>, <strong>đồ móc theo yêu cầu</strong> và <strong>quà tặng handmade</strong>. Shop phù hợp cho người mới tập móc len, khách muốn mua set len tự làm hoặc cần đặt sản phẩm handmade theo sở thích.

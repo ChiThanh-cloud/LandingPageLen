@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogPostPage } from "@/components/blog/BlogPostPage";
-import { getPostBySlug, posts } from "@/data/posts";
+import { PostSections } from "@/components/blog/PostSections";
 import { siteConfig } from "@/data/site";
+import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
+import { getPostBySlug } from "@/lib/blog/get-post-by-slug";
 
 type BlogPostRouteProps = {
   params: Promise<{
@@ -33,19 +35,20 @@ function getOgImage(path: string) {
 }
 
 export function generateStaticParams() {
-  return posts.map((post) => ({
+  return getAllPostMetadata().map((post) => ({
     slug: post.slug
   }));
 }
 
 export async function generateMetadata({ params }: BlogPostRouteProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const loadedPost = await getPostBySlug(slug);
 
-  if (!post) {
+  if (!loadedPost) {
     return {};
   }
 
+  const post = loadedPost.meta;
   const canonical = postUrl(post.slug);
   const image = getOgImage(post.ogImage || post.image);
 
@@ -88,11 +91,24 @@ export async function generateMetadata({ params }: BlogPostRouteProps): Promise<
 
 export default async function BlogPostRoute({ params }: BlogPostRouteProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const loadedPost = await getPostBySlug(slug);
 
-  if (!post) {
+  if (!loadedPost) {
     notFound();
   }
 
-  return <BlogPostPage post={post} />;
+  if (loadedPost.source === "mdx") {
+    const Content = loadedPost.Content;
+    return (
+      <BlogPostPage post={loadedPost.meta}>
+        <Content />
+      </BlogPostPage>
+    );
+  }
+
+  return (
+    <BlogPostPage post={loadedPost.meta}>
+      <PostSections post={loadedPost.legacyPost} />
+    </BlogPostPage>
+  );
 }

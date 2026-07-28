@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { BlogPost } from "@/types/post";
+import type { BlogPostMeta } from "@/types/post";
 
 type BlogIndexProps = {
-  posts: BlogPost[];
+  posts: BlogPostMeta[];
 };
 
 const filters = [

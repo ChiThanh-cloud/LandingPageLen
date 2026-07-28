@@ -1,6 +1,5 @@
 .DS_Store
 
-.agent/
 __pycache__/
 product-color-extractor.html
 supabase
@@ -15,5 +14,4 @@ out
 *.tmp
 manifests/
 ui-ux-pro-max-skill/
-
 .agents/

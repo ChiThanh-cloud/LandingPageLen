@@ -85,12 +85,13 @@
 }
 
 .product-modal-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  color: var(--blue-deep);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--primary-700);
   margin-bottom: 24px;
   text-align: center;
-  border-bottom: 2px solid var(--blue-pale);
+  border-bottom: 2px solid var(--primary-100);
   padding-bottom: 16px;
 }
 
@@ -577,17 +578,17 @@
 }
 
 .yarn-price-box {
-  background: var(--blue-pale);
+  background: var(--primary-100);
   padding: 16px 20px;
   border-radius: 12px;
-  border: 1px solid var(--blue-light);
+  border: 1px solid var(--primary-300);
 }
 
 .yarn-detail-price {
   margin: 0 0 4px;
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--blue-deep);
+  color: var(--primary-700);
 }
 
 .yarn-price-note {
@@ -779,7 +780,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--blue-main);
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
   color: var(--white);
   padding: 14px 24px;
   border-radius: 999px;
@@ -787,13 +788,13 @@
   font-size: 1.1rem;
   text-decoration: none;
   transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-  box-shadow: 0 4px 12px rgba(45, 111, 148, 0.2);
+  box-shadow: 0 4px 12px rgba(59, 111, 160, 0.22);
 }
 
 .yarn-contact-btn:hover {
-  background: #006edb;
+  background: var(--primary-700);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(45, 111, 148, 0.3);
+  box-shadow: 0 6px 16px rgba(59, 111, 160, 0.30);
 }
 
 .yarn-contact-btn.disabled {

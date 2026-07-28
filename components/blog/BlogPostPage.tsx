@@ -1,17 +1,23 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { siteConfig } from "@/data/site";
-import type { BlogPost } from "@/types/post";
+import type { BlogPostMeta } from "@/types/post";
 import { BlogReadingProgress } from "./BlogReadingProgress";
 import { PostJsonLd } from "./PostJsonLd";
-import { PostSections } from "./PostSections";
 
 function formatDate(value: string) {
   const [year, month, day] = value.split("-");
   return `${day}/${month}/${year}`;
 }
 
-export function BlogPostPage({ post }: { post: BlogPost }) {
+export function BlogPostPage({
+  post,
+  children
+}: {
+  post: BlogPostMeta;
+  children: ReactNode;
+}) {
   return (
     <main className="blog-page blog-article-page">
       <PostJsonLd post={post} />
@@ -74,7 +80,7 @@ export function BlogPostPage({ post }: { post: BlogPost }) {
           />
         </div>
 
-        <PostSections post={post} />
+        {children}
 
         <section className="blog-cta">
           <h2>{post.heroCta ? "Đã hình dung món quà bạn muốn dành tặng?" : "Cần Tiny tư vấn thêm về đồ len handmade?"}</h2>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BlogIndex } from "@/components/blog/BlogIndex";
-import { posts } from "@/data/posts";
 import { siteConfig } from "@/data/site";
+import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
 
 const blogTitle = "Blog Đồ Len Handmade Và Chart Móc Len | LenTiny";
 const blogDescription =
@@ -42,5 +42,6 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
+  const posts = getAllPostMetadata();
   return <BlogIndex posts={posts} />;
 }

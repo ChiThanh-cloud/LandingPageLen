@@ -8,7 +8,7 @@
 
 .migration-panel {
   width: min(100%, 720px);
-  border: 1px solid #f1d8cb;
+  border: 1px solid #b8d2ea;
   border-radius: 8px;
   background: #ffffff;
   box-shadow: 0 18px 60px rgb(91 48 28 / 10%);
@@ -17,7 +17,7 @@
 
 .migration-eyebrow {
   margin: 0 0 12px;
-  color: #9a5f45;
+  color: #3b6fa0;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -31,7 +31,7 @@
 }
 
 .migration-panel p {
-  color: #6d554a;
+  color: #4a607a;
   font-size: 1rem;
   line-height: 1.7;
 }
@@ -45,10 +45,10 @@
 }
 
 .migration-list li {
-  border: 1px solid #f5e3da;
+  border: 1px solid #d6e8f5;
   border-radius: 8px;
   padding: 12px 14px;
-  background: #fff8f4;
+  background: #edf5fb;
 }
 
 .footer-policy-link {
@@ -70,9 +70,25 @@
 }
 
 .product-detail-link {
-  margin-top: 6px;
-  display: block;
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
   font-size: .82rem;
+  font-weight: 600;
+  color: var(--primary-700);
+  border: 1.5px solid var(--primary-300);
+  border-radius: 100px;
+  padding: 8px 16px;
+  min-height: 36px;
+  transition: var(--transition);
+  background: transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-detail-link:hover {
+    background: var(--primary-100);
+    border-color: var(--primary-600);
+  }
 }
 
 .product-modal-actions {

@@ -1,18 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { posts } from "../data/posts";
 import { products } from "../data/products";
 import { siteConfig } from "../data/site";
+import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import robots from "./robots";
 import sitemap from "./sitemap";
 
 test("SEO routes", async (t) => {
+  const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
   const entries = sitemap();
   const urls = entries.map((entry) => entry.url);
 
   await t.test("sitemap contains every public route exactly once", () => {
     const expectedUrls = [
       siteConfig.url,
+      `${siteConfig.url}/about`,
       `${siteConfig.url}/blog`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
       ...products.map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
@@ -40,15 +42,24 @@ test("SEO routes", async (t) => {
     const config = robots();
     assert.equal(config.sitemap, `${siteConfig.url}/sitemap.xml`);
     assert.equal(config.host, siteConfig.url);
-    assert.deepEqual(config.rules, {
+    const rules = Array.isArray(config.rules) ? config.rules : [config.rules];
+    assert.deepEqual(rules[0], {
       userAgent: "*",
       allow: "/",
       disallow: ["/admin.html", "/tools/", "/migration-status"]
     });
+    assert.deepEqual(
+      rules.slice(1).map((rule) => rule.userAgent),
+      ["GPTBot", "Google-Extended", "CCBot", "Bytespider"]
+    );
+    for (const rule of rules.slice(1)) {
+      assert.deepEqual(rule.disallow, ["/"]);
+    }
   });
 });
 
 test("SEO content data", async (t) => {
+  const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
   await t.test("post and product slugs are unique", () => {
     const postSlugs = posts.map((post) => post.slug);
     const productSlugs = products.map((product) => product.slug);
