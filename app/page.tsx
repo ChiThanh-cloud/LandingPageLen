@@ -104,6 +104,44 @@ const homeJsonLd = {
         "query-input": "required name=search_term_string"
       }
     },
+    {
+      "@type": "FAQPage",
+      "@id": `${siteConfig.url}/#faq`,
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "Tiệm Len Nhà Tiny bán gì?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng handmade."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "Tiệm Len Nhà Tiny phù hợp với ai?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần tư vấn phối màu len."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "Có thể đặt đồ móc theo yêu cầu không?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng."
+          }
+        },
+        {
+          "@type": "Question",
+          name: "Shop có giao hàng toàn quốc không?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc."
+          }
+        }
+      ]
+    },
   ]
 };
 
@@ -439,7 +477,7 @@ export default function HomePage() {
             <p className="contact-hours">
               <span className="contact-info-icon" aria-hidden="true"><LucideIconClock /></span>
               <span className="hours-label">Giờ mở cửa:</span>{" "}
-              <time>{siteConfig.businessHours}</time>
+              <time dateTime="Mo-Su 09:00-21:00">{siteConfig.businessHours}</time>
             </p>
           </address>
           <div className="map-container">
