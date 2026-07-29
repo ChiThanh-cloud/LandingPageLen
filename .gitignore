@@ -14,3 +14,4 @@ out
 *.tmp
 manifests/
 ui-ux-pro-max-skill/
+.agents/
