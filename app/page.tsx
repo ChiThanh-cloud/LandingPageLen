@@ -283,31 +283,31 @@ export default function HomePage() {
         <div className="hero-scroll"><span /></div>
       </section>
 
-      <section className="trust-bar">
-        <div className="container trust-grid">
+      <section className="trust-bar" aria-label="Cam kết dịch vụ">
+        <ul className="container trust-grid">
           {trustItems.map(([title, desc, IconComponent]) => (
-            <div className="trust-item" key={title}>
-              <span className="trust-icon"><IconComponent /></span>
+            <li className="trust-item" key={title}>
+              <span className="trust-icon" aria-hidden="true"><IconComponent /></span>
               <div>
                 <strong>{title}</strong>
                 <p>{desc}</p>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="about section" id="ve-tiny">
         <div className="container about-grid">
           <div className="about-img-wrap">
             <Image src="/images/yarn_hero_800.jpg" alt="Không gian Tiệm Len Nhà Tiny với len sợi và đồ móc handmade tại TP.HCM" className="about-img" width={800} height={600} sizes="(max-width: 768px) 100vw, 50vw" />
-            <div className="about-badge-card">
+            <aside className="about-badge-card" aria-label="Số khách hàng hài lòng">
               <span className="badge-num">100+</span>
               <span className="badge-label">Khách hàng hài lòng</span>
-            </div>
+            </aside>
           </div>
           <div className="about-text">
-            <p className="section-tag">Chút tâm tình từ Tiny</p>
+            <span className="section-tag">Chút tâm tình từ Tiny</span>
             <h2 className="section-title">Nơi những cuộn len <span className="highlight">biết kể chuyện</span></h2>
             <p>Không chỉ là một trạm dừng chân mua bán len sợi, Tiny là góc nhỏ dành riêng cho những ai trân trọng đồ thủ công. Chúng mình tin rằng, mỗi cuộn len đều ẩn chứa một câu chuyện, và mỗi mũi móc đều mang theo một phần tâm huyết.</p>
             <p>Dù bạn đang tìm kiếm những cuộn len mềm mịn để tự đan chiếc khăn ấm, hay cần một em gấu bông &quot;độc bản&quot; để làm quà tặng – Tiny luôn ở đây, cẩn thận tỉ mỉ từng chút một để gửi đến bạn sản phẩm hoàn thiện nhất.</p>
@@ -332,25 +332,25 @@ export default function HomePage() {
       <section className="process section" id="quy-trinh-dat-hang">
         <div className="container">
           <h2 className="section-title center">Hành trình làm ra <span className="highlight">món quà của bạn</span></h2>
-          <div className="process-steps">
+          <ol className="process-steps">
             {processSteps.map(([num, title, desc, IconComponent], index) => (
               <Fragment key={num}>
-                <div className="step">
-                  <div className="step-num">{num}</div>
-                  <div className="step-icon" aria-hidden="true"><IconComponent /></div>
+                <li className="step">
+                  <span className="step-num" aria-hidden="true">{num}</span>
+                  <span className="step-icon" aria-hidden="true"><IconComponent /></span>
                   <h3>{title}</h3>
                   <p>{desc}</p>
-                </div>
-                {index < processSteps.length - 1 ? <div className="step-arrow">→</div> : null}
+                </li>
+                {index < processSteps.length - 1 ? <span className="step-arrow" aria-hidden="true">→</span> : null}
               </Fragment>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       <section className="reviews section" id="khach-chia-se">
         <div className="container">
-          <p className="section-tag center">Khách nhà Tiny chia sẻ</p>
+          <span className="section-tag center">Khách nhà Tiny chia sẻ</span>
           <h2 className="section-title center">Những lời nhắn nhỏ <span className="highlight">sau khi nhận hàng</span></h2>
           <div className="reviews-grid">
             {[
@@ -402,48 +402,46 @@ export default function HomePage() {
 
       <section className="contact section" id="lien-he-tu-van">
         <div className="container">
-          <p className="section-tag center">Đặt hàng ngay hôm nay</p>
+          <span className="section-tag center">Đặt hàng ngay hôm nay</span>
           <h2 className="section-title center">Liên hệ <span className="highlight">Tiệm Len Nhà Tiny</span></h2>
           <p className="section-sub center">Gửi ảnh mẫu hoặc mô tả món bạn muốn, Tiny sẽ tư vấn màu len và báo giá trước khi làm.</p>
-          <div className="contact-cards">
+          <address className="contact-cards">
             <a href="https://m.me/61559447375156" target="_blank" rel="noopener" className="contact-card" id="contact-fb" data-track="contact_facebook_click">
-              <div className="contact-card-icon fb-icon"><MessengerBrandIcon /></div>
-              <div className="contact-card-info">
+              <span className="contact-card-icon fb-icon" aria-hidden="true"><MessengerBrandIcon /></span>
+              <span className="contact-card-info">
                 <strong>Messenger</strong>
                 <span>Nhắn tin trực tiếp qua Messenger</span>
                 <em>Tiệm Len Nhà Tiny</em>
-              </div>
-              <span className="contact-arrow">→</span>
+              </span>
+              <span className="contact-arrow" aria-hidden="true">→</span>
             </a>
             <a href="https://zalo.me/0368903519" target="_blank" rel="noopener" className="contact-card" id="contact-zalo" data-track="contact_zalo_click">
-              <div className="contact-card-icon zalo-icon">
+              <span className="contact-card-icon zalo-icon" aria-hidden="true">
                 <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true">
                   <rect width="48" height="48" rx="10" fill="#0068FF" />
                   <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="20" fontWeight="bold" fontFamily="Arial, sans-serif">Za</text>
                 </svg>
-              </div>
-              <div className="contact-card-info">
+              </span>
+              <span className="contact-card-info">
                 <strong>Zalo</strong>
                 <span>Nhắn tin hoặc gọi điện trực tiếp</span>
                 <em>036.890.3519</em>
-              </div>
-              <span className="contact-arrow">→</span>
+              </span>
+              <span className="contact-arrow" aria-hidden="true">→</span>
             </a>
-          </div>
-          <div className="contact-address">
-            <span className="address-icon" aria-hidden="true"><LucideIconMapPin /></span>
-            <p>853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh</p>
-          </div>
-          <p className="contact-map-link">
-            <a href="https://www.google.com/maps/search/?api=1&query=853%20Ba%20%C4%90%C3%ACnh%2C%20Ph%C6%B0%E1%BB%9Dng%20Ch%C3%A1nh%20H%C6%B0ng%2C%20TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener">
-              Xem chỉ đường trên Google Maps
-            </a>
-          </p>
-          <div className="contact-hours">
-            <span className="contact-info-icon" aria-hidden="true"><LucideIconClock /></span>
-            <span className="hours-label">Giờ mở cửa:</span>
-            <p>{siteConfig.businessHours}</p>
-          </div>
+            <p className="contact-address">
+              <span className="address-icon" aria-hidden="true"><LucideIconMapPin /></span>
+              853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh —{" "}
+              <a href="https://www.google.com/maps/search/?api=1&query=853%20Ba%20%C4%90%C3%ACnh%2C%20Ph%C6%B0%E1%BB%9Dng%20Ch%C3%A1nh%20H%C6%B0ng%2C%20TP.%20H%E1%BB%93%20Ch%C3%AD%20Minh" target="_blank" rel="noopener">
+                Xem chỉ đường
+              </a>
+            </p>
+            <p className="contact-hours">
+              <span className="contact-info-icon" aria-hidden="true"><LucideIconClock /></span>
+              <span className="hours-label">Giờ mở cửa:</span>{" "}
+              <time>{siteConfig.businessHours}</time>
+            </p>
+          </address>
           <div className="map-container">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.8665042831874!2d106.659918!3d10.7448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752e5513ab4357%3A0xc3f5a2e582e2c8dc!2s853%20Ba%20%C4%90%C3%ACnh%2C%20Ph%C6%B0%E1%BB%9Dng%2010%2C%20Qu%E1%BA%ADn%208%2C%20H%E1%BB%93%20Ch%C3%AD%20Minh%2C%20Vietnam!5e0!3m2!1sen!2s!4v1715060000000!5m2!1sen!2s"
@@ -459,7 +457,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="shop-info section" id="thong-tin-tiny">
+      <section className="shop-info section" id="thong-tin-tiny" aria-label="Thông tin Tiệm Len Nhà Tiny">
         <div className="container shop-info-inner">
           <h2 className="section-title center">Thông tin về <span className="highlight">Tiệm Len Nhà Tiny</span></h2>
           <p className="shop-info-lead">
