@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PolicyLinks } from "./PolicyLinks";
 import { TrackedExternalLink } from "./TrackedExternalLink";
+import { siteConfig } from "@/data/site";
 
 export function Footer() {
   return (
@@ -16,12 +17,16 @@ export function Footer() {
             height={160}
           />
           <p className="footer-slogan">&quot;Từng sợi len, một tình yêu&quot;</p>
-          <p className="footer-entity">Chủ thể bán hàng: Tiệm Len Nhà Tiny</p>
-          <p className="footer-addr">853 Ba Đình, Phường Chánh Hưng, TP.HCM</p>
-          <p className="footer-hours">Giờ mở cửa: 08:00 - 21:00, mỗi ngày</p>
-          <p className="footer-hours">Hotline/Zalo: 036.890.3519</p>
+          <address className="footer-contact-info">
+            <p className="footer-entity">Chủ thể bán hàng: Tiệm Len Nhà Tiny</p>
+            <p className="footer-addr">{siteConfig.address}</p>
+            <p className="footer-hours">
+              Giờ mở cửa: <time dateTime={`Mo-Su ${siteConfig.businessHoursOpens}-${siteConfig.businessHoursCloses}`}>{siteConfig.businessHours}</time>
+            </p>
+            <p className="footer-hours">Hotline/Zalo: {siteConfig.phoneDisplayDotted}</p>
+          </address>
         </div>
-        <div className="footer-links">
+        <nav className="footer-links" aria-label="Điều hướng footer">
           <Link href="/#ve-tiny">Về Tiny</Link>
           <Link href="/#bo-suu-tap">Bộ sưu tập</Link>
           <Link href="/#quy-trinh-dat-hang">Cách đặt hàng</Link>
@@ -29,26 +34,27 @@ export function Footer() {
           <Link href="/#lien-he-tu-van">Liên hệ tư vấn</Link>
           <Link href="/blog">Blog chart len</Link>
           <TrackedExternalLink
-            href="https://www.facebook.com/tiemlennhatiny"
+            href={siteConfig.facebookUrl}
             trackKey="contact_facebook_page_click"
-            label="Facebook Fanpage"
+            label="Facebook Fanpage Tiệm Len Nhà Tiny"
           >
             Facebook
           </TrackedExternalLink>
           <TrackedExternalLink
-            href="https://m.me/61559447375156"
+            href={siteConfig.messengerUrl}
             trackKey="contact_facebook_click"
-            label="Messenger"
+            label="Nhắn tin Messenger Tiệm Len Nhà Tiny"
           >
             Messenger
           </TrackedExternalLink>
-          <TrackedExternalLink href="https://zalo.me/0368903519" trackKey="contact_zalo_click" label="Zalo">
+          <TrackedExternalLink href={siteConfig.zaloUrl} trackKey="contact_zalo_click" label="Zalo Tiệm Len Nhà Tiny">
             Zalo
           </TrackedExternalLink>
           <PolicyLinks />
-        </div>
+        </nav>
         <p className="footer-copy">© 2026 Tiệm Len Nhà Tiny. Handmade with care.</p>
       </div>
     </footer>
   );
 }
+
