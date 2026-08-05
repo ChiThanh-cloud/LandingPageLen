@@ -29,7 +29,7 @@ export function Footer() {
           <Link href="/#lien-he-tu-van">Liên hệ tư vấn</Link>
           <Link href="/blog">Blog chart len</Link>
           <TrackedExternalLink
-            href="https://www.facebook.com/profile.php?id=61559447375156"
+            href="https://www.facebook.com/tiemlennhatiny"
             trackKey="contact_facebook_page_click"
             label="Facebook Fanpage"
           >

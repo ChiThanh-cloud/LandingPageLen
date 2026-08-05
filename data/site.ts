@@ -12,7 +12,7 @@ export const siteConfig = {
   businessHoursOpens: "09:00",
   businessHoursCloses: "21:00",
   messengerUrl: "https://m.me/61559447375156",
-  facebookUrl: "https://www.facebook.com/profile.php?id=61559447375156",
+  facebookUrl: "https://www.facebook.com/tiemlennhatiny",
   zaloUrl: "https://zalo.me/0368903519",
   gaId: "G-C27736KHYT",
   clarityId: "wqieag9yv3",
