@@ -79,7 +79,7 @@ const homeJsonLd = {
           closes: siteConfig.businessHoursCloses
         }
       ],
-      sameAs: [siteConfig.messengerUrl, siteConfig.zaloUrl],
+      sameAs: [siteConfig.facebookUrl, siteConfig.messengerUrl, siteConfig.zaloUrl],
       contactPoint: {
         "@type": "ContactPoint",
         contactType: "customer support",
