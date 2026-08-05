@@ -4,6 +4,105 @@ import type { MdxPostLoader } from "./registry-types";
 
 export const mdxPostMetadata: BlogPostMeta[] = [
   {
+    "slug": "cach-bao-quan-thu-len-handmade-de-luon-dep",
+    "title": "Cách Bảo Quản Thú Len Handmade Để Luôn Đẹp | LenTiny",
+    "description": "Hướng dẫn bảo quản thú len handmade: cách vệ sinh nhẹ, tránh bụi, tránh ẩm, tránh nắng gắt và giữ form thú len luôn đẹp.",
+    "ogTitle": "Cách Bảo Quản Thú Len Handmade Để Luôn Đẹp | LenTiny",
+    "ogDescription": "Mẹo chăm thú len handmade sau khi mua: làm sạch nhẹ nhàng, giữ khô thoáng và bảo vệ form thú len.",
+    "category": "Quà handmade",
+    "categorySlug": "qua-tang-bang-len",
+    "tags": [
+      "qua-handmade",
+      "huong-dan"
+    ],
+    "searchText": "cách bảo quản thú len handmade vệ sinh thú len tránh bụi ẩm nắng gắt giữ form thú bông len đồ len handmade",
+    "publishedAt": "2026-05-26",
+    "updatedAt": "2026-07-07",
+    "author": "Tiny",
+    "eyebrow": "Quà handmade - Chăm đồ len",
+    "breadcrumbLabel": "Bảo quản thú len handmade",
+    "h1": "Cách bảo quản thú len handmade để luôn đẹp",
+    "lead": "Thú len handmade sẽ ở bên bạn lâu hơn nếu được giữ sạch, tránh ẩm, tránh nắng gắt và được nâng niu đúng cách.",
+    "excerpt": "Mẹo giữ thú len sạch, tránh bụi ẩm, nắng gắt và không bị mất form sau thời gian sử dụng.",
+    "image": "https://res.cloudinary.com/djn2kd2hh/images/EE87E0C9-D516-4B4E-A4A2-3B58F09C2FC6_jtioyc/cach-bao-quan-thu-len-handmade-de-luon-dep.png",
+    "imageAlt": "Thú len handmade cần được bảo quản nhẹ nhàng",
+    "ogImage": "https://res.cloudinary.com/djn2kd2hh/images/c_fill,w_1200,h_630,g_auto/EE87E0C9-D516-4B4E-A4A2-3B58F09C2FC6_jtioyc/cach-bao-quan-thu-len-handmade-de-luon-dep.png",
+    "status": "published",
+    "featured": false,
+    "ctaType": "gift",
+    "heroCta": {
+      "primaryLabel": "Nhắn Tiny tư vấn",
+      "secondaryLabel": "Xem đặt móc theo yêu cầu",
+      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+    }
+  },
+  {
+    "slug": "moc-thu-len-theo-anh-mat-bao-lau",
+    "title": "Móc Thú Len Theo Ảnh Mất Bao Lâu? | LenTiny",
+    "description": "Tìm hiểu móc thú len theo ảnh mất bao lâu, quy trình custom và các yếu tố ảnh hưởng như kích thước, chi tiết, màu len, phụ kiện.",
+    "ogTitle": "Móc Thú Len Theo Ảnh Mất Bao Lâu? | LenTiny",
+    "ogDescription": "Giải thích quy trình custom thú len theo ảnh và cách chuẩn bị ảnh, kích thước, mô tả để đặt móc dễ hơn.",
+    "category": "Quà handmade",
+    "categorySlug": "qua-tang-bang-len",
+    "tags": [
+      "qua-handmade",
+      "huong-dan"
+    ],
+    "searchText": "móc thú len theo ảnh mất bao lâu custom thú len đặt móc theo yêu cầu thú bông len handmade kích thước màu len phụ kiện",
+    "publishedAt": "2026-05-26",
+    "updatedAt": "2026-07-07",
+    "author": "Tiny",
+    "eyebrow": "Quà handmade - Đặt móc theo yêu cầu",
+    "breadcrumbLabel": "Móc thú len theo ảnh",
+    "h1": "Móc thú len theo ảnh mất bao lâu?",
+    "lead": "Mẫu đơn giản thường mất 5–7 ngày; mẫu phức tạp hoặc nhiều chi tiết có thể 14–21 ngày. Thời gian cụ thể phụ thuộc vào ảnh mẫu, kích thước và lịch làm hiện tại của Tiny — nên hỏi lịch trước khi chốt ngày trao quà.",
+    "excerpt": "Giải thích quy trình custom thú len theo ảnh và những yếu tố ảnh hưởng đến thời gian hoàn thiện.",
+    "image": "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/cover.png",
+    "imageAlt": "Quà handmade bằng len đặt móc theo yêu cầu",
+    "ogImage": "https://res.cloudinary.com/djn2kd2hh/image/upload/c_fill,w_1200,h_630,g_auto/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/cover.png",
+    "status": "published",
+    "featured": false,
+    "ctaType": "custom-order",
+    "heroCta": {
+      "primaryLabel": "Gửi ảnh cho Tiny",
+      "secondaryLabel": "Xem đặt móc theo yêu cầu",
+      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+    }
+  },
+  {
+    "slug": "nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
+    "title": "Người Mới Học Móc Len Nên Chọn Loại Len Nào? | LenTiny",
+    "description": "Gợi ý chọn len cho người mới học móc: milk cotton, len nhung, cotton, acrylic và cách chọn kim móc phù hợp.",
+    "ogTitle": "Người Mới Học Móc Len Nên Chọn Loại Len Nào? | LenTiny",
+    "ogDescription": "Giải thích các loại len dễ gặp và gợi ý chọn len, kim móc phù hợp cho thú bông, hoa len, móc khóa.",
+    "category": "Len cho người mới",
+    "categorySlug": "nguyen-lieu-len",
+    "tags": [
+      "huong-dan",
+      "nguoi-moi"
+    ],
+    "searchText": "người mới học móc len nên chọn loại len nào milk cotton len nhung cotton acrylic kim móc thú bông hoa len móc khóa",
+    "publishedAt": "2026-05-25",
+    "updatedAt": "2026-07-07",
+    "author": "Tiny",
+    "eyebrow": "Hướng dẫn - Len cho người mới",
+    "breadcrumbLabel": "Chọn len cho người mới",
+    "h1": "Người mới học móc len nên chọn loại len nào?",
+    "lead": "Chọn đúng len và đúng kim móc sẽ giúp buổi học đầu tiên nhẹ nhàng hơn, mũi móc dễ nhìn hơn và thành phẩm ra form xinh hơn.",
+    "excerpt": "Giải thích milk cotton, len nhung, cotton, acrylic và cách chọn kim móc theo từng sản phẩm.",
+    "image": "https://res.cloudinary.com/djn2kd2hh/images/6631B3C3-6B0C-4006-9317-DC5D4203B47F_ahk36d/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.png",
+    "imageAlt": "Các cuộn len nhiều màu cho người mới học móc",
+    "ogImage": "https://res.cloudinary.com/djn2kd2hh/images/c_fill,w_1200,h_630,g_auto/6631B3C3-6B0C-4006-9317-DC5D4203B47F_ahk36d/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.png",
+    "status": "published",
+    "featured": false,
+    "ctaType": "starter-kit",
+    "heroCta": {
+      "primaryLabel": "Nhắn Tiny chọn set",
+      "secondaryLabel": "Xem len sợi tại Tiny",
+      "secondaryHref": "/san-pham/len-soi"
+    }
+  },
+  {
     "slug": "qua-tot-nghiep-handmade-y-nghia",
     "title": "Quà Tốt Nghiệp Handmade Làm Riêng Cho Người Nhận | LenTiny",
     "description": "Chọn quà tốt nghiệp handmade làm riêng theo sở thích người nhận. Tiny gợi ý mẫu theo khoảng giá mong muốn và gửi ảnh thành phẩm trước khi giao.",
@@ -35,8 +134,45 @@ export const mdxPostMetadata: BlogPostMeta[] = [
       "secondaryLabel": "Xem cách đặt theo yêu cầu",
       "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
     }
+  },
+  {
+    "slug": "vi-sao-qua-len-handmade-duoc-yeu-thich",
+    "title": "Vì Sao Quà Len Handmade Ngày Càng Được Yêu Thích? | LenTiny",
+    "description": "Khám phá vì sao quà len handmade được yêu thích: dễ thương, cá nhân hóa, bền lâu và hợp để tặng người thương.",
+    "ogTitle": "Vì Sao Quà Len Handmade Ngày Càng Được Yêu Thích? | LenTiny",
+    "ogDescription": "Khám phá giá trị của đồ len handmade và lý do những món quà làm bằng tay luôn có cảm giác rất riêng.",
+    "category": "Quà handmade",
+    "categorySlug": "qua-tang-bang-len",
+    "tags": [
+      "qua-handmade",
+      "huong-dan"
+    ],
+    "searchText": "quà len handmade đồ len handmade quà handmade dễ thương chart móc len lentiny",
+    "publishedAt": "2026-05-25",
+    "updatedAt": "2026-07-07",
+    "author": "Tiny",
+    "eyebrow": "Quà handmade - Cảm hứng len",
+    "breadcrumbLabel": "Quà len handmade",
+    "h1": "Vì sao quà len handmade ngày càng được yêu thích?",
+    "lead": "Một món quà nhỏ bằng len có thể mang theo rất nhiều sự tỉ mỉ, dịu dàng và cảm giác được làm riêng cho người nhận.",
+    "excerpt": "Một bài mở đầu nhẹ nhàng về giá trị của đồ len handmade và cảm giác ấm áp khi tặng quà làm bằng tay.",
+    "image": "https://res.cloudinary.com/djn2kd2hh/images/B7FE0C11-3AEE-4E71-B246-C91EE6914B50_knnama/vi-sao-qua-len-handmade-duoc-yeu-thich.png",
+    "imageAlt": "Đồ len handmade dễ thương dùng làm quà tặng",
+    "ogImage": "https://res.cloudinary.com/djn2kd2hh/images/c_fill,w_1200,h_630,g_auto/B7FE0C11-3AEE-4E71-B246-C91EE6914B50_knnama/vi-sao-qua-len-handmade-duoc-yeu-thich.png",
+    "status": "published",
+    "featured": false,
+    "ctaType": "gift",
+    "heroCta": {
+      "primaryLabel": "Nhắn Tiny tư vấn quà",
+      "secondaryLabel": "Xem đồ móc handmade",
+      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+    }
   }
 ];
 export const mdxPostLoaders: Record<string, MdxPostLoader> = {
-  "qua-tot-nghiep-handmade-y-nghia": () => import("@/content/blog/qua-tot-nghiep-handmade-y-nghia.mdx")
+  "cach-bao-quan-thu-len-handmade-de-luon-dep": () => import("@/content/blog/cach-bao-quan-thu-len-handmade-de-luon-dep.mdx"),
+  "moc-thu-len-theo-anh-mat-bao-lau": () => import("@/content/blog/moc-thu-len-theo-anh-mat-bao-lau.mdx"),
+  "nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao": () => import("@/content/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.mdx"),
+  "qua-tot-nghiep-handmade-y-nghia": () => import("@/content/blog/qua-tot-nghiep-handmade-y-nghia.mdx"),
+  "vi-sao-qua-len-handmade-duoc-yeu-thich": () => import("@/content/blog/vi-sao-qua-len-handmade-duoc-yeu-thich.mdx")
 };

@@ -35,11 +35,12 @@ Kinh nghiệm: Bắt đầu từ gia đình/người thân truyền lại, mở 
 Chuyên môn: Thú bông len, hoa len, túi len, quà tặng handmade
 
 ## Nội dung Blog
-Blog tại /blog chia sẻ:
-- Cách chọn quà tặng handmade (tốt nghiệp, sinh nhật, Valentine)
-- Hướng dẫn chọn loại len phù hợp cho người mới
-- Kinh nghiệm bảo quản đồ len handmade
-- Thời gian làm và quy trình đặt hàng theo yêu cầu
+Blog tại /blog chia sẻ (5 bài đã xuất bản):
+- /blog/qua-tot-nghiep-handmade-y-nghia — Quà tốt nghiệp handmade làm riêng cho người nhận
+- /blog/vi-sao-qua-len-handmade-duoc-yeu-thich — Vì sao quà len handmade ngày càng được yêu thích?
+- /blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao — Người mới học móc len nên chọn loại len nào?
+- /blog/moc-thu-len-theo-anh-mat-bao-lau — Móc thú len theo ảnh mất bao lâu?
+- /blog/cach-bao-quan-thu-len-handmade-de-luon-dep — Cách bảo quản thú len handmade để luôn đẹp
 
 ## Trang sản phẩm
 - /san-pham/len-soi — Len sợi & phụ kiện đan móc
