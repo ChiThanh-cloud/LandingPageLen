@@ -613,81 +613,230 @@
 /* =============================================
    PROCESS
    ============================================= */
+/* =============================================
+   PROCESS — Organic Craft Redesign
+   ============================================= */
 .process {
-  background: linear-gradient(135deg, var(--blue-pale) 0%, var(--white) 100%);
+  background: linear-gradient(160deg, #f0f7ff 0%, #fafcff 55%, #f5f0ff 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.process::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 20% 50%, rgba(167, 199, 231, 0.18) 0%, transparent 60%),
+                    radial-gradient(circle at 80% 20%, rgba(196, 181, 253, 0.12) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .process-steps {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 56px;
-  flex-wrap: wrap;
-  justify-content: center;
+  align-items: stretch;
+  gap: 0;
+  margin-top: 60px;
   list-style: none;
   padding: 0;
+  position: relative;
+  justify-content: center;
+}
+
+/* Connecting line between cards */
+.process-steps::before {
+  content: "";
+  position: absolute;
+  top: 52px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--primary-200, #bfdbfe) 0px,
+    var(--primary-200, #bfdbfe) 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  z-index: 0;
+  pointer-events: none;
 }
 
 .step {
   flex: 1;
-  min-width: 180px;
-  max-width: 220px;
+  min-width: 160px;
+  max-width: 230px;
   text-align: center;
-  padding: 36px 20px;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--blue-light);
-  transition: var(--transition);
+  padding: 32px 20px 28px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(100, 130, 200, 0.10), 0 1px 3px rgba(100, 130, 200, 0.08);
+  border: 1.5px solid rgba(191, 219, 254, 0.6);
+  transition: transform 220ms cubic-bezier(.34,1.56,.64,1),
+              box-shadow 220ms ease,
+              border-color 220ms ease;
+  position: relative;
+  z-index: 1;
+  margin: 0 8px;
+  cursor: default;
 }
 
+.step:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(100, 130, 200, 0.18), 0 2px 8px rgba(100, 130, 200, 0.1);
+  border-color: rgba(147, 197, 253, 0.9);
+}
+
+/* Stagger entrance animation */
+.step:nth-child(1)  { animation: stepFadeUp 0.5s ease both 0.05s; }
+.step:nth-child(3)  { animation: stepFadeUp 0.5s ease both 0.12s; }
+.step:nth-child(5)  { animation: stepFadeUp 0.5s ease both 0.19s; }
+.step:nth-child(7)  { animation: stepFadeUp 0.5s ease both 0.26s; }
+
+@keyframes stepFadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step { animation: none !important; }
+}
+
+/* Step number badge — floating top-right */
 .step-num {
-  font-size: .75rem;
-  font-weight: 700;
-  color: var(--blue-light);
-  letter-spacing: .1em;
-  margin-bottom: 12px;
+  position: absolute;
+  top: -12px;
+  right: 16px;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+  color: var(--white, #fff);
+  background: linear-gradient(135deg, #6ba3d6 0%, #93c5fd 100%);
+  border-radius: 20px;
+  padding: 3px 10px;
+  box-shadow: 0 2px 8px rgba(107, 163, 214, 0.35);
+  line-height: 1.4;
 }
 
+/* Icon circle — glowing soft */
 .step-icon {
-  width: 54px;
-  height: 54px;
+  width: 60px;
+  height: 60px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  border-radius: 18px;
-  color: var(--primary-700);
-  background: var(--primary-100);
-  box-shadow: inset 0 0 0 1px rgba(59, 111, 160, .12);
+  margin-bottom: 18px;
+  border-radius: 50%;
+  color: #3b6fa0;
+  background: linear-gradient(145deg, #dbeafe 0%, #eff6ff 100%);
+  box-shadow: 0 0 0 6px rgba(191, 219, 254, 0.35),
+              inset 0 1px 2px rgba(255,255,255,0.9);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+
+.step:hover .step-icon {
+  box-shadow: 0 0 0 10px rgba(147, 197, 253, 0.3),
+              0 4px 14px rgba(107, 163, 214, 0.3),
+              inset 0 1px 2px rgba(255,255,255,0.9);
+  transform: scale(1.08);
 }
 
 .step-icon svg {
   width: 28px;
   height: 28px;
-  stroke-width: 1.8;
-  color: var(--primary-700);
+  stroke-width: 1.7;
+  color: #3b6fa0;
 }
 
 .step h3 {
   font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-dark);
+  font-weight: 700;
+  color: #1e3a5f;
   margin-bottom: 10px;
+  line-height: 1.35;
 }
 
 .step p {
-  font-size: .85rem;
-  color: var(--text-mid);
-  line-height: 1.6;
+  font-size: .82rem;
+  color: #64748b;
+  line-height: 1.65;
+  margin: 0;
 }
 
+/* Arrow connector between steps */
 .step-arrow {
-  font-size: 1.5rem;
-  color: var(--blue-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   align-self: center;
-  margin: 0 4px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
+  margin-top: -20px;
+  font-size: 1.1rem;
+  color: #93c5fd;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  border: 1.5px solid rgba(191,219,254,0.7);
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 1px 4px rgba(147,197,253,0.2);
+}
+
+/* Mobile: vertical stack */
+@media (max-width: 768px) {
+  .process-steps {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .process-steps::before {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: auto;
+    width: 2px;
+    height: auto;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--primary-200, #bfdbfe) 0px,
+      var(--primary-200, #bfdbfe) 8px,
+      transparent 8px,
+      transparent 16px
+    );
+    transform: translateX(-50%);
+  }
+
+  .step {
+    width: 100%;
+    max-width: 360px;
+    margin: 8px 0;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 20px 20px 24px;
+  }
+
+  .step-icon {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    width: 52px;
+    height: 52px;
+  }
+
+  .step-num {
+    top: -10px;
+    right: 12px;
+  }
+
+  .step-arrow {
+    transform: rotate(90deg);
+    margin: 0 auto;
+  }
 }
 
 /* =============================================
