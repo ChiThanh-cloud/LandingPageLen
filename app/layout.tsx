@@ -6,17 +6,14 @@ import "../css/layout.css";
 import "../css/sections.css";
 import "../css/animations.css";
 import "../css/products.css";
+import "../css/category-pages.css";
 import "../css/responsive.css";
 import "../css/blog.css";
 import "./blog/blog-pages.css";
 import "./san-pham/product-pages.css";
 import "./globals.css";
-import { DataTrackBridge } from "@/components/layout/DataTrackBridge";
-import { FloatingContact } from "@/components/layout/FloatingContact";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { PolicyModalHost } from "@/components/layout/PolicyModalHost";
-import { SiteTracking } from "@/components/layout/SiteTracking";
+import "../css/yarn-product.css";
+import { StorefrontShell } from "@/components/layout/StorefrontShell";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -70,13 +67,7 @@ export default function RootLayout({
       <head>
       </head>
       <body>
-        <SiteTracking />
-        <DataTrackBridge />
-        <Header />
-        {children}
-        <Footer />
-        <PolicyModalHost />
-        <FloatingContact />
+        <StorefrontShell>{children}</StorefrontShell>
       </body>
     </html>
   );

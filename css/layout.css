@@ -159,75 +159,208 @@
 /* =============================================
    FOOTER
    ============================================= */
+/* ── Footer 4-column grid ── */
 .footer {
   background: var(--text-dark);
-  padding: 56px 0 32px;
+  padding: 56px 0 0;
 }
 
-.footer-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 28px;
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1.2fr 1fr;
+  gap: 40px 32px;
+  padding-bottom: 48px;
 }
 
-.footer-brand {
-  text-align: center;
+/* CỘT 1 — Brand */
+.footer-col--brand {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .footer-logo {
+  width: 80px;
   height: 80px;
-  width: auto;
   object-fit: contain;
-  opacity: 1;
+  border-radius: 12px;
 }
 
 .footer-slogan {
-  color: rgba(255, 255, 255, .82);
-  font-size: .9rem;
-  font-style: italic;
-}
-
-.footer-entity {
-  color: rgba(255, 255, 255, .78);
-  font-size: .84rem;
-  font-weight: 600;
-}
-
-.footer-addr {
   color: rgba(255, 255, 255, .72);
-  font-size: .82rem;
-}
-
-.footer-hours {
-  color: rgba(255, 255, 255, .72);
-  font-size: .82rem;
-}
-
-.footer-links {
-  display: flex;
-  gap: 32px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.footer-links a {
-  color: rgba(255, 255, 255, .76);
   font-size: .88rem;
-  transition: var(--transition);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0;
 }
 
-.footer-copy {
+.footer-address {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-style: normal;
+}
+
+.footer-address p {
+  margin: 0;
+  color: rgba(255, 255, 255, .62);
+  font-size: .82rem;
+  line-height: 1.6;
+}
+
+/* Các cột chung */
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer-col-heading {
+  margin: 0;
+  color: #fff;
+  font-size: .84rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.footer-col-links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.footer-col-links a,
+.footer-col-links button {
+  display: block;
   color: rgba(255, 255, 255, .66);
-  font-size: .8rem;
+  font-size: .9rem;
+  line-height: 1.6;
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: color .18s ease;
+}
+
+.footer-col-links a:hover,
+.footer-col-links button:hover {
+  color: var(--primary-400, #7eaee8);
+}
+
+/* Thanh toán — compact trong cột 4 */
+.footer-payment {
+  margin-top: 4px;
+}
+
+.footer-payment-title {
+  margin: 0 0 10px;
+  color: rgba(255, 255, 255, .48);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.footer-payment-list {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.footer-payment-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 76px;
+  padding: 10px 8px 8px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .07);
+  color: rgba(255, 255, 255, .72);
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.footer-payment-card svg {
+  flex-shrink: 0;
+}
+
+/* Đường kẻ + copyright */
+.footer-copy {
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  padding: 20px 0;
   text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, .08);
-  padding-top: 24px;
-  width: 100%;
+}
+
+.footer-copy p {
+  margin: 0;
+  color: rgba(255, 255, 255, .44);
+  font-size: .8rem;
+}
+
+/* ── Responsive Tablet ≤ 900px ── */
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+  }
+
+  .footer-col--brand {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+  }
+
+  .footer-col--brand .footer-logo {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* ── Responsive Mobile ≤ 640px ── */
+@media (max-width: 640px) {
+  .footer {
+    padding-top: 40px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .footer-col--brand {
+    grid-column: auto;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .footer-col--brand .footer-address {
+    align-items: center;
+  }
+
+  .footer-col-links a,
+  .footer-col-links button {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-payment-list {
+    justify-content: flex-start;
+  }
 }
 
 /* Navbar logo in footer */
@@ -440,9 +573,6 @@
     background: var(--primary-100);
   }
 
-  .footer-links a:hover {
-    color: var(--primary-500);
-  }
 
   .float-btn:hover {
     transform: translateX(-3px) scale(1.02);

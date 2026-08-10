@@ -6,8 +6,8 @@ function absoluteUrl(path: string) {
   return `${siteConfig.url}${path}`;
 }
 
-export function ProductJsonLd({ product }: { product: ProductEntry }) {
-  const url = `${siteConfig.url}/san-pham/${product.slug}`;
+export function ProductJsonLd({ product, path }: { product: ProductEntry; path?: string }) {
+  const url = `${siteConfig.url}${path || `/san-pham/${product.slug}`}`;
   const pageNode = {
     "@type": "CollectionPage",
     "@id": url,
@@ -59,13 +59,6 @@ export function ProductJsonLd({ product }: { product: ProductEntry }) {
       brand: {
         "@type": "Brand",
         name: siteConfig.name
-      },
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: "4.9",
-        bestRating: "5",
-        worstRating: "1",
-        reviewCount: "47"
       },
       offers: {
         "@type": "Offer",

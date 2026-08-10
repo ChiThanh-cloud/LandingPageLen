@@ -132,45 +132,75 @@ export function ProductShowcase() {
   return (
     <>
       <div className="products-grid">
-        {products.map((product) => (
-          <div
-            key={product.id}
-            className={["product-card", product.className].filter(Boolean).join(" ")}
-            id={product.id}
-            role="button"
-            tabIndex={0}
-            aria-label={product.ariaLabel}
-            style={{ cursor: "pointer" }}
-            data-track="product_card_click"
-            data-category={product.type}
-            data-track-handled="true"
-            onClick={() => {
-              trackSiteEvent("product_card_click", {
-                label: product.title,
-                category: product.type
-              });
-              openModal(product.type);
-            }}
-            onKeyDown={(event) => handleCardKeyDown(event, product.type)}
-          >
-            <div className="product-img-wrap">
-              <Image src={product.image} alt={product.imageAlt} width={800} height={600} sizes="(max-width: 768px) 100vw, 50vw" />
-              <div className={["product-tag", product.tagClassName].filter(Boolean).join(" ")}>{product.tag}</div>
-            </div>
-            <div className="product-info">
-              <h3>{product.title}</h3>
-              <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
-              <p>{product.description}</p>
+        {products.map((product) => {
+          // Card len sợi → navigate thẳng tới /len-soi, không mở modal
+          if (product.type === "yarn") {
+            return (
               <Link
-                className="product-detail-link"
-                href={product.detailHref}
-                onClick={(event) => event.stopPropagation()}
+                key={product.id}
+                href="/len-soi"
+                className={["product-card", product.className].filter(Boolean).join(" ")}
+                id={product.id}
+                aria-label={product.ariaLabel}
+                data-track="product_card_click"
+                data-category={product.type}
+                onClick={() => trackSiteEvent("product_card_click", { label: product.title, category: product.type })}
               >
-                Xem chi tiết →
+                <div className="product-img-wrap">
+                  <Image src={product.image} alt={product.imageAlt} width={800} height={600} sizes="(max-width: 768px) 100vw, 50vw" />
+                  <div className={["product-tag", product.tagClassName].filter(Boolean).join(" ")}>{product.tag}</div>
+                </div>
+                <div className="product-info">
+                  <h3>{product.title}</h3>
+                  <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
+                  <p>{product.description}</p>
+                  <span className="product-detail-link">Xem danh mục len →</span>
+                </div>
               </Link>
+            );
+          }
+
+          // 3 card còn lại → giữ nguyên modal behavior
+          return (
+            <div
+              key={product.id}
+              className={["product-card", product.className].filter(Boolean).join(" ")}
+              id={product.id}
+              role="button"
+              tabIndex={0}
+              aria-label={product.ariaLabel}
+              style={{ cursor: "pointer" }}
+              data-track="product_card_click"
+              data-category={product.type}
+              data-track-handled="true"
+              onClick={() => {
+                trackSiteEvent("product_card_click", {
+                  label: product.title,
+                  category: product.type
+                });
+                openModal(product.type);
+              }}
+              onKeyDown={(event) => handleCardKeyDown(event, product.type)}
+            >
+              <div className="product-img-wrap">
+                <Image src={product.image} alt={product.imageAlt} width={800} height={600} sizes="(max-width: 768px) 100vw, 50vw" />
+                <div className={["product-tag", product.tagClassName].filter(Boolean).join(" ")}>{product.tag}</div>
+              </div>
+              <div className="product-info">
+                <h3>{product.title}</h3>
+                <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
+                <p>{product.description}</p>
+                <Link
+                  className="product-detail-link"
+                  href={product.detailHref}
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  Xem chi tiết →
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="product-modal-overlay" id="productModal">

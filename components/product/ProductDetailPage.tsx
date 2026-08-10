@@ -5,10 +5,10 @@ import type { ProductEntry } from "@/types/product";
 import { ProductJsonLd } from "./ProductJsonLd";
 import { ProductSections } from "./ProductSections";
 
-export function ProductDetailPage({ product }: { product: ProductEntry }) {
+export function ProductDetailPage({ product, canonicalPath }: { product: ProductEntry; canonicalPath?: string }) {
   return (
     <main className="blog-page product-page">
-      <ProductJsonLd product={product} />
+      <ProductJsonLd product={product} path={canonicalPath} />
       <article className="blog-shell blog-post-layout">
         <section className="blog-post-hero">
           <nav className="blog-breadcrumb" aria-label="Breadcrumb">

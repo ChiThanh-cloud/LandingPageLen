@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin.html", "/tools/", "/migration-status"]
+        disallow: ["/admin.html", "/tools/"]
       },
       // Block AI training crawlers — protect content from being used for model training
       // Note: this does NOT affect Google Search indexing or AI Overviews (those use Googlebot)

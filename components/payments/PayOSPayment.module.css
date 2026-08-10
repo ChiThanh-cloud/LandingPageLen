@@ -1,0 +1,244 @@
+.payment {
+  margin-top: 20px;
+  padding: clamp(18px, 4vw, 28px);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, #fff 0%, var(--primary-50) 100%);
+}
+
+.headingRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 5px;
+  color: var(--primary-700);
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.headingRow h2 {
+  margin: 0;
+  color: var(--text-dark);
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(1.55rem, 4vw, 2rem);
+}
+
+.status {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--primary-100);
+  color: var(--primary-700);
+  font-size: .7rem;
+  font-weight: 800;
+}
+
+.status[data-state="paid"] {
+  background: #e8f7ef;
+  color: #17623a;
+}
+
+.form {
+  margin-top: 20px;
+}
+
+.helper,
+.qrNote,
+.feedback {
+  color: var(--text-mid);
+  font-size: .76rem;
+  line-height: 1.65;
+}
+
+.helper {
+  margin: 0 0 14px;
+}
+
+.form label {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--text-dark);
+  font-size: .76rem;
+  font-weight: 750;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.formRow input,
+.formRow button,
+.paymentDetails a {
+  min-height: 48px;
+  border-radius: 12px;
+  font: inherit;
+}
+
+.formRow input {
+  min-width: 0;
+  padding: 0 14px;
+  border: 1px solid var(--primary-300);
+  background: #fff;
+  color: var(--text-dark);
+  font-size: 1rem;
+}
+
+.formRow input:focus-visible,
+.formRow button:focus-visible,
+.paymentDetails a:focus-visible {
+  outline: 3px solid var(--primary-300);
+  outline-offset: 3px;
+}
+
+.formRow button,
+.paymentDetails a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary-700);
+  background: var(--primary-700);
+  color: #fff;
+  font-size: .78rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.formRow button {
+  padding: 0 20px;
+}
+
+.formRow button:disabled {
+  cursor: wait;
+  opacity: .6;
+}
+
+.qrPanel {
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) 1fr;
+  gap: clamp(20px, 5vw, 34px);
+  align-items: center;
+  margin-top: 24px;
+}
+
+.qrFrame {
+  padding: 12px;
+  border: 1px solid var(--primary-200);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.qrFrame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.qrTitle {
+  margin: 0 0 14px;
+  color: var(--text-dark);
+  font-size: 1rem;
+  font-weight: 850;
+}
+
+.paymentDetails dl {
+  margin: 0;
+}
+
+.paymentDetails dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--primary-100);
+}
+
+.paymentDetails dt {
+  color: var(--text-mid);
+  font-size: .74rem;
+}
+
+.paymentDetails dd {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: .78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.qrNote {
+  margin: 14px 0;
+}
+
+.paymentDetails a {
+  width: 100%;
+  padding: 0 18px;
+}
+
+.feedback {
+  margin: 14px 0 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: var(--primary-100);
+}
+
+.feedback[data-state="error"] {
+  border: 1px solid #efb4b4;
+  background: #fff1f1;
+  color: #8f2424;
+}
+
+.feedback[data-state="paid"] {
+  border: 1px solid #b9dfc9;
+  background: #e8f7ef;
+  color: #17623a;
+}
+
+@media (hover: hover) {
+  .formRow button:hover:not(:disabled),
+  .paymentDetails a:hover {
+    border-color: var(--text-dark);
+    background: var(--text-dark);
+  }
+}
+
+@media (max-width: 620px) {
+  .headingRow,
+  .qrPanel {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .status {
+    justify-self: start;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .qrFrame {
+    width: min(300px, 100%);
+    margin-inline: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .formRow button,
+  .paymentDetails a {
+    transition: none;
+  }
+}
+

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { CartHeaderLink } from "@/components/cart/CartHeaderLink";
 import { trackSiteEvent } from "@/lib/siteTracking";
 
 type NavItem = {
@@ -18,11 +19,12 @@ const navItems: NavItem[] = [
   { href: "/#bo-suu-tap", label: "Sản phẩm", styleIndex: 1 },
   { href: "/#quy-trinh-dat-hang", label: "Đặt theo yêu cầu", styleIndex: 2 },
   { href: "/#khach-chia-se", label: "Khách hàng", styleIndex: 3 },
-  { href: "/blog", label: "Blog", styleIndex: 4 },
+  { href: "/tra-cuu-don-hang", label: "Tra cứu đơn hàng", styleIndex: 4 },
+  { href: "/blog", label: "Blog", styleIndex: 5 },
   {
     href: "/#lien-he-tu-van",
     label: "Nhắn Tiny",
-    styleIndex: 5,
+    styleIndex: 6,
     className: "nav-cta",
     trackKey: "nav_order_click"
   }
@@ -136,6 +138,7 @@ export function Header() {
             </li>
           ))}
         </ul>
+        <CartHeaderLink />
         <button
           ref={toggleRef}
           className={`hamburger${isOpen ? " active" : ""}`}

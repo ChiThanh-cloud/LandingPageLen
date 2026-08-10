@@ -26,6 +26,11 @@ const nextConfig = {
         source: "/san-pham/:slug.html",
         destination: "/san-pham/:slug",
         statusCode: 301
+      },
+      {
+        source: "/admin.html",
+        destination: "/admin/login",
+        statusCode: 301
       }
     ];
   },
@@ -48,6 +53,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "bizweb.dktcdn.net",
       }
     ]
   }

@@ -3,12 +3,14 @@ import test from "node:test";
 import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
+import { getAllYarnProducts } from "../lib/products/supabase-products";
 import robots from "./robots";
 import sitemap from "./sitemap";
 
 test("SEO routes", async (t) => {
   const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
-  const entries = sitemap();
+  const entries = await sitemap();
+  const yarnProducts = await getAllYarnProducts();
   const urls = entries.map((entry) => entry.url);
 
   await t.test("sitemap contains every public route exactly once", () => {
@@ -16,7 +18,9 @@ test("SEO routes", async (t) => {
       siteConfig.url,
       `${siteConfig.url}/about`,
       `${siteConfig.url}/blog`,
+      `${siteConfig.url}/len-soi`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
+      ...yarnProducts.map((product) => `${siteConfig.url}/len-soi/${product.slug}`),
       ...products.map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
     ];
 
@@ -46,7 +50,7 @@ test("SEO routes", async (t) => {
     assert.deepEqual(rules[0], {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin.html", "/tools/", "/migration-status"]
+      disallow: ["/admin.html", "/tools/"]
     });
     assert.deepEqual(
       rules.slice(1).map((rule) => rule.userAgent),

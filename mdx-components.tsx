@@ -41,7 +41,9 @@ const blogMdxComponents: MDXComponents = {
   BlogSection,
   BlogCallout,
   BlogImage,
-  BlogRelatedPosts
+  BlogRelatedPosts,
+  // Alias: một số bài MDX dùng tên cũ <BlogRelated>
+  BlogRelated: BlogRelatedPosts
 };
 
 export function useMDXComponents(): MDXComponents {

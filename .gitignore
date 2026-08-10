@@ -2,7 +2,7 @@
 
 __pycache__/
 product-color-extractor.html
-supabase
+
 node_modules
 .next
 out
@@ -14,3 +14,4 @@ out
 *.tmp
 manifests/
 ui-ux-pro-max-skill/
+.agents/

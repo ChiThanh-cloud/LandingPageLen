@@ -1,0 +1,341 @@
+"use client";
+
+import Image from "next/image";
+import { useMemo, useRef, useState, useTransition } from "react";
+import {
+  deleteProductAction,
+  generateCaptionAction,
+  importVariantsAction,
+  saveProductAction,
+  saveVariantAction,
+  toggleProductAction,
+  toggleVariantAction,
+  type ProductAdminActionResult
+} from "@/app/admin/(protected)/san-pham/actions";
+import styles from "./Admin.module.css";
+
+type ProductRecord = {
+  id: number | string;
+  name: string | null;
+  category: string | null;
+  sub_category: string | null;
+  image_url: string | null;
+  full_image_url: string | null;
+  weight: string | null;
+  price: number | string | null;
+  status: string | null;
+  sort_order: number | null;
+};
+
+type VariantRecord = {
+  id: number | string;
+  product_id: number | string;
+  name: string;
+  color_code: string | null;
+  color_name: string | null;
+  sku: string | null;
+  image_url: string | null;
+  full_image_url: string | null;
+  status: string | null;
+  sort_order: number | null;
+};
+
+type CloudinaryConfig = { cloudName: string; uploadPreset: string; folder: string };
+const defaultCloudinary: CloudinaryConfig = { cloudName: "djn2kd2hh", uploadPreset: "", folder: "tiny-products" };
+const cloudinaryKey = "tiny_admin_cloudinary_config";
+
+const categoryLabels: Record<string, string> = {
+  handmade: "Đồ móc",
+  yarn: "Cuộn len",
+  set: "Set tự móc",
+  gift: "Quà tặng"
+};
+
+const statusLabels: Record<string, string> = {
+  available: "Còn hàng",
+  out: "Hết hàng",
+  preorder: "Đặt trước",
+  hidden: "Ẩn khỏi web"
+};
+
+function formatPrice(value: ProductRecord["price"]) {
+  if (value === null || value === "") return "Chưa nhập giá";
+  return `${Number(value).toLocaleString("vi-VN")}đ`;
+}
+
+function readCloudinaryConfig(): CloudinaryConfig {
+  if (typeof window === "undefined") return defaultCloudinary;
+  try {
+    return { ...defaultCloudinary, ...JSON.parse(localStorage.getItem(cloudinaryKey) || "{}") };
+  } catch {
+    return defaultCloudinary;
+  }
+}
+
+function parseCsv(text: string) {
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(",").map((value) => value.trim());
+  return lines.slice(1).map((line) => {
+    const cells = line.split(",").map((value) => value.trim().replace(/^"|"$/g, ""));
+    return Object.fromEntries(headers.map((header, index) => [header, cells[index] || ""]));
+  });
+}
+
+function importedVariants(text: string) {
+  const trimmed = text.trim();
+  const input = trimmed.startsWith("[") || trimmed.startsWith("{")
+    ? JSON.parse(trimmed)
+    : parseCsv(trimmed);
+  const rows = Array.isArray(input) ? input : Array.isArray(input.data) ? input.data : [input];
+  return rows.map((row: Record<string, unknown>, index: number) => {
+    const name = String(row.color_code || row.colorCode || row.code || row.name || `Màu ${index + 1}`).trim();
+    const imageUrl = String(row.image_url || row.imageUrl || "").trim();
+    const fullImageUrl = String(row.full_image_url || row.fullImageUrl || imageUrl).trim();
+    return {
+      name,
+      color_code: String(row.color_code || row.colorCode || name).trim() || null,
+      color_name: String(row.color_name || row.colorName || "").trim() || null,
+      sku: String(row.sku || "").trim() || null,
+      image_url: imageUrl,
+      full_image_url: fullImageUrl || null,
+      status: ["available", "out", "preorder", "hidden"].includes(String(row.status)) ? String(row.status) : "available",
+      sort_order: Number(row.sort_order ?? row.sortOrder ?? index + 1)
+    };
+  }).filter((row: { image_url: string }) => /^https?:\/\//i.test(row.image_url));
+}
+
+export function ProductManager({ products, variants }: { products: ProductRecord[]; variants: VariantRecord[] }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [editingVariantId, setEditingVariantId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all");
+  const [message, setMessage] = useState<ProductAdminActionResult | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [importText, setImportText] = useState("");
+  const [cloudinary, setCloudinary] = useState<CloudinaryConfig>(defaultCloudinary);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [productImageUrl, setProductImageUrl] = useState("");
+  const [variantImageUrl, setVariantImageUrl] = useState("");
+  const [pending, startTransition] = useTransition();
+  const productFormRef = useRef<HTMLFormElement>(null);
+  const variantFormRef = useRef<HTMLFormElement>(null);
+
+  const selected = products.find((product) => String(product.id) === selectedId) || null;
+  const editingVariant = variants.find((variant) => String(variant.id) === editingVariantId) || null;
+  const selectedVariants = selected
+    ? variants.filter((variant) => String(variant.product_id) === String(selected.id))
+    : [];
+  const filtered = useMemo(() => products.filter((product) => {
+    const matchesText = !search.trim() || String(product.name || "").toLowerCase().includes(search.trim().toLowerCase());
+    return matchesText && (category === "all" || product.category === category);
+  }), [products, search, category]);
+
+  function run(action: () => Promise<ProductAdminActionResult>, after?: (result: ProductAdminActionResult) => void) {
+    setMessage(null);
+    startTransition(async () => {
+      try {
+        const result = await action();
+        setMessage(result);
+        after?.(result);
+      } catch {
+        setMessage({ ok: false, message: "Phiên quản trị không còn hợp lệ hoặc hệ thống chưa sẵn sàng." });
+      }
+    });
+  }
+
+  function chooseProduct(product: ProductRecord | null) {
+    setSelectedId(product ? String(product.id) : null);
+    setEditingVariantId(null);
+    setProductImageUrl(product?.image_url || "");
+    setVariantImageUrl("");
+    setMessage(null);
+    requestAnimationFrame(() => productFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+
+  function chooseVariant(variant: VariantRecord | null) {
+    setEditingVariantId(variant ? String(variant.id) : null);
+    setVariantImageUrl(variant?.image_url || "");
+    requestAnimationFrame(() => variantFormRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
+  }
+
+  function loadCloudinary() {
+    setCloudinary(readCloudinaryConfig());
+  }
+
+  function saveCloudinary() {
+    localStorage.setItem(cloudinaryKey, JSON.stringify(cloudinary));
+    setMessage({ ok: true, message: "Đã lưu cấu hình Cloudinary trên trình duyệt này." });
+  }
+
+  async function uploadImage(file: File | undefined, target: "product" | "variant") {
+    const config = readCloudinaryConfig();
+    setCloudinary(config);
+    if (!file) return setMessage({ ok: false, message: "Hãy chọn một file ảnh." });
+    if (!config.cloudName || !config.uploadPreset) {
+      return setMessage({ ok: false, message: "Hãy lưu Cloud name và unsigned upload preset trước." });
+    }
+    setUploading(target);
+    setMessage(null);
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", config.uploadPreset);
+    if (config.folder) data.append("folder", target === "variant" ? `${config.folder}/variants` : config.folder);
+    try {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(config.cloudName)}/image/upload`, { method: "POST", body: data });
+      const result = await response.json();
+      if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Upload thất bại.");
+      if (target === "product") setProductImageUrl(result.secure_url);
+      else setVariantImageUrl(result.secure_url);
+      setMessage({ ok: true, message: "Đã upload ảnh. Hãy bấm lưu để cập nhật dữ liệu sản phẩm." });
+    } catch (error) {
+      setMessage({ ok: false, message: error instanceof Error ? error.message : "Upload ảnh thất bại." });
+    } finally {
+      setUploading(null);
+    }
+  }
+
+  return (
+    <div className={styles.productWorkspace}>
+      <section className={styles.productToolbar} aria-label="Tìm và lọc sản phẩm">
+        <input type="search" placeholder="Tìm theo tên sản phẩm" value={search} onChange={(event) => setSearch(event.target.value)} />
+        <select aria-label="Lọc danh mục" value={category} onChange={(event) => setCategory(event.target.value)}>
+          <option value="all">Tất cả danh mục</option>
+          {Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+        </select>
+        <button type="button" onClick={() => chooseProduct(null)}>Sản phẩm mới</button>
+      </section>
+
+      <details className={styles.cloudinaryPanel} onToggle={(event) => event.currentTarget.open && loadCloudinary()}>
+        <summary>Cấu hình upload Cloudinary</summary>
+        <p>Preset chỉ được lưu trên trình duyệt của máy này.</p>
+        <div className={styles.formGridThree}>
+          <label>Cloud name<input value={cloudinary.cloudName} onChange={(event) => setCloudinary({ ...cloudinary, cloudName: event.target.value })} /></label>
+          <label>Unsigned upload preset<input value={cloudinary.uploadPreset} onChange={(event) => setCloudinary({ ...cloudinary, uploadPreset: event.target.value })} /></label>
+          <label>Folder<input value={cloudinary.folder} onChange={(event) => setCloudinary({ ...cloudinary, folder: event.target.value })} /></label>
+        </div>
+        <button type="button" onClick={saveCloudinary}>Lưu cấu hình</button>
+      </details>
+
+      {message?.message ? <p className={message.ok ? styles.success : styles.error} role="status">{message.message}</p> : null}
+
+      <div className={styles.productColumns}>
+        <section className={styles.productListPanel} aria-labelledby="product-list-heading">
+          <div className={styles.sectionHeading}><h2 id="product-list-heading">Danh sách sản phẩm</h2><span>{filtered.length} sản phẩm</span></div>
+          <div className={styles.productList}>
+            {filtered.map((product) => (
+              <article className={`${styles.productListItem} ${product.status === "hidden" ? styles.mutedItem : ""} ${selectedId === String(product.id) ? styles.selectedItem : ""}`} key={String(product.id)}>
+                <button type="button" className={styles.productSelect} onClick={() => chooseProduct(product)} aria-label={`Sửa ${product.name}`}>
+                  <span className={styles.productThumb}>
+                    {product.image_url ? <Image src={product.image_url} alt="" width={68} height={68} /> : "Ảnh"}
+                  </span>
+                  <span><strong>{product.name || "Chưa đặt tên"}</strong><small>{categoryLabels[product.category || ""] || product.category} · {formatPrice(product.price)}</small><small>{statusLabels[product.status || ""] || product.status}</small></span>
+                </button>
+                <div className={styles.compactActions}>
+                  <button type="button" disabled={pending} onClick={() => run(() => toggleProductAction(String(product.id), product.status || "available"))}>{product.status === "hidden" ? "Hiện" : "Ẩn"}</button>
+                  <button type="button" disabled={pending} onClick={() => run(() => generateCaptionAction(String(product.id)))}>Caption</button>
+                  <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => setDeleteId(String(product.id))}>Xóa</button>
+                </div>
+                {deleteId === String(product.id) ? (
+                  <div className={styles.inlineConfirm}>
+                    <p>Xóa “{product.name}” và các mã màu thuộc sản phẩm này?</p>
+                    <button type="button" onClick={() => setDeleteId(null)}>Giữ lại</button>
+                    <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => run(() => deleteProductAction(String(product.id)), (result) => result.ok && setDeleteId(null))}>Xác nhận xóa</button>
+                  </div>
+                ) : null}
+              </article>
+            ))}
+            {!filtered.length ? <p className={styles.empty}>Không có sản phẩm phù hợp.</p> : null}
+          </div>
+        </section>
+
+        <section className={styles.editorPanel} aria-labelledby="product-editor-heading">
+          <div className={styles.sectionHeading}><h2 id="product-editor-heading">{selected ? `Sửa: ${selected.name}` : "Sản phẩm mới"}</h2>{selected ? <button type="button" onClick={() => chooseProduct(null)}>Xóa form</button> : null}</div>
+          <form
+            ref={productFormRef}
+            key={selectedId || "new"}
+            className={styles.adminForm}
+            onSubmit={(event) => {
+              event.preventDefault();
+              const data = new FormData(event.currentTarget);
+              run(() => saveProductAction(data), (result) => result.ok && result.id && setSelectedId(result.id));
+            }}
+          >
+            <input type="hidden" name="id" value={selectedId || ""} />
+            <label>Tên sản phẩm<input name="name" required maxLength={200} defaultValue={selected?.name || ""} /></label>
+            <div className={styles.formGridTwo}>
+              <label>Danh mục<select name="category" required defaultValue={selected?.category || "handmade"}>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+              <label>Danh mục con<input name="subCategory" maxLength={80} defaultValue={selected?.sub_category || ""} placeholder="Ví dụ: milk" /></label>
+              <label>Trạng thái<select name="status" defaultValue={selected?.status || "available"}>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+              <label>Thứ tự<input name="sortOrder" type="number" min="0" defaultValue={selected?.sort_order ?? 0} /></label>
+              <label>Giá<input name="price" inputMode="numeric" defaultValue={selected?.price ?? ""} placeholder="8000 hoặc 8k" /></label>
+              <label>Khối lượng / ghi chú ngắn<input name="weight" maxLength={120} defaultValue={selected?.weight || ""} /></label>
+            </div>
+            <label>Link ảnh Cloudinary<input name="imageUrl" type="url" required value={productImageUrl} onChange={(event) => setProductImageUrl(event.target.value)} /></label>
+            <label>Upload ảnh<input type="file" accept="image/*" onChange={(event) => uploadImage(event.target.files?.[0], "product")} disabled={uploading !== null} /></label>
+            <label>Link ảnh lớn<input name="fullImageUrl" type="url" defaultValue={selected?.full_image_url || ""} /></label>
+            {productImageUrl ? <Image className={styles.editorPreview} src={productImageUrl} alt="Xem trước ảnh sản phẩm" width={180} height={180} /> : null}
+            <button type="submit" disabled={pending || uploading !== null}>{pending ? "Đang lưu…" : "Lưu sản phẩm"}</button>
+          </form>
+        </section>
+      </div>
+
+      {selected?.category === "yarn" ? (
+        <section className={styles.variantSection} aria-labelledby="variant-heading">
+          <div className={styles.sectionHeading}><div><h2 id="variant-heading">Mã màu · {selected.name}</h2><p>{selectedVariants.length} mã màu</p></div><button type="button" onClick={() => chooseVariant(null)}>Mã màu mới</button></div>
+          <div className={styles.variantColumns}>
+            <form
+              ref={variantFormRef}
+              key={editingVariantId || `new-${selectedId}`}
+              className={styles.adminForm}
+              onSubmit={(event) => {
+                event.preventDefault();
+                run(() => saveVariantAction(new FormData(event.currentTarget)), (result) => result.ok && chooseVariant(null));
+              }}
+            >
+              <input type="hidden" name="id" value={editingVariantId || ""} />
+              <input type="hidden" name="productId" value={String(selected.id)} />
+              <div className={styles.formGridTwo}>
+                <label>Tên / mã<input name="name" required defaultValue={editingVariant?.name || ""} /></label>
+                <label>Mã màu<input name="colorCode" defaultValue={editingVariant?.color_code || ""} /></label>
+                <label>Tên màu<input name="colorName" defaultValue={editingVariant?.color_name || ""} /></label>
+                <label>SKU<input name="sku" defaultValue={editingVariant?.sku || ""} /></label>
+                <label>Trạng thái<select name="status" defaultValue={editingVariant?.status || "available"}>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                <label>Thứ tự<input name="sortOrder" type="number" min="0" defaultValue={editingVariant?.sort_order ?? selectedVariants.length + 1} /></label>
+              </div>
+              <label>Link ảnh<input name="imageUrl" type="url" value={variantImageUrl} onChange={(event) => setVariantImageUrl(event.target.value)} /></label>
+              <label>Upload ảnh mã màu<input type="file" accept="image/*" onChange={(event) => uploadImage(event.target.files?.[0], "variant")} disabled={uploading !== null} /></label>
+              <label>Link ảnh lớn<input name="fullImageUrl" type="url" defaultValue={editingVariant?.full_image_url || ""} /></label>
+              <button type="submit" disabled={pending || uploading !== null}>{pending ? "Đang lưu…" : "Lưu mã màu"}</button>
+            </form>
+            <div className={styles.variantList}>
+              {selectedVariants.map((variant) => (
+                <article key={String(variant.id)} className={`${variant.status === "hidden" ? styles.mutedItem : ""} ${editingVariantId === String(variant.id) ? styles.selectedItem : ""}`}>
+                  <span className={styles.variantThumb}>{variant.image_url ? <Image src={variant.image_url} alt="" width={52} height={52} /> : "Ảnh"}</span>
+                  <span><strong>{variant.color_code || variant.name}</strong><small>{variant.color_name || variant.name} · {statusLabels[variant.status || ""] || variant.status}</small></span>
+                  <div className={styles.compactActions}>
+                    <button type="button" onClick={() => chooseVariant(variant)}>Sửa</button>
+                    <button type="button" disabled={pending} onClick={() => run(() => toggleVariantAction(String(variant.id), String(selected.id), variant.status || "available"))}>{variant.status === "hidden" ? "Hiện" : "Ẩn"}</button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+          <details className={styles.importPanel}>
+            <summary>Import nhanh mã màu bằng JSON hoặc CSV</summary>
+            <textarea value={importText} onChange={(event) => setImportText(event.target.value)} placeholder="Dán JSON từ tool lấy ảnh hoặc CSV có cột color_code,image_url…" />
+            <button type="button" disabled={pending || !importText.trim()} onClick={() => {
+              try {
+                const rows = importedVariants(importText);
+                if (!rows.length) return setMessage({ ok: false, message: "Không tìm thấy dòng nào có đường dẫn ảnh hợp lệ." });
+                run(() => importVariantsAction(String(selected.id), rows), (result) => result.ok && setImportText(""));
+              } catch {
+                setMessage({ ok: false, message: "JSON hoặc CSV không đọc được." });
+              }
+            }}>Import mã màu</button>
+          </details>
+        </section>
+      ) : null}
+    </div>
+  );
+}

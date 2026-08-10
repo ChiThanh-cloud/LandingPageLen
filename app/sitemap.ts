@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { products } from "@/data/products";
 import { siteConfig } from "@/data/site";
 import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
+import { getAllYarnProducts } from "@/lib/products/yarn-products";
 
 function absoluteUrl(path: string) {
   if (path.startsWith("http")) return path;
@@ -50,6 +51,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: 0.7,
       images: [absoluteUrl(post.ogImage || post.image)]
+    })),
+    { url: `${siteConfig.url}/len-soi`, lastModified: baseLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
+    ...getAllYarnProducts().map((product) => ({
+      url: `${siteConfig.url}/len-soi/${product.slug}`,
+      lastModified: product.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
+      images: [absoluteUrl(product.image)]
     })),
     ...products.map((product) => ({
       url: `${siteConfig.url}/san-pham/${product.slug}`,

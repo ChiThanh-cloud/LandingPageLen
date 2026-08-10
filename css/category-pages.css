@@ -1,0 +1,442 @@
+/* ================================================================
+   CATEGORY LANDING PAGE  — .cat-page
+   Dùng cho: Đồ móc đặt riêng, Hộp quà ý nghĩa, Set tự móc
+   Design tokens từ base.css: --primary-*, --text-*, --radius
+   ================================================================ */
+
+/* ── PAGE WRAPPER ──────────────────────────────────────────────── */
+.cat-page {
+  padding-top: 80px; /* offset fixed header */
+  color: var(--text-dark);
+  background: var(--white);
+}
+
+/* ── HERO ──────────────────────────────────────────────────────── */
+.cat-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 520px;
+  background: linear-gradient(135deg, var(--primary-50) 0%, #fff 60%);
+  overflow: hidden;
+}
+
+.cat-hero-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 48px 64px 5%;
+  gap: 0;
+}
+
+/* Breadcrumb */
+.cat-breadcrumb ol {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+.cat-breadcrumb ol li + li::before {
+  content: "›";
+  margin-right: 8px;
+  color: var(--primary-300);
+}
+
+.cat-breadcrumb a {
+  color: var(--primary-600);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cat-breadcrumb a:hover {
+  color: var(--primary-700);
+}
+
+.cat-breadcrumb [aria-current="page"] {
+  color: var(--text-mid);
+}
+
+/* Eyebrow badge */
+.cat-eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary-700);
+  background: var(--primary-100);
+  border: 1px solid var(--primary-300);
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+  width: fit-content;
+}
+
+/* Heading */
+.cat-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-dark);
+  margin: 0 0 16px;
+}
+
+.cat-hero-lead {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-mid);
+  max-width: 520px;
+  margin: 0 0 32px;
+}
+
+/* CTAs */
+.cat-hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Hero image */
+.cat-hero-image {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.cat-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── BUTTONS ───────────────────────────────────────────────────── */
+.cat-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 13px 28px;
+  border-radius: 100px;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(59, 111, 160, 0.25);
+  transition:
+    transform 0.2s var(--motion-ease-out),
+    box-shadow 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(59, 111, 160, 0.32);
+  }
+}
+
+.cat-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  color: var(--primary-700);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 24px;
+  border-radius: 100px;
+  text-decoration: none;
+  border: 2px solid var(--primary-300);
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-btn-secondary:hover {
+    border-color: var(--primary-600);
+    background: var(--primary-50);
+  }
+}
+
+.cat-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-mid);
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  padding: 12px 20px;
+  border-radius: 100px;
+  border: 2px solid var(--primary-200);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-btn-ghost:hover {
+    border-color: var(--primary-400, var(--primary-300));
+    color: var(--text-dark);
+  }
+}
+
+/* ── BODY / CONTENT SECTIONS ───────────────────────────────────── */
+.cat-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 64px 24px 32px;
+}
+
+.cat-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Override blog-content-card padding/border trong cat-page */
+.cat-page .blog-content-card {
+  background: #fff;
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cat-page .blog-content-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  margin: 0 0 16px;
+}
+
+.cat-page .blog-content-card p {
+  color: var(--text-mid);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.cat-page .blog-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cat-page .blog-list li {
+  padding: 10px 14px;
+  background: var(--primary-50);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--primary-500);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+}
+
+/* Callout trong cat-page */
+.cat-page .blog-product-callout {
+  background: linear-gradient(135deg, var(--primary-100), var(--primary-50));
+  border: 1.5px solid var(--primary-300);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 24px;
+}
+
+.cat-page .blog-callout-kicker {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary-600);
+  margin-bottom: 8px;
+}
+
+.cat-page .blog-product-callout h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.cat-page .blog-product-callout p {
+  color: var(--text-mid);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* Related links grid */
+.cat-page .blog-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.cat-page .blog-related-card {
+  display: block;
+  padding: 18px 20px;
+  background: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text-dark);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-page .blog-related-card:hover {
+    border-color: var(--primary-500);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.cat-page .blog-related-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--primary-700);
+}
+
+.cat-page .blog-related-card p {
+  font-size: 0.88rem;
+  color: var(--text-mid);
+  margin: 0;
+}
+
+/* FAQ details/summary trong cat-page */
+.cat-page .sp-faq-item {
+  background: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  padding: 14px 18px;
+}
+
+/* ── FINAL CTA SECTION ─────────────────────────────────────────── */
+.cat-cta-section {
+  background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+  padding: 72px 24px;
+  text-align: center;
+}
+
+.cat-cta-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cat-cta-section h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.cat-cta-section p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.cat-cta-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cat-cta-section .cat-btn-primary {
+  background: #fff;
+  color: var(--primary-700);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-cta-section .cat-btn-primary:hover {
+    background: var(--primary-50);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.cat-cta-section .cat-btn-ghost {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cat-cta-section .cat-btn-ghost:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* ── RESPONSIVE ────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .cat-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .cat-hero-content {
+    padding: 48px 24px 40px;
+    order: 2;
+  }
+
+  .cat-hero-image {
+    order: 1;
+    height: 280px;
+  }
+
+  .cat-hero-image img {
+    object-position: center 30%;
+  }
+}
+
+@media (max-width: 600px) {
+  .cat-page {
+    padding-top: 70px;
+  }
+
+  .cat-hero-title {
+    font-size: 1.6rem;
+  }
+
+  .cat-hero-lead {
+    font-size: 0.97rem;
+  }
+
+  .cat-hero-ctas {
+    flex-direction: column;
+  }
+
+  .cat-btn-primary,
+  .cat-btn-secondary {
+    text-align: center;
+    justify-content: center;
+  }
+
+  .cat-body {
+    padding: 40px 16px 24px;
+  }
+
+  .cat-page .blog-content-card {
+    padding: 22px 18px;
+  }
+
+  .cat-cta-section {
+    padding: 56px 20px;
+  }
+
+  .cat-cta-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
