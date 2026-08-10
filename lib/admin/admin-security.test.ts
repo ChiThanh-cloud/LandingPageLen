@@ -13,7 +13,7 @@ const shell = read("../../components/layout/StorefrontShell.tsx");
 
 test("admin pages require a verified server-side session and active allowlist entry", () => {
   assert.match(protectedLayout, /await requireAdminPage\(\)/);
-  assert.match(auth, /auth\.getUser\(\)/);
+  assert.match(auth, /auth\.getClaims\(\)/);
   assert.match(auth, /from\("admin_users"\)/);
   assert.match(auth, /\.eq\("active", true\)/);
 });

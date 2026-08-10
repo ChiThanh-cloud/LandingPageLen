@@ -24,7 +24,7 @@ async function callAdminRpc(name: string, args: Record<string, unknown>) {
   const admin = await requireAdminPage();
   const client = getSupabaseAdminClient();
   if (!client) return { ok: false, message: "Hệ thống quản trị chưa được cấu hình." };
-  const { error } = await client.rpc(name, { ...args, p_admin_user: admin.user.id });
+  const { error } = await client.rpc(name, { ...args, p_admin_user: admin.id });
   if (error) {
     console.error("Admin RPC failed", { name, code: error.code, message: error.message });
     return { ok: false, message: rpcErrorMessage(error.message) };

@@ -1,33 +1,36 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
-import type { User } from "@supabase/supabase-js";
+import { cache } from "react";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export type VerifiedAdmin = {
-  user: User;
+  id: string;
   email: string;
 };
 
-export async function getVerifiedAdmin(): Promise<VerifiedAdmin | null> {
+export const getVerifiedAdmin = cache(async function getVerifiedAdmin(): Promise<VerifiedAdmin | null> {
   const sessionClient = await createSupabaseServerClient();
   const adminClient = getSupabaseAdminClient();
   if (!sessionClient || !adminClient) return null;
 
-  const { data: { user }, error } = await sessionClient.auth.getUser();
-  if (error || !user) return null;
+  const { data, error } = await sessionClient.auth.getClaims();
+  if (error || !data || !data.claims) return null;
+  
+  const userId = data.claims.sub;
+  if (!userId) return null;
 
   const { data: allowlist, error: allowlistError } = await adminClient
     .from("admin_users")
     .select("user_id,active")
-    .eq("user_id", user.id)
+    .eq("user_id", userId)
     .eq("active", true)
     .maybeSingle();
 
   if (allowlistError || !allowlist) return null;
-  return { user, email: user.email || "Admin Tiny" };
-}
+  return { id: userId, email: data.claims.email || "Admin Tiny" };
+});
 
 export async function requireAdminPage() {
   const admin = await getVerifiedAdmin();
