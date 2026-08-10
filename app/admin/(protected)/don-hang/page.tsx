@@ -47,20 +47,20 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
       <div className={styles.tableWrap}>
         <table className={`${styles.table} ${styles.ordersTable}`}>
           <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th><th>Tổng</th><th>Phương thức</th><th>Thanh toán</th><th>Trạng thái</th></tr></thead>
-          <tbody>{orders.map((order) => <tr key={order.id} className={order.inventory_attention_required ? styles.attentionRow : undefined}><td data-label="Mã đơn"><Link href={`/admin/don-hang/${order.order_code}`}>{order.order_code}</Link></td><td data-label="Khách hàng">{order.customer_name}</td><td data-label="Ngày đặt">{formatDate(order.created_at)}</td><td data-label="Tổng" className={styles.numberCell}>{formatCurrency(order.total)}</td><td data-label="Phương thức">{getPaymentMethodLabel(order.payment_method)}</td><td data-label="Thanh toán"><span className={styles.statusBadge}>{getPaymentStatusLabel(order.payment_status)}</span></td><td data-label="Trạng thái"><span className={styles.statusBadge}>{getOrderStatusLabel(order.order_status)}</span>{order.inventory_attention_required ? <small className={styles.rowWarning}>Cần kiểm tra tồn</small> : null}</td></tr>)}</tbody>
+          <tbody>{orders.map((order) => <tr key={order.id} className={order.inventory_attention_required ? styles.attentionRow : undefined}><td data-label="Mã đơn"><Link href={`/admin/don-hang/${order.order_code}`} prefetch={false}>{order.order_code}</Link></td><td data-label="Khách hàng">{order.customer_name}</td><td data-label="Ngày đặt">{formatDate(order.created_at)}</td><td data-label="Tổng" className={styles.numberCell}>{formatCurrency(order.total)}</td><td data-label="Phương thức">{getPaymentMethodLabel(order.payment_method)}</td><td data-label="Thanh toán"><span className={styles.statusBadge}>{getPaymentStatusLabel(order.payment_status)}</span></td><td data-label="Trạng thái"><span className={styles.statusBadge}>{getOrderStatusLabel(order.order_status)}</span>{order.inventory_attention_required ? <small className={styles.rowWarning}>Cần kiểm tra tồn</small> : null}</td></tr>)}</tbody>
         </table>
         {!orders.length ? <p className={styles.empty}>Chưa có đơn hàng phù hợp.</p> : null}
         
         {totalPages > 1 && (
           <div className={styles.pagination}>
             {currentPage > 1 ? (
-              <Link href={prevHref} className={styles.pageButton}>&larr; Trang trước</Link>
+              <Link href={prevHref} prefetch={false} className={styles.pageButton}>&larr; Trang trước</Link>
             ) : (
               <span className={`${styles.pageButton} ${styles.disabled}`}>&larr; Trang trước</span>
             )}
             <span className={styles.pageInfo}>Trang {currentPage} / {totalPages}</span>
             {currentPage < totalPages ? (
-              <Link href={nextHref} className={styles.pageButton}>Trang sau &rarr;</Link>
+              <Link href={nextHref} prefetch={false} className={styles.pageButton}>Trang sau &rarr;</Link>
             ) : (
               <span className={`${styles.pageButton} ${styles.disabled}`}>Trang sau &rarr;</span>
             )}

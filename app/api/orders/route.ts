@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { sendTelegramNewOrderNotification } from "@/lib/notifications/telegram";
 import { createOrder, OrderServiceError } from "@/lib/orders/order-service";
 import { orderRequestSchema } from "@/lib/orders/order-schema";
 
@@ -29,6 +30,26 @@ export async function POST(request: Request) {
 
   try {
     const result = await createOrder(parsed.data);
+    
+    after(async () => {
+      try {
+        await sendTelegramNewOrderNotification({
+          orderCode: result.orderCode,
+          customerName: parsed.data.customer.name,
+          paymentMethod: parsed.data.paymentMethod,
+          itemLines: parsed.data.items.length,
+          totalQuantity: parsed.data.items.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+          )
+        });
+      } catch (error) {
+        console.error("Telegram new-order notification failed", {
+          name: error instanceof Error ? error.name : "UnknownError"
+        });
+      }
+    });
+
     return NextResponse.json(result, {
       status: 201,
       headers: { "Cache-Control": "no-store" }
