@@ -291,3 +291,27 @@ export async function getCustomerPaymentStatus(orderCode: string) {
   return "pending" as const;
 }
 
+export async function getPayOSNotificationContext(providerOrderCode: number) {
+  const supabase = getSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("payments")
+    .select("amount, orders!inner(order_code)")
+    .eq("provider_order_code", providerOrderCode)
+    .maybeSingle();
+
+  if (error || !data || !data.orders) {
+    if (error) console.error("Unable to resolve PayOS notification context", { code: error.code });
+    return null;
+  }
+
+  const order = Array.isArray(data.orders) ? data.orders[0] : data.orders;
+  if (!order || !order.order_code) return null;
+
+  return {
+    orderCode: order.order_code,
+    amount: data.amount
+  };
+}
+

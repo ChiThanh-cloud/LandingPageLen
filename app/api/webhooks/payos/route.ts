@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { PaymentFlowError } from "@/lib/payments/payment-core";
 import { payOSWebhookSchema } from "@/lib/payments/payment-schema";
-import { handlePayOSWebhook } from "@/lib/payments/payment-service";
+import { handlePayOSWebhook, getPayOSNotificationContext } from "@/lib/payments/payment-service";
+import { sendTelegramPaymentPaidNotification } from "@/lib/notifications/telegram";
 
 export const runtime = "nodejs";
 
@@ -21,6 +22,25 @@ export async function POST(request: Request) {
 
   try {
     const result = await handlePayOSWebhook(parsed.data);
+
+    if (!result.alreadyPaid) {
+      after(async () => {
+        try {
+          const context = await getPayOSNotificationContext(parsed.data.data.orderCode);
+          if (context) {
+            await sendTelegramPaymentPaidNotification({
+              orderCode: context.orderCode,
+              amount: context.amount
+            });
+          }
+        } catch (error) {
+          console.error("Telegram payment notification failed", {
+            name: error instanceof Error ? error.name : "UnknownError"
+          });
+        }
+      });
+    }
+
     return NextResponse.json(
       { success: true, alreadyProcessed: result.alreadyPaid },
       { status: 200, headers: { "Cache-Control": "no-store" } }

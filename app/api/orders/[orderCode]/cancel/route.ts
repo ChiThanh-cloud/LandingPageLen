@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { sendTelegramOrderCancelledNotification } from "@/lib/notifications/telegram";
 import {
   cancelOrderRequestSchema,
   orderCodeSchema
@@ -46,6 +47,21 @@ export async function POST(
 
   try {
     const result = await cancelGuestOrder(parsedOrderCode.data, parsedBody.data);
+
+    if (!result.alreadyCancelled) {
+      after(async () => {
+        try {
+          await sendTelegramOrderCancelledNotification({
+            orderCode: parsedOrderCode.data
+          });
+        } catch (error) {
+          console.error("Telegram cancel notification failed", {
+            name: error instanceof Error ? error.name : "UnknownError"
+          });
+        }
+      });
+    }
+
     return NextResponse.json(result, {
       status: 200,
       headers: { "Cache-Control": "no-store" }
