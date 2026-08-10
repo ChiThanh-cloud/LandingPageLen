@@ -1719,3 +1719,44 @@
     grid-column: auto;
   }
 }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid var(--admin-border);
+}
+
+.pageButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border: 1px solid var(--admin-border-strong);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--admin-text);
+  font-size: 0.8rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: all 180ms ease;
+}
+
+.pageButton:hover:not(.disabled) {
+  border-color: var(--admin-primary-hover);
+  color: var(--admin-primary-hover);
+}
+
+.pageButton.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+  font-weight: 600;
+}
+

@@ -7,6 +7,8 @@ export type AdminOrderFilters = {
   status?: string;
   paymentMethod?: string;
   paymentStatus?: string;
+  page?: number;
+  pageSize?: number;
 };
 
 export type AdminOrderRow = {
@@ -52,44 +54,50 @@ function adminClient() {
   return client;
 }
 
-export async function getAdminDashboard() {
+export type AdminDashboardMetrics = {
+  pendingConfirmation: number;
+  pendingPayment: number;
+  confirmed: number;
+  shipping: number;
+  paid: number;
+  completed: number;
+  cancelled: number;
+  ordersToday: number;
+  paidRevenueToday: number;
+};
+
+export async function getAdminDashboard(): Promise<AdminDashboardMetrics> {
   const { data, error } = await adminClient()
-    .from("orders")
-    .select("order_status,payment_status,total,created_at");
+    .rpc("get_admin_dashboard_metrics");
+
   if (error) throw error;
 
-  const rows = data || [];
-  const now = new Date();
-  const vietnamNow = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-  const startUtc = new Date(Date.UTC(
-    vietnamNow.getUTCFullYear(),
-    vietnamNow.getUTCMonth(),
-    vietnamNow.getUTCDate()
-  ) - 7 * 60 * 60 * 1000);
+  const value = (data ?? {}) as Partial<AdminDashboardMetrics>;
 
-  const count = (status: string) => rows.filter((row) => row.order_status === status).length;
-  const paidToday = rows.filter((row) => (
-    row.payment_status === "paid" && new Date(row.created_at) >= startUtc
-  ));
   return {
-    pendingConfirmation: count("pending_confirmation"),
-    pendingPayment: count("pending_payment"),
-    confirmed: count("confirmed"),
-    shipping: count("shipping"),
-    paid: rows.filter((row) => row.payment_status === "paid").length,
-    completed: count("completed"),
-    cancelled: count("cancelled"),
-    ordersToday: rows.filter((row) => new Date(row.created_at) >= startUtc).length,
-    paidRevenueToday: paidToday.reduce((sum, row) => sum + Number(row.total || 0), 0)
+    pendingConfirmation: Number(value.pendingConfirmation ?? 0),
+    pendingPayment: Number(value.pendingPayment ?? 0),
+    confirmed: Number(value.confirmed ?? 0),
+    shipping: Number(value.shipping ?? 0),
+    paid: Number(value.paid ?? 0),
+    completed: Number(value.completed ?? 0),
+    cancelled: Number(value.cancelled ?? 0),
+    ordersToday: Number(value.ordersToday ?? 0),
+    paidRevenueToday: Number(value.paidRevenueToday ?? 0)
   };
 }
 
 export async function getAdminOrders(filters: AdminOrderFilters = {}) {
+  const page = Math.max(1, filters.page || 1);
+  const pageSize = Math.min(50, Math.max(10, filters.pageSize || 25));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
   let query = adminClient()
     .from("orders")
-    .select("id,order_code,customer_name,phone,subtotal,shipping_fee,total,payment_method,payment_status,order_status,inventory_attention_required,created_at")
+    .select("id,order_code,customer_name,phone,subtotal,shipping_fee,total,payment_method,payment_status,order_status,inventory_attention_required,created_at", { count: "exact" })
     .order("created_at", { ascending: false })
-    .limit(250);
+    .range(from, to);
 
   if (filters.query?.trim()) {
     const safe = filters.query.trim().replace(/[%_,]/g, "");
@@ -99,9 +107,21 @@ export async function getAdminOrders(filters: AdminOrderFilters = {}) {
   if (filters.paymentMethod && filters.paymentMethod !== "all") query = query.eq("payment_method", filters.paymentMethod);
   if (filters.paymentStatus && filters.paymentStatus !== "all") query = query.eq("payment_status", filters.paymentStatus);
 
-  const { data, error } = await query;
+  const { data, error, count } = await query;
   if (error) throw error;
-  return (data || []) as AdminOrderRow[];
+
+  const total = count || 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  return {
+    rows: (data || []) as AdminOrderRow[],
+    pagination: {
+      page,
+      pageSize,
+      total,
+      totalPages
+    }
+  };
 }
 
 export async function getAdminOrder(orderCode: string) {
