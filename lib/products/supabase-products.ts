@@ -49,7 +49,7 @@ function variantFromRow(row: SupabaseVariantRow, productImage: string): YarnVari
   const price = numberValue(row.price);
   return {
     id: String(row.id),
-    colorCode: row.color_hex?.trim() || "#edf5fb",
+    colorCode: code,
     colorName: row.color_name?.trim() || code,
     image: row.image_url?.trim() || row.full_image_url?.trim() || productImage,
     price: price > 0 ? price : null,
@@ -63,7 +63,7 @@ function productFromRows(
   wholesaleRows: SupabaseWholesalePriceRow[]
 ): YarnProduct | null {
   const name = row.name?.trim();
-  const price = numberValue(row.base_price) || numberValue(row.price);
+  const price = numberValue(row.price) || numberValue(row.base_price);
   const image = row.cover_image?.trim() || row.image_url?.trim() || row.full_image_url?.trim() || FALLBACK_IMAGE;
   if (!name || price <= 0) return null;
 

@@ -40,6 +40,8 @@ export default defineConfig([
     "test-gallery.js",
     "test-storefront.ts",
     "scripts/repair-nhung-gau.ts",
-    "scripts/repair-nhung-dua-cloudinary.ts"
+    "scripts/repair-nhung-dua-cloudinary.ts",
+    "scripts/repair-product-price-sync.ts",
+    "scripts/audit-catalog-sync.ts"
   ])
 ]);

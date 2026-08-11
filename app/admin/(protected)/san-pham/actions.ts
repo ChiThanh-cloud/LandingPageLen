@@ -27,6 +27,17 @@ function parsePrice(value: FormDataEntryValue | null) {
   return hasK && parsed < 1000 ? parsed * 1000 : parsed;
 }
 
+function slugifyProductName(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 async function authorizedClient() {
   await requireAdminPage();
   const client = getSupabaseAdminClient();
@@ -40,9 +51,10 @@ function resultFromError(error: { message?: string } | null, success: string): P
   return { ok: false, message: "Tiny chưa thể lưu thay đổi. Vui lòng kiểm tra dữ liệu và thử lại." };
 }
 
-function revalidateProducts() {
+function revalidateProducts(slug?: string | null) {
   revalidatePath("/admin/san-pham");
   revalidatePath("/len-soi");
+  if (slug) revalidatePath(`/len-soi/${slug}`);
 }
 
 export async function saveProductAction(formData: FormData): Promise<ProductAdminActionResult> {
@@ -82,15 +94,36 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     status: parsed.data.status,
     sort_order: parsed.data.sortOrder,
     price: parsed.data.price,
+    base_price: parsed.data.price,
     weight: parsed.data.weight,
     image_url: parsed.data.imageUrl,
     full_image_url: parsed.data.fullImageUrl
   };
+  let insertPayload: typeof payload & { slug?: string } = payload;
+  if (parsed.data.id === "" && parsed.data.category === "yarn") {
+    const baseSlug = slugifyProductName(parsed.data.name);
+    if (!baseSlug) return { ok: false, message: "Tên sản phẩm chưa tạo được đường dẫn hợp lệ." };
+
+    let stableSlug = baseSlug;
+    for (let suffix = 1; suffix <= 100; suffix += 1) {
+      const { data: existing, error: slugError } = await client
+        .from("products")
+        .select("id")
+        .eq("slug", stableSlug)
+        .maybeSingle();
+      if (slugError) return resultFromError(slugError, "");
+      if (!existing) break;
+      stableSlug = `${baseSlug}-${suffix + 1}`;
+      if (suffix === 100) return { ok: false, message: "Tên sản phẩm đang trùng quá nhiều đường dẫn hiện có." };
+    }
+    insertPayload = { ...payload, slug: stableSlug };
+  }
+
   const request = parsed.data.id === ""
-    ? client.from("products").insert(payload).select("id").single()
-    : client.from("products").update(payload).eq("id", parsed.data.id).select("id").single();
+    ? client.from("products").insert(insertPayload).select("id,slug").single()
+    : client.from("products").update(payload).eq("id", parsed.data.id).select("id,slug").single();
   const { data, error } = await request;
-  if (!error) revalidateProducts();
+  if (!error) revalidateProducts(data?.slug);
   return { ...resultFromError(error, "Đã lưu sản phẩm."), id: data?.id ? String(data.id) : undefined };
 }
 
@@ -98,10 +131,10 @@ export async function toggleProductAction(id: string, currentStatus: string): Pr
   const parsed = z.object({ id: productIdSchema, currentStatus: statusSchema }).safeParse({ id, currentStatus });
   if (!parsed.success) return { ok: false, message: "Sản phẩm không hợp lệ." };
   const client = await authorizedClient();
-  const { error } = await client.from("products").update({
+  const { data, error } = await client.from("products").update({
     status: parsed.data.currentStatus === "hidden" ? "available" : "hidden"
-  }).eq("id", parsed.data.id);
-  if (!error) revalidateProducts();
+  }).eq("id", parsed.data.id).select("slug").single();
+  if (!error) revalidateProducts(data?.slug);
   return resultFromError(error, parsed.data.currentStatus === "hidden" ? "Đã hiện sản phẩm." : "Đã ẩn sản phẩm.");
 }
 
@@ -143,7 +176,7 @@ export async function saveVariantAction(formData: FormData): Promise<ProductAdmi
   if (!parsed.success) return { ok: false, message: "Thông tin mã màu chưa hợp lệ." };
 
   const client = await authorizedClient();
-  const { data: product } = await client.from("products").select("id,category").eq("id", parsed.data.productId).maybeSingle();
+  const { data: product } = await client.from("products").select("id,category,slug").eq("id", parsed.data.productId).maybeSingle();
   if (!product || product.category !== "yarn") return { ok: false, message: "Chỉ sản phẩm len sợi mới có mã màu." };
   const payload = {
     product_id: parsed.data.productId,
@@ -160,7 +193,7 @@ export async function saveVariantAction(formData: FormData): Promise<ProductAdmi
     ? client.from("product_variants").insert(payload)
     : client.from("product_variants").update(payload).eq("id", parsed.data.id).eq("product_id", parsed.data.productId);
   const { error } = await request;
-  if (!error) revalidateProducts();
+  if (!error) revalidateProducts(product.slug);
   return resultFromError(error, "Đã lưu mã màu.");
 }
 
@@ -168,10 +201,16 @@ export async function toggleVariantAction(id: string, productId: string, current
   const parsed = z.object({ id: productIdSchema, productId: productIdSchema, currentStatus: statusSchema }).safeParse({ id, productId, currentStatus });
   if (!parsed.success) return { ok: false, message: "Mã màu không hợp lệ." };
   const client = await authorizedClient();
+  const { data: product, error: productError } = await client
+    .from("products")
+    .select("slug")
+    .eq("id", parsed.data.productId)
+    .maybeSingle();
+  if (productError || !product) return resultFromError(productError || { message: "Product not found" }, "");
   const { error } = await client.from("product_variants").update({
     status: parsed.data.currentStatus === "hidden" ? "available" : "hidden"
   }).eq("id", parsed.data.id).eq("product_id", parsed.data.productId);
-  if (!error) revalidateProducts();
+  if (!error) revalidateProducts(product.slug);
   return resultFromError(error, parsed.data.currentStatus === "hidden" ? "Đã hiện mã màu." : "Đã ẩn mã màu.");
 }
 
@@ -193,7 +232,7 @@ export async function importVariantsAction(productId: string, input: unknown): P
   }).safeParse({ productId, variants: input });
   if (!parsed.success) return { ok: false, message: "Dữ liệu import không hợp lệ. Kiểm tra mã màu và đường dẫn ảnh." };
   const client = await authorizedClient();
-  const { data: product } = await client.from("products").select("id,category").eq("id", parsed.data.productId).maybeSingle();
+  const { data: product } = await client.from("products").select("id,category,slug").eq("id", parsed.data.productId).maybeSingle();
   if (!product || product.category !== "yarn") return { ok: false, message: "Chỉ sản phẩm len sợi mới có mã màu." };
 
   for (const variant of parsed.data.variants) {
@@ -210,7 +249,7 @@ export async function importVariantsAction(productId: string, input: unknown): P
       : await client.from("product_variants").insert(payload);
     if (error) return resultFromError(error, "");
   }
-  revalidateProducts();
+  revalidateProducts(product.slug);
   return { ok: true, message: `Đã import ${parsed.data.variants.length} mã màu.` };
 }
 

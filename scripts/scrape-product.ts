@@ -22,6 +22,7 @@ const PRODUCT_CATEGORY = 'yarn';
 const AVAILABLE_STATUS = 'available';
 
 interface GalleryImage {
+  display_index: number;
   original_url: string;
   local_image: string;
   cloudinary_public_id: string;
@@ -64,6 +65,28 @@ interface GalleryStats {
   skippedDataUri: number;
   skippedDuplicate: number;
   skippedVariantImage: number;
+}
+
+interface ExistingProduct {
+  id: number | string;
+  slug: string | null;
+  name: string | null;
+  category: string | null;
+  price: number | string | null;
+  base_price: number | string | null;
+  description: string | null;
+  image_url: string | null;
+  full_image_url: string | null;
+  status: string | null;
+}
+
+interface ExistingVariant {
+  id: number | string;
+  color_code: string | null;
+  image_url: string | null;
+  full_image_url: string | null;
+  status: string | null;
+  sort_order: number | null;
 }
 
 const SKIPPED_IMAGE_SCHEMES = ['data:', 'blob:', 'javascript:'];
@@ -233,6 +256,45 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error);
 }
 
+function storedPositivePrice(value: number | string | null | undefined) {
+  if (typeof value === 'number') return Number.isFinite(value) && value > 0 ? value : null;
+  if (!value) return null;
+  const parsed = Number(String(value).replace(/[^0-9.-]/g, ''));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function parseGalleryIndices(rawValue: string) {
+  const indices = new Set<number>();
+  for (const token of rawValue.split(',').map(value => value.trim()).filter(Boolean)) {
+    if (!/^\d+$/.test(token) || Number(token) < 1) {
+      throw new Error(`Invalid gallery index "${token}". Use 1-based values such as --exclude-gallery-index="2,3".`);
+    }
+    indices.add(Number(token));
+  }
+  return indices;
+}
+
+async function triggerCatalogRevalidation(slug: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  const secret = process.env.CATALOG_REVALIDATE_SECRET?.trim();
+  if (!appUrl || !secret) {
+    failImport('NEXT_PUBLIC_APP_URL and CATALOG_REVALIDATE_SECRET are required for protected storefront revalidation.');
+  }
+
+  const endpoint = new URL('/api/admin/revalidate-catalog', appUrl);
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${secret}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ slug }),
+  });
+  if (!response.ok) {
+    failImport(`Protected storefront revalidation failed with HTTP ${response.status}.`);
+  }
+}
+
 function validateScrapedProduct(input: {
   slug: string;
   name: string;
@@ -241,13 +303,12 @@ function validateScrapedProduct(input: {
   updateGalleryOnly: boolean;
 }) {
   if (!input.slug.trim()) failImport('Missing product slug.');
+  if (input.updateGalleryOnly) return;
   if (!input.name.trim()) failImport('Missing product name.');
   if (PRODUCT_CATEGORY !== 'yarn') failImport('Product category must be yarn.');
   if (input.price === null || !Number.isFinite(input.price) || input.price <= 0) {
     failImport('Scraped product price must be a positive number.');
   }
-
-  if (input.updateGalleryOnly) return;
   if (input.variants.length === 0) failImport('No product variants were scraped.');
 
   const codes = new Set<string>();
@@ -261,10 +322,21 @@ function validateScrapedProduct(input: {
   }
 }
 
-async function scrapeProduct(url: string, dryRun: boolean, download: boolean, isImport: boolean, excludeGalleryStr: string, updateGalleryOnly: boolean) {
+async function scrapeProduct(
+  url: string,
+  dryRun: boolean,
+  download: boolean,
+  isImport: boolean,
+  excludeGalleryIndices: Set<number>,
+  updateGalleryOnly: boolean,
+  syncPrice: boolean,
+) {
   console.log(`Starting scrape for: ${url}`);
   if (updateGalleryOnly) {
     console.log(`Mode: UPDATE GALLERY ONLY`);
+  }
+  if (syncPrice) {
+    console.log(`Price sync: ENABLED`);
   }
   
   const browser = await chromium.launch({ headless: true });
@@ -431,7 +503,6 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
       }));
     });
 
-    const excludeTokens = excludeGalleryStr.split(',').map(s => s.trim()).filter(Boolean);
     const variantSourceUrls = new Set(variants.map(variant => variant.source_image).filter(Boolean));
     if (updateGalleryOnly) {
       const variantImagesRaw = await page.evaluate((sel) => {
@@ -463,6 +534,7 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
       skippedVariantImage: 0,
     };
     const cleanGallery: GalleryImage[] = [];
+    let galleryDisplayIndex = 0;
 
     for (let i = 0; i < galleryRaw.length; i++) {
       const rawImage = galleryRaw[i];
@@ -479,23 +551,24 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
         continue;
       }
       seenGalleryUrls.add(source_image);
+      galleryDisplayIndex += 1;
 
-      const isExcluded = excludeTokens.includes(i.toString())
-        || excludeTokens.some(token => token.length > 10 && source_image.includes(token));
-      if (isExcluded) {
-        console.log(`Gallery image [${i}] EXCLUDED: ${source_image}`);
+      if (excludeGalleryIndices.has(galleryDisplayIndex)) {
+        console.log(`Gallery image [${galleryDisplayIndex}] EXCLUDED: ${source_image}`);
         continue;
       }
 
       const galleryIndex = cleanGallery.length + 1;
       const paddedIndex = galleryIndex.toString().padStart(2, '0');
       cleanGallery.push({
+        display_index: galleryDisplayIndex,
         original_url: source_image,
         local_image: `data/products/${slug}/gallery/gallery-${paddedIndex}.webp`,
         cloudinary_public_id: `lentiny/products/${slug}/gallery/gallery-${paddedIndex}`,
         image_url: ''
       });
     }
+    const galleryToPersist = cleanGallery.slice(0, 1);
 
     if (cleanGallery.length > 0) {
       console.log(`Found ${cleanGallery.length} clean gallery images. Main image will be: ${cleanGallery[0].original_url}`);
@@ -509,13 +582,14 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
 
     if (dryRun) {
       console.log(`\nPRODUCT GALLERY`);
-      cleanGallery.forEach((galleryImage, index) => {
-        console.log(`[${index + 1}] ${galleryImage.original_url}`);
+      cleanGallery.forEach((galleryImage) => {
+        console.log(`[${galleryImage.display_index}] ${galleryImage.original_url}`);
       });
       console.log(`Total gallery: ${cleanGallery.length}`);
       console.log(`Skipped data URI: ${galleryStats.skippedDataUri}`);
       console.log(`Skipped duplicate: ${galleryStats.skippedDuplicate}`);
       console.log(`Skipped variant image: ${galleryStats.skippedVariantImage}`);
+      console.log(`Gallery images used by runtime: ${galleryToPersist.length}`);
 
       if (!updateGalleryOnly) {
         console.log(`\nVARIANTS`);
@@ -536,7 +610,7 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
     // Download Phase
     if (download || isImport) {
       console.log(`\nDownloading gallery images...`);
-      for (const g of cleanGallery) {
+      for (const g of galleryToPersist) {
         try {
           const imgPath = path.join(process.cwd(), g.local_image);
           if (isReusableLocalImage(imgPath)) {
@@ -589,12 +663,59 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
         auth: { persistSession: false, autoRefreshToken: false }
       });
 
-      if (!process.env.CLOUDINARY_API_SECRET) {
+      console.log(`\nValidating database payload...`);
+
+      const { data: existingProduct, error: getProductError } = await supabase
+        .from('products')
+        .select('id,slug,name,category,price,base_price,description,image_url,full_image_url,status')
+        .eq('slug', slug)
+        .maybeSingle<ExistingProduct>();
+
+      let productId = existingProduct?.id;
+      if (getProductError) {
+        throw new Error(`Database error fetching product: ${getProductError.message}`);
+      }
+
+      if (updateGalleryOnly && !productId) {
+        failImport('--update-gallery-only requires an existing product with the scraped slug.');
+      }
+      if (existingProduct && existingProduct.category !== PRODUCT_CATEGORY) {
+        failImport(`Existing product ${slug} is not in category yarn.`);
+      }
+      const existingPrice = storedPositivePrice(existingProduct?.price);
+      if (existingProduct && !updateGalleryOnly && !syncPrice && existingPrice === null) {
+        failImport('Existing products.price is invalid. Use --sync-price only after confirming the scraped price.');
+      }
+
+      let existingVariants: ExistingVariant[] = [];
+
+      if (productId) {
+        const { data, error } = await supabase
+          .from('product_variants')
+          .select('id,color_code,image_url,full_image_url,status,sort_order')
+          .eq('product_id', productId)
+          .order('sort_order', { ascending: true });
+        if (error) throw new Error(`Database error fetching existing variants: ${error.message}`);
+        existingVariants = data || [];
+      }
+
+      const existingCodes = new Map<string, ExistingVariant>();
+      for (const variant of existingVariants) {
+        const code = variant.color_code?.trim();
+        if (!code) {
+          if (!updateGalleryOnly) failImport(`Existing variant ${variant.id} has no color_code.`);
+          continue;
+        }
+        if (existingCodes.has(code)) failImport(`Existing product has duplicate color_code ${code}.`);
+        existingCodes.set(code, variant);
+      }
+
+      if ((galleryToPersist.length > 0 || !updateGalleryOnly) && !process.env.CLOUDINARY_API_SECRET) {
         failImport('CLOUDINARY_API_SECRET is missing.');
       }
 
-      console.log(`\nUploading gallery to Cloudinary...`);
-      for (const g of cleanGallery) {
+      console.log(`\nUploading runtime gallery image to Cloudinary...`);
+      for (const g of galleryToPersist) {
         try {
           const imgPath = path.join(process.cwd(), g.local_image);
           const result = await cloudinary.uploader.upload(imgPath, {
@@ -631,62 +752,11 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
         }
       }
 
-      console.log(`\nValidating database payload...`);
-
-      const { data: existingProduct, error: getProductError } = await supabase
-        .from('products')
-        .select('id')
-        .eq('slug', slug)
-        .maybeSingle();
-
-      let productId = existingProduct?.id;
-      if (getProductError) {
-        throw new Error(`Database error fetching product: ${getProductError.message}`);
-      }
-
-      if (updateGalleryOnly && !productId) {
-        failImport('--update-gallery-only requires an existing product with the scraped slug.');
-      }
-
-      let existingVariants: Array<{
-        id: number | string;
-        color_code: string | null;
-        image_url: string | null;
-        full_image_url: string | null;
-        status: string | null;
-        sort_order: number | null;
-      }> = [];
-
-      if (productId) {
-        const { data, error } = await supabase
-          .from('product_variants')
-          .select('id,color_code,image_url,full_image_url,status,sort_order')
-          .eq('product_id', productId)
-          .order('sort_order', { ascending: true });
-        if (error) throw new Error(`Database error fetching existing variants: ${error.message}`);
-        existingVariants = data || [];
-      }
-
-      const existingCodes = new Map<string, number | string>();
-      for (const variant of existingVariants) {
-        const code = variant.color_code?.trim();
-        if (!code) {
-          if (!updateGalleryOnly) failImport(`Existing variant ${variant.id} has no color_code.`);
-          continue;
-        }
-        if (existingCodes.has(code)) failImport(`Existing product has duplicate color_code ${code}.`);
-        existingCodes.set(code, variant.id);
-      }
-
-      if (updateGalleryOnly && existingVariants.length === 0) {
-        failImport('--update-gallery-only requires at least one existing variant.');
-      }
-
       const firstExistingVariantImage = existingVariants
         .map(variant => variant.image_url?.trim() || variant.full_image_url?.trim() || '')
         .find(isCloudinaryUrl);
       const firstImportedVariantImage = variants[0]?.image_url?.trim() || '';
-      const mainImageUrl = cleanGallery[0]?.image_url?.trim()
+      const mainImageUrl = galleryToPersist[0]?.image_url?.trim()
         || (updateGalleryOnly ? firstExistingVariantImage : firstImportedVariantImage)
         || '';
 
@@ -704,21 +774,26 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
       }
 
       console.log(`\nUpdating Database...`);
-
-      const productPayload = {
-        slug,
-        name,
-        category: PRODUCT_CATEGORY,
-        price,
-        base_price: price,
-        description,
-        image_url: mainImageUrl,
-        full_image_url: mainImageUrl,
-        status: AVAILABLE_STATUS,
-        updated_at: new Date().toISOString()
-      };
+      const updatedAt = new Date().toISOString();
+      const expectedPrice = existingProduct && !syncPrice ? existingPrice : price;
+      const expectedStatus = existingProduct ? existingProduct.status : AVAILABLE_STATUS;
 
       if (productId) {
+        const productPayload: Record<string, unknown> = updateGalleryOnly
+          ? {
+              image_url: mainImageUrl,
+              full_image_url: mainImageUrl,
+              updated_at: updatedAt,
+            }
+          : {
+              image_url: mainImageUrl,
+              full_image_url: mainImageUrl,
+              base_price: expectedPrice,
+              updated_at: updatedAt,
+              ...(!existingProduct?.name?.trim() ? { name } : {}),
+              ...(!existingProduct?.description?.trim() ? { description } : {}),
+              ...(syncPrice ? { price, base_price: price } : {}),
+            };
         const { error: updateError } = await supabase
           .from('products')
           .update(productPayload)
@@ -726,14 +801,33 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
         if (updateError) throw updateError;
         console.log(`Updated existing product: ${slug} (ID: ${productId}) ${mainImageUrl ? 'with new main image' : ''}`);
       } else {
+        const productPayload = {
+          slug,
+          name,
+          category: PRODUCT_CATEGORY,
+          price,
+          base_price: price,
+          description,
+          image_url: mainImageUrl,
+          full_image_url: mainImageUrl,
+          status: AVAILABLE_STATUS,
+          updated_at: updatedAt,
+        };
         const { data: newProduct, error: insertError } = await supabase
           .from('products')
-          .insert({ ...productPayload })
+          .insert(productPayload)
           .select('id')
           .single();
         if (insertError) throw insertError;
         productId = newProduct.id;
         console.log(`Inserted new product: ${slug} (ID: ${productId})`);
+      }
+
+      const expectedSortOrders = new Map<string, number | null>();
+      const expectedStatuses = new Map<string, string | null>();
+      for (const [code, variant] of existingCodes) {
+        expectedSortOrders.set(code, variant.sort_order);
+        expectedStatuses.set(code, variant.status);
       }
 
       if (!updateGalleryOnly) {
@@ -744,24 +838,26 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
             color_code: v.code,
             image_url: v.image_url,
             full_image_url: v.image_url,
-            status: AVAILABLE_STATUS,
             sort_order: v.position,
-            updated_at: new Date().toISOString()
+            updated_at: updatedAt,
           };
 
-          if (existingCodes.has(v.code)) {
+          const existingVariant = existingCodes.get(v.code);
+          if (existingVariant) {
             const { error: uvError } = await supabase
               .from('product_variants')
               .update(variantPayload)
-              .eq('id', existingCodes.get(v.code));
+              .eq('id', existingVariant.id);
             if (uvError) throw uvError;
             existingCodes.delete(v.code);
           } else {
             const { error: ivError } = await supabase
               .from('product_variants')
-              .insert(variantPayload);
+              .insert({ ...variantPayload, status: AVAILABLE_STATUS });
             if (ivError) throw ivError;
+            expectedStatuses.set(v.code, AVAILABLE_STATUS);
           }
+          expectedSortOrders.set(v.code, v.position);
         }
         
         if (existingCodes.size > 0) {
@@ -774,18 +870,26 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
 
       const { data: verifiedProduct, error: verifyProductError } = await supabase
         .from('products')
-        .select('id,slug,category,price,base_price,image_url,full_image_url,status')
+        .select('id,slug,name,category,price,base_price,description,image_url,full_image_url,status')
         .eq('id', productId)
         .single();
       if (verifyProductError || !verifiedProduct) {
         failImport(`Product read-back failed: ${verifyProductError?.message || 'product not found'}.`);
       }
       if (verifiedProduct.category !== PRODUCT_CATEGORY) failImport('Product read-back category is not yarn.');
-      if (verifiedProduct.price === null || Number(verifiedProduct.price) !== price) failImport('Product read-back price is invalid.');
-      if (verifiedProduct.base_price === null || Number(verifiedProduct.base_price) !== price) failImport('Product read-back base_price is invalid.');
       if (!isCloudinaryUrl(verifiedProduct.image_url || '')) failImport('Product read-back image_url is missing or is not Cloudinary.');
       if (!isCloudinaryUrl(verifiedProduct.full_image_url || '')) failImport('Product read-back full_image_url is missing or is not Cloudinary.');
-      if (verifiedProduct.status === 'hidden') failImport('Product read-back status is hidden.');
+      if (updateGalleryOnly && existingProduct) {
+        for (const field of ['slug', 'name', 'category', 'price', 'base_price', 'description', 'status'] as const) {
+          if (verifiedProduct[field] !== existingProduct[field]) {
+            failImport(`--update-gallery-only changed protected product field ${field}.`);
+          }
+        }
+      } else {
+        if (storedPositivePrice(verifiedProduct.price) !== expectedPrice) failImport('Product read-back price is invalid.');
+        if (storedPositivePrice(verifiedProduct.base_price) !== expectedPrice) failImport('Product read-back base_price is invalid.');
+        if (verifiedProduct.status !== expectedStatus) failImport('Product read-back status was not preserved.');
+      }
 
       const { data: verifiedVariants, error: verifyVariantsError } = await supabase
         .from('product_variants')
@@ -796,16 +900,11 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
         failImport(`Variant read-back failed: ${verifyVariantsError?.message || 'variants not found'}.`);
       }
 
-      const expectedVariants = updateGalleryOnly
-        ? existingVariants.map(variant => ({ code: variant.color_code, sortOrder: variant.sort_order, status: variant.status }))
-        : variants.map(variant => ({ code: variant.code, sortOrder: variant.position, status: AVAILABLE_STATUS }));
-      if (verifiedVariants.length !== expectedVariants.length) {
-        failImport(`Variant read-back count ${verifiedVariants.length} does not match expected count ${expectedVariants.length}.`);
+      if (verifiedVariants.length !== expectedStatuses.size) {
+        failImport(`Variant read-back count ${verifiedVariants.length} does not match expected count ${expectedStatuses.size}.`);
       }
 
       const verifiedCodes = new Set<string>();
-      const expectedSortOrders = new Map(expectedVariants.map(variant => [variant.code, variant.sortOrder]));
-      const expectedStatuses = new Map(expectedVariants.map(variant => [variant.code, variant.status]));
       for (const variant of verifiedVariants) {
         const code = variant.color_code?.trim();
         if (!code) failImport(`Variant ${variant.id} is missing color_code after read-back.`);
@@ -819,6 +918,7 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
         verifiedCodes.add(code);
       }
 
+      await triggerCatalogRevalidation(slug);
       console.log(`\nImport verified: product ${slug}, ${verifiedVariants.length} variants.`);
       console.log(`Import complete.`);
     }
@@ -830,7 +930,7 @@ async function scrapeProduct(url: string, dryRun: boolean, download: boolean, is
       target_url: `https://lentiny.xyz/len-soi/${slug}`,
       price,
       description,
-      main_image: cleanGallery.length > 0 ? cleanGallery[0].image_url || cleanGallery[0].original_url : '',
+      main_image: galleryToPersist.length > 0 ? galleryToPersist[0].image_url || galleryToPersist[0].original_url : '',
       gallery: cleanGallery,
       variants
     };
@@ -861,28 +961,46 @@ let url = '';
 let dryRun = false;
 let download = false;
 let isImport = false;
-let excludeGalleryStr = '';
+let excludeGalleryIndexRaw = '';
 let updateGalleryOnly = false;
+let syncPrice = false;
 
 for (const arg of args) {
   if (arg === '--dry-run') dryRun = true;
   else if (arg === '--download') download = true;
   else if (arg === '--import') isImport = true;
   else if (arg === '--update-gallery-only') updateGalleryOnly = true;
+  else if (arg === '--sync-price') syncPrice = true;
+  else if (arg.startsWith('--exclude-gallery-index=')) {
+    excludeGalleryIndexRaw = arg.slice('--exclude-gallery-index='.length);
+  }
   else if (arg.startsWith('--exclude-gallery=')) {
-    excludeGalleryStr = arg.split('=')[1];
+    console.error('The ambiguous --exclude-gallery option was removed. Use 1-based --exclude-gallery-index="2,3".');
+    process.exit(1);
   }
   else if (arg.startsWith('http')) url = arg;
 }
 
 if (!url) {
-  console.error('Usage: npx tsx scripts/scrape-product.ts <URL> [--dry-run | --download | --import] [--update-gallery-only] [--exclude-gallery="0,1,2"]');
+  console.error('Usage: npx tsx scripts/scrape-product.ts <URL> [--dry-run | --download | --import] [--update-gallery-only] [--sync-price] [--exclude-gallery-index="2,3"]');
   process.exit(1);
 }
 
 // Validate exclusive flags
 if ((dryRun && download) || (dryRun && isImport) || (download && isImport)) {
   console.error('Please specify only ONE of: --dry-run, --download, --import');
+  process.exit(1);
+}
+if (updateGalleryOnly && syncPrice) {
+  console.error('--sync-price cannot be combined with --update-gallery-only.');
+  process.exit(1);
+}
+
+let excludeGalleryIndices: Set<number>;
+try {
+  excludeGalleryIndices = parseGalleryIndices(excludeGalleryIndexRaw);
+} catch (error) {
+  console.error(errorMessage(error));
   process.exit(1);
 }
 
@@ -892,4 +1010,4 @@ if (!dryRun && !download && !isImport) {
   dryRun = true;
 }
 
-scrapeProduct(url, dryRun, download, isImport, excludeGalleryStr, updateGalleryOnly);
+scrapeProduct(url, dryRun, download, isImport, excludeGalleryIndices, updateGalleryOnly, syncPrice);

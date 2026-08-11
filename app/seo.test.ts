@@ -81,7 +81,7 @@ test("SEO routes", async (t) => {
     assert.deepEqual(rules[0], {
       userAgent: "*",
       allow: "/",
-      disallow: ["/admin.html", "/tools/"]
+      disallow: ["/admin/", "/api/admin/", "/tools/"]
     });
     assert.deepEqual(
       rules.slice(1).map((rule) => rule.userAgent),

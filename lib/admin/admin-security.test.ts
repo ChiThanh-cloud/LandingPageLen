@@ -25,6 +25,23 @@ test("admin mutations reverify authorization and keep the service role server-on
   assert.doesNotMatch(productActions, /NEXT_PUBLIC_SUPABASE|createBrowserClient|localStorage/);
 });
 
+test("admin product save keeps both price columns synchronized and revalidates storefront routes", () => {
+  assert.match(productActions, /price:\s*parsed\.data\.price,\s*base_price:\s*parsed\.data\.price/);
+  assert.match(productActions, /select\("id,slug"\)/);
+  assert.match(productActions, /revalidatePath\("\/len-soi"\)/);
+  assert.match(productActions, /revalidatePath\(`\/len-soi\/\$\{slug\}`\)/);
+  assert.match(productActions, /revalidateProducts\(data\?\.slug\)/);
+  assert.match(productActions, /slugifyProductName\(parsed\.data\.name\)/);
+  assert.match(productActions, /insertPayload = \{ \.\.\.payload, slug: stableSlug \}/);
+});
+
+test("every catalog mutation resolves the product slug before storefront revalidation", () => {
+  assert.match(productActions, /toggleProductAction[\s\S]*select\("slug"\)\.single\(\)[\s\S]*revalidateProducts\(data\?\.slug\)/);
+  assert.match(productActions, /saveVariantAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
+  assert.match(productActions, /toggleVariantAction[\s\S]*select\("slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
+  assert.match(productActions, /importVariantsAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
+});
+
 test("browser roles cannot directly mutate catalog or inventory", () => {
   assert.match(migration, /revoke insert, update, delete on table public\.products from authenticated/);
   assert.match(migration, /revoke insert, update, delete on table public\.product_variants from authenticated/);
@@ -58,4 +75,3 @@ test("inventory admin is limited to yarn and storefront protected sections stay 
   assert.match(shell, /return children/);
   assert.doesNotMatch(service, /do-moc-dat-rieng|hop-qua|set-tu-moc/);
 });
-
