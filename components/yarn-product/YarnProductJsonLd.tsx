@@ -1,11 +1,22 @@
 import { siteConfig } from "@/data/site";
 import type { YarnProduct } from "@/types/yarn-product";
 
-export function YarnProductJsonLd({ product }: { product: YarnProduct }) {
+export function toAbsoluteUrl(value: string) {
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") return value;
+  } catch {
+    // Relative image paths are resolved against the storefront origin below.
+  }
+
+  return new URL(value, siteConfig.url).toString();
+}
+
+export function getYarnProductStructuredData(product: YarnProduct) {
   const url = `${siteConfig.url}/len-soi/${product.slug}`;
   const inStock = product.variants.some((variant) => variant.stock === null || variant.stock > 0);
 
-  const data = {
+  return {
     "@context": "https://schema.org",
     "@graph": [
       {
@@ -21,56 +32,24 @@ export function YarnProductJsonLd({ product }: { product: YarnProduct }) {
         "@id": `${url}#product`,
         name: product.name,
         description: product.seoDescription,
-        image: product.images.map((image) => `${siteConfig.url}${image}`),
+        image: product.images.map(toAbsoluteUrl),
+        url,
         sku: product.id,
-        brand: { "@type": "Brand", name: siteConfig.name },
         offers: {
           "@type": "Offer",
           url,
           priceCurrency: "VND",
           price: product.price,
           availability: `https://schema.org/${inStock ? "InStock" : "OutOfStock"}`,
-          itemCondition: "https://schema.org/NewCondition",
-          seller: { "@type": "Organization", name: siteConfig.name },
-          shippingDetails: {
-            "@type": "OfferShippingDetails",
-            shippingRate: {
-              "@type": "MonetaryAmount",
-              value: "0",
-              currency: "VND"
-            },
-            shippingDestination: {
-              "@type": "DefinedRegion",
-              addressCountry: "VN"
-            },
-            deliveryTime: {
-              "@type": "ShippingDeliveryTime",
-              handlingTime: {
-                "@type": "QuantitativeValue",
-                minValue: 0,
-                maxValue: 1,
-                unitCode: "DAY"
-              },
-              transitTime: {
-                "@type": "QuantitativeValue",
-                minValue: 1,
-                maxValue: 3,
-                unitCode: "DAY"
-              }
-            }
-          },
-          hasMerchantReturnPolicy: {
-            "@type": "MerchantReturnPolicy",
-            applicableCountry: "VN",
-            returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-            merchantReturnDays: 7,
-            returnMethod: "https://schema.org/ReturnByMail",
-            returnFees: "https://schema.org/FreeReturn"
-          }
+          seller: { "@type": "Organization", name: siteConfig.name }
         }
       }
     ]
   };
+}
+
+export function YarnProductJsonLd({ product }: { product: YarnProduct }) {
+  const data = getYarnProductStructuredData(product);
 
   return (
     <script
