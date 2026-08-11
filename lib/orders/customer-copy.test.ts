@@ -55,7 +55,7 @@ test("success page uses stored shipping and total with historical null fallback"
 });
 
 test("customer stock copy uses Tiny wording and shows exact managed stock", () => {
-  assert.match(customerSource, /Liên hệ Tiny để xác nhận số lượng/);
+  assert.match(customerSource, /Liên hệ Tiny để xác nhận số lượng lớn/);
   assert.match(customerSource, /Còn hàng: \$\{stock\.toLocaleString\("vi-VN"\)\} cuộn/);
   assert.match(customerSource, /Còn hàng: \$\{variant\.stock\.toLocaleString\("vi-VN"\)\} cuộn/);
   assert.match(customerSource, /Hết hàng/);

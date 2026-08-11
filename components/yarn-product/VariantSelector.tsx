@@ -16,7 +16,7 @@ export function VariantSelector({ variants, selected, onSelect }: { variants: Ya
             className={`${styles.swatch} ${variant.id === selected.id ? styles.swatchActive : ""}`}
             onClick={() => onSelect(variant)}
             disabled={variant.stock === 0}
-            aria-label={`${variant.colorName}${variant.stock === 0 ? ", hết hàng" : variant.stock === null ? ", liên hệ Tiny để xác nhận số lượng" : `, còn hàng ${variant.stock.toLocaleString("vi-VN")} cuộn`}`}
+            aria-label={`${variant.colorName}${variant.stock === 0 ? ", hết hàng" : variant.stock === null ? ", liên hệ Tiny để xác nhận số lượng lớn" : `, còn hàng ${variant.stock.toLocaleString("vi-VN")} cuộn`}`}
             aria-pressed={variant.id === selected.id}
             title={variant.colorName}
           >

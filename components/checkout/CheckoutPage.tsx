@@ -398,7 +398,7 @@ export function CheckoutPage({ availableProducts }: { availableProducts: YarnPro
                     {entry.issueMessage || serverIssueMessage
                       ? <p role="alert">{entry.issueMessage || serverIssueMessage}</p>
                       : entry.variant?.stock === null
-                        ? <small>Liên hệ Tiny để xác nhận số lượng.</small>
+                        ? <small>Liên hệ Tiny để xác nhận số lượng lớn.</small>
                         : null}
                   </div>
                   <strong className={styles.linePrice}>{(entry.displayPrice * entry.item.quantity).toLocaleString("vi-VN")}đ</strong>

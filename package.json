@@ -44,6 +44,7 @@
     "dotenv": "^17.4.2",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.12",
+    "playwright": "^1.62.1",
     "tsx": "^4.23.0",
     "typescript": "5.9.3"
   }

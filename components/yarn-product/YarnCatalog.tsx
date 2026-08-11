@@ -109,7 +109,7 @@ function ProductCard({ product }: { product: YarnProduct }) {
           <span>{availableColors} màu đang bán</span>
           <span>
             {totalStock === null
-              ? "Liên hệ Tiny để xác nhận số lượng"
+              ? "Liên hệ Tiny để xác nhận số lượng lớn."
               : totalStock > 0
               ? `Còn hàng: ${totalStock.toLocaleString("vi-VN")} cuộn`
               : "Hết hàng"}

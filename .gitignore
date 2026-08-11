@@ -17,3 +17,15 @@ ui-ux-pro-max-skill/
 .agents/
 AI_CONTEXT_HANDOFF.md
 task.md
+
+# Local scraper staging output (regenerable; production uses Supabase/Cloudinary)
+/data/products/
+
+# Local database/DOM audit helpers
+/test-db.ts
+/test-dom*.js
+/test-gallery.js
+/check-nhung-gau.ts
+/test-storefront.ts
+/scripts/repair-nhung-gau.ts
+/scripts/repair-nhung-dua-cloudinary.ts

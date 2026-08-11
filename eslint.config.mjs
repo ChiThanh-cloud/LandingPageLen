@@ -33,6 +33,13 @@ export default defineConfig([
     "chart-admin.html",
     "index.html",
     "product-color-extractor.html",
-    "check_images.js"
+    "check_images.js",
+    "check-nhung-gau.ts",
+    "test-db.ts",
+    "test-dom*.js",
+    "test-gallery.js",
+    "test-storefront.ts",
+    "scripts/repair-nhung-gau.ts",
+    "scripts/repair-nhung-dua-cloudinary.ts"
   ])
 ]);

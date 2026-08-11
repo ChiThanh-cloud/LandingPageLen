@@ -11,7 +11,7 @@ export function QuantitySelector({ quantity, stock, onChange }: { quantity: numb
         <output aria-live="polite">{quantity}</output>
         <button type="button" onClick={() => onChange(stock === null ? quantity + 1 : Math.min(stock, quantity + 1))} disabled={stock !== null && quantity >= stock} aria-label="Tăng số lượng">+</button>
       </div>
-      <small className={styles.stock}>{stock === null ? "Liên hệ Tiny để xác nhận số lượng" : stock > 0 ? `Còn hàng: ${stock.toLocaleString("vi-VN")} cuộn` : "Hết hàng"}</small>
+      <small className={styles.stock}>{stock === null ? "Liên hệ Tiny để xác nhận số lượng lớn." : stock > 0 ? `Còn hàng: ${stock.toLocaleString("vi-VN")} cuộn` : "Hết hàng"}</small>
     </div>
   );
 }

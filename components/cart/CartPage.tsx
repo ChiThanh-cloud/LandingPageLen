@@ -100,7 +100,7 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
                     <Link href={`/len-soi/${product?.slug || item.slug}`} className={styles.itemName}>{productName}</Link>
                     <p>Mã màu: <strong>{variantName}</strong></p>
                     <p className={styles.stockText}>
-                      {!product || !variant ? "Sản phẩm hoặc mã màu không còn khả dụng" : variant.stock === null ? "Liên hệ Tiny để xác nhận số lượng" : variant.stock > 0 ? `Còn hàng: ${variant.stock.toLocaleString("vi-VN")} cuộn` : "Hết hàng"}
+                      {!product || !variant ? "Sản phẩm hoặc mã màu không còn khả dụng" : variant.stock === null ? "Liên hệ Tiny để xác nhận số lượng lớn" : variant.stock > 0 ? `Còn hàng: ${variant.stock.toLocaleString("vi-VN")} cuộn` : "Hết hàng"}
                     </p>
                     <strong className={styles.mobilePrice}>{displayPrice.toLocaleString("vi-VN")}đ / cuộn</strong>
 
