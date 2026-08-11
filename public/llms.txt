@@ -43,7 +43,8 @@ Blog tại /blog chia sẻ (5 bài đã xuất bản):
 - /blog/cach-bao-quan-thu-len-handmade-de-luon-dep — Cách bảo quản thú len handmade để luôn đẹp
 
 ## Trang sản phẩm
-- /san-pham/len-soi — Len sợi & phụ kiện đan móc
+- /len-soi — Catalog ecommerce len sợi và phụ kiện móc đang bán
+- /san-pham/len-soi — Hướng dẫn chọn len sợi cho người mới và theo từng dự án
 - /san-pham/set-tu-moc — Set tự móc trọn gói
 - /san-pham/thu-len-theo-yeu-cau — Thú len, đồ móc theo yêu cầu
 - /san-pham/hoa-len-handmade — Hoa len handmade

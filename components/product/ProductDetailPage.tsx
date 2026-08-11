@@ -6,6 +6,8 @@ import { ProductJsonLd } from "./ProductJsonLd";
 import { ProductSections } from "./ProductSections";
 
 export function ProductDetailPage({ product, canonicalPath }: { product: ProductEntry; canonicalPath?: string }) {
+  const isYarnGuide = product.slug === "len-soi";
+
   return (
     <main className="blog-page product-page">
       <ProductJsonLd product={product} path={canonicalPath} />
@@ -29,22 +31,31 @@ export function ProductDetailPage({ product, canonicalPath }: { product: Product
 
         <section className="blog-cta">
           <h2>
-            {product.kind === "service"
+            {isYarnGuide
+              ? "Sẵn sàng chọn len cho dự án của bạn?"
+              : product.kind === "service"
               ? "Sẵn sàng đặt một bé thú len theo ý muốn?"
               : "Muốn Tiny tư vấn mẫu phù hợp cho bạn?"}
           </h2>
           <p className="blog-text">
-            Nhắn Tiny qua Zalo để được tư vấn mẫu, màu sắc, ngân sách và thời gian hoàn thiện phù hợp nhất.
+            {isYarnGuide
+              ? "Xem catalog hiện tại để kiểm tra sản phẩm, giá, màu và tình trạng trước khi chọn."
+              : "Nhắn Tiny qua Zalo để được tư vấn mẫu, màu sắc, ngân sách và thời gian hoàn thiện phù hợp nhất."}
           </p>
           <div className="blog-cta-actions">
+            {isYarnGuide ? (
+              <Link className="sp-zalo-btn" href="/len-soi">
+                Xem len đang bán
+              </Link>
+            ) : null}
             <a
-              className="sp-zalo-btn"
+              className={isYarnGuide ? "blog-button blog-button-soft" : "sp-zalo-btn"}
               href={siteConfig.zaloUrl}
               target="_blank"
               rel="noopener noreferrer"
               data-track="contact_zalo_click"
             >
-              Nhắn Zalo {siteConfig.phoneDisplay}
+              {isYarnGuide ? "Nhắn Tiny để được tư vấn" : `Nhắn Zalo ${siteConfig.phoneDisplay}`}
             </a>
             <Link className="blog-button blog-button-soft" href="/">
               Về trang chủ

@@ -4,33 +4,31 @@ export const products: ProductEntry[] = [
   {
     slug: "len-soi",
     kind: "product",
-    name: "Len sợi & phụ kiện",
-    title: "Len Sợi, Len Milk Cotton Móc Thú - Tiệm Len Nhà Tiny",
+    name: "Hướng dẫn chọn len sợi",
+    title: "Cách chọn len sợi cho người mới | Tiệm Len Nhà Tiny",
     description:
-      "Mua len sợi, len milk cotton, len móc handmade tại Tiệm Len Nhà Tiny. Đa dạng màu sắc, chất sợi mềm mịn, có tư vấn loại len phù hợp. Giá từ 8.000đ.",
-    ogTitle: "Len Sợi, Len Milk Cotton Móc Thú - Tiệm Len Nhà Tiny",
+      "Hướng dẫn cách chọn len sợi theo loại sản phẩm, độ mềm, độ dày và nhu cầu sử dụng. Xem gợi ý cho người mới và chuyển tới catalog khi cần mua len.",
+    ogTitle: "Cách chọn len sợi cho người mới | Tiệm Len Nhà Tiny",
     ogDescription:
-      "Mua len sợi, len milk cotton, len móc handmade tại Tiệm Len Nhà Tiny. Đa dạng màu sắc, chất sợi mềm mịn, tư vấn miễn phí.",
-    category: "Nguyên liệu",
-    eyebrow: "Nguyên liệu - Len sợi",
-    h1: "Len sợi, len milk cotton móc thú tại Tiệm Len Nhà Tiny",
+      "Tìm hiểu các dòng len phổ biến và cách chọn len theo dự án cho người mới học móc.",
+    category: "Hướng dẫn",
+    eyebrow: "Hướng dẫn - Len cho người mới",
+    h1: "Cách chọn len sợi phù hợp cho người mới",
     lead:
-      "Từ cuộn len milk cotton nhỏ xinh đến len nhung mềm mịn, Tiny có đủ loại len sợi để bạn bắt đầu hành trình handmade của mình - dù mới học hay đã biết móc.",
+      "Hiểu chất sợi, độ mềm và form thành phẩm để chọn len phù hợp với dự án đầu tiên của bạn.",
     image: "/images/yarn_collection_800.jpg",
     imageAlt:
-      "Bảng màu len sợi đa dạng tại Tiệm Len Nhà Tiny, gồm len milk cotton, len nhung, len cotton",
+      "Các cuộn len phổ biến dùng cho dự án đan móc handmade",
     updatedAt: "2026-07-07",
-    schemaName: "Len sợi móc handmade",
+    schemaName: "Hướng dẫn chọn len sợi cho người mới",
     schemaDescription:
-      "Len milk cotton, len nhung, len cotton đa dạng màu sắc, phù hợp móc thú bông, hoa len, túi len, phụ kiện handmade.",
-    legacyPhoneFound: "0909.281.029",
-    legacyHadOffer: true,
+      "Hướng dẫn phân biệt các loại len phổ biến và chọn len theo dự án đan móc, từ thú bông đến hoa và phụ kiện.",
     sections: [
       {
         type: "list",
-        title: "Len sợi tại Tiệm Len Nhà Tiny có gì?",
+        title: "Các loại len phổ biến khi học móc",
         intro:
-          "Tiệm Len Nhà Tiny bán nhiều loại len sợi phổ biến phù hợp với các dự án đan móc khác nhau: từ móc thú bông, hoa len, túi len đến các phụ kiện handmade nhỏ xinh. Bảng màu len rất đa dạng, từ những tông pastel dịu dàng đến màu đậm ấn tượng. Các dòng len Tiny thường có gồm:",
+          "Mỗi loại len tạo cảm giác khác nhau khi móc và cho thành phẩm có độ mềm, độ đứng form khác nhau. Bạn có thể bắt đầu từ những nhóm sợi quen thuộc sau:",
         items: [
           {
             label: "Len milk cotton",
@@ -46,82 +44,72 @@ export const products: ProductEntry[] = [
           },
           {
             label: "Phụ kiện kèm",
-            text: "Kim móc các cỡ, bông nhồi, mắt nhựa, đánh dấu mũi, kim khâu - tất cả để bạn có thể bắt đầu ngay."
+            text: "Kim móc, đánh dấu mũi, kim khâu và bông nhồi nên được chọn theo loại len và mẫu bạn dự định làm."
           }
         ]
       },
       {
         type: "list",
-        title: "Ai nên chọn mua len sợi tại Tiny?",
+        title: "Chọn len theo dự án bạn muốn làm",
         items: [
           {
             label: "Người mới học móc len",
-            text: "Muốn bắt đầu với len dễ dùng, dễ nhìn mũi, giá không quá cao để luyện tay."
+            text: "Ưu tiên sợi dễ nhìn mũi, ít xù và chọn màu sáng để thuận tiện tập tăng, giảm và tháo móc lại."
           },
           {
-            label: "Người đã biết móc",
-            text: "Cần bổ sung màu mới, đổi loại len theo mẫu, hoặc mua số lượng nhỏ theo dự án."
+            label: "Móc thú bông",
+            text: "Milk cotton phù hợp để bắt đầu; khi đã quen tay, len nhung cho cảm giác mềm và thành phẩm mũm mĩm hơn."
           },
           {
-            label: "Bạn muốn mua set nguyên liệu trọn gói",
-            text: "Len, kim, bông nhồi - mua 1 lần là có đủ để làm 1 sản phẩm hoàn chỉnh."
+            label: "Móc hoa hoặc túi",
+            text: "Cotton hoặc milk cotton giúp mũi móc rõ hơn và dễ giữ những chi tiết cần form."
           },
           {
-            label: "Bạn không biết chọn len nào",
-            text: "Nhắn Tiny, gửi ảnh mẫu muốn làm, Tiny sẽ gợi ý loại len phù hợp nhất."
+            label: "Móc khóa và phụ kiện nhỏ",
+            text: "Chọn sợi ít xù, có độ bền vừa phải và thử một mẫu nhỏ trước khi làm nhiều màu."
           }
         ]
       },
       {
-        type: "priceTable",
-        title: "Giá tham khảo len sợi tại Tiệm Len Nhà Tiny",
-        intro:
-          "Giá len tùy loại, màu sắc và số lượng. Tiny ưu tiên tư vấn trước để bạn chọn đúng loại len và không mua thừa hoặc thiếu.",
-        table: {
-          headers: ["Loại len", "Giá tham khảo", "Ghi chú"],
-          rows: [
-            ["Len milk cotton (cuộn nhỏ)", "Từ 8.000đ", "Nhiều màu, phù hợp mọi mẫu"],
-            ["Len nhung", "Tùy dòng len", "Mềm bông, hợp thú bông size vừa"],
-            ["Len cotton", "Tùy cuộn/màu", "Form đẹp, hợp hoa len, túi móc"],
-            ["Kim móc các cỡ", "Tùy cỡ kim", "Nhiều cỡ từ 2.0mm trở lên"]
-          ]
-        },
-        outro:
-          "Nhắn Zalo 0368.903.519 để hỏi giá cụ thể và số lượng cần dùng theo mẫu."
+        type: "text",
+        title: "Khi nào nên xem catalog len đang bán?",
+        paragraphs: [
+          "Giá, màu và tình trạng sản phẩm thay đổi theo từng dòng sợi. Khi đã xác định loại len phù hợp, hãy xem catalog hiện tại để kiểm tra thông tin sản phẩm trước khi chọn.",
+          "Nếu chưa chắc về loại sợi hoặc cỡ kim, bạn có thể chuẩn bị ảnh mẫu và số đo dự kiến để việc tư vấn cụ thể hơn."
+        ]
       },
       {
         type: "callout",
-        kicker: "Tư vấn miễn phí",
+        kicker: "Cần gợi ý thêm?",
         title: "Chưa biết nên chọn loại len nào?",
         text:
-          "Gửi Tiny ảnh mẫu hoặc mô tả sản phẩm bạn muốn làm. Tiny sẽ gợi ý loại len, màu phù hợp và ước lượng số lượng cần mua.",
+          "Gửi Tiny ảnh mẫu hoặc mô tả sản phẩm bạn muốn làm. Tiny sẽ gợi ý loại len, màu phù hợp và cỡ kim để bạn dễ bắt đầu.",
         ctaLabel: "Nhắn Zalo tư vấn ngay",
         ctaTrackKey: "contact_zalo_click"
       },
       {
         type: "list",
-        title: "Vì sao nên chọn len sợi tại Tiệm Len Nhà Tiny?",
+        title: "Mẹo chọn len trước khi bắt đầu",
         items: [
-          { text: "Len được chọn lọc phù hợp với đan móc handmade, không phải len công nghiệp dệt may." },
-          { text: "Bảng màu đa dạng, cập nhật thêm màu mới theo thời gian." },
-          { text: "Tiny biết móc nên có thể tư vấn đúng loại len theo sản phẩm và chart bạn muốn làm." },
-          { text: "Nhận đơn online, giao hàng toàn quốc, đóng gói cẩn thận." },
-          { text: "Có thể mua kèm bông nhồi, kim móc, phụ kiện để không phải tìm nhiều nơi." }
+          { text: "Đọc nhãn sợi để đối chiếu chất liệu, trọng lượng và cỡ kim được gợi ý." },
+          { text: "Chọn màu sáng khi mới tập để mũi móc dễ nhìn hơn." },
+          { text: "Móc thử một mẫu nhỏ nếu bạn định thay loại len khác với chart." },
+          { text: "Chuẩn bị số đo hoặc ảnh tham khảo để ước lượng lượng sợi sát với dự án hơn." }
         ]
       },
       {
         type: "related",
-        title: "Đọc thêm từ blog LenTiny",
+        title: "Xem thêm",
         links: [
+          {
+            href: "/len-soi",
+            title: "Xem len đang bán",
+            text: "Mở catalog hiện tại để xem sản phẩm, giá, màu và tình trạng có sẵn."
+          },
           {
             href: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
             title: "Người mới học móc len nên chọn loại len nào?",
             text: "So sánh các loại len phổ biến và cách chọn đúng loại theo mẫu."
-          },
-          {
-            href: "/san-pham/set-tu-moc",
-            title: "Set tự móc dành cho người mới",
-            text: "Set trọn gói len, kim, bông nhồi và hướng dẫn - làm ngay không cần mua nhiều nơi."
           }
         ]
       }
@@ -133,19 +121,14 @@ export const products: ProductEntry[] = [
           "Phù hợp. Len milk cotton là lựa chọn phổ biến nhất để móc thú bông, đặc biệt cho người mới. Sợi mềm, nhiều màu, mũi móc dễ nhìn và giá dễ tiếp cận."
       },
       {
-        question: "Giá len tại Tiny là bao nhiêu?",
+        question: "Làm sao để kiểm tra giá, màu và tình trạng len hiện tại?",
         answer:
-          "Giá từ 8.000đ cho cuộn len nhỏ, tùy loại len và màu sắc. Nhắn Zalo để được báo giá cụ thể và tư vấn số lượng cần mua theo mẫu."
+          "Xem catalog len đang bán để kiểm tra thông tin sản phẩm hiện tại. Trang hướng dẫn này không hiển thị giá hoặc tình trạng bán hàng cố định."
       },
       {
         question: "Tiny có tư vấn loại len theo mẫu tôi muốn móc không?",
         answer:
-          "Có. Bạn chỉ cần gửi ảnh mẫu hoặc mô tả, Tiny sẽ gợi ý loại len phù hợp, cỡ kim và ước lượng số cuộn cần dùng."
-      },
-      {
-        question: "Len có giao hàng toàn quốc không?",
-        answer:
-          "Có. Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc, đóng gói cẩn thận."
+          "Có. Bạn chỉ cần gửi ảnh mẫu hoặc mô tả, Tiny sẽ gợi ý loại len phù hợp và cỡ kim để bạn bắt đầu."
       }
     ]
   },

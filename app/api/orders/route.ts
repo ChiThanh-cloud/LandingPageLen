@@ -1,6 +1,6 @@
 import { after, NextResponse } from "next/server";
 import { sendTelegramNewOrderNotification } from "@/lib/notifications/telegram";
-import { createOrder, OrderServiceError } from "@/lib/orders/order-service";
+import { createOrder, OrderServiceError, getOrderItemsSnapshot } from "@/lib/orders/order-service";
 import { orderRequestSchema } from "@/lib/orders/order-schema";
 
 export const runtime = "nodejs";
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     
     after(async () => {
       try {
+        const items = await getOrderItemsSnapshot(result.orderCode);
         await sendTelegramNewOrderNotification({
           orderCode: result.orderCode,
           customerName: parsed.data.customer.name,
@@ -41,7 +42,8 @@ export async function POST(request: Request) {
           totalQuantity: parsed.data.items.reduce(
             (sum, item) => sum + item.quantity,
             0
-          )
+          ),
+          items
         });
       } catch (error) {
         console.error("Telegram new-order notification failed", {

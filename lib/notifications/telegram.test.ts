@@ -21,7 +21,8 @@ test("Telegram skips notification gracefully if env variables are missing", asyn
       customerName: "Tiny",
       paymentMethod: "cod",
       itemLines: 1,
-      totalQuantity: 2
+      totalQuantity: 2,
+      items: []
     }));
 
     await assert.doesNotReject(sendTelegramPaymentPaidNotification({
@@ -89,7 +90,10 @@ test("Telegram payload does not contain PII", async () => {
       customerName: "Nguyễn Văn A",
       paymentMethod: "bank_transfer",
       itemLines: 1,
-      totalQuantity: 2
+      totalQuantity: 2,
+      items: [
+        { productName: "Milk Cotton", colorCode: "12", quantity: 2 }
+      ]
     });
     
     const parsed = JSON.parse(capturedBody);
@@ -102,6 +106,9 @@ test("Telegram payload does not contain PII", async () => {
     assert.doesNotMatch(parsed.text, /phone/i);
     assert.doesNotMatch(parsed.text, /email/i);
     assert.doesNotMatch(parsed.text, /address/i);
+    assert.match(parsed.text, /Milk Cotton/);
+    assert.match(parsed.text, /Mã màu: 12/);
+    assert.match(parsed.text, /SL: 2/);
   } finally {
     global.fetch = originalFetch;
     process.env.TELEGRAM_BOT_TOKEN = originalToken;

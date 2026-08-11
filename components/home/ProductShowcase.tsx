@@ -37,7 +37,7 @@ const products: ProductCard[] = [
     description:
       "Bảng màu len siêu xinh, chất sợi mềm mịn (Cotton, Wool...). Đủ kim móc và phụ kiện để bạn tự tay làm nên tác phẩm của mình.",
     modalLabel: "Xem bảng màu len →",
-    detailHref: "/san-pham/len-soi",
+    detailHref: "/len-soi",
     detailLabel: "Tìm hiểu thêm về len sợi →"
   },
   {

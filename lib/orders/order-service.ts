@@ -339,3 +339,31 @@ export async function lookupGuestOrder(
     }
   });
 }
+
+export type NotificationItemSnapshot = {
+  productName: string;
+  colorCode: string | null;
+  quantity: number;
+};
+
+export async function getOrderItemsSnapshot(orderCode: string): Promise<NotificationItemSnapshot[]> {
+  const supabase = getSupabaseAdminClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("order_items")
+    .select("product_name_snapshot, color_code_snapshot, quantity, orders!inner(order_code)")
+    .eq("orders.order_code", orderCode)
+    .order("created_at", { ascending: true });
+
+  if (error || !data) {
+    if (error) console.error("Unable to load order items snapshot for notification", { code: error.code });
+    return [];
+  }
+
+  return data.map(item => ({
+    productName: item.product_name_snapshot,
+    colorCode: item.color_code_snapshot,
+    quantity: item.quantity
+  }));
+}

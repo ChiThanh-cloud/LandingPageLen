@@ -15,3 +15,5 @@ out
 manifests/
 ui-ux-pro-max-skill/
 .agents/
+AI_CONTEXT_HANDOFF.md
+task.md

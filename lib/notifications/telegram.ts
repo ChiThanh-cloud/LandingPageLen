@@ -1,4 +1,5 @@
 import "server-only";
+import type { NotificationItemSnapshot } from "@/lib/orders/order-service";
 
 export type NewOrderNotificationArgs = {
   orderCode: string;
@@ -6,6 +7,7 @@ export type NewOrderNotificationArgs = {
   paymentMethod: "cod" | "bank_transfer";
   itemLines: number;
   totalQuantity: number;
+  items: NotificationItemSnapshot[];
 };
 
 async function sendTelegramMessage(text: string) {
@@ -43,10 +45,16 @@ export async function sendTelegramNewOrderNotification({
   customerName,
   paymentMethod,
   itemLines,
-  totalQuantity
+  totalQuantity,
+  items
 }: NewOrderNotificationArgs) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  let text = `🛒 ĐƠN HÀNG MỚI\n\nMã đơn: ${orderCode}\nKhách: ${customerName}\nThanh toán: ${paymentMethod === "cod" ? "COD" : "Chuyển khoản"}\nSản phẩm: ${itemLines} dòng / ${totalQuantity} sản phẩm\n`;
+  let text = `🛒 ĐƠN HÀNG MỚI\n\nMã đơn: ${orderCode}\nKhách: ${customerName}\nThanh toán: ${paymentMethod === "cod" ? "COD" : "Chuyển khoản"}\nSản phẩm: ${itemLines} dòng / ${totalQuantity} sản phẩm\n\n📦 SẢN PHẨM\n`;
+
+  for (const item of items) {
+    const colorCodeText = item.colorCode ? item.colorCode : "Không có";
+    text += `• ${item.productName}\n  Mã màu: ${colorCodeText}\n  SL: ${item.quantity}\n\n`;
+  }
 
   if (appUrl) {
     text += `\nXem đơn:\n${appUrl}/admin/don-hang/${orderCode}`;

@@ -99,7 +99,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
     "heroCta": {
       "primaryLabel": "Nhắn Tiny chọn set",
       "secondaryLabel": "Xem len sợi tại Tiny",
-      "secondaryHref": "/san-pham/len-soi"
+      "secondaryHref": "/len-soi"
     }
   },
   {
