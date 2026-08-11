@@ -6,6 +6,10 @@ const inventory = readFileSync(
   new URL("../../supabase/migrations/20260810055913_inventory_engine.sql", import.meta.url),
   "utf8"
 );
+const paymentCompletion = readFileSync(
+  new URL("../../supabase/migrations/20260811100000_payos_paid_order_status_transition.sql", import.meta.url),
+  "utf8"
+);
 const admin = readFileSync(
   new URL("../../supabase/migrations/20260810055926_admin_security_and_operations.sql", import.meta.url),
   "utf8"
@@ -40,34 +44,42 @@ test("COD order creation never consumes physical stock", () => {
 });
 
 test("first successful PayOS completion decrements managed stock and completes reservations", () => {
-  assert.match(inventory, /v_payment\.status = 'paid'[\s\S]*alreadyPaid'[\s\S]*true/);
-  assert.match(inventory, /'payment_sale'[\s\S]*-v_item\.quantity/);
-  assert.match(inventory, /update public\.product_variants[\s\S]*set stock = v_stock_after/);
-  assert.match(inventory, /reservation_status = 'completed'/);
-  assert.match(inventory, /payment:%s:variant:%s/);
+  assert.match(paymentCompletion, /v_payment\.status = 'paid'[\s\S]*alreadyPaid'[\s\S]*true/);
+  assert.match(paymentCompletion, /'payment_sale'[\s\S]*-v_item\.quantity/);
+  assert.match(paymentCompletion, /update public\.product_variants[\s\S]*set stock = v_stock_after/);
+  assert.match(paymentCompletion, /reservation_status = 'completed'/);
+  assert.match(paymentCompletion, /payment:%s:variant:%s/);
   assert.match(inventory, /reference_key text not null unique/);
 });
 
-test("PayOS retry returns before inventory mutation", () => {
-  const retryStart = inventory.indexOf("if v_payment.status = 'paid'");
-  const retryEnd = inventory.indexOf("perform pv.id", retryStart);
-  const retryBranch = inventory.slice(retryStart, retryEnd);
+test("PayOS retry repairs only pending bank-transfer order status before inventory mutation", () => {
+  const retryStart = paymentCompletion.indexOf("if v_payment.status = 'paid'");
+  const retryEnd = paymentCompletion.indexOf("perform pv.id", retryStart);
+  const retryBranch = paymentCompletion.slice(retryStart, retryEnd);
   assert.match(retryBranch, /alreadyPaid', true/);
   assert.doesNotMatch(retryBranch, /product_variants|inventory_movements|stock_reservations/);
+  assert.match(retryBranch, /v_order\.payment_method = 'bank_transfer'[\s\S]*v_order\.order_status = 'pending_payment'/);
+  assert.match(retryBranch, /payment_status = 'paid',[\s\S]*order_status = case[\s\S]*else order_status/);
+});
+
+test("first PayOS payment moves only pending bank-transfer orders to confirmation", () => {
+  assert.match(paymentCompletion, /o\.order_status,[\s\S]*o\.payment_method,[\s\S]*o\.payment_status/);
+  const firstPaymentUpdate = paymentCompletion.slice(paymentCompletion.lastIndexOf("update public.orders"));
+  assert.match(firstPaymentUpdate, /payment_status = 'paid',[\s\S]*when payment_method = 'bank_transfer'[\s\S]*order_status = 'pending_payment'[\s\S]*then 'pending_confirmation'[\s\S]*else order_status/);
 });
 
 test("expired reservation payment still reconciles when stock is sufficient", () => {
-  const loop = inventory.slice(inventory.indexOf("for v_item in"), inventory.indexOf("update public.payments"));
+  const loop = paymentCompletion.slice(paymentCompletion.indexOf("for v_item in"), paymentCompletion.indexOf("update public.payments"));
   assert.doesNotMatch(loop, /expires_at\s*>/);
   assert.match(loop, /elsif v_stock >= v_item\.quantity/);
   assert.match(loop, /set stock = v_stock_after/);
 });
 
 test("insufficient or unmanaged stock leaves payment paid and flags attention", () => {
-  assert.match(inventory, /if v_stock is null then[\s\S]*v_attention := true/);
-  assert.match(inventory, /else[\s\S]*v_attention := true[\s\S]*reservation_status = 'cancelled'/);
-  assert.match(inventory, /update public\.payments[\s\S]*status = 'paid'/);
-  assert.match(inventory, /update public\.orders[\s\S]*payment_status = 'paid'[\s\S]*inventory_attention_required/);
+  assert.match(paymentCompletion, /if v_stock is null then[\s\S]*v_attention := true/);
+  assert.match(paymentCompletion, /else[\s\S]*v_attention := true[\s\S]*reservation_status = 'cancelled'/);
+  assert.match(paymentCompletion, /update public\.payments[\s\S]*status = 'paid'/);
+  assert.match(paymentCompletion, /update public\.orders[\s\S]*payment_status = 'paid'[\s\S]*inventory_attention_required/);
   assert.match(inventory, /stock_after is null or stock_after >= 0/);
 });
 

@@ -76,7 +76,7 @@ export default async function OrderSuccessPage({
 
         <dl className={styles.details}>
           <div><dt>Mã đơn</dt><dd className={styles.orderCode}>{order.orderCode}</dd></div>
-          <div><dt>Trạng thái</dt><dd>{getOrderStatusLabel(order.orderStatus)}</dd></div>
+          <div><dt>Trạng thái đơn hàng</dt><dd>{getOrderStatusLabel(order.orderStatus)}</dd></div>
           <div><dt>Tạm tính sản phẩm</dt><dd>{formatCurrency(order.subtotal)}</dd></div>
           <div><dt>Phí vận chuyển</dt><dd>{shippingFeeLabel}</dd></div>
           <div><dt>Tổng thanh toán</dt><dd>{totalLabel}</dd></div>

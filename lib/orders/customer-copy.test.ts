@@ -54,6 +54,22 @@ test("success page uses stored shipping and total with historical null fallback"
   assert.doesNotMatch(successPage, /FIXED_SHIPPING_FEE_VND/);
 });
 
+test("customer order pages distinguish order status from payment status", () => {
+  const successPage = readFileSync(
+    new URL("../../app/dat-hang-thanh-cong/[orderCode]/page.tsx", import.meta.url),
+    "utf8"
+  );
+  const lookupPage = readFileSync(
+    new URL("../../app/tra-cuu-don-hang/OrderLookupPage.tsx", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(successPage, /<dt>Trạng thái đơn hàng<\/dt>[\s\S]*getOrderStatusLabel/);
+  assert.match(successPage, /<dt>Trạng thái thanh toán<\/dt>[\s\S]*getPaymentStatusLabel/);
+  assert.match(lookupPage, /Trạng thái đơn hàng/);
+  assert.match(lookupPage, /Trạng thái thanh toán/);
+});
+
 test("customer stock copy uses Tiny wording and shows exact managed stock", () => {
   assert.match(customerSource, /Liên hệ Tiny để xác nhận số lượng lớn/);
   assert.match(customerSource, /Còn hàng: \$\{stock\.toLocaleString\("vi-VN"\)\} cuộn/);
