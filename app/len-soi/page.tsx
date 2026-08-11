@@ -5,14 +5,14 @@ import { siteConfig } from "@/data/site";
 import { getAllYarnProducts } from "@/lib/products/supabase-products";
 
 export const metadata: Metadata = {
-  title: "Cuộn len & Phụ kiện móc | Tiệm Len Nhà Tiny",
+  title: "Len sợi & Phụ kiện móc",
   description:
-    "Cuộn len Milk Cotton, Nhung Gấu, Cotton Việt Nam và phụ kiện móc – từ 18.000đ/cuộn, 24 màu. Xem tồn kho, giá sỉ và đặt hàng online tại Tiệm Len Nhà Tiny TP.HCM.",
+    "Khám phá len sợi và phụ kiện móc đang có tại Tiệm Len Nhà Tiny. Xem màu sắc, giá và tình trạng sản phẩm trước khi đặt hàng.",
   alternates: { canonical: "/len-soi" },
   openGraph: {
-    title: "Cuộn len & Phụ kiện móc – Tiệm Len Nhà Tiny",
+    title: "Len sợi & Phụ kiện móc | Tiệm Len Nhà Tiny",
     description:
-      "Len Milk Cotton, Nhung Gấu, Cotton Việt Nam – 24 màu, từ 18.000đ. Có giá sỉ, xem tồn kho trực tuyến.",
+      "Khám phá len sợi và phụ kiện móc đang có tại Tiệm Len Nhà Tiny. Xem màu sắc, giá và tình trạng sản phẩm trước khi đặt hàng.",
     url: "/len-soi",
     images: ["/images/yarn_collection_800.jpg"]
   }
@@ -28,8 +28,7 @@ export default async function YarnCategoryPage() {
         "@type": "CollectionPage",
         "@id": `${siteConfig.url}/len-soi`,
         name: "Cuộn len & Phụ kiện móc – Tiệm Len Nhà Tiny",
-        description:
-          "Danh mục cuộn len Milk Cotton, Nhung Gấu, Cotton Việt Nam và phụ kiện móc tại Tiệm Len Nhà Tiny TP.HCM."
+        description: "Danh mục len sợi và phụ kiện móc tại Tiệm Len Nhà Tiny."
       },
       {
         "@type": "BreadcrumbList",
