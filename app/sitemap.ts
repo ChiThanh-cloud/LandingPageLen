@@ -2,16 +2,38 @@ import type { MetadataRoute } from "next";
 import { products } from "@/data/products";
 import { siteConfig } from "@/data/site";
 import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
-import { getAllYarnProducts } from "@/lib/products/yarn-products";
+import { getAllYarnProducts } from "@/lib/products/supabase-products";
+import type { YarnProduct } from "@/types/yarn-product";
 
 function absoluteUrl(path: string) {
   if (path.startsWith("http")) return path;
   return `${siteConfig.url}${path}`;
 }
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export function getYarnProductSitemapEntries(
+  yarnProducts: ReadonlyArray<Pick<YarnProduct, "slug" | "updatedAt" | "image">>
+): MetadataRoute.Sitemap {
+  const seenUrls = new Set<string>();
+
+  return yarnProducts.flatMap((product) => {
+    const url = `${siteConfig.url}/len-soi/${product.slug}`;
+    if (seenUrls.has(url)) return [];
+    seenUrls.add(url);
+
+    return [{
+      url,
+      lastModified: product.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
+      images: [absoluteUrl(product.image)]
+    }];
+  });
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseLastModified = siteConfig.updatedAt || "2026-07-12";
   const posts = getAllPostMetadata();
+  const yarnProducts = await getAllYarnProducts();
   const blogLastModified = posts.reduce<string>(
     (latest, post) => (post.updatedAt > latest ? post.updatedAt : latest),
     baseLastModified
@@ -53,13 +75,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       images: [absoluteUrl(post.ogImage || post.image)]
     })),
     { url: `${siteConfig.url}/len-soi`, lastModified: baseLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
-    ...getAllYarnProducts().map((product) => ({
-      url: `${siteConfig.url}/len-soi/${product.slug}`,
-      lastModified: product.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.85,
-      images: [absoluteUrl(product.image)]
-    })),
+    ...getYarnProductSitemapEntries(yarnProducts),
     ...products.map((product) => ({
       url: `${siteConfig.url}/san-pham/${product.slug}`,
       lastModified: product.updatedAt,

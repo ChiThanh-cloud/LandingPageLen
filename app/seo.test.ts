@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getAllYarnProducts } from "../lib/products/supabase-products";
 import robots from "./robots";
-import sitemap from "./sitemap";
+import sitemap, { getYarnProductSitemapEntries } from "./sitemap";
 
 test("SEO routes", async (t) => {
   const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
@@ -26,6 +27,35 @@ test("SEO routes", async (t) => {
 
     assert.deepEqual(new Set(urls), new Set(expectedUrls));
     assert.equal(urls.length, expectedUrls.length);
+  });
+
+  await t.test("sitemap product entries use the storefront catalog source and canonical paths", () => {
+    const source = readFileSync(new URL("./sitemap.ts", import.meta.url), "utf8");
+    assert.match(source, /from "@\/lib\/products\/supabase-products"/);
+    assert.doesNotMatch(source, /from "@\/lib\/products\/yarn-products"/);
+
+    const entries = getYarnProductSitemapEntries([
+      {
+        slug: "catalog-item-a",
+        updatedAt: "2026-08-11T00:00:00.000Z",
+        image: "/images/yarn_collection_800.jpg"
+      },
+      {
+        slug: "catalog-item-a",
+        updatedAt: "2026-08-11T00:00:00.000Z",
+        image: "/images/yarn_collection_800.jpg"
+      },
+      {
+        slug: "catalog-item-b",
+        updatedAt: "2026-08-11T00:00:00.000Z",
+        image: "/images/yarn_collection_800.jpg"
+      }
+    ]);
+
+    assert.deepEqual(entries.map((entry) => entry.url), [
+      `${siteConfig.url}/len-soi/catalog-item-a`,
+      `${siteConfig.url}/len-soi/catalog-item-b`
+    ]);
   });
 
   await t.test("sitemap URLs and images are absolute HTTPS URLs", () => {
