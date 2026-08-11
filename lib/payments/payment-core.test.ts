@@ -7,13 +7,18 @@ import {
   createPayOSPayment,
   PaymentFlowError,
   processPayOSWebhook,
+  TINY_PROVIDER_ORDER_CODE_MINIMUM,
   type PaymentProvider,
   type PaymentRepository,
   type PreparedPaymentRecord,
   type ProviderPayment,
   type VerifiedWebhookPayment
 } from "./payment-core";
-import { createPayOSPaymentRequestSchema } from "./payment-schema";
+import {
+  createPayOSPaymentRequestSchema,
+  getSafeZodIssueDiagnostics,
+  verifiedPayOSWebhookSchema
+} from "./payment-schema";
 
 const prepared: PreparedPaymentRecord = {
   paymentId: "5c72b38e-617e-478e-ab3c-d03e1effa181",
@@ -39,11 +44,13 @@ function createDependencies(options?: {
   prepared?: PreparedPaymentRecord;
   prepareError?: PaymentFlowError;
   verifyError?: PaymentFlowError;
+  verifiedWebhook?: unknown;
   markPaid?: (payment: VerifiedWebhookPayment) => Promise<{ alreadyPaid: boolean }>;
 }) {
   const calls = {
     providerCreate: 0,
     attach: [] as ProviderPayment[],
+    verifiedWebhook: [] as unknown[],
     markedPaid: [] as VerifiedWebhookPayment[]
   };
   const repository: PaymentRepository = {
@@ -65,9 +72,10 @@ function createDependencies(options?: {
       assert.equal(input.amount, prepared.amount);
       return providerPayment;
     },
-    async verify() {
+    async verify(webhook) {
+      calls.verifiedWebhook.push(webhook);
       if (options?.verifyError) throw options.verifyError;
-      return {
+      return options?.verifiedWebhook || {
         orderCode: prepared.providerOrderCode,
         amount: prepared.amount,
         paymentLinkId: providerPayment.paymentLinkId,
@@ -180,7 +188,11 @@ test("invalid webhook signature never reaches the paid update", async () => {
 test("valid webhook forwards trusted provider identifiers to atomic paid update", async () => {
   const deps = createDependencies();
   const result = await processPayOSWebhook({}, deps);
-  assert.equal(result.alreadyPaid, false);
+  assert.deepEqual(result, {
+    kind: "payment",
+    alreadyPaid: false,
+    providerOrderCode: prepared.providerOrderCode
+  });
   assert.deepEqual(deps.calls.markedPaid[0], {
     orderCode: prepared.providerOrderCode,
     amount: prepared.amount,
@@ -206,7 +218,100 @@ test("amount mismatch does not report a paid webhook", async () => {
 test("webhook retry is idempotently acknowledged", async () => {
   const deps = createDependencies({ markPaid: async () => ({ alreadyPaid: true }) });
   const result = await processPayOSWebhook({}, deps);
-  assert.equal(result.alreadyPaid, true);
+  assert.deepEqual(result, {
+    kind: "payment",
+    alreadyPaid: true,
+    providerOrderCode: prepared.providerOrderCode
+  });
+});
+
+test("signed events outside Tiny's provider order namespace are acknowledged without a paid update", async () => {
+  const deps = createDependencies({
+    verifiedWebhook: {
+      orderCode: TINY_PROVIDER_ORDER_CODE_MINIMUM - 1,
+      amount: prepared.amount,
+      paymentLinkId: providerPayment.paymentLinkId,
+      reference: "sample-reference",
+      code: "00"
+    }
+  });
+  const result = await processPayOSWebhook({ sample: true }, deps);
+  assert.deepEqual(result, { kind: "ignored_signed_non_tiny" });
+  assert.equal(deps.calls.markedPaid.length, 0);
+});
+
+test("the original webhook object, including extra signed fields, reaches the provider unchanged", async () => {
+  const rawWebhook = {
+    code: "00",
+    data: {
+      orderCode: prepared.providerOrderCode,
+      extraSignedField: "preserve-me"
+    },
+    signature: "opaque-signature"
+  };
+  const deps = createDependencies();
+  await processPayOSWebhook(rawWebhook, deps);
+  assert.equal(deps.calls.verifiedWebhook[0], rawWebhook);
+});
+
+test("malformed verified provider output is rejected before any paid update", async () => {
+  const deps = createDependencies({
+    verifiedWebhook: {
+      orderCode: "not-a-number",
+      amount: prepared.amount,
+      paymentLinkId: providerPayment.paymentLinkId,
+      reference: "reference",
+      code: "00"
+    }
+  });
+  await assert.rejects(
+    processPayOSWebhook({}, deps),
+    (error: unknown) => error instanceof PaymentFlowError
+      && error.code === "PAYMENT_VERIFIED_PAYLOAD_INVALID"
+      && error.status === 400
+  );
+  assert.equal(deps.calls.markedPaid.length, 0);
+});
+
+test("unknown provider order codes in Tiny's namespace remain retryable", async () => {
+  const deps = createDependencies({
+    markPaid: async () => {
+      throw new PaymentFlowError("PAYMENT_NOT_FOUND", 503, "missing payment");
+    }
+  });
+  await assert.rejects(
+    processPayOSWebhook({}, deps),
+    (error: unknown) => error instanceof PaymentFlowError
+      && error.code === "PAYMENT_NOT_FOUND"
+      && error.status === 503
+  );
+});
+
+test("paymentLinkId mismatch does not report a paid webhook", async () => {
+  const deps = createDependencies({
+    markPaid: async () => {
+      throw new PaymentFlowError("PAYMENT_AMOUNT_MISMATCH", 409, "link mismatch");
+    }
+  });
+  await assert.rejects(
+    processPayOSWebhook({}, deps),
+    (error: unknown) => error instanceof PaymentFlowError && error.status === 409
+  );
+});
+
+test("safe Zod diagnostics never include webhook values", () => {
+  const parsed = verifiedPayOSWebhookSchema.safeParse({
+    orderCode: "secret-order-code",
+    amount: prepared.amount,
+    paymentLinkId: "sensitive-payment-link",
+    reference: "sensitive-reference",
+    code: "00"
+  });
+  assert.equal(parsed.success, false);
+  if (!parsed.success) {
+    const diagnostics = JSON.stringify(getSafeZodIssueDiagnostics(parsed.error));
+    assert.doesNotMatch(diagnostics, /secret-order-code|sensitive-payment-link|sensitive-reference/);
+  }
 });
 
 test("payment return and cancel URLs only navigate to the Tiny order page", () => {

@@ -78,6 +78,13 @@ function mapDatabasePaymentError(message: string) {
       "Đơn hàng đã được thanh toán."
     );
   }
+  if (message.includes("PAYMENT_NOT_FOUND")) {
+    return new PaymentFlowError(
+      "PAYMENT_NOT_FOUND",
+      503,
+      "Chưa thể xác nhận thanh toán. Vui lòng thử lại sau."
+    );
+  }
   if (message.includes("PAYMENT_AMOUNT_MISMATCH") || message.includes("PAYMENT_RESPONSE_MISMATCH")) {
     return new PaymentFlowError(
       "PAYMENT_AMOUNT_MISMATCH",
@@ -86,9 +93,9 @@ function mapDatabasePaymentError(message: string) {
     );
   }
   return new PaymentFlowError(
-    "PAYMENT_NOT_AVAILABLE",
-    409,
-    "Đơn hàng chưa thể thanh toán trực tuyến lúc này."
+    "PAYMENT_SERVICE_UNAVAILABLE",
+    503,
+    "Thanh toán trực tuyến chưa sẵn sàng. Vui lòng thử lại sau."
   );
 }
 
@@ -314,4 +321,3 @@ export async function getPayOSNotificationContext(providerOrderCode: number) {
     amount: data.amount
   };
 }
-

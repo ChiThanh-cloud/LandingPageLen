@@ -17,24 +17,24 @@ export const createPayOSPaymentRequestSchema = z.object({
 
 export type CreatePayOSPaymentRequest = z.infer<typeof createPayOSPaymentRequestSchema>;
 
-export const payOSWebhookSchema = z.object({
-  code: z.string(),
-  desc: z.string(),
-  success: z.boolean(),
-  signature: z.string().min(1),
-  data: z.object({
-    orderCode: z.number().int().positive(),
-    amount: z.number().int().positive(),
-    description: z.string(),
-    accountNumber: z.string(),
-    reference: z.string(),
-    transactionDateTime: z.string(),
-    currency: z.string(),
-    paymentLinkId: z.string(),
-    code: z.string(),
-    desc: z.string()
-  }).passthrough()
-}).passthrough();
+// This schema is intentionally applied only after payOS verifies the original
+// webhook body. Reconstructing or validating the provider envelope first could
+// reject a valid signed payload or omit fields that participate in its signature.
+export const verifiedPayOSWebhookSchema = z.object({
+  orderCode: z.number().int().positive().safe(),
+  amount: z.number().int().positive(),
+  paymentLinkId: z.string().min(1),
+  reference: z.string(),
+  code: z.string()
+});
+
+export function getSafeZodIssueDiagnostics(error: z.ZodError) {
+  return error.issues.map((issue) => ({
+    path: issue.path.join("."),
+    code: issue.code,
+    expected: "expected" in issue ? issue.expected : undefined
+  }));
+}
 
 export const preparedPaymentSchema = z.object({
   paymentId: z.string().uuid(),
@@ -48,4 +48,3 @@ export const preparedPaymentSchema = z.object({
 });
 
 export type PreparedPayment = z.infer<typeof preparedPaymentSchema>;
-
