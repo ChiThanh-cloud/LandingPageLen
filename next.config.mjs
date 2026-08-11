@@ -8,6 +8,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/len-soi/milk-bo-40",
+        destination: "/len-soi/milk-bo",
+        statusCode: 301
+      },
+      {
+        source: "/len-soi/mac-den-39",
+        destination: "/len-soi/mac-den",
+        statusCode: 301
+      },
+      {
         source: "/index.html",
         destination: "/",
         statusCode: 301
