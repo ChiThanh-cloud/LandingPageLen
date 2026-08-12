@@ -7,12 +7,12 @@ import { getAllYarnProducts } from "@/lib/products/supabase-products";
 export const metadata: Metadata = {
   title: "Len sợi & Phụ kiện móc",
   description:
-    "Khám phá len sợi và phụ kiện móc đang có tại Tiệm Len Nhà Tiny. Xem màu sắc, giá và tình trạng sản phẩm trước khi đặt hàng.",
+    "Mua len sợi từ 7.000đ – nhiều dòng len, giá rẻ. Xem giá và đặt hàng online giao toàn quốc tại Tiệm Len Nhà Tiny.",
   alternates: { canonical: "/len-soi" },
   openGraph: {
     title: "Len sợi & Phụ kiện móc | Tiệm Len Nhà Tiny",
     description:
-      "Khám phá len sợi và phụ kiện móc đang có tại Tiệm Len Nhà Tiny. Xem màu sắc, giá và tình trạng sản phẩm trước khi đặt hàng.",
+      "Mua len sợi từ 7.000đ – nhiều dòng len, giá rẻ. Xem giá và đặt hàng online giao toàn quốc tại Tiệm Len Nhà Tiny.",
     url: "/len-soi",
     images: ["/images/yarn_collection_800.jpg"]
   }
@@ -50,9 +50,9 @@ export default async function YarnCategoryPage() {
         <div>
           <p className="yc-eyebrow">Cuộn len & Phụ kiện móc</p>
           <h1>
-            Cuộn len chất lượng —<br />chọn màu, chọn đúng sợi
+            Len sợi từ 7.000đ – nhiều màu, dễ chọn
           </h1>
-          <p>Mỗi dòng len có thông số, bảng màu, tồn kho và giá theo số lượng rõ ràng.</p>
+          <p>Nhiều dòng len, nhiều mẫu và mức giá dễ tiếp cận. Xem giá và đặt hàng online giao toàn quốc tại Tiệm Len Nhà Tiny.</p>
         </div>
         <Image
           src="/images/yarn_hero_800.jpg"

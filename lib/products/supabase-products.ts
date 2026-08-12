@@ -154,9 +154,34 @@ async function loadSupabaseYarnProducts(): Promise<YarnProduct[] | null> {
     .filter((product): product is YarnProduct => product !== null);
 }
 
+/**
+ * Single source of truth for the production fallback policy.
+ * Exported so tests can import and exercise the SAME logic used at runtime.
+ *
+ * Rules:
+ * - production + null  → throws (never serve stale data)
+ * - dev/test   + null  → staticYarnProducts (allows local dev without DB)
+ * - []                 → [] (empty catalog is a valid DB result, not a failure)
+ * - valid data         → returned unchanged
+ */
+export function applyYarnFallbackGuard(products: YarnProduct[] | null): YarnProduct[] {
+  if (products === null) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "[supabase-products] Unable to load yarn products from database. " +
+        "Refusing to serve stale static data on production."
+      );
+    }
+    // development / test: allow static fallback so local dev and unit tests
+    // work without a live Supabase connection.
+    return staticYarnProducts;
+  }
+  return products;
+}
+
 export const getAllYarnProducts = cache(async (): Promise<YarnProduct[]> => {
   const products = await loadSupabaseYarnProducts();
-  return products === null ? staticYarnProducts : products;
+  return applyYarnFallbackGuard(products);
 });
 
 export async function getYarnProductBySlug(slug: string) {
