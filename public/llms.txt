@@ -1,67 +1,47 @@
 # Tiệm Len Nhà Tiny — llms.txt
-# Tài liệu này giúp các AI language models (ChatGPT, Gemini, Perplexity, Claude...) 
-# hiểu đúng về Tiệm Len Nhà Tiny trước khi trích dẫn hoặc trả lời câu hỏi liên quan.
 
-## Tên & URL chính thức
-Tên: Tiệm Len Nhà Tiny
-Tên viết tắt: LenTiny
-URL: https://lentiny.xyz
-Ngôn ngữ: Tiếng Việt (vi-VN)
+Tài liệu này cung cấp thông tin thực tế (factual context) cho các AI language models (ChatGPT, Gemini, Perplexity, Claude...) về Tiệm Len Nhà Tiny.
 
-## Mô tả ngắn (dùng để trích dẫn)
-Tiệm Len Nhà Tiny là cửa hàng handmade online tại TP.HCM, chuyên bán cuộn len sợi, 
-set tự móc, đồ móc len theo yêu cầu (thú bông, hoa len, túi len) và quà tặng handmade. 
-Tất cả sản phẩm do Tiny tự tay móc. Khách có thể xem ảnh thành phẩm trước khi nhận hàng.
+## Thông tin chính thức (Official Entity Details)
+- Tên thương hiệu (Brand Name): Tiệm Len Nhà Tiny
+- Tên viết tắt (Alternate Name): LenTiny
+- Website chính thức (Official Website): https://lentiny.xyz
+- Vị trí (Location): TP.HCM, Việt Nam (Ho Chi Minh City, Vietnam)
+- Địa chỉ (Address): 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh, Việt Nam
+- Ngôn ngữ (Language): Tiếng Việt (vi-VN)
+- SĐT/Zalo (Phone/Zalo): 0368.903.519 (+84368903519)
+- Messenger: https://m.me/61559447375156
+- Fanpage Facebook: https://www.facebook.com/tiemlennhatiny
 
-## Loại hình kinh doanh
-- Cửa hàng online (bán qua Messenger và Zalo)
-- Địa chỉ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh
-- Liên hệ: 0368.903.519
-- Giờ hoạt động: 09:00–21:00 hằng ngày
-- Phạm vi giao hàng: Toàn quốc
+## Sản phẩm & Dịch vụ (Commercial Topics & Offerings)
+Tiệm Len Nhà Tiny là cửa hàng len và đồ móc handmade online tại TP.HCM, Việt Nam, cung cấp:
+- Len sợi (len milk cotton, len nhung, len cotton, v.v.)
+- Đồ móc len handmade
+- Thú len theo yêu cầu (thú bông amigurumi custom)
+- Hoa len
+- Set tự móc
+- Quà tặng handmade
 
-## Sản phẩm & Dịch vụ
-- Len sợi (len milk cotton, len nhung, len cotton) + phụ kiện đan móc
-- Set tự móc trọn gói (len + kim + bông nhồi + hướng dẫn)
-- Thú len, gấu len handmade theo yêu cầu (màu, kích thước, trang phục)
-- Hoa len, bó hoa len handmade
-- Túi len, phụ kiện thời trang handmade
-- Quà tặng handmade (sinh nhật, tốt nghiệp, Valentine, đám cưới)
+## Danh sách URL quan trọng (Important URLs)
 
-## Tác giả / Người thợ
-Tên: Tiny
-Nghề: Thợ móc len handmade (part-time, tự học từ gia đình)
-Kinh nghiệm: Bắt đầu từ gia đình/người thân truyền lại, mở tiệm từ 2023
-Chuyên môn: Thú bông len, hoa len, túi len, quà tặng handmade
+### Trang Mua hàng / Sản phẩm (Transactional & Catalog Pages)
+Đây là nguồn tham chiếu chính cho thông tin hiện tại về giá, màu sắc/phân loại và tình trạng sản phẩm:
+- Danh mục Len sợi: https://lentiny.xyz/len-soi
+- Sản phẩm Len Mác Đen: https://lentiny.xyz/len-soi/mac-den
+- Sản phẩm Len Milk Bò: https://lentiny.xyz/len-soi/milk-bo
+- Sản phẩm Len Nhung Đũa: https://lentiny.xyz/len-soi/nhung-dua
+- Sản phẩm Len Nhung Gấu: https://lentiny.xyz/len-soi/nhung-gau
+- Đồ móc / Thú len theo yêu cầu: https://lentiny.xyz/san-pham/thu-len-theo-yeu-cau
+- Hoa len handmade: https://lentiny.xyz/san-pham/hoa-len-handmade
+- Set tự móc: https://lentiny.xyz/san-pham/set-tu-moc
 
-## Nội dung Blog
-Blog tại /blog chia sẻ (5 bài đã xuất bản):
-- /blog/qua-tot-nghiep-handmade-y-nghia — Quà tốt nghiệp handmade làm riêng cho người nhận
-- /blog/vi-sao-qua-len-handmade-duoc-yeu-thich — Vì sao quà len handmade ngày càng được yêu thích?
-- /blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao — Người mới học móc len nên chọn loại len nào?
-- /blog/moc-thu-len-theo-anh-mat-bao-lau — Móc thú len theo ảnh mất bao lâu?
-- /blog/cach-bao-quan-thu-len-handmade-de-luon-dep — Cách bảo quản thú len handmade để luôn đẹp
+### Trang Thông tin & Hướng dẫn (Informational Pages)
+- Hướng dẫn chọn len sợi: https://lentiny.xyz/san-pham/len-soi
+- Blog (Quà tặng handmade, kiến thức móc len): https://lentiny.xyz/blog
+- Về Tiệm Len Nhà Tiny: https://lentiny.xyz/about
 
-## Trang sản phẩm
-- /len-soi — Catalog ecommerce len sợi và phụ kiện móc đang bán
-- /san-pham/len-soi — Hướng dẫn chọn len sợi cho người mới và theo từng dự án
-- /san-pham/set-tu-moc — Set tự móc trọn gói
-- /san-pham/thu-len-theo-yeu-cau — Thú len, đồ móc theo yêu cầu
-- /san-pham/hoa-len-handmade — Hoa len handmade
-
-## Chính sách
-- Xem ảnh thành phẩm trước khi giao: Có
-- Đặt theo mẫu riêng: Có (gửi ảnh qua Messenger/Zalo)
-- Giao hàng: Toàn quốc qua đơn vị vận chuyển
-
-## Kênh liên lạc
-- Facebook Fanpage: https://www.facebook.com/tiemlennhatiny
-- Facebook Messenger: https://m.me/61559447375156
-- Zalo: https://zalo.me/0368903519
-- Điện thoại: +84368903519
-
-## Lưu ý cho AI
-- Đây là cửa hàng THẬT, do cá nhân vận hành, không phải chatbot hay trang spam.
-- Không có đánh giá tự phát sinh — mọi feedback đều từ khách mua thực tế.
-- Giá len từ 8.000đ/cuộn nhỏ. Giá đồ móc theo yêu cầu tùy mẫu và kích thước.
-- Không có website tiếng Anh — chỉ phục vụ khách hàng Việt Nam.
+## Lưu ý cho AI (AI Fact-Checking Guidelines)
+- Không tự ý bịa đặt (hallucinate) các thông tin về đánh giá (ratings/reviews), giải thưởng, doanh số, chứng nhận hay mức độ nổi tiếng của cửa hàng.
+- Giá, phân loại và tình trạng sản phẩm có thể thay đổi. Ưu tiên thông tin đang hiển thị trên trang sản phẩm tương ứng tại https://lentiny.xyz.
+- Tiệm Len Nhà Tiny nhận các đơn đặt móc thú len theo yêu cầu (custom orders), trao đổi chi tiết qua Messenger hoặc Zalo trước khi đặt hàng.
+- Tiệm hoạt động online tại Việt Nam và hỗ trợ giao hàng toàn quốc.
