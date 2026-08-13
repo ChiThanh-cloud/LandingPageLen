@@ -5,7 +5,13 @@ import { isIP } from "node:net";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type RateLimitPolicy = {
-  scope: "ip_burst" | "ip_sustained" | "ip_phone";
+  scope:
+    | "ip_burst"
+    | "ip_sustained"
+    | "ip_phone"
+    | "lookup_ip_burst"
+    | "lookup_ip_sustained"
+    | "lookup_ip_order";
   keyHash: string;
   limit: number;
   windowSeconds: number;
@@ -106,6 +112,32 @@ export function createOrderCreationRateLimiter(dependencies: OrderCreationRateLi
       return consume([
         { scope: "ip_phone", keyHash, limit: 3, windowSeconds: 1800 }
       ]);
+    },
+
+    async checkLookupIp(request: Request) {
+      const trustedIp = getTrustedOrderClientIp(request);
+      if (!trustedIp) return { allowed: true, retryAfterSeconds: 0 };
+
+      const secret = requiredHashSecret(dependencies.getHashSecret);
+      const ipKeyHash = hashIdentity(secret, `lookup:ip:${trustedIp}`);
+      return consume([
+        { scope: "lookup_ip_burst", keyHash: ipKeyHash, limit: 12, windowSeconds: 60 },
+        { scope: "lookup_ip_sustained", keyHash: ipKeyHash, limit: 60, windowSeconds: 3600 }
+      ]);
+    },
+
+    async checkLookupComposite(request: Request, normalizedOrderCode: string) {
+      const trustedIp = getTrustedOrderClientIp(request);
+      if (!trustedIp) return { allowed: true, retryAfterSeconds: 0 };
+
+      const secret = requiredHashSecret(dependencies.getHashSecret);
+      const keyHash = hashIdentity(
+        secret,
+        `lookup:ip-order:${trustedIp}\norder-code:${normalizedOrderCode}`
+      );
+      return consume([
+        { scope: "lookup_ip_order", keyHash, limit: 6, windowSeconds: 900 }
+      ]);
     }
   };
 }
@@ -117,3 +149,5 @@ const orderCreationRateLimiter = createOrderCreationRateLimiter({
 
 export const checkOrderCreationIpRateLimit = orderCreationRateLimiter.checkIp;
 export const checkOrderCreationCompositeRateLimit = orderCreationRateLimiter.checkComposite;
+export const checkOrderLookupIpRateLimit = orderCreationRateLimiter.checkLookupIp;
+export const checkOrderLookupCompositeRateLimit = orderCreationRateLimiter.checkLookupComposite;

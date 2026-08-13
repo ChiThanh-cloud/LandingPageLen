@@ -5,7 +5,13 @@ import { createOrderPostHandler } from "./route";
 
 type StoredWindow = { startedAt: number; count: number };
 type PolicyEntry = {
-  scope: "ip_burst" | "ip_sustained" | "ip_phone";
+  scope:
+    | "ip_burst"
+    | "ip_sustained"
+    | "ip_phone"
+    | "lookup_ip_burst"
+    | "lookup_ip_sustained"
+    | "lookup_ip_order";
   keyHash: string;
   limit: number;
   windowSeconds: number;

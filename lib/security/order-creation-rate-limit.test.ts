@@ -11,6 +11,10 @@ const migration = readFileSync(
   new URL("../../supabase/migrations/20260813110000_order_creation_rate_limit.sql", import.meta.url),
   "utf8"
 );
+const lookupMigration = readFileSync(
+  new URL("../../supabase/migrations/20260813120000_order_lookup_rate_limit_scopes.sql", import.meta.url),
+  "utf8"
+);
 
 test("trusted order IP extraction uses only Vercel metadata and skips limiting when it is unavailable", () => {
   assert.equal(getTrustedOrderClientIp(new Request("https://lentiny.xyz/api/orders", {
@@ -41,8 +45,12 @@ test("production limiter sends exact approved policies with opaque HMAC keys", a
 
   await limiter.checkIp(request);
   await limiter.checkComposite(request, "0901234567");
+  await limiter.checkLookupIp(request);
+  await limiter.checkLookupComposite(request, "TINY-ABCDEF123456");
 
   assert.deepEqual(calls.map((call) => call.name), [
+    "check_order_creation_rate_limits",
+    "check_order_creation_rate_limits",
     "check_order_creation_rate_limits",
     "check_order_creation_rate_limits"
   ]);
@@ -61,9 +69,24 @@ test("production limiter sends exact approved policies with opaque HMAC keys", a
   })), [
     { scope: "ip_phone", limit: 3, windowSeconds: 1800 }
   ]);
+  assert.deepEqual(calls[2].entries.map((entry) => ({
+    scope: entry.scope,
+    limit: entry.limit,
+    windowSeconds: entry.windowSeconds
+  })), [
+    { scope: "lookup_ip_burst", limit: 12, windowSeconds: 60 },
+    { scope: "lookup_ip_sustained", limit: 60, windowSeconds: 3600 }
+  ]);
+  assert.deepEqual(calls[3].entries.map((entry) => ({
+    scope: entry.scope,
+    limit: entry.limit,
+    windowSeconds: entry.windowSeconds
+  })), [
+    { scope: "lookup_ip_order", limit: 6, windowSeconds: 900 }
+  ]);
 
   const serialized = JSON.stringify(calls);
-  assert.doesNotMatch(serialized, /203\.0\.113\.10|0901234567|unit-test-secret/);
+  assert.doesNotMatch(serialized, /203\.0\.113\.10|0901234567|TINY-ABCDEF123456|unit-test-secret/);
   for (const call of calls) {
     for (const entry of call.entries) assert.match(String(entry.keyHash), /^[0-9a-f]{64}$/);
   }
@@ -115,6 +138,11 @@ test("missing trusted IP does not invoke a shared limiter bucket", async () => {
     await limiter.checkComposite(request, "0901234567"),
     { allowed: true, retryAfterSeconds: 0 }
   );
+  assert.deepEqual(await limiter.checkLookupIp(request), { allowed: true, retryAfterSeconds: 0 });
+  assert.deepEqual(
+    await limiter.checkLookupComposite(request, "TINY-ABCDEF123456"),
+    { allowed: true, retryAfterSeconds: 0 }
+  );
   assert.equal(calls, 0);
 });
 
@@ -131,4 +159,18 @@ test("Postgres limiter is atomic, private, bounded, and derives retry timing fro
 
   const tableDefinition = migration.match(/create table[\s\S]*?\n\);/)?.[0] || "";
   assert.doesNotMatch(tableDefinition, /customer|address|request_body|phone\s+text|ip\s+inet/i);
+});
+
+test("lookup migration extends only allowed scopes and preserves the private atomic limiter contract", () => {
+  assert.match(lookupMigration, /drop constraint if exists order_creation_rate_limits_scope_valid/i);
+  assert.match(lookupMigration, /lookup_ip_burst[\s\S]*lookup_ip_sustained[\s\S]*lookup_ip_order/i);
+  assert.match(lookupMigration, /on conflict \(scope, key_hash\) do update/i);
+  assert.match(lookupMigration, /security definer/i);
+  assert.match(lookupMigration, /set search_path = ''/i);
+  assert.match(lookupMigration, /revoke all on table private\.order_creation_rate_limits from public, anon, authenticated/i);
+  assert.match(lookupMigration, /revoke all on function public\.check_order_creation_rate_limits\(jsonb\)[\s\S]*from public, anon, authenticated/i);
+  assert.match(lookupMigration, /grant execute on function public\.check_order_creation_rate_limits\(jsonb\)[\s\S]*to service_role/i);
+  assert.match(lookupMigration, /extract\(epoch from/i);
+  assert.doesNotMatch(lookupMigration, /pg_catalog\.extract/i);
+  assert.doesNotMatch(lookupMigration, /phone\s+(?:text|varchar)|ip\s+(?:inet|text)|order_code\s+text/i);
 });
