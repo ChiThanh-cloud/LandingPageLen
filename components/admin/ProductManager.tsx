@@ -40,9 +40,18 @@ type VariantRecord = {
   sort_order: number | null;
 };
 
-type CloudinaryConfig = { cloudName: string; uploadPreset: string; folder: string };
-const defaultCloudinary: CloudinaryConfig = { cloudName: "djn2kd2hh", uploadPreset: "", folder: "tiny-products" };
-const cloudinaryKey = "tiny_admin_cloudinary_config";
+type SignedUploadResponse = {
+  uploadUrl: string;
+  apiKey: string;
+  timestamp: number;
+  signature: string;
+  folder: string;
+  allowedFormats: string;
+  overwrite: boolean;
+};
+
+const allowedImageMimeTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+const maxImageFileSize = 10 * 1024 * 1024;
 
 const categoryLabels: Record<string, string> = {
   handmade: "Đồ móc",
@@ -63,13 +72,26 @@ function formatPrice(value: ProductRecord["price"]) {
   return `${Number(value).toLocaleString("vi-VN")}đ`;
 }
 
-function readCloudinaryConfig(): CloudinaryConfig {
-  if (typeof window === "undefined") return defaultCloudinary;
-  try {
-    return { ...defaultCloudinary, ...JSON.parse(localStorage.getItem(cloudinaryKey) || "{}") };
-  } catch {
-    return defaultCloudinary;
+function getFileValidationMessage(file: File) {
+  if (!file.type || !allowedImageMimeTypes.has(file.type)) {
+    return "Chỉ hỗ trợ ảnh JPG, PNG, WebP hoặc AVIF.";
   }
+  if (file.size > maxImageFileSize) {
+    return "Ảnh cần nhỏ hơn hoặc bằng 10 MB.";
+  }
+  return null;
+}
+
+function isSignedUploadResponse(value: unknown): value is SignedUploadResponse {
+  if (!value || typeof value !== "object") return false;
+  const response = value as Record<string, unknown>;
+  return typeof response.uploadUrl === "string"
+    && typeof response.apiKey === "string"
+    && typeof response.timestamp === "number"
+    && typeof response.signature === "string"
+    && typeof response.folder === "string"
+    && typeof response.allowedFormats === "string"
+    && response.overwrite === false;
 }
 
 function parseCsv(text: string) {
@@ -113,7 +135,6 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   const [message, setMessage] = useState<ProductAdminActionResult | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [importText, setImportText] = useState("");
-  const [cloudinary, setCloudinary] = useState<CloudinaryConfig>(defaultCloudinary);
   const [uploading, setUploading] = useState<string | null>(null);
   const [productImageUrl, setProductImageUrl] = useState("");
   const [variantImageUrl, setVariantImageUrl] = useState("");
@@ -159,34 +180,42 @@ export function ProductManager({ products, variants }: { products: ProductRecord
     requestAnimationFrame(() => variantFormRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
   }
 
-  function loadCloudinary() {
-    setCloudinary(readCloudinaryConfig());
-  }
-
-  function saveCloudinary() {
-    localStorage.setItem(cloudinaryKey, JSON.stringify(cloudinary));
-    setMessage({ ok: true, message: "Đã lưu cấu hình Cloudinary trên trình duyệt này." });
-  }
-
   async function uploadImage(file: File | undefined, target: "product" | "variant") {
-    const config = readCloudinaryConfig();
-    setCloudinary(config);
     if (!file) return setMessage({ ok: false, message: "Hãy chọn một file ảnh." });
-    if (!config.cloudName || !config.uploadPreset) {
-      return setMessage({ ok: false, message: "Hãy lưu Cloud name và unsigned upload preset trước." });
-    }
+    const validationMessage = getFileValidationMessage(file);
+    if (validationMessage) return setMessage({ ok: false, message: validationMessage });
+
     setUploading(target);
     setMessage(null);
-    const data = new FormData();
-    data.append("file", file);
-    data.append("upload_preset", config.uploadPreset);
-    if (config.folder) data.append("folder", target === "variant" ? `${config.folder}/variants` : config.folder);
     try {
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${encodeURIComponent(config.cloudName)}/image/upload`, { method: "POST", body: data });
-      const result = await response.json();
-      if (!response.ok || !result.secure_url) throw new Error(result.error?.message || "Upload thất bại.");
-      if (target === "product") setProductImageUrl(result.secure_url);
-      else setVariantImageUrl(result.secure_url);
+      const signResponse = await fetch("/api/admin/cloudinary/sign-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target })
+      });
+      const signedPayload: unknown = await signResponse.json().catch(() => null);
+      if (!signResponse.ok || !isSignedUploadResponse(signedPayload)) {
+        throw new Error("Không thể tạo quyền upload ảnh. Vui lòng đăng nhập lại hoặc thử lại sau.");
+      }
+
+      const signed = signedPayload;
+      const data = new FormData();
+      data.append("file", file);
+      data.append("api_key", signed.apiKey);
+      data.append("timestamp", String(signed.timestamp));
+      data.append("signature", signed.signature);
+      data.append("folder", signed.folder);
+      data.append("allowed_formats", signed.allowedFormats);
+      data.append("overwrite", String(signed.overwrite));
+
+      const response = await fetch(signed.uploadUrl, { method: "POST", body: data });
+      const result: unknown = await response.json().catch(() => null);
+      if (!response.ok || !result || typeof result !== "object" || typeof (result as { secure_url?: unknown }).secure_url !== "string") {
+        throw new Error("Upload ảnh thất bại. Vui lòng thử lại.");
+      }
+      const secureUrl = (result as { secure_url: string }).secure_url;
+      if (target === "product") setProductImageUrl(secureUrl);
+      else setVariantImageUrl(secureUrl);
       setMessage({ ok: true, message: "Đã upload ảnh. Hãy bấm lưu để cập nhật dữ liệu sản phẩm." });
     } catch (error) {
       setMessage({ ok: false, message: error instanceof Error ? error.message : "Upload ảnh thất bại." });
@@ -205,17 +234,6 @@ export function ProductManager({ products, variants }: { products: ProductRecord
         </select>
         <button type="button" onClick={() => chooseProduct(null)}>Sản phẩm mới</button>
       </section>
-
-      <details className={styles.cloudinaryPanel} onToggle={(event) => event.currentTarget.open && loadCloudinary()}>
-        <summary>Cấu hình upload Cloudinary</summary>
-        <p>Preset chỉ được lưu trên trình duyệt của máy này.</p>
-        <div className={styles.formGridThree}>
-          <label>Cloud name<input value={cloudinary.cloudName} onChange={(event) => setCloudinary({ ...cloudinary, cloudName: event.target.value })} /></label>
-          <label>Unsigned upload preset<input value={cloudinary.uploadPreset} onChange={(event) => setCloudinary({ ...cloudinary, uploadPreset: event.target.value })} /></label>
-          <label>Folder<input value={cloudinary.folder} onChange={(event) => setCloudinary({ ...cloudinary, folder: event.target.value })} /></label>
-        </div>
-        <button type="button" onClick={saveCloudinary}>Lưu cấu hình</button>
-      </details>
 
       {message?.message ? <p className={message.ok ? styles.success : styles.error} role="status">{message.message}</p> : null}
 

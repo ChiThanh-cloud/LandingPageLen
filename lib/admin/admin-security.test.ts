@@ -7,6 +7,7 @@ const protectedLayout = read("../../app/admin/(protected)/layout.tsx");
 const auth = read("./auth.ts");
 const actions = read("../../app/admin/(protected)/actions.ts");
 const productActions = read("../../app/admin/(protected)/san-pham/actions.ts");
+const cloudinarySignRoute = read("../../app/api/admin/cloudinary/sign-upload/route.ts");
 const service = read("./admin-service.ts");
 const migration = read("../../supabase/migrations/20260810055926_admin_security_and_operations.sql");
 const shell = read("../../components/layout/StorefrontShell.tsx");
@@ -23,6 +24,13 @@ test("admin mutations reverify authorization and keep the service role server-on
   assert.match(productActions, /await requireAdminPage\(\)/);
   assert.match(productActions, /getSupabaseAdminClient/);
   assert.doesNotMatch(productActions, /NEXT_PUBLIC_SUPABASE|createBrowserClient|localStorage/);
+});
+
+test("Cloudinary upload signatures are issued only after the shared active-admin verification", () => {
+  assert.match(cloudinarySignRoute, /getVerifiedAdmin/);
+  assert.match(cloudinarySignRoute, /if \(!admin\)[\s\S]*status: 401/);
+  assert.match(cloudinarySignRoute, /createAdminSignedUpload/);
+  assert.match(cloudinarySignRoute, /Cache-Control": "no-store/);
 });
 
 test("admin product save keeps both price columns synchronized and revalidates storefront routes", () => {

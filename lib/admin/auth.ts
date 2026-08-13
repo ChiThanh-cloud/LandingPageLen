@@ -10,9 +10,10 @@ export type VerifiedAdmin = {
   email: string;
 };
 
-export const getVerifiedAdmin = cache(async function getVerifiedAdmin(): Promise<VerifiedAdmin | null> {
-  const sessionClient = await createSupabaseServerClient();
-  const adminClient = getSupabaseAdminClient();
+export async function getVerifiedAdminFromClients(
+  sessionClient: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  adminClient: ReturnType<typeof getSupabaseAdminClient>
+): Promise<VerifiedAdmin | null> {
   if (!sessionClient || !adminClient) return null;
 
   const { data, error } = await sessionClient.auth.getClaims();
@@ -30,6 +31,12 @@ export const getVerifiedAdmin = cache(async function getVerifiedAdmin(): Promise
 
   if (allowlistError || !allowlist) return null;
   return { id: userId, email: data.claims.email || "Admin Tiny" };
+}
+
+export const getVerifiedAdmin = cache(async function getVerifiedAdmin(): Promise<VerifiedAdmin | null> {
+  const sessionClient = await createSupabaseServerClient();
+  const adminClient = getSupabaseAdminClient();
+  return getVerifiedAdminFromClients(sessionClient, adminClient);
 });
 
 export async function requireAdminPage() {
@@ -44,4 +51,3 @@ export async function signOutAdmin() {
   if (client) await client.auth.signOut();
   redirect("/admin/login");
 }
-

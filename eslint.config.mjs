@@ -30,7 +30,6 @@ export default defineConfig([
     "admin.js",
     "admin.html",
     "blog.html",
-    "chart-admin.html",
     "index.html",
     "product-color-extractor.html",
     "check_images.js",

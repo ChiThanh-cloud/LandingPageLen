@@ -410,7 +410,6 @@
 .productListPanel,
 .editorPanel,
 .variantSection,
-.cloudinaryPanel,
 .importPanel {
   border: 1px solid var(--admin-border);
   background: var(--admin-surface);
@@ -636,7 +635,6 @@
 
 .filters label,
 .loginForm label,
-.cloudinaryPanel label,
 .adminForm label,
 .confirmBox label {
   display: grid;
@@ -660,8 +658,6 @@
 .productToolbar input,
 .productToolbar select,
 .productToolbar button,
-.cloudinaryPanel input,
-.cloudinaryPanel button,
 .adminForm input,
 .adminForm select,
 .adminForm button,
@@ -1123,33 +1119,20 @@
   box-shadow: var(--admin-shadow-sm);
 }
 
-.cloudinaryPanel,
 .importPanel {
   border-radius: 15px;
   padding: 15px 17px;
 }
 
-.cloudinaryPanel summary,
 .importPanel summary {
   color: var(--admin-navy-950);
   font-weight: 750;
   cursor: pointer;
 }
 
-.cloudinaryPanel p {
-  color: var(--admin-muted);
-  font-size: 0.78rem;
-}
-
-.formGridThree,
 .formGridTwo {
   display: grid;
   gap: 11px;
-}
-
-.formGridThree {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 14px 0;
 }
 
 .formGridTwo {
@@ -1563,8 +1546,7 @@
     grid-column: 1 / -1;
   }
 
-  .productToolbar,
-  .formGridThree {
+  .productToolbar {
     grid-template-columns: 1fr;
   }
 }
@@ -1759,4 +1741,3 @@
   color: var(--admin-muted);
   font-weight: 600;
 }
-

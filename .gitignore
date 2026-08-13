@@ -16,7 +16,8 @@ manifests/
 ui-ux-pro-max-skill/
 .agents/
 AI_CONTEXT_HANDOFF.md
-
+task
+/supabase/.temp/
 
 # Local scraper staging output (regenerable; production uses Supabase/Cloudinary)
 /data/products/
