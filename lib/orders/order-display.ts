@@ -1,10 +1,40 @@
 export const FIXED_SHIPPING_FEE_VND = 30_000;
+export const FREESHIP_SAME_PRODUCT_QUANTITY = 20;
 
-export function calculateCheckoutDisplayTotals(subtotal: number) {
+type CheckoutShippingItem = {
+  productId: string;
+  quantity: number;
+};
+
+export function qualifiesForSameProductFreeship(
+  items: ReadonlyArray<CheckoutShippingItem>
+) {
+  const quantityByProductId = new Map<string, number>();
+
+  for (const item of items) {
+    quantityByProductId.set(
+      item.productId,
+      (quantityByProductId.get(item.productId) || 0) + item.quantity
+    );
+  }
+
+  return [...quantityByProductId.values()].some(
+    (quantity) => quantity >= FREESHIP_SAME_PRODUCT_QUANTITY
+  );
+}
+
+export function calculateCheckoutDisplayTotals(
+  subtotal: number,
+  items: ReadonlyArray<CheckoutShippingItem>
+) {
+  const shippingFee = qualifiesForSameProductFreeship(items)
+    ? 0
+    : FIXED_SHIPPING_FEE_VND;
+
   return {
     subtotal,
-    shippingFee: FIXED_SHIPPING_FEE_VND,
-    total: subtotal + FIXED_SHIPPING_FEE_VND
+    shippingFee,
+    total: subtotal + shippingFee
   };
 }
 

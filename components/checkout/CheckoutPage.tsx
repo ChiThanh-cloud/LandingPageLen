@@ -71,7 +71,7 @@ export function CheckoutPage({ availableProducts }: { availableProducts: YarnPro
     (total, entry) => total + entry.displayPrice * entry.item.quantity,
     0
   );
-  const displayTotals = calculateCheckoutDisplayTotals(displaySubtotal);
+  const displayTotals = calculateCheckoutDisplayTotals(displaySubtotal, items);
 
   function setField<Key extends keyof CheckoutFormValues>(field: Key, value: CheckoutFormValues[Key]) {
     setValues((current) => ({ ...current, [field]: value }));

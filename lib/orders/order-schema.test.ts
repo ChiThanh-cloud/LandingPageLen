@@ -71,6 +71,17 @@ test("server order request validation", async (t) => {
     }).success, false);
   });
 
+  await t.test("accepts different variants of the same product", () => {
+    assert.equal(orderRequestSchema.safeParse({
+      ...validOrderRequest,
+      items: [
+        { productId: "40", variantId: "101", quantity: 8 },
+        { productId: "40", variantId: "102", quantity: 6 },
+        { productId: "40", variantId: "103", quantity: 6 }
+      ]
+    }).success, true);
+  });
+
   await t.test("rejects malformed contact and address data", () => {
     assert.equal(orderRequestSchema.safeParse({
       ...validOrderRequest,

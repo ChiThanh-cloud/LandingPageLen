@@ -15,7 +15,7 @@ const admin = readFileSync(
   "utf8"
 );
 const orderCreation = readFileSync(
-  new URL("../../supabase/migrations/20260810045534_fixed_shipping_fee.sql", import.meta.url),
+  new URL("../../supabase/migrations/20260813090000_freeship_same_product_quantity.sql", import.meta.url),
   "utf8"
 );
 const yarnSchema = readFileSync(
@@ -38,9 +38,27 @@ test("order availability subtracts active non-expired reservations", () => {
   assert.match(orderCreation, /v_available := v_variant\.stock - v_reserved/);
 });
 
-test("COD order creation never consumes physical stock", () => {
-  const codBranch = orderCreation.slice(orderCreation.indexOf("if v_input.payment_method = 'bank_transfer'"));
-  assert.doesNotMatch(codBranch, /update public\.product_variants[\s\S]*set stock/);
+test("guest order reservations remain bank-transfer-only and freeship leaves inventory untouched", () => {
+  const reservationCondition = "if v_payment_method = 'bank_transfer' and v_variant.stock is not null then";
+  const reservationStart = orderCreation.indexOf(reservationCondition);
+  assert.notEqual(reservationStart, -1, "current production SQL must guard reservations by bank transfer");
+
+  const reservationEnd = orderCreation.indexOf("    end if;", reservationStart);
+  assert.notEqual(reservationEnd, -1, "bank-transfer reservation branch must be complete");
+  const reservationBranch = orderCreation.slice(reservationStart, reservationEnd);
+  assert.match(reservationBranch, /insert into public\.stock_reservations/);
+  assert.match(reservationBranch, /reservation_status,[\s\S]*'active'/);
+  assert.equal(
+    (orderCreation.match(/insert into public\.stock_reservations/g) || []).length,
+    1,
+    "the bank-transfer branch must be the only reservation creation path"
+  );
+  assert.doesNotMatch(orderCreation, /update public\.product_variants[\s\S]*set stock/);
+
+  const freeshipStart = orderCreation.indexOf("  select case when exists (");
+  assert.notEqual(freeshipStart, -1, "current production SQL must contain the freeship calculation");
+  const freeshipBlock = orderCreation.slice(freeshipStart);
+  assert.doesNotMatch(freeshipBlock, /stock_reservations|product_variants|inventory_movements/);
 });
 
 test("first successful PayOS completion decrements managed stock and completes reservations", () => {
