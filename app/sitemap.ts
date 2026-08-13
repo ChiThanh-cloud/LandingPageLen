@@ -30,10 +30,24 @@ export function getYarnProductSitemapEntries(
   });
 }
 
+export async function getSitemapYarnProducts(
+  loadProducts: () => Promise<YarnProduct[]> = getAllYarnProducts
+): Promise<YarnProduct[]> {
+  try {
+    return await loadProducts();
+  } catch {
+    // The catalog intentionally fails closed in production. Sitemap generation
+    // must remain available so crawlers can still discover stable site content.
+    console.error("Unable to load yarn products for sitemap generation");
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseLastModified = siteConfig.updatedAt || "2026-07-12";
+  const yarnCatalogLastModified = "2026-08-11";
   const posts = getAllPostMetadata();
-  const yarnProducts = await getAllYarnProducts();
+  const yarnProducts = await getSitemapYarnProducts();
   const blogLastModified = posts.reduce<string>(
     (latest, post) => (post.updatedAt > latest ? post.updatedAt : latest),
     baseLastModified
@@ -74,7 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
       images: [absoluteUrl(post.ogImage || post.image)]
     })),
-    { url: `${siteConfig.url}/len-soi`, lastModified: baseLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: `${siteConfig.url}/len-soi`, lastModified: yarnCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
     ...getYarnProductSitemapEntries(yarnProducts),
     ...products.map((product) => ({
       url: `${siteConfig.url}/san-pham/${product.slug}`,

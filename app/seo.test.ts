@@ -7,7 +7,7 @@ import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getAllYarnProducts } from "../lib/products/supabase-products";
 import { generateMetadata as generateLegacyProductMetadata } from "./san-pham/[slug]/page";
 import robots from "./robots";
-import sitemap, { getYarnProductSitemapEntries } from "./sitemap";
+import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries } from "./sitemap";
 
 test("SEO routes", async (t) => {
   const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
@@ -57,6 +57,21 @@ test("SEO routes", async (t) => {
       `${siteConfig.url}/len-soi/catalog-item-a`,
       `${siteConfig.url}/len-soi/catalog-item-b`
     ]);
+  });
+
+  await t.test("sitemap remains available when the production catalog fails closed", async () => {
+    const yarnProducts = await getSitemapYarnProducts(async () => {
+      throw new Error("Supabase catalog is temporarily unavailable");
+    });
+
+    assert.deepEqual(yarnProducts, []);
+    assert.ok(entries.some((entry) => entry.url === siteConfig.url));
+    assert.ok(entries.some((entry) => entry.url === `${siteConfig.url}/blog`));
+  });
+
+  await t.test("the yarn catalog URL has its own SEO modification date", () => {
+    const yarnCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/len-soi`);
+    assert.equal(yarnCatalogEntry?.lastModified, "2026-08-11");
   });
 
   await t.test("sitemap URLs and images are absolute HTTPS URLs", () => {
