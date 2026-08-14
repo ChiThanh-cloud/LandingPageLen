@@ -44,6 +44,17 @@ function yarnCategory(row: SupabaseProductRow): YarnCategory {
   return "len-dac-biet";
 }
 
+export function getYarnVariantImage(
+  row: Pick<SupabaseVariantRow, "image_url" | "full_image_url">,
+  productImage: string
+): Pick<YarnVariant, "image" | "hasOwnImage"> {
+  const ownImage = row.image_url?.trim() || row.full_image_url?.trim() || null;
+  return {
+    image: ownImage || productImage,
+    hasOwnImage: ownImage !== null
+  };
+}
+
 function variantFromRow(row: SupabaseVariantRow, productImage: string): YarnVariant {
   const code = row.color_code?.trim() || row.name?.trim() || String(row.id);
   const price = numberValue(row.price);
@@ -51,7 +62,7 @@ function variantFromRow(row: SupabaseVariantRow, productImage: string): YarnVari
     id: String(row.id),
     colorCode: code,
     colorName: row.color_name?.trim() || code,
-    image: row.image_url?.trim() || row.full_image_url?.trim() || productImage,
+    ...getYarnVariantImage(row, productImage),
     price: price > 0 ? price : null,
     stock: typeof row.stock === "number" ? Math.max(0, row.stock) : null
   };
@@ -75,7 +86,7 @@ function productFromRows(
   const variants = variantRows
     .filter((variant) => variant.status !== "hidden")
     .map((variant) => variantFromRow(variant, image));
-  const description = row.description?.trim() || `Xem bảng màu và chọn mã màu ${name} phù hợp với mẫu móc của bạn.`;
+  const description = row.description?.trim() || "";
 
   return {
     id: String(row.id),
@@ -84,12 +95,13 @@ function productFromRows(
     shortName: name,
     category: yarnCategory(row),
     description,
-    seoDescription: `${name} tại Tiệm Len Nhà Tiny. Xem bảng màu, giá bán và chọn mã màu trực tiếp.`,
+    seoDescription: description,
     price,
-    weight: row.weight?.trim() || "Theo cuộn",
-    material: row.yarn_size?.trim() || "Len sợi",
-    hookSize: row.crochet_hook?.trim() || "Liên hệ Tiny để được tư vấn",
-    origin: row.origin?.trim() || "Chưa cập nhật",
+    weight: row.weight?.trim() || null,
+    yarnSize: row.yarn_size?.trim() || null,
+    material: row.material?.trim() || null,
+    hookSize: row.crochet_hook?.trim() || null,
+    origin: row.origin?.trim() || null,
     image,
     images,
     updatedAt: row.updated_at || row.created_at || new Date(0).toISOString(),

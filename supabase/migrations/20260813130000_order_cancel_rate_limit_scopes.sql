@@ -1,30 +1,23 @@
--- Durable, privacy-preserving fixed-window limits for POST /api/orders.
+-- Extends the deployed order limiter with isolated cancellation scopes.
 -- The application sends only HMAC-derived keys; no customer PII is stored.
 
-create schema if not exists private;
+alter table private.order_creation_rate_limits
+  drop constraint if exists order_creation_rate_limits_scope_valid;
 
-create table if not exists private.order_creation_rate_limits (
-  scope text not null,
-  key_hash text not null,
-  window_started_at timestamptz not null,
-  attempt_count integer not null,
-  updated_at timestamptz not null,
-  primary key (scope, key_hash),
-  constraint order_creation_rate_limits_scope_valid check (
-    scope in ('ip_burst', 'ip_sustained', 'ip_phone')
-  ),
-  constraint order_creation_rate_limits_key_hash_valid check (
-    key_hash ~ '^[0-9a-f]{64}$'
-  ),
-  constraint order_creation_rate_limits_attempt_count_positive check (
-    attempt_count > 0
-  )
-);
-
-create index if not exists order_creation_rate_limits_updated_at_idx
-  on private.order_creation_rate_limits (updated_at);
-
-revoke all on table private.order_creation_rate_limits from public, anon, authenticated;
+alter table private.order_creation_rate_limits
+  add constraint order_creation_rate_limits_scope_valid check (
+    scope in (
+      'ip_burst',
+      'ip_sustained',
+      'ip_phone',
+      'lookup_ip_burst',
+      'lookup_ip_sustained',
+      'lookup_ip_order',
+      'cancel_ip_burst',
+      'cancel_ip_sustained',
+      'cancel_ip_order'
+    )
+  );
 
 create or replace function public.check_order_creation_rate_limits(p_entries jsonb)
 returns jsonb
@@ -64,7 +57,17 @@ begin
     order by entry.scope, entry."keyHash"
   loop
     if v_scope is null
-      or v_scope not in ('ip_burst', 'ip_sustained', 'ip_phone')
+      or v_scope not in (
+        'ip_burst',
+        'ip_sustained',
+        'ip_phone',
+        'lookup_ip_burst',
+        'lookup_ip_sustained',
+        'lookup_ip_order',
+        'cancel_ip_burst',
+        'cancel_ip_sustained',
+        'cancel_ip_order'
+      )
       or v_key_hash is null
       or v_key_hash !~ '^[0-9a-f]{64}$'
       or v_limit is null
@@ -141,6 +144,8 @@ begin
   );
 end;
 $$;
+
+revoke all on table private.order_creation_rate_limits from public, anon, authenticated;
 
 revoke all on function public.check_order_creation_rate_limits(jsonb)
   from public, anon, authenticated;

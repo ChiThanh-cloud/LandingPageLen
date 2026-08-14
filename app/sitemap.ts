@@ -43,11 +43,20 @@ export async function getSitemapYarnProducts(
   }
 }
 
+export function getYarnCatalogLastModified(
+  yarnProducts: ReadonlyArray<Pick<YarnProduct, "updatedAt">>,
+  fallback = "2026-08-11"
+) {
+  return yarnProducts.reduce((latest, product) => (
+    product.updatedAt > latest ? product.updatedAt : latest
+  ), fallback);
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseLastModified = siteConfig.updatedAt || "2026-07-12";
-  const yarnCatalogLastModified = "2026-08-11";
   const posts = getAllPostMetadata();
   const yarnProducts = await getSitemapYarnProducts();
+  const yarnCatalogLastModified = getYarnCatalogLastModified(yarnProducts);
   const blogLastModified = posts.reduce<string>(
     (latest, post) => (post.updatedAt > latest ? post.updatedAt : latest),
     baseLastModified

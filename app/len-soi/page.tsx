@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { YarnCatalog } from "@/components/yarn-product/YarnCatalog";
 import { siteConfig } from "@/data/site";
 import { getAllYarnProducts } from "@/lib/products/supabase-products";
+import { formatYarnPrice, getYarnCatalogStartingPrice } from "@/lib/products/yarn-product-seo";
 
 export const metadata: Metadata = {
   title: "Len sợi & Phụ kiện móc",
   description:
-    "Mua len sợi từ 7.000đ – nhiều dòng len, giá rẻ. Xem giá và đặt hàng online giao toàn quốc tại Tiệm Len Nhà Tiny.",
+    "Khám phá len sợi, bảng màu và thông số sản phẩm tại Tiệm Len Nhà Tiny.",
   alternates: { canonical: "/len-soi" },
   openGraph: {
     title: "Len sợi & Phụ kiện móc | Tiệm Len Nhà Tiny",
     description:
-      "Mua len sợi từ 7.000đ – nhiều dòng len, giá rẻ. Xem giá và đặt hàng online giao toàn quốc tại Tiệm Len Nhà Tiny.",
+      "Khám phá len sợi, bảng màu và thông số sản phẩm tại Tiệm Len Nhà Tiny.",
     url: "/len-soi",
     images: ["/images/yarn_collection_800.jpg"]
   }
@@ -20,6 +22,10 @@ export const metadata: Metadata = {
 
 export default async function YarnCategoryPage() {
   const products = await getAllYarnProducts();
+  const catalogStartingPrice = getYarnCatalogStartingPrice(products);
+  const catalogPriceCopy = catalogStartingPrice === null
+    ? "Xem bảng màu & giá của từng dòng len tại Tiệm Len Nhà Tiny."
+    : `Nhiều dòng len, bảng màu dễ đối chiếu. Giá từ ${formatYarnPrice(catalogStartingPrice)} cho sản phẩm đang có thể đặt.`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -49,10 +55,8 @@ export default async function YarnCategoryPage() {
       <section className="yc-hero">
         <div>
           <p className="yc-eyebrow">Cuộn len & Phụ kiện móc</p>
-          <h1>
-            Len sợi từ 7.000đ – nhiều màu, dễ chọn
-          </h1>
-          <p>Nhiều dòng len, nhiều mẫu và mức giá dễ tiếp cận. Xem giá và đặt hàng online giao toàn quốc tại Tiệm Len Nhà Tiny.</p>
+          <h1>Len sợi, bảng màu và giá dễ đối chiếu</h1>
+          <p>{catalogPriceCopy}</p>
         </div>
         <Image
           src="/images/yarn_hero_800.jpg"
@@ -63,6 +67,15 @@ export default async function YarnCategoryPage() {
         />
       </section>
       <YarnCatalog products={products} />
+      <section className="yc-help" aria-labelledby="yarn-guides-heading">
+        <h2 id="yarn-guides-heading">Hướng dẫn chọn len</h2>
+        <p>Đối chiếu thông số sợi và kim móc trước khi chọn mã màu.</p>
+        <ul>
+          <li><Link href="/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao">Người mới học móc nên chọn loại len nào?</Link></li>
+          <li><Link href="/blog/chon-kim-moc-bao-nhieu-cho-milk-bo-nhung-dua-nhung-gau-va-mac-den">Chọn kim móc cho các dòng len đang bán</Link></li>
+          <li><Link href="/blog/huong-dan-dat-len-tren-website-tiem-len-nha-tiny">Hướng dẫn đặt len trên website</Link></li>
+        </ul>
+      </section>
       <section className="yc-help">
         <h2>Chưa chắc nên dùng loại nào?</h2>
         <p>Gửi ảnh mẫu cho Tiny để được gợi ý loại sợi, cỡ kim và số cuộn phù hợp.</p>

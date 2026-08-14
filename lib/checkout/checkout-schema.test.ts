@@ -48,7 +48,7 @@ function product(stock: number | null = 10): YarnProduct {
     image: cartItem.imageUrl,
     images: [cartItem.imageUrl],
     updatedAt: "2026-08-10",
-    variants: [{ id: "01", colorCode: "#edf5fb", colorName: "01", image: cartItem.imageUrl, stock }],
+    variants: [{ id: "01", colorCode: "#edf5fb", colorName: "01", image: cartItem.imageUrl, hasOwnImage: true, stock }],
     wholesaleTiers: []
   };
 }

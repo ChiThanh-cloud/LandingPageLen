@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { getYarnProductImageAlt } from "@/lib/products/yarn-product-seo";
 import type { YarnCategory, YarnProduct } from "@/types/yarn-product";
 
 type CategoryFilter = "all" | YarnCategory;
@@ -94,7 +95,7 @@ function ProductCard({ product }: { product: YarnProduct }) {
       <div className="yc-card-image">
         <Image
           src={product.image}
-          alt={product.name}
+          alt={getYarnProductImageAlt(product)}
           width={520}
           height={520}
           sizes="(max-width: 389px) 100vw, (max-width: 767px) 50vw, (max-width: 1100px) 40vw, 280px"

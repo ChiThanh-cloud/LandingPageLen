@@ -1,4 +1,9 @@
 import { siteConfig } from "@/data/site";
+import {
+  getYarnProductSeoMetadata,
+  getYarnProductStartingPrice,
+  isPurchasableYarnVariant
+} from "@/lib/products/yarn-product-seo";
 import type { YarnProduct } from "@/types/yarn-product";
 
 export function toAbsoluteUrl(value: string) {
@@ -14,7 +19,10 @@ export function toAbsoluteUrl(value: string) {
 
 export function getYarnProductStructuredData(product: YarnProduct) {
   const url = `${siteConfig.url}/len-soi/${product.slug}`;
-  const inStock = product.variants.some((variant) => variant.stock === null || variant.stock > 0);
+  const inStock = product.variants.some(isPurchasableYarnVariant);
+  const startingPrice = getYarnProductStartingPrice(product);
+  const offerPrice = startingPrice ?? (!inStock && product.price > 0 && Number.isFinite(product.price) ? product.price : null);
+  const seo = getYarnProductSeoMetadata(product);
 
   return {
     "@context": "https://schema.org",
@@ -31,18 +39,21 @@ export function getYarnProductStructuredData(product: YarnProduct) {
         "@type": "Product",
         "@id": `${url}#product`,
         name: product.name,
-        description: product.seoDescription,
+        description: seo.description,
         image: product.images.map(toAbsoluteUrl),
         url,
         sku: product.id,
-        offers: {
-          "@type": "Offer",
-          url,
-          priceCurrency: "VND",
-          price: product.price,
-          availability: `https://schema.org/${inStock ? "InStock" : "OutOfStock"}`,
-          seller: { "@type": "Organization", name: siteConfig.name }
-        }
+        ...(product.material?.trim() ? { material: product.material } : {}),
+        ...(offerPrice === null ? {} : {
+          offers: {
+            "@type": "Offer",
+            url,
+            priceCurrency: "VND",
+            price: offerPrice,
+            availability: `https://schema.org/${inStock ? "InStock" : "OutOfStock"}`,
+            seller: { "@type": "Organization", name: siteConfig.name }
+          }
+        })
       }
     ]
   };

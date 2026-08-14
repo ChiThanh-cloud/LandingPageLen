@@ -3,6 +3,8 @@ export type YarnVariant = {
   colorCode: string;
   colorName: string;
   image: string;
+  /** True only when `image` originates from this variant, never from the product fallback. */
+  hasOwnImage: boolean;
   /** Public catalog price override. The order API still re-queries Supabase. */
   price?: number | null;
   stock: number | null;
@@ -32,10 +34,11 @@ export type YarnProduct = {
   description: string;
   seoDescription: string;
   price: number;
-  weight: string;
-  material: string;
-  hookSize: string;
-  origin: string;
+  weight?: string | null;
+  yarnSize?: string | null;
+  material?: string | null;
+  hookSize?: string | null;
+  origin?: string | null;
   image: string;
   images: string[];
   updatedAt: string;

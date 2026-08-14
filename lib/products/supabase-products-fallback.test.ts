@@ -32,7 +32,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 
 // Import the REAL production helper — no duplicate logic in tests.
-import { applyYarnFallbackGuard } from "./supabase-products";
+import { applyYarnFallbackGuard, getYarnVariantImage } from "./supabase-products";
 import { yarnProducts as staticYarnProducts } from "./yarn-products";
 import type { YarnProduct } from "../../types/yarn-product";
 
@@ -162,4 +162,18 @@ describe("supabase-products fallback guard", () => {
       "getAllYarnProducts must NOT contain an inline null-check — fallback belongs solely in applyYarnFallbackGuard"
     );
   });
+});
+
+it("variant image provenance distinguishes an own row image from the product fallback", () => {
+  const ownImage = getYarnVariantImage(
+    { image_url: " /images/variant-17.webp ", full_image_url: null },
+    "/images/product-cover.webp"
+  );
+  const fallbackImage = getYarnVariantImage(
+    { image_url: null, full_image_url: " " },
+    "/images/product-cover.webp"
+  );
+
+  assert.deepEqual(ownImage, { image: "/images/variant-17.webp", hasOwnImage: true });
+  assert.deepEqual(fallbackImage, { image: "/images/product-cover.webp", hasOwnImage: false });
 });

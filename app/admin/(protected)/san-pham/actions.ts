@@ -68,6 +68,11 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     sortOrder: z.coerce.number().int().min(0).max(100000),
     price: z.number().nonnegative().nullable(),
     weight: z.string().trim().max(120).nullable(),
+    yarnSize: z.string().trim().max(120).nullable(),
+    material: z.string().trim().max(240).nullable(),
+    hookSize: z.string().trim().max(120).nullable(),
+    origin: z.string().trim().max(160).nullable(),
+    description: z.string().trim().max(1200).nullable(),
     imageUrl: z.string().url().max(2000),
     fullImageUrl: z.string().url().max(2000).nullable()
   }).safeParse({
@@ -79,6 +84,11 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     sortOrder: formData.get("sortOrder"),
     price,
     weight: cleanOptional(formData.get("weight")),
+    yarnSize: cleanOptional(formData.get("yarnSize")),
+    material: cleanOptional(formData.get("material")),
+    hookSize: cleanOptional(formData.get("hookSize")),
+    origin: cleanOptional(formData.get("origin")),
+    description: cleanOptional(formData.get("description")),
     imageUrl: formData.get("imageUrl"),
     fullImageUrl: cleanOptional(formData.get("fullImageUrl"))
   });
@@ -96,6 +106,11 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     price: parsed.data.price,
     base_price: parsed.data.price,
     weight: parsed.data.weight,
+    yarn_size: parsed.data.yarnSize,
+    material: parsed.data.material,
+    crochet_hook: parsed.data.hookSize,
+    origin: parsed.data.origin,
+    description: parsed.data.description,
     image_url: parsed.data.imageUrl,
     full_image_url: parsed.data.fullImageUrl
   };

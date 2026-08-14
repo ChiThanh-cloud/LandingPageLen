@@ -11,7 +11,10 @@ type RateLimitPolicy = {
     | "ip_phone"
     | "lookup_ip_burst"
     | "lookup_ip_sustained"
-    | "lookup_ip_order";
+    | "lookup_ip_order"
+    | "cancel_ip_burst"
+    | "cancel_ip_sustained"
+    | "cancel_ip_order";
   keyHash: string;
   limit: number;
   windowSeconds: number;
@@ -138,6 +141,32 @@ export function createOrderCreationRateLimiter(dependencies: OrderCreationRateLi
       return consume([
         { scope: "lookup_ip_order", keyHash, limit: 6, windowSeconds: 900 }
       ]);
+    },
+
+    async checkCancelIp(request: Request) {
+      const trustedIp = getTrustedOrderClientIp(request);
+      if (!trustedIp) return { allowed: true, retryAfterSeconds: 0 };
+
+      const secret = requiredHashSecret(dependencies.getHashSecret);
+      const ipKeyHash = hashIdentity(secret, `cancel:ip:${trustedIp}`);
+      return consume([
+        { scope: "cancel_ip_burst", keyHash: ipKeyHash, limit: 6, windowSeconds: 60 },
+        { scope: "cancel_ip_sustained", keyHash: ipKeyHash, limit: 20, windowSeconds: 3600 }
+      ]);
+    },
+
+    async checkCancelComposite(request: Request, normalizedOrderCode: string) {
+      const trustedIp = getTrustedOrderClientIp(request);
+      if (!trustedIp) return { allowed: true, retryAfterSeconds: 0 };
+
+      const secret = requiredHashSecret(dependencies.getHashSecret);
+      const keyHash = hashIdentity(
+        secret,
+        `cancel:ip-order:${trustedIp}\norder-code:${normalizedOrderCode}`
+      );
+      return consume([
+        { scope: "cancel_ip_order", keyHash, limit: 4, windowSeconds: 900 }
+      ]);
     }
   };
 }
@@ -151,3 +180,5 @@ export const checkOrderCreationIpRateLimit = orderCreationRateLimiter.checkIp;
 export const checkOrderCreationCompositeRateLimit = orderCreationRateLimiter.checkComposite;
 export const checkOrderLookupIpRateLimit = orderCreationRateLimiter.checkLookupIp;
 export const checkOrderLookupCompositeRateLimit = orderCreationRateLimiter.checkLookupComposite;
+export const checkOrderCancellationIpRateLimit = orderCreationRateLimiter.checkCancelIp;
+export const checkOrderCancellationCompositeRateLimit = orderCreationRateLimiter.checkCancelComposite;

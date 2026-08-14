@@ -12,6 +12,7 @@ export type SupabaseProductRow = {
   price: number | string | null;
   weight: string | null;
   yarn_size: string | null;
+  material: string | null;
   knitting_needle: string | null;
   crochet_hook: string | null;
   origin: string | null;

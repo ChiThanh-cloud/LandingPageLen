@@ -1,5 +1,8 @@
+import Link from "next/link";
+import { getYarnProductVisibleColorCount } from "@/lib/products/yarn-product-seo";
 import type { YarnProduct } from "@/types/yarn-product";
 
 export function ProductSeoContent({ product }: { product: YarnProduct }) {
-  return <section className="yp-seo-content"><article><h2>{product.shortName} phù hợp móc gì?</h2><p>Chất sợi {product.material.toLowerCase()} phù hợp với thú bông, hoa len, túi nhỏ và phụ kiện. Cỡ kim {product.hookSize} giúp mũi móc đều và thành phẩm giữ form tốt.</p></article><article><h2>Cách chọn và phối màu len</h2><p>Chọn một màu chính, một màu sáng hơn cho chi tiết và một màu tương phản cho điểm nhấn. Nếu làm theo ảnh mẫu, bạn có thể nhắn Tiny để được đối chiếu màu trước khi đặt.</p></article><article><h2>Bảo quản len chưa sử dụng</h2><p>Để len nơi khô thoáng, tránh nắng trực tiếp và giữ nhãn cuộn để mua bổ sung đúng dòng. Phần sợi đang dùng nên cho vào túi sạch để hạn chế bụi và rối.</p></article></section>;
+  const visibleColors = getYarnProductVisibleColorCount(product);
+  return <section className="yp-seo-content"><article><h2>Bảng màu {product.shortName}</h2><p>{visibleColors > 0 ? `${visibleColors} mã màu đang hiển thị trên trang này. Chọn từng mã màu để xem ảnh và giá tương ứng trước khi thêm vào giỏ.` : "Bảng màu sẽ hiển thị khi sản phẩm có mã màu công khai."}</p></article><article><h2>Hướng dẫn chọn len</h2><p><Link href="/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao">Đọc hướng dẫn chọn len cho người mới</Link> để đối chiếu khối lượng, độ dày sợi, thành phần và kim móc của các dòng len đang bán.</p></article></section>;
 }

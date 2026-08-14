@@ -22,6 +22,11 @@ type ProductRecord = {
   image_url: string | null;
   full_image_url: string | null;
   weight: string | null;
+  yarn_size: string | null;
+  material: string | null;
+  crochet_hook: string | null;
+  origin: string | null;
+  description: string | null;
   price: number | string | null;
   status: string | null;
   sort_order: number | null;
@@ -287,8 +292,15 @@ export function ProductManager({ products, variants }: { products: ProductRecord
               <label>Trạng thái<select name="status" defaultValue={selected?.status || "available"}>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
               <label>Thứ tự<input name="sortOrder" type="number" min="0" defaultValue={selected?.sort_order ?? 0} /></label>
               <label>Giá<input name="price" inputMode="numeric" defaultValue={selected?.price ?? ""} placeholder="8000 hoặc 8k" /></label>
-              <label>Khối lượng / ghi chú ngắn<input name="weight" maxLength={120} defaultValue={selected?.weight || ""} /></label>
+              <label>Khối lượng<input name="weight" maxLength={120} defaultValue={selected?.weight || ""} /></label>
             </div>
+            <div className={styles.formGridTwo}>
+              <label>Độ dày sợi (len sợi)<input name="yarnSize" maxLength={120} defaultValue={selected?.yarn_size || ""} placeholder="Ví dụ: 2.5mm" /></label>
+              <label>Thành phần (len sợi)<input name="material" maxLength={240} defaultValue={selected?.material || ""} placeholder="Ví dụ: 100% Polyester" /></label>
+              <label>Kim móc khuyên dùng (len sợi)<input name="hookSize" maxLength={120} defaultValue={selected?.crochet_hook || ""} placeholder="Ví dụ: 2.5–3mm" /></label>
+              <label>Xuất xứ (nếu có)<input name="origin" maxLength={160} defaultValue={selected?.origin || ""} /></label>
+            </div>
+            <label>Mô tả sản phẩm<textarea name="description" maxLength={1200} rows={4} defaultValue={selected?.description || ""} /></label>
             <label>Link ảnh Cloudinary<input name="imageUrl" type="url" required value={productImageUrl} onChange={(event) => setProductImageUrl(event.target.value)} /></label>
             <label>Upload ảnh<input type="file" accept="image/*" onChange={(event) => uploadImage(event.target.files?.[0], "product")} disabled={uploading !== null} /></label>
             <label>Link ảnh lớn<input name="fullImageUrl" type="url" defaultValue={selected?.full_image_url || ""} /></label>

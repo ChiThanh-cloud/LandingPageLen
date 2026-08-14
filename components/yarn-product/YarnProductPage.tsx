@@ -31,7 +31,7 @@ export function YarnProductPage({ product, relatedProducts }: { product: YarnPro
       <YarnProductJsonLd product={product} />
       <div className={`yp-shell ${styles.shell}`}>
         <div className={styles.productLayout}>
-          <ProductGallery images={product.images} mainImage={mainImage} name={product.name} onSelect={setMainImage} />
+          <ProductGallery images={product.images} mainImage={mainImage} product={product} selectedVariant={variant} onSelect={setMainImage} />
           <ProductInfo product={product} selectedPrice={variant?.price}>
             {variant ? (
               <>

@@ -7,7 +7,7 @@ import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getAllYarnProducts } from "../lib/products/supabase-products";
 import { generateMetadata as generateLegacyProductMetadata } from "./san-pham/[slug]/page";
 import robots from "./robots";
-import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries } from "./sitemap";
+import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries, getYarnCatalogLastModified } from "./sitemap";
 
 test("SEO routes", async (t) => {
   const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
@@ -69,9 +69,11 @@ test("SEO routes", async (t) => {
     assert.ok(entries.some((entry) => entry.url === `${siteConfig.url}/blog`));
   });
 
-  await t.test("the yarn catalog URL has its own SEO modification date", () => {
+  await t.test("the yarn catalog URL follows the latest product timestamp with a stable fallback", () => {
     const yarnCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/len-soi`);
-    assert.equal(yarnCatalogEntry?.lastModified, "2026-08-11");
+    assert.equal(yarnCatalogEntry?.lastModified, getYarnCatalogLastModified(yarnProducts));
+    assert.equal(getYarnCatalogLastModified([]), "2026-08-11");
+    assert.equal(getYarnCatalogLastModified([{ updatedAt: "2026-08-14T00:00:00.000Z" }]), "2026-08-14T00:00:00.000Z");
   });
 
   await t.test("sitemap URLs and images are absolute HTTPS URLs", () => {
@@ -180,8 +182,9 @@ test("yarn route intent separation", async (t) => {
     assert.match(legacyPageSource, /isYarnGuide[\s\S]*?href="\/len-soi"[\s\S]*?Xem len đang bán/);
   });
 
-  await t.test("beginner blog separates catalog and guide links by intent", () => {
+  await t.test("beginner blog links the transactional catalog and real yarn product pages", () => {
     assert.match(beginnerGuideSource, /secondaryHref:\s*"\/len-soi"/);
-    assert.match(beginnerGuideSource, /\[Hướng dẫn chọn len sợi cho người mới\]\(\/san-pham\/len-soi\)/);
+    assert.match(beginnerGuideSource, /\[catalog len sợi\]\(\/len-soi\)/);
+    assert.match(beginnerGuideSource, /\[Milk Bò 50g\]\(\/len-soi\/milk-bo\)/);
   });
 });

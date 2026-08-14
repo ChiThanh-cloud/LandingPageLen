@@ -14,6 +14,7 @@ alter table public.products
   add column if not exists price numeric,
   add column if not exists weight text,
   add column if not exists yarn_size text,
+  add column if not exists material text,
   add column if not exists knitting_needle text,
   add column if not exists crochet_hook text,
   add column if not exists origin text,

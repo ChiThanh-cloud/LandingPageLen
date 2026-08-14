@@ -29,6 +29,7 @@ function makeProduct(images: string[]): YarnProduct {
       colorCode: "#ffffff",
       colorName: "Trắng",
       image: images[0] || "/images/yarn_collection_800.jpg",
+      hasOwnImage: true,
       stock: null
     }],
     wholesaleTiers: []

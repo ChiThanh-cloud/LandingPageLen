@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getYarnProductHeading } from "@/lib/products/yarn-product-seo";
 import type { YarnProduct } from "@/types/yarn-product";
 import styles from "./YarnProductDetail.module.css";
 
@@ -18,11 +19,7 @@ export function ProductInfo({
         <Link href="/">Trang chủ</Link><span>/</span><Link href="/len-soi">Len sợi</Link><span>/</span><span>{product.shortName}</span>
       </nav>
       <p className={styles.category}>Len sợi và nguyên liệu móc</p>
-      <h1 className={styles.title}>{product.name}</h1>
-      <dl className={styles.metadata}>
-        <div><dt>Thương hiệu</dt><dd>Đang cập nhật</dd></div>
-        <div><dt>Loại sản phẩm</dt><dd>Len sợi</dd></div>
-      </dl>
+      <h1 className={styles.title}>{getYarnProductHeading(product)}</h1>
       <p className={styles.pricePanel}>{displayedPrice.toLocaleString("vi-VN")}đ <small>/ cuộn</small></p>
       {children}
     </section>

@@ -27,6 +27,6 @@ test("/len-soi metadata stays stable and resolves the site brand once", () => {
   assert.equal(metadata.twitter, undefined);
 
   for (const value of [description, openGraphDescription]) {
-    assert.doesNotMatch(value, /Milk Cotton|Nhung Gấu|Cotton Việt Nam|24 màu|từ 18\.000/i);
+    assert.doesNotMatch(value, /Milk Cotton|Nhung Gấu|Cotton Việt Nam|24 màu|từ 18\.000|7\.000/i);
   }
 });
