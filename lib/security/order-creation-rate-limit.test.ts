@@ -19,6 +19,10 @@ const cancelMigration = readFileSync(
   new URL("../../supabase/migrations/20260813130000_order_cancel_rate_limit_scopes.sql", import.meta.url),
   "utf8"
 );
+const paymentMigration = readFileSync(
+  new URL("../../supabase/migrations/20260814130000_payment_creation_rate_limit_scopes.sql", import.meta.url),
+  "utf8"
+);
 
 test("trusted order IP extraction uses only Vercel metadata and skips limiting when it is unavailable", () => {
   assert.equal(getTrustedOrderClientIp(new Request("https://lentiny.xyz/api/orders", {
@@ -53,8 +57,12 @@ test("production limiter sends exact approved policies with opaque HMAC keys", a
   await limiter.checkLookupComposite(request, "TINY-ABCDEF123456");
   await limiter.checkCancelIp(request);
   await limiter.checkCancelComposite(request, "TINY-ABCDEF123456");
+  await limiter.checkPaymentIp(request);
+  await limiter.checkPaymentComposite(request, "TINY-ABCDEF123456", "0901234567");
 
   assert.deepEqual(calls.map((call) => call.name), [
+    "check_order_creation_rate_limits",
+    "check_order_creation_rate_limits",
     "check_order_creation_rate_limits",
     "check_order_creation_rate_limits",
     "check_order_creation_rate_limits",
@@ -106,6 +114,21 @@ test("production limiter sends exact approved policies with opaque HMAC keys", a
     windowSeconds: entry.windowSeconds
   })), [
     { scope: "cancel_ip_order", limit: 4, windowSeconds: 900 }
+  ]);
+  assert.deepEqual(calls[6].entries.map((entry) => ({
+    scope: entry.scope,
+    limit: entry.limit,
+    windowSeconds: entry.windowSeconds
+  })), [
+    { scope: "payment_ip_burst", limit: 6, windowSeconds: 60 },
+    { scope: "payment_ip_sustained", limit: 20, windowSeconds: 3600 }
+  ]);
+  assert.deepEqual(calls[7].entries.map((entry) => ({
+    scope: entry.scope,
+    limit: entry.limit,
+    windowSeconds: entry.windowSeconds
+  })), [
+    { scope: "payment_ip_order_phone", limit: 4, windowSeconds: 900 }
   ]);
 
   const serialized = JSON.stringify(calls);
@@ -171,6 +194,11 @@ test("missing trusted IP does not invoke a shared limiter bucket", async () => {
     await limiter.checkCancelComposite(request, "TINY-ABCDEF123456"),
     { allowed: true, retryAfterSeconds: 0 }
   );
+  assert.deepEqual(await limiter.checkPaymentIp(request), { allowed: true, retryAfterSeconds: 0 });
+  assert.deepEqual(
+    await limiter.checkPaymentComposite(request, "TINY-ABCDEF123456", "0901234567"),
+    { allowed: true, retryAfterSeconds: 0 }
+  );
   assert.equal(calls, 0);
 });
 
@@ -216,4 +244,20 @@ test("cancel migration extends only allowed scopes and preserves the private ato
   assert.match(cancelMigration, /extract\(epoch from/i);
   assert.doesNotMatch(cancelMigration, /pg_catalog\.extract/i);
   assert.doesNotMatch(cancelMigration, /phone\s+(?:text|varchar)|ip\s+(?:inet|text)|order_code\s+text/i);
+});
+
+test("payment migration extends only allowed scopes and preserves the private atomic limiter contract", () => {
+  assert.match(paymentMigration, /drop constraint if exists order_creation_rate_limits_scope_valid/i);
+  assert.match(paymentMigration, /lookup_ip_burst[\s\S]*lookup_ip_sustained[\s\S]*lookup_ip_order/i);
+  assert.match(paymentMigration, /cancel_ip_burst[\s\S]*cancel_ip_sustained[\s\S]*cancel_ip_order/i);
+  assert.match(paymentMigration, /payment_ip_burst[\s\S]*payment_ip_sustained[\s\S]*payment_ip_order_phone/i);
+  assert.match(paymentMigration, /on conflict \(scope, key_hash\) do update/i);
+  assert.match(paymentMigration, /security definer/i);
+  assert.match(paymentMigration, /set search_path = ''/i);
+  assert.match(paymentMigration, /revoke all on table private\.order_creation_rate_limits from public, anon, authenticated/i);
+  assert.match(paymentMigration, /revoke all on function public\.check_order_creation_rate_limits\(jsonb\)[\s\S]*from public, anon, authenticated/i);
+  assert.match(paymentMigration, /grant execute on function public\.check_order_creation_rate_limits\(jsonb\)[\s\S]*to service_role/i);
+  assert.match(paymentMigration, /extract\(epoch from/i);
+  assert.doesNotMatch(paymentMigration, /pg_catalog\.extract/i);
+  assert.doesNotMatch(paymentMigration, /phone\s+(?:text|varchar)|ip\s+(?:inet|text)|order_code\s+text/i);
 });

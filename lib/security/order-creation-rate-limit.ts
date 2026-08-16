@@ -14,7 +14,10 @@ type RateLimitPolicy = {
     | "lookup_ip_order"
     | "cancel_ip_burst"
     | "cancel_ip_sustained"
-    | "cancel_ip_order";
+    | "cancel_ip_order"
+    | "payment_ip_burst"
+    | "payment_ip_sustained"
+    | "payment_ip_order_phone";
   keyHash: string;
   limit: number;
   windowSeconds: number;
@@ -167,6 +170,36 @@ export function createOrderCreationRateLimiter(dependencies: OrderCreationRateLi
       return consume([
         { scope: "cancel_ip_order", keyHash, limit: 4, windowSeconds: 900 }
       ]);
+    },
+
+    async checkPaymentIp(request: Request) {
+      const trustedIp = getTrustedOrderClientIp(request);
+      if (!trustedIp) return { allowed: true, retryAfterSeconds: 0 };
+
+      const secret = requiredHashSecret(dependencies.getHashSecret);
+      const ipKeyHash = hashIdentity(secret, `payment:ip:${trustedIp}`);
+      return consume([
+        { scope: "payment_ip_burst", keyHash: ipKeyHash, limit: 6, windowSeconds: 60 },
+        { scope: "payment_ip_sustained", keyHash: ipKeyHash, limit: 20, windowSeconds: 3600 }
+      ]);
+    },
+
+    async checkPaymentComposite(
+      request: Request,
+      normalizedOrderCode: string,
+      normalizedPhone: string
+    ) {
+      const trustedIp = getTrustedOrderClientIp(request);
+      if (!trustedIp) return { allowed: true, retryAfterSeconds: 0 };
+
+      const secret = requiredHashSecret(dependencies.getHashSecret);
+      const keyHash = hashIdentity(
+        secret,
+        `payment:ip-order-phone:${trustedIp}\norder-code:${normalizedOrderCode}\nphone:${normalizedPhone}`
+      );
+      return consume([
+        { scope: "payment_ip_order_phone", keyHash, limit: 4, windowSeconds: 900 }
+      ]);
     }
   };
 }
@@ -182,3 +215,5 @@ export const checkOrderLookupIpRateLimit = orderCreationRateLimiter.checkLookupI
 export const checkOrderLookupCompositeRateLimit = orderCreationRateLimiter.checkLookupComposite;
 export const checkOrderCancellationIpRateLimit = orderCreationRateLimiter.checkCancelIp;
 export const checkOrderCancellationCompositeRateLimit = orderCreationRateLimiter.checkCancelComposite;
+export const checkPaymentCreationIpRateLimit = orderCreationRateLimiter.checkPaymentIp;
+export const checkPaymentCreationCompositeRateLimit = orderCreationRateLimiter.checkPaymentComposite;

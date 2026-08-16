@@ -6,7 +6,19 @@ import { createOrderLookupPostHandler } from "./route";
 
 type StoredWindow = { startedAt: number; count: number };
 type PolicyEntry = {
-  scope: "ip_burst" | "ip_sustained" | "ip_phone" | "lookup_ip_burst" | "lookup_ip_sustained" | "lookup_ip_order";
+  scope:
+    | "ip_burst"
+    | "ip_sustained"
+    | "ip_phone"
+    | "lookup_ip_burst"
+    | "lookup_ip_sustained"
+    | "lookup_ip_order"
+    | "cancel_ip_burst"
+    | "cancel_ip_sustained"
+    | "cancel_ip_order"
+    | "payment_ip_burst"
+    | "payment_ip_sustained"
+    | "payment_ip_order_phone";
   keyHash: string;
   limit: number;
   windowSeconds: number;

@@ -9,6 +9,43 @@ import {
   saveManifest
 } from "./lib/cloudinary-blog-utils";
 
+interface SourceRestore {
+  sourceFile: string;
+  backupFile: string;
+}
+
+function getMdxSourceRestores(manifestDir: string, manifestState: ManifestState) {
+  if (manifestState.sourceFiles === undefined) return null;
+
+  const backupRoot = path.resolve(manifestDir, "source.before");
+  const allowedPrefix = path.join("content", "blog") + path.sep;
+  const restores: SourceRestore[] = [];
+
+  for (const sourceFile of manifestState.sourceFiles) {
+    const normalizedSourceFile = path.normalize(sourceFile);
+    if (
+      path.isAbsolute(normalizedSourceFile) ||
+      normalizedSourceFile.startsWith(".." + path.sep) ||
+      !normalizedSourceFile.startsWith(allowedPrefix) ||
+      path.extname(normalizedSourceFile) !== ".mdx"
+    ) {
+      throw new Error(`Invalid MDX source file in manifest: ${sourceFile}`);
+    }
+
+    const backupFile = path.resolve(backupRoot, normalizedSourceFile);
+    if (!backupFile.startsWith(backupRoot + path.sep) || !fs.existsSync(backupFile)) {
+      throw new Error(`MDX backup not found for ${sourceFile}.`);
+    }
+
+    restores.push({
+      sourceFile: path.resolve(process.cwd(), normalizedSourceFile),
+      backupFile
+    });
+  }
+
+  return restores;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const manifestArgIndex = args.indexOf("--manifest");
@@ -25,6 +62,7 @@ async function main() {
 
   const manifestDir = path.dirname(manifestPath);
   const manifestState: ManifestState = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+  const mdxSourceRestores = getMdxSourceRestores(manifestDir, manifestState);
   
   const isDryRun = args.includes("--dry-run");
 
@@ -89,13 +127,23 @@ async function main() {
     process.exit(1);
   }
 
-  // Restore source file
-  const beforeFile = path.join(manifestDir, "posts.before.ts");
-  const sourceFile = path.join(process.cwd(), "data", "posts.ts");
-  
-  if (fs.existsSync(beforeFile)) {
-    console.log("[Source] Restoring data/posts.ts from backup...");
-    fs.copyFileSync(beforeFile, sourceFile);
+  if (mdxSourceRestores) {
+    for (const restore of mdxSourceRestores) {
+      console.log(
+        `[Source] Restoring ${path.relative(process.cwd(), restore.sourceFile)} from backup...`
+      );
+      fs.mkdirSync(path.dirname(restore.sourceFile), { recursive: true });
+      fs.copyFileSync(restore.backupFile, restore.sourceFile);
+    }
+  } else {
+    // Restore source file for legacy manifests.
+    const beforeFile = path.join(manifestDir, "posts.before.ts");
+    const sourceFile = path.join(process.cwd(), "data", "posts.ts");
+
+    if (fs.existsSync(beforeFile)) {
+      console.log("[Source] Restoring data/posts.ts from backup...");
+      fs.copyFileSync(beforeFile, sourceFile);
+    }
   }
 
   manifestState.status = "rolled-back";

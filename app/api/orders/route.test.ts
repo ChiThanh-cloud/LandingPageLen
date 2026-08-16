@@ -11,7 +11,13 @@ type PolicyEntry = {
     | "ip_phone"
     | "lookup_ip_burst"
     | "lookup_ip_sustained"
-    | "lookup_ip_order";
+    | "lookup_ip_order"
+    | "cancel_ip_burst"
+    | "cancel_ip_sustained"
+    | "cancel_ip_order"
+    | "payment_ip_burst"
+    | "payment_ip_sustained"
+    | "payment_ip_order_phone";
   keyHash: string;
   limit: number;
   windowSeconds: number;

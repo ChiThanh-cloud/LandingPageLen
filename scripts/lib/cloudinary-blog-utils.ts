@@ -51,7 +51,11 @@ export interface ParsedCloudinaryUrl {
 
 // We will parse it manually for robustness.
 export function parseCloudinaryUrl(url: string, targetCloudName: string): ParsedCloudinaryUrl | null {
-  const prefixRegex = new RegExp(`^(https?:\\/\\/res\\.cloudinary\\.com\\/${targetCloudName}\\/(?:image|video|raw)\\/(?:upload|fetch|private|authenticated)\\/)`);
+  const prefixRegex = new RegExp(
+    "^(https?:\\/\\/res\\.cloudinary\\.com/" +
+      targetCloudName +
+      "\\/(?:(?:image|video|raw)\\/(?:upload|fetch|private|authenticated)|images)\\/)"
+  );
   const prefixMatch = url.match(prefixRegex);
   
   if (!prefixMatch) return null;
@@ -113,6 +117,7 @@ export async function delay(ms: number) {
 
 export interface ManifestState {
   status: "planned" | "applying" | "completed" | "partial" | "rolling-back" | "rolled-back" | "failed";
+  sourceFiles?: string[];
   assets: Array<{
     originalUrl: string;
     newUrl: string;
@@ -137,4 +142,32 @@ export function saveManifest(dirPath: string, state: ManifestState) {
 export function backupSourceFile(dirPath: string, sourcePath: string, suffix: "before" | "after") {
   const dest = path.join(dirPath, `posts.${suffix}.ts`);
   fs.copyFileSync(sourcePath, dest);
+}
+
+export function backupSourceFiles(
+  dirPath: string,
+  sourcePaths: string[],
+  suffix: "before" | "after"
+) {
+  const projectRoot = process.cwd();
+  const backupRoot = path.join(dirPath, "source." + suffix);
+  const sourceFiles: string[] = [];
+
+  for (const sourcePath of sourcePaths) {
+    const relativeSourcePath = path.relative(projectRoot, sourcePath);
+    if (
+      !relativeSourcePath ||
+      relativeSourcePath.startsWith(".." + path.sep) ||
+      path.isAbsolute(relativeSourcePath)
+    ) {
+      throw new Error("Source file must be inside the project: " + sourcePath);
+    }
+
+    const destination = path.join(backupRoot, relativeSourcePath);
+    fs.mkdirSync(path.dirname(destination), { recursive: true });
+    fs.copyFileSync(sourcePath, destination);
+    sourceFiles.push(relativeSourcePath);
+  }
+
+  return sourceFiles;
 }
