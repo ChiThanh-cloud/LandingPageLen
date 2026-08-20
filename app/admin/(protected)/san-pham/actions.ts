@@ -240,32 +240,54 @@ const importedVariantSchema = z.object({
   sort_order: z.number().int().min(0).max(100000)
 });
 
+const importedVariantResultSchema = z.object({
+  productSlug: z.string().nullable(),
+  importedCount: z.number().int().nonnegative(),
+  insertedCount: z.number().int().nonnegative(),
+  updatedCount: z.number().int().nonnegative()
+});
+
+function resultFromVariantImportError(error: { message?: string } | null): ProductAdminActionResult {
+  const message = error?.message || "";
+  if (message.includes("ADMIN_FORBIDDEN")) {
+    return { ok: false, message: "Phiên quản trị không còn quyền thực hiện thao tác này." };
+  }
+  if (message.includes("PRODUCT_NOT_FOUND")) {
+    return { ok: false, message: "Không tìm thấy sản phẩm cần import." };
+  }
+  if (message.includes("PRODUCT_NOT_YARN")) {
+    return { ok: false, message: "Chỉ sản phẩm len sợi mới có mã màu." };
+  }
+  if (message.includes("VARIANT_IMPORT_INVALID") || message.includes("VARIANT_NAME_CONFLICT")) {
+    return { ok: false, message: "Dữ liệu import có mã màu không hợp lệ hoặc bị xung đột tên." };
+  }
+  return resultFromError(error, "");
+}
+
 export async function importVariantsAction(productId: string, input: unknown): Promise<ProductAdminActionResult> {
   const parsed = z.object({
     productId: productIdSchema,
     variants: z.array(importedVariantSchema).min(1).max(200)
   }).safeParse({ productId, variants: input });
   if (!parsed.success) return { ok: false, message: "Dữ liệu import không hợp lệ. Kiểm tra mã màu và đường dẫn ảnh." };
-  const client = await authorizedClient();
-  const { data: product } = await client.from("products").select("id,category,slug").eq("id", parsed.data.productId).maybeSingle();
-  if (!product || product.category !== "yarn") return { ok: false, message: "Chỉ sản phẩm len sợi mới có mã màu." };
+  const admin = await requireAdminPage();
+  const client = getSupabaseAdminClient();
+  if (!client) throw new Error("ADMIN_SERVICE_UNAVAILABLE");
 
-  for (const variant of parsed.data.variants) {
-    const { data: existing, error: lookupError } = await client
-      .from("product_variants")
-      .select("id")
-      .eq("product_id", parsed.data.productId)
-      .ilike("name", variant.name)
-      .maybeSingle();
-    if (lookupError) return resultFromError(lookupError, "");
-    const payload = { ...variant, product_id: parsed.data.productId };
-    const { error } = existing
-      ? await client.from("product_variants").update(variant).eq("id", existing.id)
-      : await client.from("product_variants").insert(payload);
-    if (error) return resultFromError(error, "");
+  const { data, error } = await client.rpc("admin_import_product_variants", {
+    p_product_id: parsed.data.productId,
+    p_variants: parsed.data.variants,
+    p_admin_user: admin.id
+  });
+  if (error) return resultFromVariantImportError(error);
+
+  const imported = importedVariantResultSchema.safeParse(data);
+  if (!imported.success || imported.data.importedCount !== parsed.data.variants.length) {
+    return resultFromError({ message: "VARIANT_IMPORT_RESPONSE_INVALID" }, "");
   }
-  revalidateProducts(product.slug);
-  return { ok: true, message: `Đã import ${parsed.data.variants.length} mã màu.` };
+
+  revalidateProducts(imported.data.productSlug);
+  return { ok: true, message: `Đã import ${imported.data.importedCount} mã màu.` };
 }
 
 export async function generateCaptionAction(productId: string): Promise<ProductAdminActionResult> {

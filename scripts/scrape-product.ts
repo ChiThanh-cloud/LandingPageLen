@@ -89,6 +89,15 @@ interface ExistingVariant {
   sort_order: number | null;
 }
 
+interface ScrapeImportResult {
+  productId: number | string;
+  productSlug: string;
+  variantCount: number;
+  importedCount: number;
+  insertedCount: number;
+  updatedCount: number;
+}
+
 const SKIPPED_IMAGE_SCHEMES = ['data:', 'blob:', 'javascript:'];
 
 function isSkippedImageScheme(value: string) {
@@ -261,6 +270,17 @@ function storedPositivePrice(value: number | string | null | undefined) {
   if (!value) return null;
   const parsed = Number(String(value).replace(/[^0-9.-]/g, ''));
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function isScrapeImportResult(value: unknown): value is ScrapeImportResult {
+  if (!value || typeof value !== 'object') return false;
+  const result = value as Record<string, unknown>;
+  return (typeof result.productId === 'number' || typeof result.productId === 'string')
+    && typeof result.productSlug === 'string'
+    && typeof result.variantCount === 'number'
+    && typeof result.importedCount === 'number'
+    && typeof result.insertedCount === 'number'
+    && typeof result.updatedCount === 'number';
 }
 
 function parseGalleryIndices(rawValue: string) {
@@ -773,55 +793,9 @@ async function scrapeProduct(
         }
       }
 
-      console.log(`\nUpdating Database...`);
-      const updatedAt = new Date().toISOString();
+      console.log(`\nUpdating Database atomically...`);
       const expectedPrice = existingProduct && !syncPrice ? existingPrice : price;
       const expectedStatus = existingProduct ? existingProduct.status : AVAILABLE_STATUS;
-
-      if (productId) {
-        const productPayload: Record<string, unknown> = updateGalleryOnly
-          ? {
-              image_url: mainImageUrl,
-              full_image_url: mainImageUrl,
-              updated_at: updatedAt,
-            }
-          : {
-              image_url: mainImageUrl,
-              full_image_url: mainImageUrl,
-              base_price: expectedPrice,
-              updated_at: updatedAt,
-              ...(!existingProduct?.name?.trim() ? { name } : {}),
-              ...(!existingProduct?.description?.trim() ? { description } : {}),
-              ...(syncPrice ? { price, base_price: price } : {}),
-            };
-        const { error: updateError } = await supabase
-          .from('products')
-          .update(productPayload)
-          .eq('id', productId);
-        if (updateError) throw updateError;
-        console.log(`Updated existing product: ${slug} (ID: ${productId}) ${mainImageUrl ? 'with new main image' : ''}`);
-      } else {
-        const productPayload = {
-          slug,
-          name,
-          category: PRODUCT_CATEGORY,
-          price,
-          base_price: price,
-          description,
-          image_url: mainImageUrl,
-          full_image_url: mainImageUrl,
-          status: AVAILABLE_STATUS,
-          updated_at: updatedAt,
-        };
-        const { data: newProduct, error: insertError } = await supabase
-          .from('products')
-          .insert(productPayload)
-          .select('id')
-          .single();
-        if (insertError) throw insertError;
-        productId = newProduct.id;
-        console.log(`Inserted new product: ${slug} (ID: ${productId})`);
-      }
 
       const expectedSortOrders = new Map<string, number | null>();
       const expectedStatuses = new Map<string, string | null>();
@@ -830,41 +804,50 @@ async function scrapeProduct(
         expectedStatuses.set(code, variant.status);
       }
 
-      if (!updateGalleryOnly) {
-        for (const v of variants) {
-          const variantPayload = {
-            product_id: productId,
-            name: v.code,
-            color_code: v.code,
-            image_url: v.image_url,
-            full_image_url: v.image_url,
-            sort_order: v.position,
-            updated_at: updatedAt,
-          };
+      const variantsToImport = updateGalleryOnly ? [] : variants.map((variant) => ({
+        name: variant.code,
+        color_code: variant.code,
+        image_url: variant.image_url,
+        full_image_url: variant.image_url,
+        sort_order: variant.position,
+      }));
 
-          const existingVariant = existingCodes.get(v.code);
-          if (existingVariant) {
-            const { error: uvError } = await supabase
-              .from('product_variants')
-              .update(variantPayload)
-              .eq('id', existingVariant.id);
-            if (uvError) throw uvError;
-            existingCodes.delete(v.code);
-          } else {
-            const { error: ivError } = await supabase
-              .from('product_variants')
-              .insert({ ...variantPayload, status: AVAILABLE_STATUS });
-            if (ivError) throw ivError;
-            expectedStatuses.set(v.code, AVAILABLE_STATUS);
-          }
-          expectedSortOrders.set(v.code, v.position);
+      if (!updateGalleryOnly) {
+        for (const variant of variants) {
+          if (!existingCodes.has(variant.code)) expectedStatuses.set(variant.code, AVAILABLE_STATUS);
+          expectedSortOrders.set(variant.code, variant.position);
         }
-        
-        if (existingCodes.size > 0) {
+      }
+
+      const { data: importData, error: importError } = await supabase.rpc('service_import_scraped_product', {
+        p_slug: slug,
+        p_name: name,
+        p_price: price,
+        p_description: description,
+        p_main_image_url: mainImageUrl,
+        p_update_gallery_only: updateGalleryOnly,
+        p_sync_price: syncPrice,
+        p_variants: variantsToImport,
+      });
+      if (importError) {
+        throw new Error(`Atomic database import failed: ${importError.message}`);
+      }
+      if (!isScrapeImportResult(importData)
+        || importData.productSlug !== slug
+        || importData.importedCount !== variantsToImport.length
+        || importData.variantCount !== expectedStatuses.size) {
+        failImport('Atomic database import returned an invalid result.');
+      }
+
+      productId = importData.productId;
+      console.log(`${existingProduct ? 'Updated' : 'Inserted'} product atomically: ${slug} (ID: ${productId})`);
+
+      if (!updateGalleryOnly) {
+        const importedCodes = new Set(variants.map(variant => variant.code));
+        const staleCodes = [...existingCodes.keys()].filter(code => !importedCodes.has(code));
+        if (staleCodes.length > 0) {
           console.warn(`\nSTALE VARIANTS (exist in DB but not in scraped source):`);
-          for (const code of existingCodes.keys()) {
-            console.log(`- code ${code} exists locally but not in scraped source`);
-          }
+          for (const code of staleCodes) console.log(`- code ${code} exists locally but not in scraped source`);
         }
       }
 
