@@ -22,7 +22,7 @@ export default async function AdminDashboardPage() {
     <div className={styles.dashboardPage}>
       <header className={styles.pageHeader}>
         <div><p className={styles.eyebrow}>Tổng quan</p><h1>Chào Tiny, hôm nay thế nào?</h1><p>Theo dõi đơn hàng và những việc cần ưu tiên trong một màn hình.</p></div>
-        <Link href="/admin/don-hang" className={styles.primaryLink}>Xem tất cả đơn hàng <span aria-hidden="true">→</span></Link>
+        <Link href="/admin/don-hang" prefetch={false} className={styles.primaryLink}>Xem tất cả đơn hàng <span aria-hidden="true">→</span></Link>
       </header>
       <section className={styles.summaryGrid} aria-label="Tổng quan đơn hàng">
         {cards.map((card) => (
@@ -37,14 +37,14 @@ export default async function AdminDashboardPage() {
 
       <div className={styles.dashboardLowerGrid}>
         <section className={styles.dashboardPanel} aria-labelledby="tasks-heading">
-          <div className={styles.panelHeader}><div><p className={styles.eyebrow}>Ưu tiên</p><h2 id="tasks-heading">Việc cần xử lý</h2></div><Link href="/admin/don-hang">Mở danh sách</Link></div>
+          <div className={styles.panelHeader}><div><p className={styles.eyebrow}>Ưu tiên</p><h2 id="tasks-heading">Việc cần xử lý</h2></div><Link href="/admin/don-hang" prefetch={false}>Mở danh sách</Link></div>
           <div className={styles.taskList}>
-            <Link href="/admin/don-hang?status=pending_confirmation">
+            <Link href="/admin/don-hang?status=pending_confirmation" prefetch={false}>
               <span className={`${styles.taskIcon} ${styles.toneAmber}`}><AdminIcon name="alert" /></span>
               <span><strong>Xác nhận đơn mới</strong><small>Kiểm tra thông tin khách và tình trạng sản phẩm.</small></span>
               <b>{stats.pendingConfirmation}</b><span aria-hidden="true">→</span>
             </Link>
-            <Link href="/admin/don-hang?status=pending_payment">
+            <Link href="/admin/don-hang?status=pending_payment" prefetch={false}>
               <span className={`${styles.taskIcon} ${styles.toneBlue}`}><AdminIcon name="clock" /></span>
               <span><strong>Theo dõi thanh toán</strong><small>Các đơn chuyển khoản vẫn đang chờ thanh toán.</small></span>
               <b>{stats.pendingPayment}</b><span aria-hidden="true">→</span>
