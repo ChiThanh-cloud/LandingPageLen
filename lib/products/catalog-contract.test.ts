@@ -5,6 +5,7 @@ import test from "node:test";
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const adapter = read("./supabase-products.ts");
 const scraper = read("../../scripts/scrape-product.ts");
+const importMigration = read("../../supabase/migrations/20260820141529_atomic_bulk_variant_import.sql");
 const revalidationRoute = read("../../app/api/admin/revalidate-catalog/route.ts");
 
 test("storefront treats products.price as source of truth and exposes the stored color code", () => {
@@ -16,7 +17,13 @@ test("storefront treats products.price as source of truth and exposes the stored
 
 test("gallery-only import writes only runtime image fields and never syncs price", () => {
   assert.match(scraper, /const galleryToPersist = cleanGallery\.slice\(0, 1\)/);
-  assert.match(scraper, /updateGalleryOnly\s*\?\s*\{\s*image_url: mainImageUrl,\s*full_image_url: mainImageUrl,\s*updated_at: updatedAt,\s*\}/s);
+  assert.match(scraper, /p_update_gallery_only: updateGalleryOnly/);
+  assert.match(importMigration, /elsif p_update_gallery_only then[\s\S]*image_url = p_main_image_url,[\s\S]*full_image_url = p_main_image_url,[\s\S]*updated_at = pg_catalog\.clock_timestamp\(\)/);
+  const galleryUpdate = importMigration.slice(
+    importMigration.indexOf("elsif p_update_gallery_only then"),
+    importMigration.indexOf("else", importMigration.indexOf("elsif p_update_gallery_only then"))
+  );
+  assert.doesNotMatch(galleryUpdate, /\bprice\s*=/);
   assert.match(scraper, /if \(updateGalleryOnly && syncPrice\)/);
   assert.match(scraper, /--sync-price cannot be combined with --update-gallery-only/);
   assert.match(scraper, /--update-gallery-only changed protected product field/);
@@ -24,17 +31,31 @@ test("gallery-only import writes only runtime image fields and never syncs price
 
 test("full import preserves manual product and variant state unless price sync is explicit", () => {
   assert.match(scraper, /const existingPrice = storedPositivePrice\(existingProduct\?\.price\)/);
-  assert.match(scraper, /base_price: expectedPrice/);
-  assert.match(scraper, /\.\.\.\(syncPrice \? \{ price, base_price: price \} : \{\}\)/);
-  assert.match(scraper, /\.\.\.\(!existingProduct\?\.description\?\.trim\(\) \? \{ description \} : \{\}\)/);
+  assert.match(importMigration, /base_price = case when p_sync_price then p_price else v_existing_price end/);
+  assert.match(importMigration, /price = case when p_sync_price then p_price::text else p\.price end/);
+  assert.match(importMigration, /when pg_catalog\.btrim\(coalesce\(p\.description, ''\)\) = '' then coalesce\(p_description, ''\)/);
 
-  const existingVariantUpdate = scraper.slice(
-    scraper.indexOf("const variantPayload = {"),
-    scraper.indexOf("const existingVariant = existingCodes.get(v.code)")
+  const scrapeVariantUpdateStart = importMigration.indexOf(
+    "else\n        update public.product_variants pv",
+    importMigration.indexOf("if p_mode = 'admin' then")
   );
-  assert.doesNotMatch(existingVariantUpdate, /status:/);
-  assert.match(scraper, /\.insert\(\{ \.\.\.variantPayload, status: AVAILABLE_STATUS \}\)/);
+  const scrapeVariantUpdate = importMigration.slice(
+    scrapeVariantUpdateStart,
+    importMigration.indexOf("v_updated_count :=", scrapeVariantUpdateStart)
+  );
+  assert.match(scrapeVariantUpdate, /color_code = v_color_code[\s\S]*image_url = v_variant/);
+  assert.doesNotMatch(scrapeVariantUpdate, /\bstatus\s*=/);
+  assert.match(importMigration, /case when p_mode = 'admin' then[\s\S]*else 'available' end/);
   assert.match(scraper, /expectedStatuses\.set\(code, variant\.status\)/);
+});
+
+test("scrape production writes use one service-role RPC and no per-variant mutations", () => {
+  assert.equal(scraper.match(/\.rpc\('service_import_scraped_product'/g)?.length, 1);
+  assert.doesNotMatch(scraper, /\.from\('products'\)\s*\.update\(/);
+  assert.doesNotMatch(scraper, /\.from\('products'\)\s*\.insert\(/);
+  assert.doesNotMatch(scraper, /\.from\('product_variants'\)\s*\.(?:update|insert|upsert)\(/);
+  assert.match(importMigration, /private\.import_product_variant_batch/);
+  assert.match(importMigration, /function public\.service_import_scraped_product/);
 });
 
 test("gallery exclusion is one-based and scraper revalidates through a protected endpoint", () => {

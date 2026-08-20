@@ -47,7 +47,7 @@ test("every catalog mutation resolves the product slug before storefront revalid
   assert.match(productActions, /toggleProductAction[\s\S]*select\("slug"\)\.single\(\)[\s\S]*revalidateProducts\(data\?\.slug\)/);
   assert.match(productActions, /saveVariantAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
   assert.match(productActions, /toggleVariantAction[\s\S]*select\("slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
-  assert.match(productActions, /importVariantsAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
+  assert.match(productActions, /importVariantsAction[\s\S]*rpc\("admin_import_product_variants"[\s\S]*revalidateProducts\(imported\.data\.productSlug\)/);
 });
 
 test("browser roles cannot directly mutate catalog or inventory", () => {
