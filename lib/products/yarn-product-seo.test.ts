@@ -6,6 +6,11 @@ import { siteConfig } from "@/data/site";
 import { yarnProducts } from "@/lib/products/yarn-products";
 import type { YarnProduct } from "@/types/yarn-product";
 import {
+  getPrimaryYarnNavigationLinks,
+  getRelatedYarnProducts,
+  getYarnProductSeoContent
+} from "./yarn-product-content";
+import {
   getYarnProductHeading,
   getYarnProductGalleryImageAlt,
   getYarnProductImageAlt,
@@ -205,7 +210,70 @@ test("page copy, related products, and product images stay crawlable and data dr
   const related = readFileSync(new URL("../../components/yarn-product/RelatedProducts.tsx", import.meta.url), "utf8");
   const gallery = readFileSync(new URL("../../components/yarn-product/ProductGallery.tsx", import.meta.url), "utf8");
   assert.match(seoContent, /getYarnProductVisibleColorCount/);
-  assert.match(seoContent, /href="\/blog\/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao"/);
+  assert.match(seoContent, /getYarnProductSeoContent/);
+  assert.match(seoContent, /<Link href=\{article\.href\}>/);
   assert.match(related, /<Link href=\{`\/len-soi\/\$\{product\.slug\}`\}/);
   assert.match(gallery, /getYarnProductGalleryImageAlt\(product, mainImage, selectedVariant\)/);
+});
+
+test("each approved yarn product receives its own contextual blog links", () => {
+  const linksBySlug = Object.fromEntries(
+    yarnProducts.map((item) => [item.slug, getYarnProductSeoContent(item).articles.map((article) => article.href)])
+  );
+
+  assert.deepEqual(linksBySlug["nhung-dua"], [
+    "/blog/len-nhung-dua-la-gi-soi-6mm-100g-dung-kim-moc-bao-nhieu",
+    "/blog/nhung-dua-va-nhung-gau-khac-nhau-the-nao",
+    "/blog/chon-kim-moc-bao-nhieu-cho-milk-bo-nhung-dua-nhung-gau-va-mac-den"
+  ]);
+  assert.deepEqual(linksBySlug["nhung-gau"], [
+    "/blog/nhung-dua-va-nhung-gau-khac-nhau-the-nao",
+    "/blog/chon-kim-moc-bao-nhieu-cho-milk-bo-nhung-dua-nhung-gau-va-mac-den",
+    "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao"
+  ]);
+  assert.deepEqual(linksBySlug["milk-bo"], [
+    "/blog/milk-bo-va-milk-cotton-mac-den-khac-nhau-the-nao",
+    "/blog/chon-kim-moc-bao-nhieu-cho-milk-bo-nhung-dua-nhung-gau-va-mac-den",
+    "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao"
+  ]);
+  assert.deepEqual(linksBySlug["mac-den"], [
+    "/blog/milk-bo-va-milk-cotton-mac-den-khac-nhau-the-nao",
+    "/blog/chon-kim-moc-bao-nhieu-cho-milk-bo-nhung-dua-nhung-gau-va-mac-den"
+  ]);
+});
+
+test("related yarn products rank same category, then same material, then catalog fallback", () => {
+  const nhungDua = yarnProducts.find((item) => item.slug === "nhung-dua");
+  const milkBo = yarnProducts.find((item) => item.slug === "milk-bo");
+  assert.ok(nhungDua);
+  assert.ok(milkBo);
+
+  assert.deepEqual(getRelatedYarnProducts(nhungDua, yarnProducts).map((item) => item.slug), [
+    "nhung-gau",
+    "milk-bo",
+    "mac-den"
+  ]);
+  assert.deepEqual(getRelatedYarnProducts(milkBo, yarnProducts).map((item) => item.slug), [
+    "mac-den",
+    "nhung-dua",
+    "nhung-gau"
+  ]);
+
+  const futurePolyester = product({ category: "len-baby", material: "100% Polyester" });
+  assert.deepEqual(getRelatedYarnProducts(futurePolyester, yarnProducts, 2).map((item) => item.slug), [
+    "nhung-dua",
+    "nhung-gau"
+  ]);
+});
+
+test("footer product links are limited to catalog products that actually exist", () => {
+  assert.deepEqual(getPrimaryYarnNavigationLinks(yarnProducts), [
+    { href: "/len-soi/nhung-dua", label: "Len Nhung Đũa" },
+    { href: "/len-soi/nhung-gau", label: "Len Nhung Gấu" },
+    { href: "/len-soi/milk-bo", label: "Len Milk Bò" },
+    { href: "/len-soi/mac-den", label: "Milk Cotton Mác Đen" }
+  ]);
+  assert.deepEqual(getPrimaryYarnNavigationLinks(yarnProducts.filter((item) => item.slug === "milk-bo")), [
+    { href: "/len-soi/milk-bo", label: "Len Milk Bò" }
+  ]);
 });

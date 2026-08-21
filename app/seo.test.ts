@@ -5,7 +5,6 @@ import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getAllYarnProducts } from "../lib/products/supabase-products";
-import { generateMetadata as generateLegacyProductMetadata } from "./san-pham/[slug]/page";
 import robots from "./robots";
 import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries, getYarnCatalogLastModified } from "./sitemap";
 
@@ -133,53 +132,49 @@ test("SEO content data", async (t) => {
 });
 
 test("yarn route intent separation", async (t) => {
-  const legacyYarnGuide = products.find((product) => product.slug === "len-soi");
   const yarnCategorySource = readFileSync(new URL("./len-soi/page.tsx", import.meta.url), "utf8");
   const legacyRouteSource = readFileSync(new URL("./san-pham/[slug]/page.tsx", import.meta.url), "utf8");
-  const legacyPageSource = readFileSync(new URL("../components/product/ProductDetailPage.tsx", import.meta.url), "utf8");
+  const nextConfigSource = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
+  const headerSource = readFileSync(new URL("../components/layout/Header.tsx", import.meta.url), "utf8");
+  const footerSource = readFileSync(new URL("../components/layout/Footer.tsx", import.meta.url), "utf8");
   const beginnerGuideSource = readFileSync(
     new URL("../content/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.mdx", import.meta.url),
     "utf8"
   );
 
-  assert.ok(legacyYarnGuide, "legacy yarn guide must exist");
-
   await t.test("/len-soi remains the transactional catalog", () => {
     assert.match(yarnCategorySource, /getAllYarnProducts/);
     assert.match(yarnCategorySource, /YarnCatalog/);
     assert.match(yarnCategorySource, /canonical:\s*"\/len-soi"/);
+    assert.match(yarnCategorySource, /href=\{`\/len-soi\/\$\{product\.slug\}`\}/);
   });
 
-  await t.test("legacy guide is self-canonical and independently indexable", async () => {
-    const metadata = await generateLegacyProductMetadata({ params: Promise.resolve({ slug: "len-soi" }) });
-    const title = metadata.title as { absolute?: string } | undefined;
-
-    assert.equal(metadata.alternates?.canonical, `${siteConfig.url}/san-pham/len-soi`);
-    assert.equal(metadata.robots, undefined);
-    assert.equal(title?.absolute, legacyYarnGuide.title);
-  });
-
-  await t.test("no redirect joins the two yarn routes", () => {
-    assert.doesNotMatch(legacyRouteSource, /(?:permanentRedirect|redirect)\s*\(/);
+  await t.test("legacy yarn guide data is removed without affecting protected showcase products", () => {
+    assert.equal(products.some((product) => product.slug === "len-soi"), false);
+    assert.deepEqual(products.map((product) => product.slug), [
+      "set-tu-moc",
+      "thu-len-theo-yeu-cau",
+      "hoa-len-handmade"
+    ]);
     assert.match(legacyRouteSource, /return <ProductDetailPage product=\{product\} \/>;/);
   });
 
-  await t.test("legacy guide copy and schema data stay informational", () => {
-    assert.doesNotMatch(legacyYarnGuide.title, /\b(mua|giá|milk cotton|móc thú)\b/i);
-    assert.doesNotMatch(legacyYarnGuide.description, /giá từ|từ\s+\d+[\d.,]*\s*(?:đ|vnd)/i);
-    assert.equal(legacyYarnGuide.sections.some((section) => section.type === "priceTable"), false);
-    assert.doesNotMatch(JSON.stringify(legacyYarnGuide.sections), /8\.000đ|giá tham khảo/i);
-    assert.match(legacyYarnGuide.schemaDescription, /Hướng dẫn|chọn len/i);
+  await t.test("legacy yarn guide permanently redirects to the catalog", () => {
+    assert.match(
+      nextConfigSource,
+      /source:\s*"\/san-pham\/len-soi"[\s\S]*?destination:\s*"\/len-soi"[\s\S]*?statusCode:\s*301/
+    );
   });
 
-  await t.test("legacy guide sends purchase intent to the live catalog", () => {
-    const catalogLink = legacyYarnGuide.sections.find(
-      (section) =>
-        section.type === "related" && section.links.some((link) => link.href === "/len-soi" && /xem len đang bán/i.test(link.title))
-    );
+  await t.test("navigation exposes crawlable links to the yarn catalog", () => {
+    assert.match(headerSource, /href:\s*"\/len-soi",\s*label:\s*"Len sợi"/);
+    assert.match(footerSource, /<Link href="\/len-soi">Len sợi<\/Link>/);
+    assert.match(footerSource, /yarnLinks\.map/);
+  });
 
-    assert.ok(catalogLink);
-    assert.match(legacyPageSource, /isYarnGuide[\s\S]*?href="\/len-soi"[\s\S]*?Xem len đang bán/);
+  await t.test("the old yarn guide is absent from the generated sitemap", async () => {
+    const entries = await sitemap();
+    assert.equal(entries.some((entry) => entry.url === `${siteConfig.url}/san-pham/len-soi`), false);
   });
 
   await t.test("beginner blog links the transactional catalog and real yarn product pages", () => {
