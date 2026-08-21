@@ -224,6 +224,10 @@
   text-transform: uppercase;
 }
 
+.footer-col-heading--secondary {
+  margin-top: 8px;
+}
+
 .footer-col-links {
   display: flex;
   flex-direction: column;

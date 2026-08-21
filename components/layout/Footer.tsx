@@ -3,8 +3,9 @@ import Link from "next/link";
 import { PolicyLinks } from "./PolicyLinks";
 import { TrackedExternalLink } from "./TrackedExternalLink";
 import { siteConfig } from "@/data/site";
+import type { YarnContentLink } from "@/lib/products/yarn-product-content";
 
-export function Footer() {
+export function Footer({ yarnLinks }: { yarnLinks: YarnContentLink[] }) {
   return (
     <footer className="footer">
       <div className="footer-grid container">
@@ -33,7 +34,14 @@ export function Footer() {
 
         {/* CỘT 2 — Khám phá */}
         <div className="footer-col">
-          <p className="footer-col-heading">Khám phá</p>
+          <p className="footer-col-heading">Len sợi</p>
+          <nav className="footer-col-links" aria-label="Các dòng len đang bán">
+            <Link href="/len-soi">Len sợi</Link>
+            {yarnLinks.map((link) => (
+              <Link href={link.href} key={link.href}>{link.label}</Link>
+            ))}
+          </nav>
+          <p className="footer-col-heading footer-col-heading--secondary">Khám phá</p>
           <nav className="footer-col-links" aria-label="Khám phá">
             <Link href="/#ve-tiny">Về Tiny</Link>
             <Link href="/#bo-suu-tap">Bộ sưu tập</Link>

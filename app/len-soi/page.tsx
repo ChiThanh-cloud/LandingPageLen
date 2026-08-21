@@ -67,6 +67,29 @@ export default async function YarnCategoryPage() {
         />
       </section>
       <YarnCatalog products={products} />
+      {products.length > 0 ? (
+        <section className="yc-product-links" aria-labelledby="available-yarn-heading">
+          <div>
+            <p className="yc-eyebrow">Chọn theo thông số</p>
+            <h2 id="available-yarn-heading">Các dòng len đang có tại Tiny</h2>
+            <p>Mở từng trang sản phẩm để xem bảng màu, giá, tồn kho và thông số đang công bố.</p>
+          </div>
+          <ul>
+            {products.map((product) => (
+              <li key={product.id}>
+                <Link href={`/len-soi/${product.slug}`}>
+                  <strong>{product.name}</strong>
+                  <span>
+                    {[product.yarnSize && `Sợi ${product.yarnSize}`, product.hookSize && `Kim ${product.hookSize}`]
+                      .filter(Boolean)
+                      .join(" · ") || "Xem bảng màu và thông số"}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       <section className="yc-help" aria-labelledby="yarn-guides-heading">
         <h2 id="yarn-guides-heading">Hướng dẫn chọn len</h2>
         <p>Đối chiếu thông số sợi và kim móc trước khi chọn mã màu.</p>

@@ -14,6 +14,8 @@ import "./san-pham/product-pages.css";
 import "./globals.css";
 import "../css/yarn-product.css";
 import { StorefrontShell } from "@/components/layout/StorefrontShell";
+import { getAllYarnProducts } from "@/lib/products/supabase-products";
+import { getPrimaryYarnNavigationLinks } from "@/lib/products/yarn-product-content";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -57,17 +59,24 @@ const beVietnam = Be_Vietnam_Pro({
   variable: "--font-be-vietnam"
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let footerYarnLinks: ReturnType<typeof getPrimaryYarnNavigationLinks> = [];
+  try {
+    footerYarnLinks = getPrimaryYarnNavigationLinks(await getAllYarnProducts());
+  } catch {
+    console.error("Unable to load yarn links for the storefront footer");
+  }
+
   return (
     <html lang="vi" data-scroll-behavior="smooth" className={`${playfair.variable} ${beVietnam.variable}`}>
       <head>
       </head>
       <body>
-        <StorefrontShell>{children}</StorefrontShell>
+        <StorefrontShell footerYarnLinks={footerYarnLinks}>{children}</StorefrontShell>
       </body>
     </html>
   );

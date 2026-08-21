@@ -2,137 +2,6 @@ import type { ProductEntry } from "@/types/product";
 
 export const products: ProductEntry[] = [
   {
-    slug: "len-soi",
-    kind: "product",
-    name: "Hướng dẫn chọn len sợi",
-    title: "Cách chọn len sợi cho người mới | Tiệm Len Nhà Tiny",
-    description:
-      "Hướng dẫn cách chọn len sợi theo loại sản phẩm, độ mềm, độ dày và nhu cầu sử dụng. Xem gợi ý cho người mới và chuyển tới catalog khi cần mua len.",
-    ogTitle: "Cách chọn len sợi cho người mới | Tiệm Len Nhà Tiny",
-    ogDescription:
-      "Tìm hiểu các dòng len phổ biến và cách chọn len theo dự án cho người mới học móc.",
-    category: "Hướng dẫn",
-    eyebrow: "Hướng dẫn - Len cho người mới",
-    h1: "Cách chọn len sợi phù hợp cho người mới",
-    lead:
-      "Hiểu chất sợi, độ mềm và form thành phẩm để chọn len phù hợp với dự án đầu tiên của bạn.",
-    image: "/images/yarn_collection_800.jpg",
-    imageAlt:
-      "Các cuộn len phổ biến dùng cho dự án đan móc handmade",
-    updatedAt: "2026-07-07",
-    schemaName: "Hướng dẫn chọn len sợi cho người mới",
-    schemaDescription:
-      "Hướng dẫn phân biệt các loại len phổ biến và chọn len theo dự án đan móc, từ thú bông đến hoa và phụ kiện.",
-    sections: [
-      {
-        type: "list",
-        title: "Các loại len phổ biến khi học móc",
-        intro:
-          "Mỗi loại len tạo cảm giác khác nhau khi móc và cho thành phẩm có độ mềm, độ đứng form khác nhau. Bạn có thể bắt đầu từ những nhóm sợi quen thuộc sau:",
-        items: [
-          {
-            label: "Len milk cotton",
-            text: "Mềm mịn, nhiều màu, mũi móc dễ nhìn, phù hợp nhất cho người mới bắt đầu và cho hầu hết sản phẩm handmade."
-          },
-          {
-            label: "Len nhung",
-            text: "Sợi bông mềm, thành phẩm trông mũm mĩm và đáng yêu, đặc biệt hợp với thú bông size vừa và lớn."
-          },
-          {
-            label: "Len cotton",
-            text: "Sợi gọn, đứng form, phù hợp hoa len, túi móc, phụ kiện cần dáng rõ nét."
-          },
-          {
-            label: "Phụ kiện kèm",
-            text: "Kim móc, đánh dấu mũi, kim khâu và bông nhồi nên được chọn theo loại len và mẫu bạn dự định làm."
-          }
-        ]
-      },
-      {
-        type: "list",
-        title: "Chọn len theo dự án bạn muốn làm",
-        items: [
-          {
-            label: "Người mới học móc len",
-            text: "Ưu tiên sợi dễ nhìn mũi, ít xù và chọn màu sáng để thuận tiện tập tăng, giảm và tháo móc lại."
-          },
-          {
-            label: "Móc thú bông",
-            text: "Milk cotton phù hợp để bắt đầu; khi đã quen tay, len nhung cho cảm giác mềm và thành phẩm mũm mĩm hơn."
-          },
-          {
-            label: "Móc hoa hoặc túi",
-            text: "Cotton hoặc milk cotton giúp mũi móc rõ hơn và dễ giữ những chi tiết cần form."
-          },
-          {
-            label: "Móc khóa và phụ kiện nhỏ",
-            text: "Chọn sợi ít xù, có độ bền vừa phải và thử một mẫu nhỏ trước khi làm nhiều màu."
-          }
-        ]
-      },
-      {
-        type: "text",
-        title: "Khi nào nên xem catalog len đang bán?",
-        paragraphs: [
-          "Giá, màu và tình trạng sản phẩm thay đổi theo từng dòng sợi. Khi đã xác định loại len phù hợp, hãy xem catalog hiện tại để kiểm tra thông tin sản phẩm trước khi chọn.",
-          "Nếu chưa chắc về loại sợi hoặc cỡ kim, bạn có thể chuẩn bị ảnh mẫu và số đo dự kiến để việc tư vấn cụ thể hơn."
-        ]
-      },
-      {
-        type: "callout",
-        kicker: "Cần gợi ý thêm?",
-        title: "Chưa biết nên chọn loại len nào?",
-        text:
-          "Gửi Tiny ảnh mẫu hoặc mô tả sản phẩm bạn muốn làm. Tiny sẽ gợi ý loại len, màu phù hợp và cỡ kim để bạn dễ bắt đầu.",
-        ctaLabel: "Nhắn Zalo tư vấn ngay",
-        ctaTrackKey: "contact_zalo_click"
-      },
-      {
-        type: "list",
-        title: "Mẹo chọn len trước khi bắt đầu",
-        items: [
-          { text: "Đọc nhãn sợi để đối chiếu chất liệu, trọng lượng và cỡ kim được gợi ý." },
-          { text: "Chọn màu sáng khi mới tập để mũi móc dễ nhìn hơn." },
-          { text: "Móc thử một mẫu nhỏ nếu bạn định thay loại len khác với chart." },
-          { text: "Chuẩn bị số đo hoặc ảnh tham khảo để ước lượng lượng sợi sát với dự án hơn." }
-        ]
-      },
-      {
-        type: "related",
-        title: "Xem thêm",
-        links: [
-          {
-            href: "/len-soi",
-            title: "Xem len đang bán",
-            text: "Mở catalog hiện tại để xem sản phẩm, giá, màu và tình trạng có sẵn."
-          },
-          {
-            href: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
-            title: "Người mới học móc len nên chọn loại len nào?",
-            text: "So sánh các loại len phổ biến và cách chọn đúng loại theo mẫu."
-          }
-        ]
-      }
-    ],
-    faq: [
-      {
-        question: "Len milk cotton có phù hợp làm thú bông không?",
-        answer:
-          "Phù hợp. Len milk cotton là lựa chọn phổ biến nhất để móc thú bông, đặc biệt cho người mới. Sợi mềm, nhiều màu, mũi móc dễ nhìn và giá dễ tiếp cận."
-      },
-      {
-        question: "Làm sao để kiểm tra giá, màu và tình trạng len hiện tại?",
-        answer:
-          "Xem catalog len đang bán để kiểm tra thông tin sản phẩm hiện tại. Trang hướng dẫn này không hiển thị giá hoặc tình trạng bán hàng cố định."
-      },
-      {
-        question: "Tiny có tư vấn loại len theo mẫu tôi muốn móc không?",
-        answer:
-          "Có. Bạn chỉ cần gửi ảnh mẫu hoặc mô tả, Tiny sẽ gợi ý loại len phù hợp và cỡ kim để bạn bắt đầu."
-      }
-    ]
-  },
-  {
     slug: "set-tu-moc",
     kind: "product",
     name: "Set tự móc len",
@@ -245,7 +114,7 @@ export const products: ProductEntry[] = [
             text: "Tìm hiểu về milk cotton, len nhung, cotton và acrylic để chọn đúng loại len từ đầu."
           },
           {
-            href: "/san-pham/len-soi",
+            href: "/len-soi",
             title: "Len sợi, len milk cotton tại Tiny",
             text: "Mua thêm len riêng lẻ theo màu và loại phù hợp với dự án bạn đang làm."
           }
