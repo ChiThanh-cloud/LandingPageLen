@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { YarnCatalog } from "@/components/yarn-product/YarnCatalog";
+import { YarnCatalogSeoContent } from "@/components/yarn-product/YarnCatalogSeoContent";
 import { siteConfig } from "@/data/site";
 import { getAllYarnProducts } from "@/lib/products/supabase-products";
 import { formatYarnPrice, getYarnCatalogStartingPrice } from "@/lib/products/yarn-product-seo";
@@ -70,6 +71,7 @@ export default async function YarnCategoryPage() {
         />
       </section>
       <YarnCatalog products={products} />
+      <YarnCatalogSeoContent products={products} />
       <section className="yc-help" aria-labelledby="yarn-guides-heading">
         <h2 id="yarn-guides-heading">Hướng dẫn chọn len</h2>
         <p>Đối chiếu thông số sợi và kim móc trước khi chọn mã màu.</p>
