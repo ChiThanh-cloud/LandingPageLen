@@ -147,7 +147,8 @@ test("yarn route intent separation", async (t) => {
   await t.test("/len-soi remains the transactional catalog", () => {
     assert.match(yarnCategorySource, /getAllYarnProducts/);
     assert.match(yarnCategorySource, /YarnCatalog/);
-    assert.match(yarnCategorySource, /canonical:\s*"\/len-soi"/);
+    assert.match(yarnCategorySource, /const canonical = `\$\{siteConfig\.url\}\/len-soi`;/);
+    assert.match(yarnCategorySource, /alternates:\s*\{\s*canonical\s*\}/);
   });
 
   await t.test("legacy guide is self-canonical and independently indexable", async () => {
