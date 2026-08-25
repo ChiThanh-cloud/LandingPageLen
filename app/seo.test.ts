@@ -5,7 +5,6 @@ import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getAllYarnProducts } from "../lib/products/supabase-products";
-import { generateMetadata as generateLegacyProductMetadata } from "./san-pham/[slug]/page";
 import robots from "./robots";
 import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries, getYarnCatalogLastModified } from "./sitemap";
 
@@ -163,7 +162,7 @@ test("SEO content data", async (t) => {
 test("yarn route intent separation", async (t) => {
   const legacyYarnGuide = products.find((product) => product.slug === "len-soi");
   const yarnCategorySource = readFileSync(new URL("./len-soi/page.tsx", import.meta.url), "utf8");
-  const legacyRouteSource = readFileSync(new URL("./san-pham/[slug]/page.tsx", import.meta.url), "utf8");
+  const redirectConfig = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
   const legacyPageSource = readFileSync(new URL("../components/product/ProductDetailPage.tsx", import.meta.url), "utf8");
   const beginnerGuideSource = readFileSync(
     new URL("../content/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.mdx", import.meta.url),
@@ -179,18 +178,11 @@ test("yarn route intent separation", async (t) => {
     assert.match(yarnCategorySource, /alternates:\s*\{\s*canonical\s*\}/);
   });
 
-  await t.test("legacy guide is self-canonical and independently indexable", async () => {
-    const metadata = await generateLegacyProductMetadata({ params: Promise.resolve({ slug: "len-soi" }) });
-    const title = metadata.title as { absolute?: string } | undefined;
-
-    assert.equal(metadata.alternates?.canonical, `${siteConfig.url}/san-pham/len-soi`);
-    assert.equal(metadata.robots, undefined);
-    assert.equal(title?.absolute, legacyYarnGuide.title);
-  });
-
-  await t.test("no redirect joins the two yarn routes", () => {
-    assert.doesNotMatch(legacyRouteSource, /(?:permanentRedirect|redirect)\s*\(/);
-    assert.match(legacyRouteSource, /return <ProductDetailPage product=\{product\} \/>;/);
+  await t.test("legacy yarn URL has a direct permanent redirect to the catalog", () => {
+    assert.match(
+      redirectConfig,
+      /source:\s*["']\/san-pham\/len-soi["'][\s\S]*?destination:\s*["']\/len-soi["'][\s\S]*?statusCode:\s*301/
+    );
   });
 
   await t.test("legacy guide copy and schema data stay informational", () => {
