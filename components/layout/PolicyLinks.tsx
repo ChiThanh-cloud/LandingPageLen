@@ -1,36 +1,19 @@
-"use client";
-
-import { trackSiteEvent } from "@/lib/siteTracking";
-
-type PolicyType = "privacy" | "terms" | "shipping" | "refund";
-
-const links: Array<{ type: PolicyType; label: string; trackKey: string }> = [
-  { type: "privacy", label: "Chính sách bảo mật", trackKey: "policy_privacy_click" },
-  { type: "terms", label: "Điều khoản dịch vụ", trackKey: "policy_terms_click" },
-  { type: "shipping", label: "Vận chuyển", trackKey: "policy_shipping_click" },
-  { type: "refund", label: "Đổi trả & hoàn tiền", trackKey: "policy_refund_click" }
-];
+import Link from "next/link";
+import * as React from "react";
+import { policies, policyLinks } from "@/data/policies";
 
 export function PolicyLinks() {
-  const openPolicy = async (type: PolicyType, label: string, trackKey: string) => {
-    const { openPolicyModal } = await import("@/js/policy-modal.js");
-    openPolicyModal(type);
-    trackSiteEvent(trackKey, { label, href: "#" });
-  };
-
   return (
     <>
-      {links.map((link) => (
-        <button
-          key={link.type}
+      {policyLinks.map((link) => (
+        <Link
+          key={link.key}
           className="footer-policy-link"
-          type="button"
+          href={`/${policies[link.key].slug}`}
           data-track={link.trackKey}
-          data-track-handled="true"
-          onClick={() => openPolicy(link.type, link.label, link.trackKey)}
         >
           {link.label}
-        </button>
+        </Link>
       ))}
     </>
   );

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { policies } from "@/data/policies";
 import { products } from "@/data/products";
 import { siteConfig } from "@/data/site";
 import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
@@ -83,6 +84,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6
     },
+    ...Object.values(policies).map((policy) => ({
+      url: `${siteConfig.url}/${policy.slug}`,
+      lastModified: baseLastModified,
+      changeFrequency: "yearly" as const,
+      priority: 0.3
+    })),
     {
       url: `${siteConfig.url}/blog`,
       lastModified: blogLastModified,

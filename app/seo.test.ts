@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { policies } from "../data/policies";
 import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
@@ -18,6 +19,7 @@ test("SEO routes", async (t) => {
     const expectedUrls = [
       siteConfig.url,
       `${siteConfig.url}/about`,
+      ...Object.values(policies).map((policy) => `${siteConfig.url}/${policy.slug}`),
       `${siteConfig.url}/blog`,
       `${siteConfig.url}/len-soi`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
