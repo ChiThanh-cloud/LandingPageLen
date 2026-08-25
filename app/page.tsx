@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { Fragment } from "react";
+import { HomeBlogPreview } from "@/components/home/HomeBlogPreview";
+import { HomeFaq } from "@/components/home/HomeFaq";
 import { HomepageEffects } from "@/components/home/HomepageEffects";
 import { HeroMedia } from "@/components/home/HeroMedia";
 import { ProductShowcase } from "@/components/home/ProductShowcase";
-import { posts } from "@/data/posts";
+import { getHomeFaqSchemaEntities } from "@/data/home-faq";
 import { siteConfig } from "@/data/site";
+import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
 
 const messengerConsultUrl =
   "https://m.me/61559447375156?text=Ch%C3%A0o%20Tiny%2C%20m%C3%ACnh%20mu%E1%BB%91n%20t%C6%B0%20v%E1%BA%A5n%20%C4%91%E1%BA%B7t%20len%2F%C4%91%E1%BB%93%20m%C3%B3c%20handmade.%20M%C3%ACnh%20c%C3%B3%20th%E1%BB%83%20g%E1%BB%ADi%20%E1%BA%A3nh%20m%E1%BA%ABu%20%C4%91%E1%BB%83%20Tiny%20b%C3%A1o%20gi%C3%A1%20gi%C3%BAp%20m%C3%ACnh%20kh%C3%B4ng%3F";
@@ -107,40 +109,7 @@ const homeJsonLd = {
     {
       "@type": "FAQPage",
       "@id": `${siteConfig.url}/#faq`,
-      mainEntity: [
-        {
-          "@type": "Question",
-          name: "Tiệm Len Nhà Tiny bán gì?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng handmade."
-          }
-        },
-        {
-          "@type": "Question",
-          name: "Tiệm Len Nhà Tiny phù hợp với ai?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần tư vấn phối màu len."
-          }
-        },
-        {
-          "@type": "Question",
-          name: "Có thể đặt đồ móc theo yêu cầu không?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng."
-          }
-        },
-        {
-          "@type": "Question",
-          name: "Shop có giao hàng toàn quốc không?",
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: "Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc."
-          }
-        }
-      ]
+      mainEntity: getHomeFaqSchemaEntities()
     },
   ]
 };
@@ -158,10 +127,6 @@ const processSteps = [
   ["03", "Tỉ mỉ móc tay", "Tiny bắt tay vào làm và sẽ gửi ảnh cập nhật để bạn xem hình hài bé nó ra sao.", LucideIconYarnBall],
   ["04", "Giao tới tận tay", "Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!", LucideIconPackageCheck]
 ] as const;
-
-const latestPosts = [...posts]
-  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-  .slice(0, 3);
 
 function CheckIcon() {
   return (
@@ -283,6 +248,8 @@ function MessengerBrandIcon() {
 }
 
 export default function HomePage() {
+  const latestPosts = getAllPostMetadata().slice(0, 3);
+
   return (
     <>
       <HomepageEffects />
@@ -350,7 +317,7 @@ export default function HomePage() {
             <p>Không chỉ là một trạm dừng chân mua bán len sợi, Tiny là góc nhỏ dành riêng cho những ai trân trọng đồ thủ công. Chúng mình tin rằng, mỗi cuộn len đều ẩn chứa một câu chuyện, và mỗi mũi móc đều mang theo một phần tâm huyết.</p>
             <p>Dù bạn đang tìm kiếm những cuộn len mềm mịn để tự đan chiếc khăn ấm, hay cần một em gấu bông &quot;độc bản&quot; để làm quà tặng – Tiny luôn ở đây, cẩn thận tỉ mỉ từng chút một để gửi đến bạn sản phẩm hoàn thiện nhất.</p>
             <ul className="about-list">
-              <li>Len tuyển chọn kỹ lưỡng: Dòng len Milk, Cotton, len xù... an toàn cho cả em bé.</li>
+              <li>Len tuyển chọn kỹ lưỡng: Dòng len Milk, Cotton, len xù... để bạn đối chiếu với mẫu và nhu cầu sử dụng.</li>
               <li>Móc tay 100%: Nhận làm theo mẫu ảnh hoặc lên ý tưởng thiết kế riêng cho bạn.</li>
               <li>Trách nhiệm tới cùng: Luôn gửi ảnh kiểm tra trước khi giao, hỗ trợ sửa dáng nếu chưa ưng ý.</li>
             </ul>
@@ -408,35 +375,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-blog section" id="blog-noi-bat">
-        <div className="container">
-          <h2 className="section-title center">Blog nổi bật từ <span className="highlight">LenTiny</span></h2>
-          <p className="section-sub center">Một vài bài nhẹ nhàng giúp bạn chọn quà, chọn len và chăm món đồ handmade lâu đẹp hơn.</p>
-          <div className="home-blog-grid">
-            {latestPosts.map((post) => {
-              const href = `/blog/${post.slug}`;
-              const d = new Date(post.publishedAt);
-              const dateLabel = `${d.getDate().toString().padStart(2, "0")}/${(d.getMonth() + 1).toString().padStart(2, "0")}/${d.getFullYear()}`;
-              return (
-                <article className="home-blog-card" key={href}>
-                  <Link className="home-blog-media" href={href}>
-                    <Image src={post.image} alt={post.imageAlt || post.title} width={800} height={600} sizes="(max-width: 768px) 100vw, 33vw" />
-                  </Link>
-                  <div className="home-blog-body">
-                    <p className="home-blog-meta"><time dateTime={post.publishedAt}>{dateLabel}</time></p>
-                    <h3><Link href={href}>{post.h1}</Link></h3>
-                    <p>{post.excerpt || post.description}</p>
-                    <Link className="home-blog-link" href={href}>Đọc bài →</Link>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <div className="home-blog-actions">
-            <Link href="/blog" className="btn btn-primary">Xem tất cả bài viết</Link>
-          </div>
-        </div>
-      </section>
+      <HomeBlogPreview posts={latestPosts} />
 
       <section className="contact section" id="lien-he-tu-van">
         <div className="container">
@@ -509,29 +448,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="shop-info-faq section" id="cau-hoi-nhanh-tiny" aria-label="Câu hỏi nhanh về Tiệm Len Nhà Tiny">
-        <div className="container shop-info-inner">
-          <h2 className="section-title center">Câu hỏi nhanh về <span className="highlight">Tiệm Len Nhà Tiny</span></h2>
-          <div className="shop-info-faq-list">
-            <details className="shop-info-faq-item">
-              <summary>Tiệm Len Nhà Tiny bán gì?</summary>
-              <p>Tiệm Len Nhà Tiny bán cuộn len, set tự móc, túi móc handmade, thú len, đồ móc theo yêu cầu và quà tặng handmade.</p>
-            </details>
-            <details className="shop-info-faq-item">
-              <summary>Tiệm Len Nhà Tiny phù hợp với ai?</summary>
-              <p>Shop phù hợp với người mới tập móc len, người muốn mua set len tự làm, khách tìm quà tặng handmade hoặc cần tư vấn phối màu len.</p>
-            </details>
-            <details className="shop-info-faq-item">
-              <summary>Có thể đặt đồ móc theo yêu cầu không?</summary>
-              <p>Có. Khách có thể nhắn Facebook Messenger hoặc Zalo để gửi mẫu, chọn màu và được tư vấn trước khi đặt hàng.</p>
-            </details>
-            <details className="shop-info-faq-item">
-              <summary>Shop có giao hàng toàn quốc không?</summary>
-              <p>Tiệm Len Nhà Tiny nhận đơn online và hỗ trợ giao hàng toàn quốc.</p>
-            </details>
-          </div>
-        </div>
-      </section>
+      <HomeFaq />
     </>
   );
 }

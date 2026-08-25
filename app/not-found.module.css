@@ -1,0 +1,108 @@
+.page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 132px 24px 84px;
+  background: radial-gradient(circle at top right, var(--primary-100), transparent 46%), var(--warm-pale);
+}
+
+.panel {
+  width: min(100%, 640px);
+  padding: clamp(30px, 7vw, 64px);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.code {
+  margin: 0 0 8px;
+  color: var(--primary-600);
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(3.5rem, 14vw, 7rem);
+  font-weight: 700;
+  line-height: .9;
+}
+
+.panel h1 {
+  margin: 0;
+  color: var(--text-dark);
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  line-height: 1.2;
+}
+
+.description {
+  max-width: 470px;
+  margin: 18px auto 0;
+  color: var(--text-mid);
+  line-height: 1.75;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 30px;
+}
+
+.primaryAction,
+.secondaryAction,
+.textAction {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-size: .94rem;
+  font-weight: 700;
+  transition: var(--transition);
+}
+
+.primaryAction {
+  background: var(--primary-700);
+  color: var(--white);
+}
+
+.secondaryAction {
+  border: 1px solid var(--primary-300);
+  background: var(--primary-100);
+  color: var(--primary-700);
+}
+
+.textAction {
+  color: var(--primary-700);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .primaryAction:hover {
+    background: var(--primary-600);
+    transform: translateY(-1px);
+  }
+
+  .secondaryAction:hover,
+  .textAction:hover {
+    color: var(--primary-600);
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 108px 16px 64px;
+  }
+
+  .panel {
+    border-radius: var(--radius);
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
