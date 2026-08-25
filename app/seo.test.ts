@@ -23,11 +23,28 @@ test("SEO routes", async (t) => {
       `${siteConfig.url}/len-soi`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
       ...yarnProducts.map((product) => `${siteConfig.url}/len-soi/${product.slug}`),
-      ...products.map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
+      ...products
+        .filter((product) => product.slug !== "len-soi")
+        .map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
     ];
 
     assert.deepEqual(new Set(urls), new Set(expectedUrls));
     assert.equal(urls.length, expectedUrls.length);
+  });
+
+  await t.test("yarn sitemap entries expose only canonical catalog and public product URLs", () => {
+    const catalogUrl = `${siteConfig.url}/len-soi`;
+    const yarnProductUrls = urls.filter((url) => url.startsWith(`${catalogUrl}/`));
+
+    assert.equal(urls.filter((url) => url === catalogUrl).length, 1);
+    assert.equal(urls.includes(`${siteConfig.url}/san-pham/len-soi`), false);
+    assert.equal(new Set(yarnProductUrls).size, yarnProductUrls.length);
+    assert.deepEqual(new Set(yarnProductUrls), new Set(
+      yarnProducts.map((product) => `${catalogUrl}/${product.slug}`)
+    ));
+    for (const url of urls) {
+      assert.doesNotMatch(url, /[?](?:filter|sort|q)=|\/(?:gio-hang|thanh-toan|dat-hang-thanh-cong)(?:\/|$)/);
+    }
   });
 
   await t.test("sitemap product entries use the storefront catalog source and canonical paths", () => {
@@ -107,6 +124,17 @@ test("SEO routes", async (t) => {
     for (const rule of rules.slice(1)) {
       assert.deepEqual(rule.disallow, ["/"]);
     }
+  });
+
+  await t.test("robots leaves the yarn catalog and product URLs crawlable", () => {
+    const config = robots();
+    const rules = Array.isArray(config.rules) ? config.rules : [config.rules];
+    const searchRule = rules.find((rule) => rule.userAgent === "*");
+    const disallow = Array.isArray(searchRule?.disallow) ? searchRule.disallow : [searchRule?.disallow];
+
+    assert.equal(searchRule?.allow, "/");
+    assert.equal(disallow.includes("/len-soi"), false);
+    assert.equal(disallow.includes("/len-soi/"), false);
   });
 });
 
