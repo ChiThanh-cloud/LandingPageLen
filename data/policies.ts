@@ -1,4 +1,6 @@
-export type PolicyKey = "privacy" | "terms" | "shipping" | "refund";
+import { policyRoutes, type PolicyKey } from "@/data/policy-routes";
+
+export type { PolicyKey } from "@/data/policy-routes";
 
 type PolicySection = {
   heading: string;
@@ -15,8 +17,8 @@ export type Policy = {
 
 export const policies: Record<PolicyKey, Policy> = {
   privacy: {
-    slug: "chinh-sach-bao-mat",
-    title: "Chính sách bảo mật",
+    slug: policyRoutes.privacy.slug,
+    title: policyRoutes.privacy.title,
     description: "Thông tin về cách Tiệm Len Nhà Tiny thu thập, sử dụng và hỗ trợ cập nhật thông tin đặt hàng.",
     intro: [
       "Chủ thể bán hàng: Tiệm Len Nhà Tiny. Tiny chỉ thu thập thông tin cần thiết để tư vấn, xác nhận đơn, giao hàng và hỗ trợ sau bán hàng."
@@ -61,8 +63,8 @@ export const policies: Record<PolicyKey, Policy> = {
     ]
   },
   terms: {
-    slug: "dieu-khoan-dich-vu",
-    title: "Điều khoản dịch vụ",
+    slug: policyRoutes.terms.slug,
+    title: policyRoutes.terms.title,
     description: "Điều khoản về sản phẩm, báo giá, đơn đặt riêng, thanh toán và hủy đơn tại Tiệm Len Nhà Tiny.",
     intro: [
       "Chủ thể bán hàng: Tiệm Len Nhà Tiny. Địa chỉ liên hệ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh. Kênh hỗ trợ: Zalo 036.890.3519 và Facebook Fanpage."
@@ -101,8 +103,8 @@ export const policies: Record<PolicyKey, Policy> = {
     ]
   },
   shipping: {
-    slug: "van-chuyen",
-    title: "Chính sách vận chuyển",
+    slug: policyRoutes.shipping.slug,
+    title: policyRoutes.shipping.title,
     description: "Thông tin về phạm vi giao hàng, thời gian, phí vận chuyển, đóng gói và kiểm tra đơn của Tiệm Len Nhà Tiny.",
     sections: [
       {
@@ -138,8 +140,8 @@ export const policies: Record<PolicyKey, Policy> = {
     ]
   },
   refund: {
-    slug: "doi-tra-hoan-tien",
-    title: "Chính sách đổi trả & hoàn tiền",
+    slug: policyRoutes.refund.slug,
+    title: policyRoutes.refund.title,
     description: "Các trường hợp hỗ trợ đổi, sửa hoặc hoàn tiền và cách liên hệ Tiệm Len Nhà Tiny khi cần kiểm tra đơn hàng.",
     sections: [
       {
@@ -175,10 +177,3 @@ export const policies: Record<PolicyKey, Policy> = {
     ]
   }
 };
-
-export const policyLinks: ReadonlyArray<{ key: PolicyKey; label: string; trackKey: string }> = [
-  { key: "privacy", label: "Chính sách bảo mật", trackKey: "policy_privacy_click" },
-  { key: "terms", label: "Điều khoản dịch vụ", trackKey: "policy_terms_click" },
-  { key: "shipping", label: "Vận chuyển", trackKey: "policy_shipping_click" },
-  { key: "refund", label: "Đổi trả & hoàn tiền", trackKey: "policy_refund_click" }
-];

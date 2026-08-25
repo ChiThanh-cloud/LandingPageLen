@@ -1,6 +1,6 @@
 import Link from "next/link";
 import * as React from "react";
-import { policies, policyLinks } from "@/data/policies";
+import { policyLinks } from "@/data/policy-routes";
 
 export function PolicyLinks() {
   return (
@@ -9,7 +9,7 @@ export function PolicyLinks() {
         <Link
           key={link.key}
           className="footer-policy-link"
-          href={`/${policies[link.key].slug}`}
+          href={`/${link.slug}`}
           data-track={link.trackKey}
         >
           {link.label}

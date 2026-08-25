@@ -7,7 +7,8 @@ import { HomeBlogPreview } from "@/components/home/HomeBlogPreview";
 import { HomeFaq } from "@/components/home/HomeFaq";
 import { PolicyLinks } from "@/components/layout/PolicyLinks";
 import { homeFaq, getHomeFaqSchemaEntities } from "@/data/home-faq";
-import { policies, policyLinks } from "@/data/policies";
+import { policies } from "@/data/policies";
+import { policyLinks } from "@/data/policy-routes";
 import { siteConfig } from "@/data/site";
 import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
 
@@ -55,7 +56,8 @@ test("footer policy actions are crawlable links to dedicated policy routes", () 
   const html = renderToStaticMarkup(createElement(PolicyLinks));
 
   for (const link of policyLinks) {
-    assert.match(html, new RegExp(`href="/${policies[link.key].slug}"`));
+    assert.equal(link.slug, policies[link.key].slug);
+    assert.match(html, new RegExp(`href="/${link.slug}"`));
     assert.match(html, new RegExp(link.label.replace("&", "&amp;").replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }
 });
@@ -90,13 +92,21 @@ test("policy routes use the existing policy content with unique canonical URLs",
   }
 });
 
-test("custom not-found page retains noindex semantics and essential navigation", () => {
+test("custom not-found page defers noindex to Next.js and retains essential navigation", () => {
   const notFound = source("./not-found.tsx");
+  const rootLayout = source("./layout.tsx");
 
-  assert.match(notFound, /robots:\s*\{\s*index:\s*false,\s*follow:\s*false\s*\}/);
+  assert.doesNotMatch(notFound, /robots\s*:/);
+  assert.doesNotMatch(rootLayout, /robots\s*:/);
   assert.match(notFound, /href="\/"[^>]*>Trang chủ/);
   assert.match(notFound, /href="\/len-soi"[^>]*>Xem len sợi/);
   assert.match(notFound, /href="\/blog"[^>]*>Blog/);
+});
+
+test("dedicated policy routes leave no legacy modal runtime in the storefront shell", () => {
+  const storefrontShell = source("../components/layout/StorefrontShell.tsx");
+
+  assert.doesNotMatch(storefrontShell, /PolicyModalHost|policy-modal/);
 });
 
 test("homepage safety wording does not claim unverified suitability for babies", () => {

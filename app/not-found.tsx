@@ -3,8 +3,7 @@ import Link from "next/link";
 import styles from "./not-found.module.css";
 
 export const metadata: Metadata = {
-  title: "Không tìm thấy trang",
-  robots: { index: false, follow: false }
+  title: "Không tìm thấy trang"
 };
 
 export default function NotFound() {
