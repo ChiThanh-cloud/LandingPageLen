@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useRef, useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef, useState, useTransition } from "react";
 import {
   deleteProductAction,
   generateCaptionAction,
@@ -13,37 +15,8 @@ import {
   type ProductAdminActionResult
 } from "@/app/admin/(protected)/san-pham/actions";
 import styles from "./Admin.module.css";
-
-type ProductRecord = {
-  id: number | string;
-  name: string | null;
-  category: string | null;
-  sub_category: string | null;
-  image_url: string | null;
-  full_image_url: string | null;
-  weight: string | null;
-  yarn_size: string | null;
-  material: string | null;
-  crochet_hook: string | null;
-  origin: string | null;
-  description: string | null;
-  price: number | string | null;
-  status: string | null;
-  sort_order: number | null;
-};
-
-type VariantRecord = {
-  id: number | string;
-  product_id: number | string;
-  name: string;
-  color_code: string | null;
-  color_name: string | null;
-  sku: string | null;
-  image_url: string | null;
-  full_image_url: string | null;
-  status: string | null;
-  sort_order: number | null;
-};
+import type { AdminPagination } from "@/lib/admin/admin-pagination";
+import type { AdminProductRecord, AdminProductSummary, AdminVariantRecord } from "@/lib/admin/admin-service";
 
 type SignedUploadResponse = {
   uploadUrl: string;
@@ -72,7 +45,7 @@ const statusLabels: Record<string, string> = {
   hidden: "Ẩn khỏi web"
 };
 
-function formatPrice(value: ProductRecord["price"]) {
+function formatPrice(value: AdminProductSummary["price"]) {
   if (value === null || value === "") return "Chưa nhập giá";
   return `${Number(value).toLocaleString("vi-VN")}đ`;
 }
@@ -132,30 +105,38 @@ function importedVariants(text: string) {
   }).filter((row: { image_url: string }) => /^https?:\/\//i.test(row.image_url));
 }
 
-export function ProductManager({ products, variants }: { products: ProductRecord[]; variants: VariantRecord[] }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+type ProductManagerProps = {
+  products: AdminProductSummary[];
+  selectedProduct: AdminProductRecord | null;
+  variants: AdminVariantRecord[];
+  filters: { query: string; category: string };
+  pagination: AdminPagination;
+};
+
+export function ProductManager({ products, selectedProduct: selected, variants: selectedVariants, filters, pagination }: ProductManagerProps) {
+  const router = useRouter();
+  const selectedId = selected ? String(selected.id) : null;
   const [editingVariantId, setEditingVariantId] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
   const [message, setMessage] = useState<ProductAdminActionResult | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [importText, setImportText] = useState("");
   const [uploading, setUploading] = useState<string | null>(null);
-  const [productImageUrl, setProductImageUrl] = useState("");
+  const [productImageUrl, setProductImageUrl] = useState(selected?.image_url || "");
   const [variantImageUrl, setVariantImageUrl] = useState("");
   const [pending, startTransition] = useTransition();
-  const productFormRef = useRef<HTMLFormElement>(null);
   const variantFormRef = useRef<HTMLFormElement>(null);
 
-  const selected = products.find((product) => String(product.id) === selectedId) || null;
-  const editingVariant = variants.find((variant) => String(variant.id) === editingVariantId) || null;
-  const selectedVariants = selected
-    ? variants.filter((variant) => String(variant.product_id) === String(selected.id))
-    : [];
-  const filtered = useMemo(() => products.filter((product) => {
-    const matchesText = !search.trim() || String(product.name || "").toLowerCase().includes(search.trim().toLowerCase());
-    return matchesText && (category === "all" || product.category === category);
-  }), [products, search, category]);
+  const editingVariant = selectedVariants.find((variant) => String(variant.id) === editingVariantId) || null;
+
+  function hrefWith(changes: { edit?: string | null; page?: number | null }) {
+    const params = new URLSearchParams();
+    if (filters.query) params.set("q", filters.query);
+    if (filters.category !== "all") params.set("category", filters.category);
+    const page = changes.page === undefined ? pagination.page : changes.page;
+    if (page && page > 1) params.set("page", String(page));
+    if (changes.edit) params.set("edit", changes.edit);
+    return params.size ? `?${params.toString()}` : "/admin/san-pham";
+  }
 
   function run(action: () => Promise<ProductAdminActionResult>, after?: (result: ProductAdminActionResult) => void) {
     setMessage(null);
@@ -164,22 +145,14 @@ export function ProductManager({ products, variants }: { products: ProductRecord
         const result = await action();
         setMessage(result);
         after?.(result);
+        if (result.ok) router.refresh();
       } catch {
         setMessage({ ok: false, message: "Phiên quản trị không còn hợp lệ hoặc hệ thống chưa sẵn sàng." });
       }
     });
   }
 
-  function chooseProduct(product: ProductRecord | null) {
-    setSelectedId(product ? String(product.id) : null);
-    setEditingVariantId(null);
-    setProductImageUrl(product?.image_url || "");
-    setVariantImageUrl("");
-    setMessage(null);
-    requestAnimationFrame(() => productFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
-  }
-
-  function chooseVariant(variant: VariantRecord | null) {
+  function chooseVariant(variant: AdminVariantRecord | null) {
     setEditingVariantId(variant ? String(variant.id) : null);
     setVariantImageUrl(variant?.image_url || "");
     requestAnimationFrame(() => variantFormRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
@@ -231,29 +204,29 @@ export function ProductManager({ products, variants }: { products: ProductRecord
 
   return (
     <div className={styles.productWorkspace}>
-      <section className={styles.productToolbar} aria-label="Tìm và lọc sản phẩm">
-        <input type="search" placeholder="Tìm theo tên sản phẩm" value={search} onChange={(event) => setSearch(event.target.value)} />
-        <select aria-label="Lọc danh mục" value={category} onChange={(event) => setCategory(event.target.value)}>
+      <form className={styles.productToolbar} aria-label="Tìm và lọc sản phẩm" method="get">
+        <input name="q" type="search" placeholder="Tìm theo tên sản phẩm" defaultValue={filters.query} />
+        <select name="category" aria-label="Lọc danh mục" defaultValue={filters.category}>
           <option value="all">Tất cả danh mục</option>
           {Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
-        <button type="button" onClick={() => chooseProduct(null)}>Sản phẩm mới</button>
-      </section>
+        <button type="submit">Lọc sản phẩm</button>
+      </form>
 
       {message?.message ? <p className={message.ok ? styles.success : styles.error} role="status">{message.message}</p> : null}
 
       <div className={styles.productColumns}>
         <section className={styles.productListPanel} aria-labelledby="product-list-heading">
-          <div className={styles.sectionHeading}><h2 id="product-list-heading">Danh sách sản phẩm</h2><span>{filtered.length} sản phẩm</span></div>
+          <div className={styles.sectionHeading}><h2 id="product-list-heading">Danh sách sản phẩm</h2><span>{pagination.total} sản phẩm</span></div>
           <div className={styles.productList}>
-            {filtered.map((product) => (
+            {products.map((product) => (
               <article className={`${styles.productListItem} ${product.status === "hidden" ? styles.mutedItem : ""} ${selectedId === String(product.id) ? styles.selectedItem : ""}`} key={String(product.id)}>
-                <button type="button" className={styles.productSelect} onClick={() => chooseProduct(product)} aria-label={`Sửa ${product.name}`}>
+                <Link href={hrefWith({ edit: String(product.id) })} prefetch={false} className={styles.productSelect} aria-label={`Sửa ${product.name}`}>
                   <span className={styles.productThumb}>
                     {product.image_url ? <Image src={product.image_url} alt="" width={68} height={68} /> : "Ảnh"}
                   </span>
                   <span><strong>{product.name || "Chưa đặt tên"}</strong><small>{categoryLabels[product.category || ""] || product.category} · {formatPrice(product.price)}</small><small>{statusLabels[product.status || ""] || product.status}</small></span>
-                </button>
+                </Link>
                 <div className={styles.compactActions}>
                   <button type="button" disabled={pending} onClick={() => run(() => toggleProductAction(String(product.id), product.status || "available"))}>{product.status === "hidden" ? "Hiện" : "Ẩn"}</button>
                   <button type="button" disabled={pending} onClick={() => run(() => generateCaptionAction(String(product.id)))}>Caption</button>
@@ -263,25 +236,35 @@ export function ProductManager({ products, variants }: { products: ProductRecord
                   <div className={styles.inlineConfirm}>
                     <p>Xóa “{product.name}” và các mã màu thuộc sản phẩm này?</p>
                     <button type="button" onClick={() => setDeleteId(null)}>Giữ lại</button>
-                    <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => run(() => deleteProductAction(String(product.id)), (result) => result.ok && setDeleteId(null))}>Xác nhận xóa</button>
+                    <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => run(() => deleteProductAction(String(product.id)), (result) => {
+                      if (!result.ok) return;
+                      setDeleteId(null);
+                      if (selectedId === String(product.id)) router.push(hrefWith({ edit: null }));
+                    })}>Xác nhận xóa</button>
                   </div>
                 ) : null}
               </article>
             ))}
-            {!filtered.length ? <p className={styles.empty}>Không có sản phẩm phù hợp.</p> : null}
+            {!products.length ? <p className={styles.empty}>Không có sản phẩm phù hợp.</p> : null}
           </div>
+          {pagination.totalPages > 1 ? <div className={styles.pagination}>
+            {pagination.page > 1 ? <Link href={hrefWith({ edit: selectedId, page: pagination.page - 1 })} prefetch={false} className={styles.pageButton}>&larr; Trang trước</Link> : <span className={`${styles.pageButton} ${styles.disabled}`}>&larr; Trang trước</span>}
+            <span className={styles.pageInfo}>Trang {pagination.page} / {pagination.totalPages}</span>
+            {pagination.page < pagination.totalPages ? <Link href={hrefWith({ edit: selectedId, page: pagination.page + 1 })} prefetch={false} className={styles.pageButton}>Trang sau &rarr;</Link> : <span className={`${styles.pageButton} ${styles.disabled}`}>Trang sau &rarr;</span>}
+          </div> : null}
         </section>
 
         <section className={styles.editorPanel} aria-labelledby="product-editor-heading">
-          <div className={styles.sectionHeading}><h2 id="product-editor-heading">{selected ? `Sửa: ${selected.name}` : "Sản phẩm mới"}</h2>{selected ? <button type="button" onClick={() => chooseProduct(null)}>Xóa form</button> : null}</div>
+          <div className={styles.sectionHeading}><h2 id="product-editor-heading">{selected ? `Sửa: ${selected.name}` : "Sản phẩm mới"}</h2>{selected ? <Link href={hrefWith({ edit: null })} prefetch={false} className={styles.secondaryButton}>Xóa form</Link> : null}</div>
           <form
-            ref={productFormRef}
             key={selectedId || "new"}
             className={styles.adminForm}
             onSubmit={(event) => {
               event.preventDefault();
               const data = new FormData(event.currentTarget);
-              run(() => saveProductAction(data), (result) => result.ok && result.id && setSelectedId(result.id));
+              run(() => saveProductAction(data), (result) => {
+                if (result.ok && result.id) router.push(hrefWith({ edit: result.id }));
+              });
             }}
           >
             <input type="hidden" name="id" value={selectedId || ""} />

@@ -917,6 +917,7 @@
 
 .secondaryButton {
   cursor: pointer;
+  text-decoration: none;
 }
 
 .secondaryButton:hover {
@@ -1215,6 +1216,7 @@
   background: transparent;
   text-align: left;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .productSelect > span:last-child,
