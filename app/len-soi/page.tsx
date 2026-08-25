@@ -47,8 +47,8 @@ export default async function YarnCategoryPage() {
           <p>{catalogPriceCopy}</p>
         </div>
         <Image
-          src="/images/yarn_hero_800.jpg"
-          alt="Các cuộn len nhiều màu và phụ kiện móc tại Tiệm Len Nhà Tiny"
+          src="https://res.cloudinary.com/djn2kd2hh/image/upload/ChatGPT_Image_Aug_17_2026_01_16_34_PM_jrbtpk.png"
+          alt="Len sợi và thú bông móc len tại Tiệm Len Nhà Tiny"
           width={800}
           height={600}
           priority
