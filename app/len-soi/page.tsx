@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { YarnCatalog } from "@/components/yarn-product/YarnCatalog";
+import { YarnCatalogJsonLd } from "@/components/yarn-product/YarnCatalogJsonLd";
 import { YarnCatalogSeoContent } from "@/components/yarn-product/YarnCatalogSeoContent";
 import { siteConfig } from "@/data/site";
 import { getAllYarnProducts } from "@/lib/products/supabase-products";
@@ -31,31 +32,14 @@ export default async function YarnCategoryPage() {
     ? "Xem bảng màu & giá của từng dòng len tại Tiệm Len Nhà Tiny."
     : `Nhiều dòng len, bảng màu dễ đối chiếu. Giá từ ${formatYarnPrice(catalogStartingPrice)} cho sản phẩm đang có thể đặt.`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "CollectionPage",
-        "@id": `${siteConfig.url}/len-soi`,
-        name: "Cuộn len & Phụ kiện móc – Tiệm Len Nhà Tiny",
-        description: "Danh mục len sợi và phụ kiện móc tại Tiệm Len Nhà Tiny."
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Trang chủ", item: siteConfig.url },
-          { "@type": "ListItem", position: 2, name: "Cuộn len & Phụ kiện", item: `${siteConfig.url}/len-soi` }
-        ]
-      }
-    ]
-  };
-
   return (
     <main className="yc-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <YarnCatalogJsonLd products={products} />
+      <nav className="yc-breadcrumb" aria-label="Breadcrumb">
+        <Link href="/">Trang chủ</Link>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Len sợi</span>
+      </nav>
       <section className="yc-hero">
         <div>
           <p className="yc-eyebrow">Cuộn len & Phụ kiện móc</p>

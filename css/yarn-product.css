@@ -5,6 +5,8 @@
 
 /* Category catalog redesign */
 .yc-page{padding-top:88px}
+.yc-breadcrumb{display:flex;align-items:center;gap:7px;width:min(1160px,calc(100% - 48px));margin:0 auto;padding:20px 0 0;color:var(--text-light);font-size:.78rem}
+.yc-breadcrumb a{color:var(--primary-700)}
 .yc-hero{height:350px;min-height:0;grid-template-columns:minmax(0,.9fr) minmax(420px,1.1fr);gap:48px;padding:28px 0}
 .yc-hero img{height:294px;border-radius:var(--radius)}
 .yc-hero h1{font-size:clamp(2.25rem,4vw,3.55rem);line-height:1.05;margin:10px 0 14px;max-width:none}
@@ -89,6 +91,7 @@
 
 @media(max-width:800px){
   .yc-page{padding-top:78px}
+  .yc-breadcrumb{width:min(100% - 32px,1160px);padding-top:16px}
   .yc-hero{height:auto;min-height:0;grid-template-columns:1fr 42%;gap:24px;padding:26px 0}
   .yc-hero h1{font-size:clamp(2rem,7vw,2.7rem)}
   .yc-hero img{height:230px}

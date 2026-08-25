@@ -31,8 +31,8 @@ export function getYarnProductStructuredData(product: YarnProduct) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Trang chủ", item: siteConfig.url },
-          { "@type": "ListItem", position: 2, name: "Cuộn len & Phụ kiện", item: `${siteConfig.url}/len-soi` },
-          { "@type": "ListItem", position: 3, name: product.name, item: url }
+          { "@type": "ListItem", position: 2, name: "Len sợi", item: `${siteConfig.url}/len-soi` },
+          { "@type": "ListItem", position: 3, name: product.shortName, item: url }
         ]
       },
       {
