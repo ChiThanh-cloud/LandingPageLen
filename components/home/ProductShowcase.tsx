@@ -154,7 +154,7 @@ export function ProductShowcase() {
                   <h3>{product.title}</h3>
                   <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
                   <p>{product.description}</p>
-                  <span className="product-detail-link">Xem danh mục len →</span>
+                  <span className="product-detail-link">Xem bảng màu và giá len →</span>
                 </div>
               </Link>
             );

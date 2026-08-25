@@ -99,7 +99,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     { url: `${siteConfig.url}/len-soi`, lastModified: yarnCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
     ...getYarnProductSitemapEntries(yarnProducts),
-    ...products.map((product) => ({
+    ...products.filter((product) => product.slug !== "len-soi").map((product) => ({
       url: `${siteConfig.url}/san-pham/${product.slug}`,
       lastModified: product.updatedAt,
       changeFrequency: "monthly" as const,

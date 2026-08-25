@@ -5,6 +5,8 @@
 
 /* Category catalog redesign */
 .yc-page{padding-top:88px}
+.yc-breadcrumb{display:flex;align-items:center;gap:7px;width:min(1160px,calc(100% - 48px));margin:0 auto;padding:20px 0 0;color:var(--text-light);font-size:.78rem}
+.yc-breadcrumb a{color:var(--primary-700)}
 .yc-hero{height:350px;min-height:0;grid-template-columns:minmax(0,.9fr) minmax(420px,1.1fr);gap:48px;padding:28px 0}
 .yc-hero img{height:294px;border-radius:var(--radius)}
 .yc-hero h1{font-size:clamp(2.25rem,4vw,3.55rem);line-height:1.05;margin:10px 0 14px;max-width:none}
@@ -89,6 +91,7 @@
 
 @media(max-width:800px){
   .yc-page{padding-top:78px}
+  .yc-breadcrumb{width:min(100% - 32px,1160px);padding-top:16px}
   .yc-hero{height:auto;min-height:0;grid-template-columns:1fr 42%;gap:24px;padding:26px 0}
   .yc-hero h1{font-size:clamp(2rem,7vw,2.7rem)}
   .yc-hero img{height:230px}
@@ -150,3 +153,22 @@
   color: var(--text-mid);
   font-size: .88rem;
 }
+
+/* Catalog guidance stays below the product grid and uses the catalog namespace only. */
+.yc-content{width:min(1160px,calc(100% - 48px));margin:0 auto;padding:16px 0 72px}
+.yc-content-section{border-top:1px solid var(--primary-200);padding:56px 0}
+.yc-content-heading{max-width:680px}
+.yc-content-heading>p:first-child{color:var(--primary-700);font-size:.76rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.yc-content h2{font-family:var(--font-playfair),serif;font-size:clamp(1.9rem,3vw,2.65rem);line-height:1.13;margin-top:10px}
+.yc-content-heading>p:last-child,.yc-content-copy p,.yc-content-note{color:var(--text-mid);line-height:1.75;margin-top:14px}
+.yc-content-products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:28px}
+.yc-content-product{display:flex;flex-direction:column;background:#fff;border:1px solid var(--primary-200);border-radius:var(--radius);padding:22px}
+.yc-content-product h3{font-size:1.05rem;line-height:1.35}.yc-content-product h3 a,.yc-hook-list a,.yc-content-link,.yc-content-faq a{color:var(--primary-700)}
+.yc-content-product>p{color:var(--text-mid);font-size:.88rem;line-height:1.6;margin-top:9px}
+.yc-content-product dl{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.yc-content-product dl div{background:var(--primary-50);border-radius:10px;padding:10px}
+.yc-content-product dt{color:var(--text-mid);font-size:.7rem}.yc-content-product dd{font-size:.82rem;font-weight:700;line-height:1.4;margin-top:4px}
+.yc-content-link{font-size:.85rem;font-weight:700;margin-top:auto}.yc-content-copy{max-width:760px}.yc-content-copy ul{display:grid;gap:10px;margin-top:16px;padding-left:20px}.yc-content-copy li{color:var(--text-mid);line-height:1.65}
+.yc-hook-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:28px}.yc-hook-list div{background:#fff;border:1px solid var(--primary-200);border-radius:var(--radius);padding:18px}.yc-hook-list dt{font-size:.85rem;font-weight:700;line-height:1.4}.yc-hook-list dd{color:var(--text-mid);font-size:.9rem;margin-top:8px}
+.yc-content-note{max-width:720px}.yc-content-faq>dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:28px}.yc-content-faq>dl>div{background:#fff;border:1px solid var(--primary-200);border-radius:var(--radius);padding:20px}.yc-content-faq dt{font-weight:700;line-height:1.45}.yc-content-faq dd{color:var(--text-mid);font-size:.9rem;line-height:1.65;margin-top:8px}
+@media(max-width:800px){.yc-content{width:min(100% - 32px,1160px);padding-bottom:48px}.yc-content-section{padding:42px 0}.yc-content-products,.yc-content-faq>dl{grid-template-columns:1fr}.yc-hook-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.yc-content-section{padding:34px 0}.yc-content h2{font-size:1.8rem}.yc-content-product{padding:18px}.yc-content-product dl{grid-template-columns:1fr 1fr}.yc-hook-list{grid-template-columns:1fr}.yc-content-faq>dl>div{padding:18px}}

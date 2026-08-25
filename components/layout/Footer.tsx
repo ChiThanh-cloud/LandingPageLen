@@ -37,6 +37,7 @@ export function Footer() {
           <nav className="footer-col-links" aria-label="Khám phá">
             <Link href="/#ve-tiny">Về Tiny</Link>
             <Link href="/#bo-suu-tap">Bộ sưu tập</Link>
+            <Link href="/len-soi">Len sợi &amp; bảng màu</Link>
             <Link href="/#quy-trinh-dat-hang">Cách đặt hàng</Link>
             <Link href="/#khach-chia-se">Khách chia sẻ</Link>
             <Link href="/blog">Blog chart len</Link>

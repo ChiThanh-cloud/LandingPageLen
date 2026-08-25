@@ -5,7 +5,6 @@ import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getAllYarnProducts } from "../lib/products/supabase-products";
-import { generateMetadata as generateLegacyProductMetadata } from "./san-pham/[slug]/page";
 import robots from "./robots";
 import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries, getYarnCatalogLastModified } from "./sitemap";
 
@@ -23,11 +22,28 @@ test("SEO routes", async (t) => {
       `${siteConfig.url}/len-soi`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
       ...yarnProducts.map((product) => `${siteConfig.url}/len-soi/${product.slug}`),
-      ...products.map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
+      ...products
+        .filter((product) => product.slug !== "len-soi")
+        .map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
     ];
 
     assert.deepEqual(new Set(urls), new Set(expectedUrls));
     assert.equal(urls.length, expectedUrls.length);
+  });
+
+  await t.test("yarn sitemap entries expose only canonical catalog and public product URLs", () => {
+    const catalogUrl = `${siteConfig.url}/len-soi`;
+    const yarnProductUrls = urls.filter((url) => url.startsWith(`${catalogUrl}/`));
+
+    assert.equal(urls.filter((url) => url === catalogUrl).length, 1);
+    assert.equal(urls.includes(`${siteConfig.url}/san-pham/len-soi`), false);
+    assert.equal(new Set(yarnProductUrls).size, yarnProductUrls.length);
+    assert.deepEqual(new Set(yarnProductUrls), new Set(
+      yarnProducts.map((product) => `${catalogUrl}/${product.slug}`)
+    ));
+    for (const url of urls) {
+      assert.doesNotMatch(url, /[?](?:filter|sort|q)=|\/(?:gio-hang|thanh-toan|dat-hang-thanh-cong)(?:\/|$)/);
+    }
   });
 
   await t.test("sitemap product entries use the storefront catalog source and canonical paths", () => {
@@ -108,6 +124,17 @@ test("SEO routes", async (t) => {
       assert.deepEqual(rule.disallow, ["/"]);
     }
   });
+
+  await t.test("robots leaves the yarn catalog and product URLs crawlable", () => {
+    const config = robots();
+    const rules = Array.isArray(config.rules) ? config.rules : [config.rules];
+    const searchRule = rules.find((rule) => rule.userAgent === "*");
+    const disallow = Array.isArray(searchRule?.disallow) ? searchRule.disallow : [searchRule?.disallow];
+
+    assert.equal(searchRule?.allow, "/");
+    assert.equal(disallow.includes("/len-soi"), false);
+    assert.equal(disallow.includes("/len-soi/"), false);
+  });
 });
 
 test("SEO content data", async (t) => {
@@ -135,7 +162,7 @@ test("SEO content data", async (t) => {
 test("yarn route intent separation", async (t) => {
   const legacyYarnGuide = products.find((product) => product.slug === "len-soi");
   const yarnCategorySource = readFileSync(new URL("./len-soi/page.tsx", import.meta.url), "utf8");
-  const legacyRouteSource = readFileSync(new URL("./san-pham/[slug]/page.tsx", import.meta.url), "utf8");
+  const redirectConfig = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
   const legacyPageSource = readFileSync(new URL("../components/product/ProductDetailPage.tsx", import.meta.url), "utf8");
   const beginnerGuideSource = readFileSync(
     new URL("../content/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao.mdx", import.meta.url),
@@ -147,21 +174,15 @@ test("yarn route intent separation", async (t) => {
   await t.test("/len-soi remains the transactional catalog", () => {
     assert.match(yarnCategorySource, /getAllYarnProducts/);
     assert.match(yarnCategorySource, /YarnCatalog/);
-    assert.match(yarnCategorySource, /canonical:\s*"\/len-soi"/);
+    assert.match(yarnCategorySource, /const canonical = `\$\{siteConfig\.url\}\/len-soi`;/);
+    assert.match(yarnCategorySource, /alternates:\s*\{\s*canonical\s*\}/);
   });
 
-  await t.test("legacy guide is self-canonical and independently indexable", async () => {
-    const metadata = await generateLegacyProductMetadata({ params: Promise.resolve({ slug: "len-soi" }) });
-    const title = metadata.title as { absolute?: string } | undefined;
-
-    assert.equal(metadata.alternates?.canonical, `${siteConfig.url}/san-pham/len-soi`);
-    assert.equal(metadata.robots, undefined);
-    assert.equal(title?.absolute, legacyYarnGuide.title);
-  });
-
-  await t.test("no redirect joins the two yarn routes", () => {
-    assert.doesNotMatch(legacyRouteSource, /(?:permanentRedirect|redirect)\s*\(/);
-    assert.match(legacyRouteSource, /return <ProductDetailPage product=\{product\} \/>;/);
+  await t.test("legacy yarn URL has a direct permanent redirect to the informational guide", () => {
+    assert.match(
+      redirectConfig,
+      /source:\s*["']\/san-pham\/len-soi["'][\s\S]*?destination:\s*["']\/blog\/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao["'][\s\S]*?statusCode:\s*301/
+    );
   });
 
   await t.test("legacy guide copy and schema data stay informational", () => {

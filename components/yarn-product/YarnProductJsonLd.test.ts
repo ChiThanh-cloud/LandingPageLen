@@ -70,3 +70,16 @@ test("YarnProductJsonLd only emits supported Product and Offer claims", () => {
   assert.equal(offer.itemCondition, undefined);
   assert.doesNotMatch(serialized, /https:\/\/lentiny\.xyzhttps:\/\//);
 });
+
+test("YarnProductJsonLd breadcrumb matches the visible product hierarchy", () => {
+  const product = makeProduct(["/images/yarn_collection_800.jpg"]);
+  product.shortName = "Tên hiển thị";
+  const data = getYarnProductStructuredData(product);
+  const breadcrumbs = data["@graph"].find((entry) => entry["@type"] === "BreadcrumbList") as Record<string, unknown>;
+
+  assert.deepEqual(breadcrumbs.itemListElement, [
+    { "@type": "ListItem", position: 1, name: "Trang chủ", item: siteConfig.url },
+    { "@type": "ListItem", position: 2, name: "Len sợi", item: `${siteConfig.url}/len-soi` },
+    { "@type": "ListItem", position: 3, name: product.shortName, item: `${siteConfig.url}/len-soi/${product.slug}` }
+  ]);
+});

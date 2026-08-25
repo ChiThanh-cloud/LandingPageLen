@@ -2,22 +2,27 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { YarnCatalog } from "@/components/yarn-product/YarnCatalog";
+import { YarnCatalogJsonLd } from "@/components/yarn-product/YarnCatalogJsonLd";
+import { YarnCatalogSeoContent } from "@/components/yarn-product/YarnCatalogSeoContent";
 import { siteConfig } from "@/data/site";
 import { getAllYarnProducts } from "@/lib/products/supabase-products";
 import { formatYarnPrice, getYarnCatalogStartingPrice } from "@/lib/products/yarn-product-seo";
 
+const canonical = `${siteConfig.url}/len-soi`;
+const description =
+  "Mua len sợi đan móc tại Tiny: xem bảng màu, giá và thông số của Milk Bò, Milk Cotton Mác Đen, Nhung Đũa, Nhung Gấu cùng các dòng len đang bán.";
+
 export const metadata: Metadata = {
-  title: "Len sợi & Phụ kiện móc",
-  description:
-    "Khám phá len sợi, bảng màu và thông số sản phẩm tại Tiệm Len Nhà Tiny.",
-  alternates: { canonical: "/len-soi" },
+  title: "Len Sợi Đan Móc – Bảng Màu & Giá Len",
+  description,
+  alternates: { canonical },
   openGraph: {
-    title: "Len sợi & Phụ kiện móc | Tiệm Len Nhà Tiny",
-    description:
-      "Khám phá len sợi, bảng màu và thông số sản phẩm tại Tiệm Len Nhà Tiny.",
-    url: "/len-soi",
+    title: "Len Sợi Đan Móc – Bảng Màu & Giá Len | Tiệm Len Nhà Tiny",
+    description,
+    url: canonical,
     images: ["/images/yarn_collection_800.jpg"]
-  }
+  },
+  robots: { index: true, follow: true }
 };
 
 export default async function YarnCategoryPage() {
@@ -27,35 +32,18 @@ export default async function YarnCategoryPage() {
     ? "Xem bảng màu & giá của từng dòng len tại Tiệm Len Nhà Tiny."
     : `Nhiều dòng len, bảng màu dễ đối chiếu. Giá từ ${formatYarnPrice(catalogStartingPrice)} cho sản phẩm đang có thể đặt.`;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "CollectionPage",
-        "@id": `${siteConfig.url}/len-soi`,
-        name: "Cuộn len & Phụ kiện móc – Tiệm Len Nhà Tiny",
-        description: "Danh mục len sợi và phụ kiện móc tại Tiệm Len Nhà Tiny."
-      },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Trang chủ", item: siteConfig.url },
-          { "@type": "ListItem", position: 2, name: "Cuộn len & Phụ kiện", item: `${siteConfig.url}/len-soi` }
-        ]
-      }
-    ]
-  };
-
   return (
     <main className="yc-page">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-      />
+      <YarnCatalogJsonLd products={products} />
+      <nav className="yc-breadcrumb" aria-label="Breadcrumb">
+        <Link href="/">Trang chủ</Link>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Len sợi</span>
+      </nav>
       <section className="yc-hero">
         <div>
           <p className="yc-eyebrow">Cuộn len & Phụ kiện móc</p>
-          <h1>Len sợi, bảng màu và giá dễ đối chiếu</h1>
+          <h1>Len sợi đan móc – bảng màu, giá và các loại len đang bán</h1>
           <p>{catalogPriceCopy}</p>
         </div>
         <Image
@@ -67,6 +55,7 @@ export default async function YarnCategoryPage() {
         />
       </section>
       <YarnCatalog products={products} />
+      <YarnCatalogSeoContent products={products} />
       <section className="yc-help" aria-labelledby="yarn-guides-heading">
         <h2 id="yarn-guides-heading">Hướng dẫn chọn len</h2>
         <p>Đối chiếu thông số sợi và kim móc trước khi chọn mã màu.</p>
