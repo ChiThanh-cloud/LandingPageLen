@@ -11,12 +11,18 @@ const cloudinarySignRoute = read("../../app/api/admin/cloudinary/sign-upload/rou
 const service = read("./admin-service.ts");
 const migration = read("../../supabase/migrations/20260810055926_admin_security_and_operations.sql");
 const shell = read("../../components/layout/StorefrontShell.tsx");
+const navigation = read("../../components/admin/AdminNavigation.tsx");
 
 test("admin pages require a verified server-side session and active allowlist entry", () => {
   assert.match(protectedLayout, /await requireAdminPage\(\)/);
   assert.match(auth, /auth\.getClaims\(\)/);
   assert.match(auth, /from\("admin_users"\)/);
   assert.match(auth, /\.eq\("active", true\)/);
+});
+
+test("primary admin navigation disables route prefetch for every destination", () => {
+  assert.match(navigation, /navigation\.map/);
+  assert.match(navigation, /<Link href=\{item\.href\} prefetch=\{false\}/);
 });
 
 test("admin mutations reverify authorization and keep the service role server-only", () => {

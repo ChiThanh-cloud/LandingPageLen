@@ -19,7 +19,7 @@ export function AdminNavigation() {
       {navigation.map((item) => {
         const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
         return (
-          <Link href={item.href} key={item.href} className={active ? styles.navLinkActive : styles.navLink} aria-current={active ? "page" : undefined}>
+          <Link href={item.href} prefetch={false} key={item.href} className={active ? styles.navLinkActive : styles.navLink} aria-current={active ? "page" : undefined}>
             <span className={styles.navIcon}><AdminIcon name={item.icon} /></span>
             <span>{item.label}</span>
           </Link>
