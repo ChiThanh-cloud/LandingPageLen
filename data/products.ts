@@ -245,7 +245,7 @@ export const products: ProductEntry[] = [
             text: "Tìm hiểu về milk cotton, len nhung, cotton và acrylic để chọn đúng loại len từ đầu."
           },
           {
-            href: "/san-pham/len-soi",
+            href: "/len-soi",
             title: "Len sợi, len milk cotton tại Tiny",
             text: "Mua thêm len riêng lẻ theo màu và loại phù hợp với dự án bạn đang làm."
           }
