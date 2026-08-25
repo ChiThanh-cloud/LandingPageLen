@@ -17,6 +17,7 @@ import {
   type OrderLookupOrderRow,
   type OrderLookupRequest
 } from "@/lib/orders/order-lookup";
+import type { OrderReceivedEmailSnapshot } from "@/lib/email/order-email-service";
 
 export type OrderErrorCode =
   | "INVALID_REQUEST"
@@ -345,6 +346,84 @@ export type NotificationItemSnapshot = {
   colorCode: string | null;
   quantity: number;
 };
+
+type OrderReceivedEmailOrderRow = {
+  id: string;
+  order_code: string;
+  customer_name: string;
+  email: string | null;
+  province: string;
+  district: string;
+  ward: string;
+  address_line: string;
+  subtotal: number | string | null;
+  shipping_fee: number | string | null;
+  total: number | string | null;
+  payment_method: "cod" | "bank_transfer";
+};
+
+type OrderReceivedEmailItemRow = {
+  product_name_snapshot: string;
+  variant_name_snapshot: string;
+  color_code_snapshot: string | null;
+  quantity: number;
+  line_total: number | string | null;
+};
+
+export async function getOrderReceivedEmailSnapshot(
+  orderCode: string
+): Promise<OrderReceivedEmailSnapshot | null> {
+  const supabase = getSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .select("id,order_code,customer_name,email,province,district,ward,address_line,subtotal,shipping_fee,total,payment_method")
+    .eq("order_code", orderCode)
+    .maybeSingle<OrderReceivedEmailOrderRow>();
+
+  if (orderError || !order) {
+    if (orderError) {
+      console.error("Unable to load persisted order snapshot for email", { code: orderError.code });
+    }
+    return null;
+  }
+
+  const { data: items, error: itemsError } = await supabase
+    .from("order_items")
+    .select("product_name_snapshot,variant_name_snapshot,color_code_snapshot,quantity,line_total")
+    .eq("order_id", order.id)
+    .order("created_at", { ascending: true });
+
+  if (itemsError) {
+    console.error("Unable to load persisted order items for email", { code: itemsError.code });
+    return null;
+  }
+
+  return {
+    customerName: order.customer_name,
+    customerEmail: order.email || "",
+    orderCode: order.order_code,
+    items: ((items || []) as OrderReceivedEmailItemRow[]).map((item) => ({
+      productName: item.product_name_snapshot,
+      variantName: item.variant_name_snapshot,
+      colorCode: item.color_code_snapshot,
+      quantity: item.quantity,
+      lineTotal: nullableNumber(item.line_total)
+    })),
+    subtotal: nullableNumber(order.subtotal),
+    shippingFee: nullableNumber(order.shipping_fee),
+    total: nullableNumber(order.total),
+    paymentMethod: order.payment_method,
+    shippingAddress: {
+      customerName: order.customer_name,
+      addressLine: order.address_line,
+      ward: order.ward,
+      district: order.district,
+      province: order.province
+    }
+  };
+}
 
 export async function getOrderItemsSnapshot(orderCode: string): Promise<NotificationItemSnapshot[]> {
   const supabase = getSupabaseAdminClient();

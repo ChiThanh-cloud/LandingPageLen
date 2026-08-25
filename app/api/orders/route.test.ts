@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import type { OrderReceivedEmailSnapshot } from "@/lib/email/order-email-service";
 import { createOrderCreationRateLimiter } from "@/lib/security/order-creation-rate-limit";
 import { createOrderPostHandler } from "./route";
 
@@ -93,7 +94,33 @@ function phoneFor(index: number) {
   return `090${String(index).padStart(7, "0")}`;
 }
 
-function createHarness() {
+function persistedEmailSnapshot(overrides: Partial<OrderReceivedEmailSnapshot> = {}): OrderReceivedEmailSnapshot {
+  return {
+    customerName: "Nguyễn Văn An",
+    customerEmail: "customer@example.test",
+    orderCode: "TINY-ABCDEF123456",
+    items: [{ productName: "Len Milk Bò", variantName: "Mã 12", colorCode: "12", quantity: 1, lineTotal: 25_000 }],
+    subtotal: 25_000,
+    shippingFee: null,
+    total: null,
+    paymentMethod: "cod",
+    shippingAddress: {
+      customerName: "Nguyễn Văn An",
+      addressLine: "12 Nguyễn Huệ",
+      ward: "Phường Bến Nghé",
+      district: "Quận 1",
+      province: "TP. Hồ Chí Minh"
+    },
+    ...overrides
+  };
+}
+
+function createHarness(options?: {
+  createOrderFails?: boolean;
+  emailSnapshot?: OrderReceivedEmailSnapshot | null;
+  telegramFails?: boolean;
+  emailFails?: boolean;
+}) {
   const store = createAtomicRateLimitStore();
   const limiter = createOrderCreationRateLimiter({
     getHashSecret: () => "unit-test-rate-limit-secret",
@@ -103,13 +130,16 @@ function createHarness() {
     createOrder: 0,
     scheduled: [] as Array<() => Promise<void>>,
     snapshots: 0,
-    notifications: 0
+    emailSnapshots: 0,
+    notifications: 0,
+    emails: [] as OrderReceivedEmailSnapshot[]
   };
   const handler = createOrderPostHandler({
     checkIpRateLimit: limiter.checkIp,
     checkCompositeRateLimit: limiter.checkComposite,
     async createOrder() {
       calls.createOrder += 1;
+      if (options?.createOrderFails) throw new Error("database unavailable");
       return {
         orderCode: "TINY-ABCDEF123456",
         status: "pending_confirmation" as const,
@@ -124,12 +154,26 @@ function createHarness() {
     },
     async sendNewOrderNotification() {
       calls.notifications += 1;
+      if (options?.telegramFails) throw new Error("Telegram unavailable");
+    },
+    async getOrderReceivedEmailSnapshot() {
+      calls.emailSnapshots += 1;
+      return options?.emailSnapshot ?? persistedEmailSnapshot();
+    },
+    async sendOrderReceivedEmail(snapshot) {
+      calls.emails.push(snapshot);
+      if (options?.emailFails) throw new Error("Resend unavailable");
+      return { delivered: true, reason: null };
     },
     scheduleAfter(callback) {
       calls.scheduled.push(callback);
     }
   });
   return { handler, calls, store };
+}
+
+async function runScheduled(calls: { scheduled: Array<() => Promise<void>> }) {
+  await Promise.all(calls.scheduled.map((callback) => callback()));
 }
 
 test("six burst attempts pass and the seventh returns 429 before order and Telegram effects", async () => {
@@ -239,6 +283,12 @@ test("limiter failures fail open and log no customer identity", async () => {
         return [];
       },
       async sendNewOrderNotification() {},
+      async getOrderReceivedEmailSnapshot() {
+        return null;
+      },
+      async sendOrderReceivedEmail() {
+        return { delivered: false, reason: "missing_recipient" as const };
+      },
       scheduleAfter() {
         calls.scheduled += 1;
       }
@@ -267,4 +317,49 @@ test("concurrent burst attempts do not obviously overrun the approved limit", as
   assert.equal(responses.filter((response) => response.status === 429).length, 1);
   assert.equal(calls.createOrder, 6);
   assert.equal(calls.scheduled.length, 6);
+});
+
+test("a persisted recipient schedules one order-received email after the successful 201", async () => {
+  const { handler, calls } = createHarness();
+
+  const response = await handler(orderRequest());
+  assert.equal(response.status, 201);
+  await runScheduled(calls);
+
+  assert.equal(calls.emailSnapshots, 1);
+  assert.equal(calls.emails.length, 1);
+  assert.equal(calls.emails[0].customerEmail, "customer@example.test");
+  assert.equal(calls.emails[0].orderCode, "TINY-ABCDEF123456");
+});
+
+test("order creation failure never schedules a persisted email lookup or send", async () => {
+  const { handler, calls } = createHarness({ createOrderFails: true });
+
+  const response = await handler(orderRequest());
+  assert.equal(response.status, 500);
+  assert.equal(calls.scheduled.length, 0);
+  assert.equal(calls.emailSnapshots, 0);
+  assert.equal(calls.emails.length, 0);
+});
+
+test("a Resend failure does not change the successful order response or block Telegram", async () => {
+  const { handler, calls } = createHarness({ emailFails: true });
+
+  const response = await handler(orderRequest());
+  assert.equal(response.status, 201);
+  await runScheduled(calls);
+
+  assert.equal(calls.notifications, 1);
+  assert.equal(calls.emails.length, 1);
+});
+
+test("a Telegram failure does not block the order-received email", async () => {
+  const { handler, calls } = createHarness({ telegramFails: true });
+
+  const response = await handler(orderRequest());
+  assert.equal(response.status, 201);
+  await runScheduled(calls);
+
+  assert.equal(calls.notifications, 1);
+  assert.equal(calls.emails.length, 1);
 });
