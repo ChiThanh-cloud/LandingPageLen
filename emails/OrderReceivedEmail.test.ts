@@ -22,5 +22,9 @@ test("order-received preview renders Tiny wording, persisted order details, and 
   assert.doesNotMatch(html, /(?:null|undefined|NaN|>0đ<)/);
   assert.match(html, /https:\/\/lentiny\.xyz\/tra-cuu-don-hang/);
   assert.match(html, /Thanh toán khi nhận hàng \(COD\)/);
+  assert.match(html, /853 Ba Đình, Phường Chánh Hưng, TP\. Hồ Chí Minh/);
+  assert.match(html, /036\.890\.3519/);
+  assert.match(html, /https:\/\/zalo\.me\/0368903519/);
+  assert.match(html, /https:\/\/m\.me\/61559447375156/);
   assert.doesNotMatch(html, /đã được xác nhận/i);
 });
