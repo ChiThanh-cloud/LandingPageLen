@@ -178,10 +178,10 @@ test("yarn route intent separation", async (t) => {
     assert.match(yarnCategorySource, /alternates:\s*\{\s*canonical\s*\}/);
   });
 
-  await t.test("legacy yarn URL has a direct permanent redirect to the catalog", () => {
+  await t.test("legacy yarn URL has a direct permanent redirect to the informational guide", () => {
     assert.match(
       redirectConfig,
-      /source:\s*["']\/san-pham\/len-soi["'][\s\S]*?destination:\s*["']\/len-soi["'][\s\S]*?statusCode:\s*301/
+      /source:\s*["']\/san-pham\/len-soi["'][\s\S]*?destination:\s*["']\/blog\/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao["'][\s\S]*?statusCode:\s*301/
     );
   });
 

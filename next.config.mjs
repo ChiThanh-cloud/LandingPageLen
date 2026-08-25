@@ -9,7 +9,7 @@ const nextConfig = {
     return [
       {
         source: "/san-pham/len-soi",
-        destination: "/len-soi",
+        destination: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
         statusCode: 301
       },
       {
