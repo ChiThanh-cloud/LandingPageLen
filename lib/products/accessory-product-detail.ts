@@ -1,23 +1,7 @@
 import type { CartItem } from "@/types/yarn-product";
 import { formatCommercePrice, getCommerceDisplayPrice, getCommerceStatusLabel } from "./commerce-catalog";
+import { getCommerceVariantPrice } from "./commerce-pricing";
 import type { CommerceProduct, CommerceVariant } from "@/types/commerce-product";
-
-function isPositiveFinitePrice(value: number | null | undefined): value is number {
-  return typeof value === "number" && Number.isFinite(value) && value > 0;
-}
-
-/**
- * A selected real variant can override the public product price only with a
- * positive finite value. This is display data; checkout still re-queries its
- * trusted price from Supabase.
- */
-export function getCommerceVariantPrice(
-  product: Pick<CommerceProduct, "price">,
-  variant: Pick<CommerceVariant, "price"> | null | undefined
-) {
-  if (isPositiveFinitePrice(variant?.price)) return variant.price;
-  return isPositiveFinitePrice(product.price) ? product.price : null;
-}
 
 export function getAccessoryDetailPriceLabel(
   product: Pick<CommerceProduct, "price" | "unitLabel" | "variants">,

@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { CartItem, YarnProduct } from "../../types/yarn-product";
+import type { CartItem } from "../../types/yarn-product";
+import type { CommerceProduct } from "../../types/commerce-product";
+import { getCommerceCartSubtotal, resolveCommerceCartItems } from "../cart/cart-commerce";
 import {
   checkoutFormSchema,
   createCheckoutPayload,
@@ -31,25 +33,36 @@ const cartItem: CartItem = {
   displayPrice: 7200
 };
 
-function product(stock: number | null = 10): YarnProduct {
+function product(stock: number | null = 10): CommerceProduct {
   return {
     id: "milk-bo",
     slug: "milk-bo-40",
     name: "Milk Bò",
-    shortName: "Milk Bò",
-    category: "milk-cotton",
+    category: "yarn",
+    subCategory: "milk-cotton",
     description: "Len sợi",
-    seoDescription: "Len sợi",
     price: 7200,
-    weight: "40g",
-    material: "Len sợi",
-    hookSize: "2.5mm",
-    origin: "Chưa cập nhật",
+    unitLabel: "cuộn",
+    optionLabel: "Màu",
+    status: "active",
+    sortOrder: 1,
     image: cartItem.imageUrl,
-    images: [cartItem.imageUrl],
+    coverImage: null,
     updatedAt: "2026-08-10",
-    variants: [{ id: "01", colorCode: "#edf5fb", colorName: "01", image: cartItem.imageUrl, hasOwnImage: true, stock }],
-    wholesaleTiers: []
+    variants: [{
+      id: "01",
+      productId: "milk-bo",
+      name: "Trắng sữa",
+      sku: null,
+      price: null,
+      stock,
+      status: "active",
+      sortOrder: 1,
+      image: cartItem.imageUrl,
+      colorCode: "01",
+      colorName: "Trắng sữa",
+      colorHex: "#edf5fb"
+    }]
   };
 }
 
@@ -100,21 +113,78 @@ test("checkout form schema", async (t) => {
 
 test("checkout cart revalidation", async (t) => {
   await t.test("accepts an available product and exact variant", () => {
-    assert.equal(resolveCheckoutItems([cartItem], [product()])[0].issue, null);
+    const entry = resolveCheckoutItems([cartItem], [product()])[0];
+    assert.equal(entry.issue, null);
+    assert.equal(entry.optionLabel, "Màu");
+    assert.equal(entry.unitLabel, "cuộn");
+    assert.equal(entry.displayPrice, 7200);
   });
 
   await t.test("marks missing product and variant", () => {
-    assert.equal(resolveCheckoutItems([cartItem], [])[0].issue, "missing-product");
+    const missingProduct = resolveCheckoutItems([cartItem], [])[0];
+    assert.equal(missingProduct.issue, "missing-product");
     const missingVariant = { ...product(), variants: [] };
-    assert.equal(resolveCheckoutItems([cartItem], [missingVariant])[0].issue, "missing-variant");
+    const unresolvedVariant = resolveCheckoutItems([cartItem], [missingVariant])[0];
+    assert.equal(unresolvedVariant.issue, "missing-variant");
+    assert.doesNotMatch(`${missingProduct.issueMessage} ${unresolvedVariant.issueMessage}`, /Mã màu/);
   });
 
   await t.test("marks out-of-stock and insufficient-stock items", () => {
     assert.equal(resolveCheckoutItems([cartItem], [product(0)])[0].issue, "out-of-stock");
-    assert.equal(resolveCheckoutItems([cartItem], [product(2)])[0].issue, "insufficient-stock");
+    const insufficient = resolveCheckoutItems([cartItem], [product(2)])[0];
+    assert.equal(insufficient.issue, "insufficient-stock");
+    assert.match(insufficient.issueMessage || "", /2 cuộn/);
   });
 
   await t.test("allows unknown stock without inventing availability", () => {
     assert.equal(resolveCheckoutItems([cartItem], [product(null)])[0].issue, null);
+  });
+
+  await t.test("resolves accessory option, unit, no-image and the same variant price as cart", () => {
+    const accessory: CommerceProduct = {
+      ...product(null),
+      id: "hook",
+      name: "Kim móc cán mềm",
+      slug: "kim-moc-can-mem",
+      category: "accessory",
+      subCategory: "hook",
+      image: "",
+      price: 25_000,
+      unitLabel: "cây",
+      optionLabel: "Kích thước",
+      variants: [{
+        ...product().variants[0],
+        id: "hook-25",
+        productId: "hook",
+        name: "2.5mm",
+        price: 27_000,
+        stock: null,
+        image: "",
+        colorCode: null,
+        colorName: null,
+        colorHex: null
+      }]
+    };
+    const accessoryItem: CartItem = {
+      ...cartItem,
+      productId: "hook",
+      variantId: "hook-25",
+      slug: "kim-moc-can-mem",
+      productName: "Kim móc",
+      variantName: "2.5mm",
+      colorCode: "",
+      imageUrl: "",
+      displayPrice: 1
+    };
+    const resolved = resolveCheckoutItems([accessoryItem], [accessory]);
+    const cartResolved = resolveCommerceCartItems([accessoryItem], [accessory]);
+
+    assert.equal(resolved[0].issue, null);
+    assert.equal(resolved[0].optionLabel, "Kích thước");
+    assert.equal(resolved[0].unitLabel, "cây");
+    assert.equal(resolved[0].imageUrl, "");
+    assert.equal(resolved[0].displayPrice, 27_000);
+    assert.equal(resolved[0].displayPrice, cartResolved[0].displayPrice);
+    assert.equal(getCommerceCartSubtotal(resolved), 81_000);
   });
 });

@@ -1,5 +1,7 @@
 import { z } from "zod";
-import type { CartItem, YarnProduct, YarnVariant } from "@/types/yarn-product";
+import { resolveCommerceCartItems, type ResolvedCommerceCartItem } from "@/lib/cart/cart-commerce";
+import type { CartItem } from "@/types/yarn-product";
+import type { CommerceProduct } from "@/types/commerce-product";
 
 export const paymentMethodSchema = z.enum(["cod", "bank_transfer"]);
 
@@ -77,22 +79,14 @@ export type CheckoutItemIssue =
   | "out-of-stock"
   | "insufficient-stock";
 
-export type ResolvedCheckoutItem = {
-  item: CartItem;
-  product: YarnProduct | undefined;
-  variant: YarnVariant | undefined;
+export type ResolvedCheckoutItem = ResolvedCommerceCartItem & {
   issue: CheckoutItemIssue | null;
   issueMessage: string | null;
-  productName: string;
-  variantName: string;
-  imageUrl: string;
-  displayPrice: number;
 };
 
-export function resolveCheckoutItems(items: CartItem[], availableProducts: YarnProduct[]): ResolvedCheckoutItem[] {
-  return items.map((item) => {
-    const product = availableProducts.find((candidate) => candidate.id === item.productId);
-    const variant = product?.variants.find((candidate) => candidate.id === item.variantId);
+export function resolveCheckoutItems(items: CartItem[], availableProducts: CommerceProduct[]): ResolvedCheckoutItem[] {
+  return resolveCommerceCartItems(items, availableProducts).map((entry) => {
+    const { item, product, variant } = entry;
     let issue: CheckoutItemIssue | null = null;
     let issueMessage: string | null = null;
 
@@ -101,25 +95,19 @@ export function resolveCheckoutItems(items: CartItem[], availableProducts: YarnP
       issueMessage = "Sản phẩm không còn khả dụng.";
     } else if (!variant) {
       issue = "missing-variant";
-      issueMessage = "Mã màu không còn khả dụng.";
+      issueMessage = "Lựa chọn này không còn khả dụng.";
     } else if (variant.stock === 0) {
       issue = "out-of-stock";
-      issueMessage = "Mã màu này hiện đã hết hàng.";
+      issueMessage = "Lựa chọn này hiện đã hết hàng.";
     } else if (variant.stock !== null && item.quantity > variant.stock) {
       issue = "insufficient-stock";
-      issueMessage = `Hiện chỉ còn ${variant.stock} cuộn. Vui lòng cập nhật số lượng trong giỏ hàng.`;
+      issueMessage = `Hiện chỉ còn ${variant.stock} ${product.unitLabel}. Vui lòng cập nhật số lượng trong giỏ hàng.`;
     }
 
     return {
-      item,
-      product,
-      variant,
+      ...entry,
       issue,
-      issueMessage,
-      productName: product?.name || item.productName,
-      variantName: variant?.colorName || item.variantName,
-      imageUrl: variant?.image || product?.image || item.imageUrl,
-      displayPrice: variant?.price ?? product?.price ?? item.displayPrice
+      issueMessage
     };
   });
 }

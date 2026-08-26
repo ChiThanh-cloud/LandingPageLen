@@ -356,7 +356,22 @@ fieldset.formSection {
   border-radius: 10px;
 }
 
-.summaryImage > span {
+.summaryNoImage {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 5px;
+  border: 1px solid var(--primary-200);
+  border-radius: 10px;
+  background: var(--primary-50);
+  color: var(--text-light);
+  font-size: .58rem;
+  line-height: 1.3;
+  text-align: center;
+}
+
+.quantityBadge {
   position: absolute;
   top: -7px;
   right: -7px;

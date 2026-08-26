@@ -3,29 +3,48 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { YarnProduct } from "@/types/yarn-product";
+import {
+  getCommerceCartStockLabel,
+  getCommerceCartSubtotal,
+  getCommerceItemAccessibleLabel,
+  getCommerceUnitPriceLabel,
+  resolveCommerceCartItems,
+  type ResolvedCommerceCartItem
+} from "@/lib/cart/cart-commerce";
+import type { CommerceProduct } from "@/types/commerce-product";
 import { useCart } from "./CartProvider";
 import styles from "./Cart.module.css";
 
-export function CartPage({ products }: { products: YarnProduct[] }) {
+function CartItemMedia({ entry }: { entry: ResolvedCommerceCartItem }) {
+  const label = getCommerceItemAccessibleLabel(entry);
+  const content = entry.imageUrl ? (
+    <Image src={entry.imageUrl} alt={label} width={144} height={144} sizes="(max-width: 600px) 88px, 120px" />
+  ) : (
+    <span className={styles.noImage} role="img" aria-label={`${label}, chưa có ảnh`}>Chưa có ảnh</span>
+  );
+
+  return entry.detailPath ? (
+    <Link href={entry.detailPath} className={styles.itemImage} aria-label={`Xem ${label}`}>{content}</Link>
+  ) : (
+    <div className={styles.itemImage}>{content}</div>
+  );
+}
+
+function CartItemName({ entry }: { entry: ResolvedCommerceCartItem }) {
+  return entry.detailPath ? (
+    <Link href={entry.detailPath} className={styles.itemName}>{entry.productName}</Link>
+  ) : (
+    <span className={styles.itemName}>{entry.productName}</span>
+  );
+}
+
+export function CartPage({ products }: { products: CommerceProduct[] }) {
   const { items, hydrated, updateQuantity, removeItem, clearCart } = useCart();
   const [message, setMessage] = useState("");
+  const resolvedItems = useMemo(() => resolveCommerceCartItems(items, products), [items, products]);
 
-  const resolvedItems = useMemo(() => items.map((item) => {
-    const product = products.find((candidate) => candidate.id === item.productId);
-    const variant = product?.variants.find((candidate) => candidate.id === item.variantId);
-    return {
-      item,
-      product,
-      variant,
-      isAvailable: Boolean(product && variant && variant.stock !== 0),
-      displayPrice: product?.price ?? item.displayPrice,
-      imageUrl: variant?.image || product?.image || item.imageUrl
-    };
-  }), [items, products]);
-
-  // CLIENT TOTAL IS FOR DISPLAY ONLY. Checkout must re-query trusted prices from Supabase.
-  const displaySubtotal = resolvedItems.reduce((total, entry) => total + entry.displayPrice * entry.item.quantity, 0);
+  // CLIENT TOTAL IS FOR DISPLAY ONLY. Checkout re-queries trusted prices through the order backend.
+  const displaySubtotal = getCommerceCartSubtotal(resolvedItems);
 
   if (!hydrated) {
     return (
@@ -50,8 +69,8 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
             </span>
             <p className={styles.eyebrow}>Giỏ hàng Tiny</p>
             <h1>Giỏ hàng của bạn đang trống</h1>
-            <p>Chọn dòng len và mã màu phù hợp, Tiny sẽ giữ lại lựa chọn của bạn ngay trên thiết bị này.</p>
-            <Link href="/len-soi" className={styles.primaryLink}>Tiếp tục mua len</Link>
+            <p>Chọn len hoặc phụ kiện phù hợp, Tiny sẽ giữ lại lựa chọn của bạn ngay trên thiết bị này.</p>
+            <Link href="/len-soi-va-phu-kien" className={styles.primaryLink}>Tiếp tục mua sắm</Link>
           </section>
         </div>
       </main>
@@ -65,7 +84,7 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
           <div>
             <p className={styles.eyebrow}>Giỏ hàng Tiny</p>
             <h1>Giỏ hàng của bạn</h1>
-            <p>Kiểm tra mã màu và số lượng trước khi tiếp tục.</p>
+            <p>Kiểm tra lựa chọn và số lượng trước khi tiếp tục.</p>
           </div>
           <button
             type="button"
@@ -85,47 +104,45 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
 
         <div className={styles.cartLayout}>
           <section className={styles.itemList} aria-label="Sản phẩm trong giỏ hàng">
-            {resolvedItems.map(({ item, product, variant, isAvailable, displayPrice, imageUrl }) => {
-              const productName = product?.name || item.productName;
-              const variantName = variant?.colorName || item.variantName;
-              const stock = variant?.stock ?? null;
+            {resolvedItems.map((entry) => {
+              const { item, productName, variantName, optionLabel, unitLabel, stock, isAvailable, displayPrice } = entry;
+              const optionDescription = `${optionLabel} ${variantName}`;
               const atStockLimit = stock !== null && item.quantity >= stock;
+              const updateMessage = `Đã cập nhật ${productName} – ${optionDescription}.`;
               return (
                 <article className={styles.cartItem} key={`${item.productId}-${item.variantId}`}>
-                  <Link href={`/len-soi/${product?.slug || item.slug}`} className={styles.itemImage} aria-label={`Xem ${productName}, màu ${variantName}`}>
-                    <Image src={imageUrl} alt={`${productName}, màu ${variantName}`} width={144} height={144} sizes="(max-width: 600px) 88px, 120px" />
-                  </Link>
+                  <CartItemMedia entry={entry} />
 
                   <div className={styles.itemDetails}>
-                    <Link href={`/len-soi/${product?.slug || item.slug}`} className={styles.itemName}>{productName}</Link>
-                    <p>Mã màu: <strong>{variantName}</strong></p>
-                    <p className={styles.stockText}>
-                      {!product || !variant ? "Sản phẩm hoặc mã màu không còn khả dụng" : variant.stock === null ? "Liên hệ Tiny để xác nhận số lượng lớn" : variant.stock > 0 ? `Còn hàng: ${variant.stock.toLocaleString("vi-VN")} cuộn` : "Hết hàng"}
-                    </p>
-                    <strong className={styles.mobilePrice}>{displayPrice.toLocaleString("vi-VN")}đ / cuộn</strong>
+                    <CartItemName entry={entry} />
+                    <p>{optionLabel}: <strong>{variantName}</strong></p>
+                    <p className={styles.stockText}>{getCommerceCartStockLabel(entry)}</p>
+                    <strong className={styles.mobilePrice}>{getCommerceUnitPriceLabel(displayPrice, unitLabel)}</strong>
 
                     <div className={styles.itemActions}>
-                      <div className={styles.quantityControl} aria-label={`Số lượng ${productName}, màu ${variantName}`}>
+                      <div className={styles.quantityControl} aria-label={`Số lượng ${productName}, ${optionDescription}`}>
                         <button
                           type="button"
-                          aria-label={`Giảm số lượng ${productName}, màu ${variantName}`}
+                          aria-label={`Giảm số lượng ${productName}, ${optionDescription}`}
                           disabled={!isAvailable || item.quantity <= 1}
                           onClick={() => {
                             const result = updateQuantity(item.productId, item.variantId, item.quantity - 1, stock);
-                            if (result.code === "updated") setMessage(`Đã cập nhật ${productName} - màu ${variantName}.`);
+                            if (result.code === "updated") setMessage(updateMessage);
                           }}
                         >−</button>
                         <output aria-live="polite">{item.quantity}</output>
                         <button
                           type="button"
-                          aria-label={`Tăng số lượng ${productName}, màu ${variantName}`}
+                          aria-label={`Tăng số lượng ${productName}, ${optionDescription}`}
                           disabled={!isAvailable || atStockLimit}
                           onClick={() => {
                             const result = updateQuantity(item.productId, item.variantId, item.quantity + 1, stock);
                             if (result.code === "stock-capped" || result.code === "stock-limit") {
-                              setMessage(`${productName} - màu ${variantName} đã đạt số lượng hiện có.`);
+                              setMessage(stock !== null && unitLabel
+                                ? `Hiện chỉ còn ${stock.toLocaleString("vi-VN")} ${unitLabel}.`
+                                : `${productName} – ${optionDescription} đã đạt số lượng hiện có.`);
                             } else if (result.code === "updated") {
-                              setMessage(`Đã cập nhật ${productName} - màu ${variantName}.`);
+                              setMessage(updateMessage);
                             }
                           }}
                         >+</button>
@@ -133,10 +150,10 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
                       <button
                         type="button"
                         className={styles.removeButton}
-                        aria-label={`Xóa ${productName} màu ${variantName} khỏi giỏ hàng`}
+                        aria-label={`Xóa ${productName}, ${optionDescription} khỏi giỏ hàng`}
                         onClick={() => {
                           removeItem(item.productId, item.variantId);
-                          setMessage(`Đã xóa ${productName} - màu ${variantName} khỏi giỏ hàng.`);
+                          setMessage(`Đã xóa ${productName} – ${optionDescription} khỏi giỏ hàng.`);
                         }}
                       >
                         Xóa
@@ -146,7 +163,7 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
 
                   <div className={styles.itemPrice}>
                     <strong>{(displayPrice * item.quantity).toLocaleString("vi-VN")}đ</strong>
-                    <span>{displayPrice.toLocaleString("vi-VN")}đ / cuộn</span>
+                    <span>{getCommerceUnitPriceLabel(displayPrice, unitLabel)}</span>
                   </div>
                 </article>
               );
@@ -162,7 +179,7 @@ export function CartPage({ products }: { products: YarnProduct[] }) {
             <p className={styles.summaryNote}>Giá và tình trạng sản phẩm sẽ được kiểm tra lại khi bạn đặt hàng.</p>
             <Link href="/thanh-toan" className={styles.checkoutButton}>Tiến hành thanh toán</Link>
             <p className={styles.checkoutNote}>Bạn sẽ kiểm tra thông tin giao hàng ở bước tiếp theo.</p>
-            <Link href="/len-soi" className={styles.continueLink}>← Tiếp tục mua len</Link>
+            <Link href="/len-soi-va-phu-kien" className={styles.continueLink}>← Tiếp tục mua sắm</Link>
           </aside>
         </div>
       </div>

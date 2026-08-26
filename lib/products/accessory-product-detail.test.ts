@@ -11,9 +11,9 @@ import {
   getAccessoryQuantity,
   getAccessoryStockLabel,
   getCommerceStockLimit,
-  getCommerceVariantPrice,
   getInitialAccessoryVariantId
 } from "./accessory-product-detail";
+import { getCommerceVariantPrice } from "./commerce-pricing";
 import {
   getAccessoryProductCanonical,
   getAccessoryProductDescription,
@@ -165,9 +165,10 @@ test("stock keeps null distinct from zero and caps managed quantities", () => {
   assert.match(detailSource, /<small>\{visibleOptionStatus\}<\/small>/);
 });
 
-test("TASK 7 keeps the existing cart and checkout sources untouched while preserving the TASK 6 accessory path", () => {
-  assert.match(cartSource, /function CartPage/);
-  assert.match(checkoutSource, /export default async function Page/);
+test("TASK 8 preserves TASK 7 accessory detail behavior while making cart and checkout generic", () => {
+  assert.match(cartSource, /CommerceProduct\[\]/);
+  assert.match(checkoutSource, /getAllSellableProducts/);
   assert.match(yarnRouteSource, /getYarnProductBySlug/);
   assert.equal(getCommerceProductPath(accessory()), "/phu-kien/kim-moc-can-mem");
+  assert.match(detailSource, /createAccessoryCartItem/);
 });

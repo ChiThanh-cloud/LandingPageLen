@@ -67,6 +67,14 @@ test("cart store", async (t) => {
     assert.equal(invalid.items[0].quantity, 10);
   });
 
+  await t.test("keeps null stock unmanaged, blocks zero and caps positive stock", () => {
+    const current = [item("01", 3)];
+
+    assert.equal(updateCartItemQuantity(current, "milk-bo", "01", 20, null).items[0].quantity, 20);
+    assert.equal(updateCartItemQuantity(current, "milk-bo", "01", 20, 0).code, "out-of-stock");
+    assert.equal(updateCartItemQuantity(current, "milk-bo", "01", 20, 5).items[0].quantity, 5);
+  });
+
   await t.test("removes only the matching product and variant pair", () => {
     const current = [item("01", 1), item("08", 2)];
     const result = removeCartItem(current, "milk-bo", "01");
