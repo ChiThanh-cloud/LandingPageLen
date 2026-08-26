@@ -80,17 +80,16 @@ export function Header() {
   }, [isOpen]);
 
   useEffect(() => {
-    const hero = document.getElementById("hero");
-    if (!hero || !("IntersectionObserver" in window)) {
-      return;
-    }
+    const isHomePage = window.location.pathname === "/";
 
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsScrolled(!entry.isIntersecting),
-      { rootMargin: "-60px 0px 0px", threshold: 0 }
-    );
-    observer.observe(hero);
-    return () => observer.disconnect();
+    const updateScrolledState = () => {
+      const nextIsScrolled = !isHomePage || window.scrollY > 12;
+      setIsScrolled((current) => current === nextIsScrolled ? current : nextIsScrolled);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", updateScrolledState, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrolledState);
   }, []);
 
   const closeMenu = () => setIsOpen(false);
