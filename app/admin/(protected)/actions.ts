@@ -16,7 +16,7 @@ function rpcErrorMessage(message: string) {
   if (message.includes("ORDER_STATUS_INVALID")) return "Trạng thái đơn không phù hợp với thao tác này.";
   if (message.includes("ORDER_NOT_FOUND")) return "Không tìm thấy đơn hàng.";
   if (message.includes("STOCK_NEGATIVE")) return "Tồn kho không được nhỏ hơn 0.";
-  if (message.includes("VARIANT_NOT_FOUND")) return "Không tìm thấy mã màu thuộc khu vực len sợi.";
+  if (message.includes("VARIANT_NOT_FOUND")) return "Không tìm thấy phiên bản thuộc khu vực quản lý tồn kho.";
   return "Tiny chưa thể cập nhật dữ liệu. Vui lòng thử lại.";
 }
 
@@ -84,4 +84,3 @@ export async function adjustStockAction(_state: AdminActionState, formData: Form
     p_request_id: randomUUID()
   });
 }
-

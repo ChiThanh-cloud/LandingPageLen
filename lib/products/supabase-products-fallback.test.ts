@@ -93,7 +93,7 @@ describe("supabase-products fallback guard", () => {
           category: "len-dac-biet", description: "From DB", seoDescription: "From DB",
           price: 25000, weight: "50g", material: "Test", hookSize: "3.0mm", origin: "VN",
           image: "/images/yarn_collection_800.jpg", images: ["/images/yarn_collection_800.jpg"],
-          updatedAt: "2026-08-12", variants: [], wholesaleTiers: []
+          status: "available", updatedAt: "2026-08-12", variants: [], wholesaleTiers: []
         }
       ];
       const result = applyYarnFallbackGuard(fakeDbProducts);

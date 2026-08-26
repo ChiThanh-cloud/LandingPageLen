@@ -36,9 +36,9 @@ const products: ProductCard[] = [
     price: "Từ 8.000đ",
     description:
       "Bảng màu len siêu xinh, chất sợi mềm mịn (Cotton, Wool...). Đủ kim móc và phụ kiện để bạn tự tay làm nên tác phẩm của mình.",
-    modalLabel: "Xem bảng màu len →",
-    detailHref: "/len-soi",
-    detailLabel: "Tìm hiểu thêm về len sợi →"
+    modalLabel: "Xem len & phụ kiện →",
+    detailHref: "/len-soi-va-phu-kien",
+    detailLabel: "Xem len & phụ kiện →"
   },
   {
     id: "prod-moc-yc",
@@ -133,12 +133,12 @@ export function ProductShowcase() {
     <>
       <div className="products-grid">
         {products.map((product) => {
-          // Card len sợi → navigate thẳng tới /len-soi, không mở modal
+          // Card commerce → navigate thẳng tới catalog umbrella, không mở modal
           if (product.type === "yarn") {
             return (
               <Link
                 key={product.id}
-                href="/len-soi"
+                href={product.detailHref}
                 className={["product-card", product.className].filter(Boolean).join(" ")}
                 id={product.id}
                 aria-label={product.ariaLabel}
@@ -154,7 +154,7 @@ export function ProductShowcase() {
                   <h3>{product.title}</h3>
                   <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
                   <p>{product.description}</p>
-                  <span className="product-detail-link">Xem bảng màu và giá len →</span>
+                  <span className="product-detail-link">Xem len & phụ kiện →</span>
                 </div>
               </Link>
             );

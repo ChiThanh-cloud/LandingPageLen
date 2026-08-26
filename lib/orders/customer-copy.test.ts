@@ -8,6 +8,7 @@ const customerFiles = [
   "../../components/yarn-product/VariantSelector.tsx",
   "../../components/cart/CartPage.tsx",
   "../../components/checkout/CheckoutPage.tsx",
+  "../../lib/cart/cart-commerce.ts",
   "../../components/orders/OrderCancellation.tsx",
   "../../components/payments/PayOSPayment.tsx",
   "../../app/tra-cuu-don-hang/OrderLookupPage.tsx",
@@ -73,7 +74,7 @@ test("customer order pages distinguish order status from payment status", () => 
 test("customer stock copy uses Tiny wording and shows exact managed stock", () => {
   assert.match(customerSource, /Liên hệ Tiny để xác nhận số lượng lớn/);
   assert.match(customerSource, /Còn hàng: \$\{stock\.toLocaleString\("vi-VN"\)\} cuộn/);
-  assert.match(customerSource, /Còn hàng: \$\{variant\.stock\.toLocaleString\("vi-VN"\)\} cuộn/);
+  assert.match(customerSource, /Còn hàng: \$\{item\.stock\.toLocaleString\("vi-VN"\)\} \$\{item\.unitLabel\}/);
   assert.match(customerSource, /Hết hàng/);
   assert.doesNotMatch(customerSource, /giới hạn tồn kho/i);
 });

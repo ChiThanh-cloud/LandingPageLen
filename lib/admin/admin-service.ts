@@ -66,6 +66,41 @@ export type AdminDashboardMetrics = {
   paidRevenueToday: number;
 };
 
+export type AdminInventoryProduct = {
+  id: number | string;
+  name: string | null;
+  category: string | null;
+  slug: string | null;
+  unit_label: string | null;
+  option_label: string | null;
+  status: string | null;
+  sort_order: number | null;
+};
+
+export type AdminInventoryVariant = {
+  id: number | string;
+  product_id: number | string;
+  name: string | null;
+  sku: string | null;
+  color_name: string | null;
+  color_code: string | null;
+  image_url: string | null;
+  stock: number | null;
+  status: string | null;
+  sort_order: number | null;
+};
+
+export type AdminInventoryMovement = {
+  id: number | string;
+  variant_id: number | string;
+  movement_type: string;
+  quantity_delta: number | null;
+  stock_before: number | null;
+  stock_after: number | null;
+  note: string | null;
+  created_at: string;
+};
+
 export async function getAdminDashboard(): Promise<AdminDashboardMetrics> {
   const { data, error } = await adminClient()
     .rpc("get_admin_dashboard_metrics");
@@ -138,29 +173,37 @@ export async function getAdminInventory() {
   const client = adminClient();
   const { data: products, error: productError } = await client
     .from("products")
-    .select("id,name,status")
-    .eq("category", "yarn")
+    .select("id,name,category,slug,unit_label,option_label,status,sort_order")
+    .in("category", ["yarn", "accessory"])
     .order("sort_order", { ascending: true });
   if (productError) throw productError;
 
-  const productIds = (products || []).map((product) => product.id);
+  const inventoryProducts = (products || []) as AdminInventoryProduct[];
+  const productIds = inventoryProducts.map((product) => product.id);
   if (!productIds.length) return { products: [], variants: [], movements: [] };
 
-  const [{ data: variants, error: variantError }, { data: movements, error: movementError }] = await Promise.all([
-    client
-      .from("product_variants")
-      .select("id,product_id,name,color_name,color_code,image_url,stock,status,sort_order")
-      .in("product_id", productIds)
-      .order("sort_order", { ascending: true }),
-    client
-      .from("inventory_movements")
-      .select("id,variant_id,movement_type,quantity_delta,stock_before,stock_after,note,created_at")
-      .order("created_at", { ascending: false })
-      .limit(200)
-  ]);
+  const { data: variants, error: variantError } = await client
+    .from("product_variants")
+    .select("id,product_id,name,sku,color_name,color_code,image_url,stock,status,sort_order")
+    .in("product_id", productIds)
+    .order("sort_order", { ascending: true });
   if (variantError) throw variantError;
+
+  const inventoryVariants = (variants || []) as AdminInventoryVariant[];
+  const variantIds = inventoryVariants.map((variant) => variant.id);
+  if (!variantIds.length) return { products: inventoryProducts, variants: [], movements: [] };
+
+  const { data: movements, error: movementError } = await client
+    .from("inventory_movements")
+    .select("id,variant_id,movement_type,quantity_delta,stock_before,stock_after,note,created_at")
+    .in("variant_id", variantIds)
+    .order("created_at", { ascending: false })
+    .limit(200);
   if (movementError) throw movementError;
-  return { products: products || [], variants: variants || [], movements: movements || [] };
+
+  const inventoryMovements = (movements || []) as AdminInventoryMovement[];
+
+  return { products: inventoryProducts, variants: inventoryVariants, movements: inventoryMovements };
 }
 
 export async function getAdminProducts() {

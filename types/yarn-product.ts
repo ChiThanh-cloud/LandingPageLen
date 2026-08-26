@@ -8,6 +8,7 @@ export type YarnVariant = {
   /** Public catalog price override. The order API still re-queries Supabase. */
   price?: number | null;
   stock: number | null;
+  status: string | null;
 };
 
 export type WholesaleTier = {
@@ -41,6 +42,7 @@ export type YarnProduct = {
   origin?: string | null;
   image: string;
   images: string[];
+  status: string | null;
   updatedAt: string;
   variants: YarnVariant[];
   wholesaleTiers: WholesaleTier[];

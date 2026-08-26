@@ -32,6 +32,7 @@ function product(overrides: Partial<YarnProduct> = {}): YarnProduct {
     hookSize: "3–4mm",
     image: "/images/yarn_collection_800.jpg",
     images: ["/images/yarn_collection_800.jpg"],
+    status: "available",
     updatedAt: "2026-08-14T00:00:00.000Z",
     variants: [],
     wholesaleTiers: [],
@@ -96,9 +97,9 @@ test("H1 helper avoids duplicate weight and yarn-size facts, including spaced un
 
 test("visible color count is derived from public variants, not a hard-coded catalog number", () => {
   const item = product({ variants: [
-    { id: "a", colorCode: "A", colorName: "A", image: "/a.jpg", hasOwnImage: true, stock: 1 },
-    { id: "b", colorCode: "B", colorName: "B", image: "/b.jpg", hasOwnImage: true, stock: 0 },
-    { id: "c", colorCode: "C", colorName: "C", image: "/c.jpg", hasOwnImage: true, stock: null }
+    { id: "a", colorCode: "A", colorName: "A", image: "/a.jpg", hasOwnImage: true, stock: 1, status: "available" },
+    { id: "b", colorCode: "B", colorName: "B", image: "/b.jpg", hasOwnImage: true, stock: 0, status: "available" },
+    { id: "c", colorCode: "C", colorName: "C", image: "/c.jpg", hasOwnImage: true, stock: null, status: "available" }
   ] });
   assert.equal(getYarnProductVisibleColorCount(item), 3);
   assert.match(getYarnProductSeoMetadata(item).description, /3 mã màu đang hiển thị/);
@@ -106,12 +107,12 @@ test("visible color count is derived from public variants, not a hard-coded cata
 
 test("purchasable starting price excludes unavailable variants and falls back per purchasable variant", () => {
   const item = product({ variants: [
-    { id: "available", colorCode: "A", colorName: "Màu A", image: "/a.jpg", hasOwnImage: true, price: 17_000, stock: 1 },
-    { id: "unavailable", colorCode: "B", colorName: "Màu B", image: "/b.jpg", hasOwnImage: true, price: 16_000, stock: 0 },
-    { id: "unknown-stock", colorCode: "C", colorName: "Màu C", image: "/c.jpg", hasOwnImage: true, price: 18_000, stock: null }
+    { id: "available", colorCode: "A", colorName: "Màu A", image: "/a.jpg", hasOwnImage: true, price: 17_000, stock: 1, status: "available" },
+    { id: "unavailable", colorCode: "B", colorName: "Màu B", image: "/b.jpg", hasOwnImage: true, price: 16_000, stock: 0, status: "available" },
+    { id: "unknown-stock", colorCode: "C", colorName: "Màu C", image: "/c.jpg", hasOwnImage: true, price: 18_000, stock: null, status: "available" }
   ] });
   const fallbackItem = product({ variants: [
-    { id: "fallback", colorCode: "F", colorName: "Màu F", image: "/f.jpg", hasOwnImage: true, price: null, stock: 1 }
+    { id: "fallback", colorCode: "F", colorName: "Màu F", image: "/f.jpg", hasOwnImage: true, price: null, stock: 1, status: "available" }
   ] });
 
   assert.equal(getYarnProductStartingPrice(item), 17_000);
@@ -120,10 +121,10 @@ test("purchasable starting price excludes unavailable variants and falls back pe
 
 test("starting-price display uses only public retail variants and handles unavailable products truthfully", () => {
   const availableItem = product({ variants: [
-    { id: "lower", colorCode: "L", colorName: "Màu L", image: "/l.jpg", hasOwnImage: true, price: 9_000, stock: 2 }
+    { id: "lower", colorCode: "L", colorName: "Màu L", image: "/l.jpg", hasOwnImage: true, price: 9_000, stock: 2, status: "available" }
   ], wholesaleTiers: [{ minQuantity: 20, price: 1_000, label: "Giá sỉ" }] });
   const unavailableItem = product({ variants: [
-    { id: "sold-out", colorCode: "S", colorName: "Màu S", image: "/s.jpg", hasOwnImage: true, price: 9_000, stock: 0 }
+    { id: "sold-out", colorCode: "S", colorName: "Màu S", image: "/s.jpg", hasOwnImage: true, price: 9_000, stock: 0, status: "available" }
   ] });
   const adapterSource = readFileSync(new URL("./supabase-products.ts", import.meta.url), "utf8");
 
@@ -141,7 +142,7 @@ test("starting-price display uses only public retail variants and handles unavai
 
 test("metadata and Product JSON-LD share the factual description and the same purchasable starting price", () => {
   const item = product({ variants: [
-    { id: "lower", colorCode: "L", colorName: "Màu L", image: "/l.jpg", hasOwnImage: true, price: 9_000, stock: 2 }
+    { id: "lower", colorCode: "L", colorName: "Màu L", image: "/l.jpg", hasOwnImage: true, price: 9_000, stock: 2, status: "available" }
   ] });
   const seo = getYarnProductSeoMetadata(item);
   const metadata = getYarnProductPageMetadata(item);
@@ -162,10 +163,10 @@ test("metadata and Product JSON-LD share the factual description and the same pu
 
 test("catalog price is derived from purchasable product prices and no catalog copy hard-codes 7.000đ", () => {
   const available = product({ variants: [
-    { id: "available", colorCode: "A", colorName: "Màu A", image: "/a.jpg", hasOwnImage: true, price: 17_000, stock: 1 }
+    { id: "available", colorCode: "A", colorName: "Màu A", image: "/a.jpg", hasOwnImage: true, price: 17_000, stock: 1, status: "available" }
   ] });
   const lowerButUnavailable = product({ id: "sold-out", slug: "sold-out", variants: [
-    { id: "sold-out-variant", colorCode: "S", colorName: "Màu S", image: "/s.jpg", hasOwnImage: true, price: 7_000, stock: 0 }
+    { id: "sold-out-variant", colorCode: "S", colorName: "Màu S", image: "/s.jpg", hasOwnImage: true, price: 7_000, stock: 0, status: "available" }
   ] });
   const source = readFileSync(new URL("../../app/len-soi/page.tsx", import.meta.url), "utf8");
 
@@ -181,8 +182,8 @@ test("variant gallery alt uses color metadata only for its displayed own image",
   assert.equal(getYarnProductImageAlt(item, { colorCode: "", colorName: "Hồng phấn" }), "Len Sợi Thử Nghiệm 75g 3mm – Hồng phấn");
   assert.equal(getYarnProductImageAlt(item), "Len Sợi Thử Nghiệm 75g 3mm");
 
-  const ownVariant = { id: "17", colorCode: "17", colorName: "Hồng", image: "/images/variant-17.webp", hasOwnImage: true, stock: 1 };
-  const fallbackVariant = { id: "18", colorCode: "18", colorName: "Kem", image: item.image, hasOwnImage: false, stock: 1 };
+  const ownVariant = { id: "17", colorCode: "17", colorName: "Hồng", image: "/images/variant-17.webp", hasOwnImage: true, stock: 1, status: "available" };
+  const fallbackVariant = { id: "18", colorCode: "18", colorName: "Kem", image: item.image, hasOwnImage: false, stock: 1, status: "available" };
 
   assert.equal(getYarnProductGalleryImageAlt(item, ownVariant.image, ownVariant), "Len Sợi Thử Nghiệm 75g 3mm – mã màu 17");
   assert.equal(getYarnProductGalleryImageAlt(item, item.image, fallbackVariant), "Len Sợi Thử Nghiệm 75g 3mm");

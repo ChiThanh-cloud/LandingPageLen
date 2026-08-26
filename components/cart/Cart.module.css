@@ -143,6 +143,18 @@
   object-fit: cover;
 }
 
+.noImage {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 8px;
+  color: var(--text-light);
+  font-size: .68rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
 .itemDetails {
   min-width: 0;
 }

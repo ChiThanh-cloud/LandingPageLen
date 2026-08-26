@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 import { CartPage } from "@/components/cart/CartPage";
-import { getAllYarnProducts } from "@/lib/products/supabase-products";
+import { getAllSellableProducts } from "@/lib/products/commerce-products";
 
 export const metadata: Metadata = {
   title: "Giỏ hàng",
-  description: "Kiểm tra sản phẩm len sợi và mã màu đã chọn tại Tiệm Len Nhà Tiny.",
+  description: "Kiểm tra len sợi, phụ kiện và lựa chọn đã thêm vào giỏ hàng tại Tiệm Len Nhà Tiny.",
   robots: { index: false, follow: true }
 };
 
 export const revalidate = 300;
 
 export default async function Page() {
-  const products = await getAllYarnProducts();
+  const products = await getAllSellableProducts();
   return <CartPage products={products} />;
 }

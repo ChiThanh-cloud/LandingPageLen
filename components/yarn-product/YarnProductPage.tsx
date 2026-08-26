@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { isCommerceVariantOrderable } from "@/lib/products/commerce-orderability";
 import type { YarnProduct, YarnVariant } from "@/types/yarn-product";
 import { ProductActions } from "./ProductActions";
 import { ProductDescription } from "./ProductDescription";
@@ -15,7 +16,10 @@ import { YarnProductJsonLd } from "./YarnProductJsonLd";
 import styles from "./YarnProductDetail.module.css";
 
 export function YarnProductPage({ product, relatedProducts }: { product: YarnProduct; relatedProducts: YarnProduct[] }) {
-  const firstAvailable = product.variants.find((variant) => variant.stock === null || variant.stock > 0) || product.variants[0];
+  const firstAvailable = product.variants.find((variant) => (
+    isCommerceVariantOrderable(variant.status)
+    && (variant.stock === null || variant.stock > 0)
+  )) || product.variants[0];
   const [variant, setVariant] = useState<YarnVariant | null>(firstAvailable || null);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(firstAvailable?.image || product.image);

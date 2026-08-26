@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdminPage } from "@/lib/admin/auth";
+import { getProductRevalidationPaths, type ProductRevalidationTarget } from "@/lib/admin/product-revalidation";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -10,7 +11,11 @@ export type ProductAdminActionResult = { ok: boolean; message: string; id?: stri
 
 const productIdSchema = z.coerce.number().int().positive();
 const statusSchema = z.enum(["available", "out", "preorder", "hidden"]);
-const categorySchema = z.enum(["handmade", "yarn", "set", "gift"]);
+const categorySchema = z.enum(["handmade", "yarn", "accessory", "set", "gift"]);
+
+function isOnlineProductCategory(category: string) {
+  return category === "yarn" || category === "accessory";
+}
 
 function cleanOptional(value: FormDataEntryValue | null) {
   const text = String(value ?? "").trim();
@@ -25,6 +30,13 @@ function parsePrice(value: FormDataEntryValue | null) {
   if (!digits) return Number.NaN;
   const parsed = Number(digits);
   return hasK && parsed < 1000 ? parsed * 1000 : parsed;
+}
+
+function parseVariantPrice(value: FormDataEntryValue | null) {
+  const raw = String(value ?? "").trim().toLowerCase();
+  if (!raw) return null;
+  if (raw.includes("-")) return Number.NaN;
+  return parsePrice(value);
 }
 
 function slugifyProductName(value: string) {
@@ -51,10 +63,14 @@ function resultFromError(error: { message?: string } | null, success: string): P
   return { ok: false, message: "Tiny chưa thể lưu thay đổi. Vui lòng kiểm tra dữ liệu và thử lại." };
 }
 
-function revalidateProducts(slug?: string | null) {
-  revalidatePath("/admin/san-pham");
-  revalidatePath("/len-soi");
-  if (slug) revalidatePath(`/len-soi/${slug}`);
+function revalidateProducts(
+  slug?: string | null,
+  category?: string | null,
+  previousProduct?: ProductRevalidationTarget | null
+) {
+  for (const path of getProductRevalidationPaths({ slug, category }, previousProduct)) {
+    revalidatePath(path);
+  }
 }
 
 export async function saveProductAction(formData: FormData): Promise<ProductAdminActionResult> {
@@ -62,6 +78,7 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
   const parsed = z.object({
     id: z.union([z.literal(""), productIdSchema]),
     name: z.string().trim().min(1).max(200),
+    slug: z.string().trim().max(200).nullable(),
     category: categorySchema,
     subCategory: z.string().trim().max(80).nullable(),
     status: statusSchema,
@@ -74,10 +91,13 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     origin: z.string().trim().max(160).nullable(),
     description: z.string().trim().max(1200).nullable(),
     imageUrl: z.string().url().max(2000),
-    fullImageUrl: z.string().url().max(2000).nullable()
+    fullImageUrl: z.string().url().max(2000).nullable(),
+    unitLabel: z.string().trim().max(80).nullable(),
+    optionLabel: z.string().trim().max(120).nullable()
   }).safeParse({
     id: String(formData.get("id") ?? "").trim(),
     name: formData.get("name"),
+    slug: cleanOptional(formData.get("slug")),
     category: formData.get("category"),
     subCategory: cleanOptional(formData.get("subCategory")),
     status: formData.get("status"),
@@ -90,10 +110,23 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     origin: cleanOptional(formData.get("origin")),
     description: cleanOptional(formData.get("description")),
     imageUrl: formData.get("imageUrl"),
-    fullImageUrl: cleanOptional(formData.get("fullImageUrl"))
+    fullImageUrl: cleanOptional(formData.get("fullImageUrl")),
+    unitLabel: cleanOptional(formData.get("unitLabel")),
+    optionLabel: cleanOptional(formData.get("optionLabel"))
   });
   if (!parsed.success || Number.isNaN(price)) {
     return { ok: false, message: "Tên, danh mục, giá và đường dẫn ảnh chưa hợp lệ." };
+  }
+
+  const isOnlineProduct = isOnlineProductCategory(parsed.data.category);
+  const unitLabel = parsed.data.category === "yarn"
+    ? parsed.data.unitLabel || "cuộn"
+    : parsed.data.unitLabel;
+  const optionLabel = parsed.data.category === "yarn"
+    ? parsed.data.optionLabel || "Màu"
+    : parsed.data.optionLabel;
+  if (isOnlineProduct && (!unitLabel || !optionLabel)) {
+    return { ok: false, message: "Sản phẩm bán online cần có đơn vị bán và tên lựa chọn." };
   }
 
   const client = await authorizedClient();
@@ -112,11 +145,15 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     origin: parsed.data.origin,
     description: parsed.data.description,
     image_url: parsed.data.imageUrl,
-    full_image_url: parsed.data.fullImageUrl
+    full_image_url: parsed.data.fullImageUrl,
+    ...(isOnlineProduct ? {
+      unit_label: unitLabel,
+      option_label: optionLabel
+    } : {})
   };
   let insertPayload: typeof payload & { slug?: string } = payload;
-  if (parsed.data.id === "" && parsed.data.category === "yarn") {
-    const baseSlug = slugifyProductName(parsed.data.name);
+  if (parsed.data.id === "" && isOnlineProduct) {
+    const baseSlug = slugifyProductName(parsed.data.slug || parsed.data.name);
     if (!baseSlug) return { ok: false, message: "Tên sản phẩm chưa tạo được đường dẫn hợp lệ." };
 
     let stableSlug = baseSlug;
@@ -134,11 +171,24 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     insertPayload = { ...payload, slug: stableSlug };
   }
 
+  let previousProduct: ProductRevalidationTarget | null = null;
+  if (parsed.data.id !== "") {
+    const { data, error } = await client
+      .from("products")
+      .select("slug,category")
+      .eq("id", parsed.data.id)
+      .single();
+    if (error || !data) return resultFromError(error || { message: "PRODUCT_NOT_FOUND" }, "");
+    previousProduct = data;
+  }
+
   const request = parsed.data.id === ""
-    ? client.from("products").insert(insertPayload).select("id,slug").single()
-    : client.from("products").update(payload).eq("id", parsed.data.id).select("id,slug").single();
+    ? client.from("products").insert(insertPayload).select("id,slug,category").single()
+    : client.from("products").update(payload).eq("id", parsed.data.id).select("id,slug,category").single();
   const { data, error } = await request;
-  if (!error) revalidateProducts(data?.slug);
+  if (!error) {
+    revalidateProducts(data?.slug, data?.category, previousProduct);
+  }
   return { ...resultFromError(error, "Đã lưu sản phẩm."), id: data?.id ? String(data.id) : undefined };
 }
 
@@ -148,8 +198,8 @@ export async function toggleProductAction(id: string, currentStatus: string): Pr
   const client = await authorizedClient();
   const { data, error } = await client.from("products").update({
     status: parsed.data.currentStatus === "hidden" ? "available" : "hidden"
-  }).eq("id", parsed.data.id).select("slug").single();
-  if (!error) revalidateProducts(data?.slug);
+  }).eq("id", parsed.data.id).select("slug,category").single();
+  if (!error) revalidateProducts(data?.slug, data?.category);
   return resultFromError(error, parsed.data.currentStatus === "hidden" ? "Đã hiện sản phẩm." : "Đã ẩn sản phẩm.");
 }
 
@@ -157,8 +207,8 @@ export async function deleteProductAction(id: string): Promise<ProductAdminActio
   const parsed = productIdSchema.safeParse(id);
   if (!parsed.success) return { ok: false, message: "Sản phẩm không hợp lệ." };
   const client = await authorizedClient();
-  const { error } = await client.from("products").delete().eq("id", parsed.data);
-  if (!error) revalidateProducts();
+  const { data, error } = await client.from("products").delete().eq("id", parsed.data).select("slug,category").maybeSingle();
+  if (!error) revalidateProducts(data?.slug, data?.category);
   return resultFromError(error, "Đã xóa sản phẩm.");
 }
 
@@ -171,11 +221,13 @@ const variantSchema = z.object({
   sku: z.string().trim().max(120).nullable(),
   imageUrl: z.string().url().max(2000).nullable(),
   fullImageUrl: z.string().url().max(2000).nullable(),
+  price: z.number().positive().nullable(),
   status: statusSchema,
   sortOrder: z.coerce.number().int().min(0).max(100000)
 });
 
 export async function saveVariantAction(formData: FormData): Promise<ProductAdminActionResult> {
+  const price = parseVariantPrice(formData.get("price"));
   const parsed = variantSchema.safeParse({
     id: String(formData.get("id") ?? "").trim(),
     productId: formData.get("productId"),
@@ -185,31 +237,41 @@ export async function saveVariantAction(formData: FormData): Promise<ProductAdmi
     sku: cleanOptional(formData.get("sku")),
     imageUrl: cleanOptional(formData.get("imageUrl")),
     fullImageUrl: cleanOptional(formData.get("fullImageUrl")),
+    price,
     status: formData.get("status"),
     sortOrder: formData.get("sortOrder")
   });
-  if (!parsed.success) return { ok: false, message: "Thông tin mã màu chưa hợp lệ." };
+  if (!parsed.success || Number.isNaN(price)) return { ok: false, message: "Thông tin phiên bản chưa hợp lệ." };
 
   const client = await authorizedClient();
   const { data: product } = await client.from("products").select("id,category,slug").eq("id", parsed.data.productId).maybeSingle();
-  if (!product || product.category !== "yarn") return { ok: false, message: "Chỉ sản phẩm len sợi mới có mã màu." };
+  if (!product || !isOnlineProductCategory(product.category)) {
+    return { ok: false, message: "Chỉ sản phẩm bán online có phiên bản/SKU mới được quản lý tại đây." };
+  }
   const payload = {
     product_id: parsed.data.productId,
     name: parsed.data.name,
-    color_code: parsed.data.colorCode,
-    color_name: parsed.data.colorName,
     sku: parsed.data.sku,
     image_url: parsed.data.imageUrl,
     full_image_url: parsed.data.fullImageUrl,
     status: parsed.data.status,
-    sort_order: parsed.data.sortOrder
+    sort_order: parsed.data.sortOrder,
+    ...(product.category === "yarn" ? {
+      color_code: parsed.data.colorCode,
+      color_name: parsed.data.colorName
+    } : {
+      color_code: null,
+      color_name: null,
+      color_hex: null,
+      price: parsed.data.price
+    })
   };
   const request = parsed.data.id === ""
     ? client.from("product_variants").insert(payload)
     : client.from("product_variants").update(payload).eq("id", parsed.data.id).eq("product_id", parsed.data.productId);
   const { error } = await request;
-  if (!error) revalidateProducts(product.slug);
-  return resultFromError(error, "Đã lưu mã màu.");
+  if (!error) revalidateProducts(product.slug, product.category);
+  return resultFromError(error, product.category === "yarn" ? "Đã lưu mã màu." : "Đã lưu lựa chọn.");
 }
 
 export async function toggleVariantAction(id: string, productId: string, currentStatus: string): Promise<ProductAdminActionResult> {
@@ -218,15 +280,19 @@ export async function toggleVariantAction(id: string, productId: string, current
   const client = await authorizedClient();
   const { data: product, error: productError } = await client
     .from("products")
-    .select("slug")
+    .select("slug,category")
     .eq("id", parsed.data.productId)
     .maybeSingle();
   if (productError || !product) return resultFromError(productError || { message: "Product not found" }, "");
+  if (!isOnlineProductCategory(product.category)) {
+    return { ok: false, message: "Chỉ sản phẩm bán online có phiên bản/SKU mới được quản lý tại đây." };
+  }
   const { error } = await client.from("product_variants").update({
     status: parsed.data.currentStatus === "hidden" ? "available" : "hidden"
   }).eq("id", parsed.data.id).eq("product_id", parsed.data.productId);
-  if (!error) revalidateProducts(product.slug);
-  return resultFromError(error, parsed.data.currentStatus === "hidden" ? "Đã hiện mã màu." : "Đã ẩn mã màu.");
+  if (!error) revalidateProducts(product.slug, product.category);
+  const variantLabel = product.category === "yarn" ? "mã màu" : "lựa chọn";
+  return resultFromError(error, parsed.data.currentStatus === "hidden" ? `Đã hiện ${variantLabel}.` : `Đã ẩn ${variantLabel}.`);
 }
 
 const importedVariantSchema = z.object({
@@ -286,7 +352,7 @@ export async function importVariantsAction(productId: string, input: unknown): P
     return resultFromError({ message: "VARIANT_IMPORT_RESPONSE_INVALID" }, "");
   }
 
-  revalidateProducts(imported.data.productSlug);
+  revalidateProducts(imported.data.productSlug, "yarn");
   return { ok: true, message: `Đã import ${imported.data.importedCount} mã màu.` };
 }
 

@@ -4,6 +4,7 @@ export const FREESHIP_SAME_PRODUCT_QUANTITY = 20;
 type CheckoutShippingItem = {
   productId: string;
   quantity: number;
+  category: string | null | undefined;
 };
 
 export function qualifiesForSameProductFreeship(
@@ -12,6 +13,7 @@ export function qualifiesForSameProductFreeship(
   const quantityByProductId = new Map<string, number>();
 
   for (const item of items) {
+    if (item.category !== "yarn") continue;
     quantityByProductId.set(
       item.productId,
       (quantityByProductId.get(item.productId) || 0) + item.quantity

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { getProductRevalidationPaths } from "./product-revalidation";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const protectedLayout = read("../../app/admin/(protected)/layout.tsx");
@@ -39,21 +40,68 @@ test("Cloudinary upload signatures are issued only after the shared active-admin
   assert.match(cloudinarySignRoute, /Cache-Control": "no-store/);
 });
 
-test("admin product save keeps both price columns synchronized and revalidates storefront routes", () => {
+test("admin product save keeps both price columns synchronized and revalidates the matching catalog route", () => {
   assert.match(productActions, /price:\s*parsed\.data\.price,\s*base_price:\s*parsed\.data\.price/);
-  assert.match(productActions, /select\("id,slug"\)/);
-  assert.match(productActions, /revalidatePath\("\/len-soi"\)/);
-  assert.match(productActions, /revalidatePath\(`\/len-soi\/\$\{slug\}`\)/);
-  assert.match(productActions, /revalidateProducts\(data\?\.slug\)/);
-  assert.match(productActions, /slugifyProductName\(parsed\.data\.name\)/);
+  assert.match(productActions, /select\("id,slug,category"\)/);
+  assert.match(productActions, /getProductRevalidationPaths/);
+  assert.match(productActions, /revalidateProducts\(data\?\.slug, data\?\.category\)/);
+  assert.match(productActions, /slugifyProductName\(parsed\.data\.slug \|\| parsed\.data\.name\)/);
   assert.match(productActions, /insertPayload = \{ \.\.\.payload, slug: stableSlug \}/);
 });
 
+test("every yarn mutation revalidates both the yarn catalog and the umbrella catalog", () => {
+  const revalidation = productActions.match(/function revalidateProducts[\s\S]*?(?=export async function saveProductAction)/)?.[0] || "";
+  assert.match(revalidation, /getProductRevalidationPaths\(\{ slug, category \}, previousProduct\)/);
+  assert.match(productActions, /revalidateProducts\(imported\.data\.productSlug, "yarn"\)/);
+});
+
+test("accessory mutations retain only umbrella and future accessory-detail revalidation", () => {
+  assert.deepEqual(getProductRevalidationPaths({ slug: "kim-moc", category: "accessory" }), [
+    "/admin/san-pham",
+    "/len-soi-va-phu-kien",
+    "/phu-kien/kim-moc"
+  ]);
+});
+
+test("protected and unknown categories revalidate only the admin product page", () => {
+  for (const category of ["handmade", "set", "gift", null, undefined]) {
+    assert.deepEqual(getProductRevalidationPaths({ slug: "protected", category }), ["/admin/san-pham"]);
+  }
+});
+
+test("existing product category transitions invalidate both the old and new storefront categories", () => {
+  const saveProduct = productActions.match(/export async function saveProductAction[\s\S]*?(?=export async function toggleProductAction)/)?.[0] || "";
+  assert.match(saveProduct, /let previousProduct: ProductRevalidationTarget \| null = null/);
+  assert.match(saveProduct, /from\("products"\)[\s\S]*select\("slug,category"\)[\s\S]*eq\("id", parsed\.data\.id\)[\s\S]*single\(\)[\s\S]*const request/);
+  assert.match(saveProduct, /revalidateProducts\(data\?\.slug, data\?\.category, previousProduct\)/);
+
+  const target = (category: string | null, slug = "new-product") => ({ category, slug });
+  assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("yarn", "milk-bo")), [
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("accessory", "kim-moc")), [
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien/kim-moc"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moi"), target("yarn", "milk-bo")), [
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien/kim-moi", "/len-soi", "/len-soi/milk-bo"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-moi"), target("accessory", "kim-moc")), [
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/phu-kien/kim-moc"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("gift"), target("handmade", "custom")), ["/admin/san-pham"]);
+  assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-bo"), target("yarn", "milk-bo")), [
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moc"), target("accessory", "kim-moc")), [
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien/kim-moc"
+  ]);
+});
+
 test("every catalog mutation resolves the product slug before storefront revalidation", () => {
-  assert.match(productActions, /toggleProductAction[\s\S]*select\("slug"\)\.single\(\)[\s\S]*revalidateProducts\(data\?\.slug\)/);
-  assert.match(productActions, /saveVariantAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
-  assert.match(productActions, /toggleVariantAction[\s\S]*select\("slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
-  assert.match(productActions, /importVariantsAction[\s\S]*rpc\("admin_import_product_variants"[\s\S]*revalidateProducts\(imported\.data\.productSlug\)/);
+  assert.match(productActions, /toggleProductAction[\s\S]*select\("slug,category"\)\.single\(\)[\s\S]*revalidateProducts\(data\?\.slug, data\?\.category\)/);
+  assert.match(productActions, /saveVariantAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug, product\.category\)/);
+  assert.match(productActions, /toggleVariantAction[\s\S]*select\("slug,category"\)[\s\S]*revalidateProducts\(product\.slug, product\.category\)/);
+  assert.match(productActions, /importVariantsAction[\s\S]*rpc\("admin_import_product_variants"[\s\S]*revalidateProducts\(imported\.data\.productSlug, "yarn"\)/);
 });
 
 test("browser roles cannot directly mutate catalog or inventory", () => {
@@ -83,8 +131,8 @@ test("admin confirm, transitions, and cancellation use secured atomic RPCs", () 
   assert.doesNotMatch(migration, /set\s+payment_status\s*=\s*'refunded'/i);
 });
 
-test("inventory admin is limited to yarn and storefront protected sections stay passive", () => {
-  assert.match(service, /\.eq\("category", "yarn"\)/);
+test("inventory admin is limited to inventory-managed categories and storefront protected sections stay passive", () => {
+  assert.match(service, /\.in\("category", \["yarn", "accessory"\]\)/);
   assert.match(shell, /pathname\.startsWith\("\/admin"\)/);
   assert.match(shell, /return children/);
   assert.doesNotMatch(service, /do-moc-dat-rieng|hop-qua|set-tu-moc/);

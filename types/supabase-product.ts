@@ -4,6 +4,8 @@ export type SupabaseProductRow = {
   slug: string | null;
   category: string | null;
   sub_category: string | null;
+  unit_label: string | null;
+  option_label: string | null;
   description: string | null;
   cover_image: string | null;
   image_url: string | null;

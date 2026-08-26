@@ -23,6 +23,7 @@ function makeProduct(images: string[]): YarnProduct {
     origin: "Việt Nam",
     image: images[0] || "/images/yarn_collection_800.jpg",
     images,
+    status: "available",
     updatedAt: "2026-08-11T00:00:00.000Z",
     variants: [{
       id: "variant-schema-test",
@@ -30,7 +31,8 @@ function makeProduct(images: string[]): YarnProduct {
       colorName: "Trắng",
       image: images[0] || "/images/yarn_collection_800.jpg",
       hasOwnImage: true,
-      stock: null
+      stock: null,
+      status: "available"
     }],
     wholesaleTiers: []
   };

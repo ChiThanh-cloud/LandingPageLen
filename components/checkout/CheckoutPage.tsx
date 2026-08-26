@@ -6,13 +6,19 @@ import { useRouter } from "next/navigation";
 import { useMemo, useRef, useState, type FormEvent } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import {
+  getCommerceCartSubtotal,
+  getCommerceItemAccessibleLabel,
+  getCommerceUnitPriceLabel
+} from "@/lib/cart/cart-commerce";
+import {
   checkoutFormSchema,
   createCheckoutPayload,
+  getCheckoutShippingItems,
   resolveCheckoutItems,
   type CheckoutFormValues
 } from "@/lib/checkout/checkout-schema";
 import { calculateCheckoutDisplayTotals } from "@/lib/orders/order-display";
-import type { YarnProduct } from "@/types/yarn-product";
+import type { CommerceProduct } from "@/types/commerce-product";
 import styles from "./Checkout.module.css";
 
 type CheckoutErrors = Partial<Record<keyof CheckoutFormValues, string>>;
@@ -50,7 +56,7 @@ function FieldError({ id, message }: { id: string; message?: string }) {
   return <span id={id} className={styles.fieldError} role="alert">{message}</span>;
 }
 
-export function CheckoutPage({ availableProducts }: { availableProducts: YarnProduct[] }) {
+export function CheckoutPage({ availableProducts }: { availableProducts: CommerceProduct[] }) {
   const router = useRouter();
   const { items, hydrated, clearCart } = useCart();
   const formRef = useRef<HTMLFormElement>(null);
@@ -67,11 +73,11 @@ export function CheckoutPage({ availableProducts }: { availableProducts: YarnPro
   const hasCartIssues = resolvedItems.some((entry) => entry.issue !== null);
 
   // DISPLAY ONLY. POST /api/orders re-queries Supabase and calculates trusted totals.
-  const displaySubtotal = resolvedItems.reduce(
-    (total, entry) => total + entry.displayPrice * entry.item.quantity,
-    0
+  const displaySubtotal = getCommerceCartSubtotal(resolvedItems);
+  const displayTotals = calculateCheckoutDisplayTotals(
+    displaySubtotal,
+    getCheckoutShippingItems(resolvedItems)
   );
-  const displayTotals = calculateCheckoutDisplayTotals(displaySubtotal, items);
 
   function setField<Key extends keyof CheckoutFormValues>(field: Key, value: CheckoutFormValues[Key]) {
     setValues((current) => ({ ...current, [field]: value }));
@@ -130,8 +136,8 @@ export function CheckoutPage({ availableProducts }: { availableProducts: YarnPro
             && entry.item.variantId === data.item?.variantId
           ));
           const label = affected
-            ? `${affected.productName} — mã ${affected.variantName}`
-            : "Một sản phẩm trong giỏ";
+            ? `${affected.productName} — ${affected.optionLabel}: ${affected.variantName}`
+            : "Một lựa chọn trong giỏ";
           setServerCartIssue({
             productId: data.item.productId,
             variantId: data.item.variantId,
@@ -176,8 +182,8 @@ export function CheckoutPage({ availableProducts }: { availableProducts: YarnPro
             </span>
             <p className={styles.eyebrow}>Thanh toán không cần tài khoản</p>
             <h1>Giỏ hàng của bạn đang trống</h1>
-            <p>Bạn cần chọn ít nhất một sản phẩm len hoặc phụ kiện trước khi điền thông tin giao hàng.</p>
-            <Link href="/len-soi" className={styles.primaryLink}>Quay lại mua len</Link>
+            <p>Bạn cần chọn ít nhất một sản phẩm trước khi điền thông tin giao hàng.</p>
+            <Link href="/len-soi-va-phu-kien" className={styles.primaryLink}>Quay lại chọn sản phẩm</Link>
           </section>
         </div>
       </main>
@@ -385,16 +391,21 @@ export function CheckoutPage({ availableProducts }: { availableProducts: YarnPro
                   && serverCartIssue.variantId === entry.item.variantId
                   ? serverCartIssue.message
                   : null;
+                const accessibleLabel = getCommerceItemAccessibleLabel(entry);
                 return (
                 <article className={`${styles.summaryItem} ${entry.issue || serverIssueMessage ? styles.summaryItemInvalid : ""}`} key={`${entry.item.productId}-${entry.item.variantId}`}>
                   <div className={styles.summaryImage}>
-                    <Image src={entry.imageUrl} alt={`${entry.productName}, màu ${entry.variantName}`} width={80} height={80} sizes="72px" />
-                    <span aria-label={`Số lượng ${entry.item.quantity}`}>{entry.item.quantity}</span>
+                    {entry.imageUrl ? (
+                      <Image src={entry.imageUrl} alt={accessibleLabel} width={80} height={80} sizes="72px" />
+                    ) : (
+                      <span className={styles.summaryNoImage} role="img" aria-label={`${accessibleLabel}, chưa có ảnh`}>Chưa có ảnh</span>
+                    )}
+                    <span className={styles.quantityBadge} aria-label={`Số lượng ${entry.item.quantity}`}>{entry.item.quantity}</span>
                   </div>
                   <div className={styles.summaryDetails}>
                     <strong>{entry.productName}</strong>
-                    <span>Mã màu: {entry.variantName}</span>
-                    <span>{entry.displayPrice.toLocaleString("vi-VN")}đ × {entry.item.quantity}</span>
+                    <span>{entry.optionLabel}: {entry.variantName}</span>
+                    <span>{getCommerceUnitPriceLabel(entry.displayPrice, entry.unitLabel)} × {entry.item.quantity}</span>
                     {entry.issueMessage || serverIssueMessage
                       ? <p role="alert">{entry.issueMessage || serverIssueMessage}</p>
                       : entry.variant?.stock === null
