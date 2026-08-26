@@ -44,10 +44,9 @@ export function StockEditor({ variantId, stock }: { variantId: string; stock: nu
         <button type="button" disabled={pending} onClick={() => setValue(String((value === "" ? 0 : Number(value)) + 1))} aria-label="Tăng tồn kho">+</button>
       </div>
       <input name="reason" type="text" maxLength={500} placeholder="Lý do điều chỉnh (không bắt buộc)" disabled={pending} />
-      {confirmUnmanaged ? <p className={styles.warning}>Việc này sẽ chuyển mã màu sang “Chưa quản lý tồn”. Bấm lưu lần nữa để xác nhận.</p> : null}
+      {confirmUnmanaged ? <p className={styles.warning}>Việc này sẽ chuyển phiên bản sang “Chưa quản lý tồn”. Bấm lưu lần nữa để xác nhận.</p> : null}
       <button type="submit" disabled={pending}>{pending ? "Đang lưu…" : confirmUnmanaged ? "Xác nhận bỏ quản lý tồn" : "Lưu tồn kho"}</button>
       {state.message ? <p className={state.ok ? styles.success : styles.error} role="status">{state.message}</p> : null}
     </form>
   );
 }
-

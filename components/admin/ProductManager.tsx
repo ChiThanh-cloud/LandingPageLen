@@ -12,11 +12,13 @@ import {
   toggleVariantAction,
   type ProductAdminActionResult
 } from "@/app/admin/(protected)/san-pham/actions";
+import { getProductFormLabels } from "@/lib/admin/product-form-state";
 import styles from "./Admin.module.css";
 
 type ProductRecord = {
   id: number | string;
   name: string | null;
+  slug: string | null;
   category: string | null;
   sub_category: string | null;
   image_url: string | null;
@@ -30,6 +32,8 @@ type ProductRecord = {
   price: number | string | null;
   status: string | null;
   sort_order: number | null;
+  unit_label: string | null;
+  option_label: string | null;
 };
 
 type VariantRecord = {
@@ -41,6 +45,8 @@ type VariantRecord = {
   sku: string | null;
   image_url: string | null;
   full_image_url: string | null;
+  price: number | string | null;
+  stock: number | null;
   status: string | null;
   sort_order: number | null;
 };
@@ -61,6 +67,7 @@ const maxImageFileSize = 10 * 1024 * 1024;
 const categoryLabels: Record<string, string> = {
   handmade: "Đồ móc",
   yarn: "Cuộn len",
+  accessory: "Phụ kiện",
   set: "Set tự móc",
   gift: "Quà tặng"
 };
@@ -137,6 +144,8 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   const [editingVariantId, setEditingVariantId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
+  const [productCategory, setProductCategory] = useState("handmade");
+  const [productLabels, setProductLabels] = useState(() => getProductFormLabels("handmade"));
   const [message, setMessage] = useState<ProductAdminActionResult | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [importText, setImportText] = useState("");
@@ -152,6 +161,11 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   const selectedVariants = selected
     ? variants.filter((variant) => String(variant.product_id) === String(selected.id))
     : [];
+  const isOnlineProduct = productCategory === "yarn" || productCategory === "accessory";
+  const isYarnProduct = selected?.category === "yarn";
+  const supportsVariants = selected?.category === "yarn" || selected?.category === "accessory";
+  const variantNoun = isYarnProduct ? "mã màu" : "lựa chọn";
+  const variantNameLabel = isYarnProduct ? "Tên / mã" : "Tên phiên bản / giá trị lựa chọn";
   const filtered = useMemo(() => products.filter((product) => {
     const matchesText = !search.trim() || String(product.name || "").toLowerCase().includes(search.trim().toLowerCase());
     return matchesText && (category === "all" || product.category === category);
@@ -171,12 +185,20 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   }
 
   function chooseProduct(product: ProductRecord | null) {
+    const nextCategory = product?.category || "handmade";
     setSelectedId(product ? String(product.id) : null);
+    setProductCategory(nextCategory);
+    setProductLabels(getProductFormLabels(nextCategory, product));
     setEditingVariantId(null);
     setProductImageUrl(product?.image_url || "");
     setVariantImageUrl("");
     setMessage(null);
     requestAnimationFrame(() => productFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+
+  function chooseProductCategory(nextCategory: string) {
+    setProductCategory(nextCategory);
+    setProductLabels(getProductFormLabels(nextCategory));
   }
 
   function chooseVariant(variant: VariantRecord | null) {
@@ -261,7 +283,7 @@ export function ProductManager({ products, variants }: { products: ProductRecord
                 </div>
                 {deleteId === String(product.id) ? (
                   <div className={styles.inlineConfirm}>
-                    <p>Xóa “{product.name}” và các mã màu thuộc sản phẩm này?</p>
+                    <p>Xóa “{product.name}” và các phiên bản thuộc sản phẩm này?</p>
                     <button type="button" onClick={() => setDeleteId(null)}>Giữ lại</button>
                     <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => run(() => deleteProductAction(String(product.id)), (result) => result.ok && setDeleteId(null))}>Xác nhận xóa</button>
                   </div>
@@ -287,17 +309,28 @@ export function ProductManager({ products, variants }: { products: ProductRecord
             <input type="hidden" name="id" value={selectedId || ""} />
             <label>Tên sản phẩm<input name="name" required maxLength={200} defaultValue={selected?.name || ""} /></label>
             <div className={styles.formGridTwo}>
-              <label>Danh mục<select name="category" required defaultValue={selected?.category || "handmade"}>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+              <label>Danh mục<select name="category" required value={productCategory} onChange={(event) => chooseProductCategory(event.target.value)}>{Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
               <label>Danh mục con<input name="subCategory" maxLength={80} defaultValue={selected?.sub_category || ""} placeholder="Ví dụ: milk" /></label>
+              <label>Slug<input name="slug" maxLength={200} defaultValue={selected?.slug || ""} readOnly={Boolean(selected)} placeholder="Tự tạo từ tên nếu để trống" /></label>
               <label>Trạng thái<select name="status" defaultValue={selected?.status || "available"}>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
               <label>Thứ tự<input name="sortOrder" type="number" min="0" defaultValue={selected?.sort_order ?? 0} /></label>
               <label>Giá<input name="price" inputMode="numeric" defaultValue={selected?.price ?? ""} placeholder="8000 hoặc 8k" /></label>
               <label>Khối lượng<input name="weight" maxLength={120} defaultValue={selected?.weight || ""} /></label>
             </div>
+            {isOnlineProduct ? (
+              <div className={styles.formGridTwo}>
+                <label>Đơn vị bán<input name="unitLabel" required maxLength={80} value={productLabels.unitLabel} onChange={(event) => setProductLabels((labels) => ({ ...labels, unitLabel: event.target.value }))} placeholder="Ví dụ: cuộn, cây, Kg, cặp" /><small>Milk Bò/Nhung Gấu: cuộn; kim móc/kim khâu: cây; bông gòn: Kg; mắt thú: cặp.</small></label>
+                <label>Tên lựa chọn<input name="optionLabel" required maxLength={120} value={productLabels.optionLabel} onChange={(event) => setProductLabels((labels) => ({ ...labels, optionLabel: event.target.value }))} placeholder="Ví dụ: Màu, Kích thước, Khối lượng, Phân loại" /><small>Ví dụ accessory: Kích thước, Khối lượng hoặc Phân loại.</small></label>
+              </div>
+            ) : null}
+            {productCategory === "yarn" ? (
+              <div className={styles.formGridTwo}>
+                <label>Độ dày sợi (len sợi)<input name="yarnSize" maxLength={120} defaultValue={selected?.yarn_size || ""} placeholder="Ví dụ: 2.5mm" /></label>
+                <label>Thành phần (len sợi)<input name="material" maxLength={240} defaultValue={selected?.material || ""} placeholder="Ví dụ: 100% Polyester" /></label>
+                <label>Kim móc khuyên dùng (len sợi)<input name="hookSize" maxLength={120} defaultValue={selected?.crochet_hook || ""} placeholder="Ví dụ: 2.5–3mm" /></label>
+              </div>
+            ) : null}
             <div className={styles.formGridTwo}>
-              <label>Độ dày sợi (len sợi)<input name="yarnSize" maxLength={120} defaultValue={selected?.yarn_size || ""} placeholder="Ví dụ: 2.5mm" /></label>
-              <label>Thành phần (len sợi)<input name="material" maxLength={240} defaultValue={selected?.material || ""} placeholder="Ví dụ: 100% Polyester" /></label>
-              <label>Kim móc khuyên dùng (len sợi)<input name="hookSize" maxLength={120} defaultValue={selected?.crochet_hook || ""} placeholder="Ví dụ: 2.5–3mm" /></label>
               <label>Xuất xứ (nếu có)<input name="origin" maxLength={160} defaultValue={selected?.origin || ""} /></label>
             </div>
             <label>Mô tả sản phẩm<textarea name="description" maxLength={1200} rows={4} defaultValue={selected?.description || ""} /></label>
@@ -310,9 +343,9 @@ export function ProductManager({ products, variants }: { products: ProductRecord
         </section>
       </div>
 
-      {selected?.category === "yarn" ? (
+      {selected && supportsVariants ? (
         <section className={styles.variantSection} aria-labelledby="variant-heading">
-          <div className={styles.sectionHeading}><div><h2 id="variant-heading">Mã màu · {selected.name}</h2><p>{selectedVariants.length} mã màu</p></div><button type="button" onClick={() => chooseVariant(null)}>Mã màu mới</button></div>
+          <div className={styles.sectionHeading}><div><h2 id="variant-heading">{isYarnProduct ? "Mã màu" : selected.option_label || "Lựa chọn"} · {selected.name}</h2><p>{selectedVariants.length} {variantNoun}</p></div><button type="button" onClick={() => chooseVariant(null)}>{isYarnProduct ? "Mã màu mới" : "Thêm lựa chọn"}</button></div>
           <div className={styles.variantColumns}>
             <form
               ref={variantFormRef}
@@ -326,23 +359,24 @@ export function ProductManager({ products, variants }: { products: ProductRecord
               <input type="hidden" name="id" value={editingVariantId || ""} />
               <input type="hidden" name="productId" value={String(selected.id)} />
               <div className={styles.formGridTwo}>
-                <label>Tên / mã<input name="name" required defaultValue={editingVariant?.name || ""} /></label>
-                <label>Mã màu<input name="colorCode" defaultValue={editingVariant?.color_code || ""} /></label>
-                <label>Tên màu<input name="colorName" defaultValue={editingVariant?.color_name || ""} /></label>
+                <label>{variantNameLabel}<input name="name" required defaultValue={editingVariant?.name || ""} /></label>
+                {isYarnProduct ? <label>Mã màu<input name="colorCode" defaultValue={editingVariant?.color_code || ""} /></label> : null}
+                {isYarnProduct ? <label>Tên màu<input name="colorName" defaultValue={editingVariant?.color_name || ""} /></label> : null}
                 <label>SKU<input name="sku" defaultValue={editingVariant?.sku || ""} /></label>
+                {!isYarnProduct ? <label>Giá phiên bản<input name="price" inputMode="numeric" defaultValue={editingVariant?.price ?? ""} placeholder="Để trống để dùng giá sản phẩm; giá riêng phải lớn hơn 0" /></label> : null}
                 <label>Trạng thái<select name="status" defaultValue={editingVariant?.status || "available"}>{Object.entries(statusLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                 <label>Thứ tự<input name="sortOrder" type="number" min="0" defaultValue={editingVariant?.sort_order ?? selectedVariants.length + 1} /></label>
               </div>
               <label>Link ảnh<input name="imageUrl" type="url" value={variantImageUrl} onChange={(event) => setVariantImageUrl(event.target.value)} /></label>
-              <label>Upload ảnh mã màu<input type="file" accept="image/*" onChange={(event) => uploadImage(event.target.files?.[0], "variant")} disabled={uploading !== null} /></label>
+              <label>{isYarnProduct ? "Upload ảnh mã màu" : "Upload ảnh phiên bản"}<input type="file" accept="image/*" onChange={(event) => uploadImage(event.target.files?.[0], "variant")} disabled={uploading !== null} /></label>
               <label>Link ảnh lớn<input name="fullImageUrl" type="url" defaultValue={editingVariant?.full_image_url || ""} /></label>
-              <button type="submit" disabled={pending || uploading !== null}>{pending ? "Đang lưu…" : "Lưu mã màu"}</button>
+              <button type="submit" disabled={pending || uploading !== null}>{pending ? "Đang lưu…" : isYarnProduct ? "Lưu mã màu" : "Lưu lựa chọn"}</button>
             </form>
             <div className={styles.variantList}>
               {selectedVariants.map((variant) => (
                 <article key={String(variant.id)} className={`${variant.status === "hidden" ? styles.mutedItem : ""} ${editingVariantId === String(variant.id) ? styles.selectedItem : ""}`}>
                   <span className={styles.variantThumb}>{variant.image_url ? <Image src={variant.image_url} alt="" width={52} height={52} /> : "Ảnh"}</span>
-                  <span><strong>{variant.color_code || variant.name}</strong><small>{variant.color_name || variant.name} · {statusLabels[variant.status || ""] || variant.status}</small></span>
+                  <span><strong>{isYarnProduct ? variant.color_code || variant.name : variant.name}</strong><small>{isYarnProduct ? variant.color_name || variant.name : variant.sku || "Chưa có SKU"} · {statusLabels[variant.status || ""] || variant.status}</small></span>
                   <div className={styles.compactActions}>
                     <button type="button" onClick={() => chooseVariant(variant)}>Sửa</button>
                     <button type="button" disabled={pending} onClick={() => run(() => toggleVariantAction(String(variant.id), String(selected.id), variant.status || "available"))}>{variant.status === "hidden" ? "Hiện" : "Ẩn"}</button>
@@ -351,7 +385,7 @@ export function ProductManager({ products, variants }: { products: ProductRecord
               ))}
             </div>
           </div>
-          <details className={styles.importPanel}>
+          {isYarnProduct ? <details className={styles.importPanel}>
             <summary>Import nhanh mã màu bằng JSON hoặc CSV</summary>
             <textarea value={importText} onChange={(event) => setImportText(event.target.value)} placeholder="Dán JSON từ tool lấy ảnh hoặc CSV có cột color_code,image_url…" />
             <button type="button" disabled={pending || !importText.trim()} onClick={() => {
@@ -363,7 +397,7 @@ export function ProductManager({ products, variants }: { products: ProductRecord
                 setMessage({ ok: false, message: "JSON hoặc CSV không đọc được." });
               }
             }}>Import mã màu</button>
-          </details>
+          </details> : null}
         </section>
       ) : null}
     </div>

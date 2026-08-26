@@ -39,20 +39,22 @@ test("Cloudinary upload signatures are issued only after the shared active-admin
   assert.match(cloudinarySignRoute, /Cache-Control": "no-store/);
 });
 
-test("admin product save keeps both price columns synchronized and revalidates storefront routes", () => {
+test("admin product save keeps both price columns synchronized and revalidates the matching catalog route", () => {
   assert.match(productActions, /price:\s*parsed\.data\.price,\s*base_price:\s*parsed\.data\.price/);
-  assert.match(productActions, /select\("id,slug"\)/);
+  assert.match(productActions, /select\("id,slug,category"\)/);
   assert.match(productActions, /revalidatePath\("\/len-soi"\)/);
   assert.match(productActions, /revalidatePath\(`\/len-soi\/\$\{slug\}`\)/);
-  assert.match(productActions, /revalidateProducts\(data\?\.slug\)/);
-  assert.match(productActions, /slugifyProductName\(parsed\.data\.name\)/);
+  assert.match(productActions, /revalidatePath\("\/len-soi-va-phu-kien"\)/);
+  assert.match(productActions, /revalidatePath\(`\/phu-kien\/\$\{slug\}`\)/);
+  assert.match(productActions, /revalidateProducts\(data\?\.slug, data\?\.category\)/);
+  assert.match(productActions, /slugifyProductName\(parsed\.data\.slug \|\| parsed\.data\.name\)/);
   assert.match(productActions, /insertPayload = \{ \.\.\.payload, slug: stableSlug \}/);
 });
 
 test("every catalog mutation resolves the product slug before storefront revalidation", () => {
-  assert.match(productActions, /toggleProductAction[\s\S]*select\("slug"\)\.single\(\)[\s\S]*revalidateProducts\(data\?\.slug\)/);
-  assert.match(productActions, /saveVariantAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
-  assert.match(productActions, /toggleVariantAction[\s\S]*select\("slug"\)[\s\S]*revalidateProducts\(product\.slug\)/);
+  assert.match(productActions, /toggleProductAction[\s\S]*select\("slug,category"\)\.single\(\)[\s\S]*revalidateProducts\(data\?\.slug, data\?\.category\)/);
+  assert.match(productActions, /saveVariantAction[\s\S]*select\("id,category,slug"\)[\s\S]*revalidateProducts\(product\.slug, product\.category\)/);
+  assert.match(productActions, /toggleVariantAction[\s\S]*select\("slug,category"\)[\s\S]*revalidateProducts\(product\.slug, product\.category\)/);
   assert.match(productActions, /importVariantsAction[\s\S]*rpc\("admin_import_product_variants"[\s\S]*revalidateProducts\(imported\.data\.productSlug\)/);
 });
 
@@ -83,8 +85,8 @@ test("admin confirm, transitions, and cancellation use secured atomic RPCs", () 
   assert.doesNotMatch(migration, /set\s+payment_status\s*=\s*'refunded'/i);
 });
 
-test("inventory admin is limited to yarn and storefront protected sections stay passive", () => {
-  assert.match(service, /\.eq\("category", "yarn"\)/);
+test("inventory admin is limited to inventory-managed categories and storefront protected sections stay passive", () => {
+  assert.match(service, /\.in\("category", \["yarn", "accessory"\]\)/);
   assert.match(shell, /pathname\.startsWith\("\/admin"\)/);
   assert.match(shell, /return children/);
   assert.doesNotMatch(service, /do-moc-dat-rieng|hop-qua|set-tu-moc/);
