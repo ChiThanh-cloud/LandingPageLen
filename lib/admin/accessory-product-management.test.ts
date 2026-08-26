@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { getProductRevalidationPaths } from "./product-revalidation";
 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const actions = read("../../app/admin/(protected)/san-pham/actions.ts");
@@ -79,7 +80,11 @@ test("product label fields are controlled by the category-aware form state", () 
 });
 
 test("accessory product edits prepare future routes without adding public catalog code", () => {
-  assert.match(actions, /category === "accessory"[\s\S]*revalidatePath\("\/len-soi-va-phu-kien"\)[\s\S]*revalidatePath\(`\/phu-kien\/\$\{slug\}`\)/);
+  assert.deepEqual(getProductRevalidationPaths({ slug: "kim-moc", category: "accessory" }), [
+    "/admin/san-pham",
+    "/len-soi-va-phu-kien",
+    "/phu-kien/kim-moc"
+  ]);
   assert.doesNotMatch(actions, /inventory_movements|admin_adjust_variant_stock/);
   assert.doesNotMatch(productManager, /\/phu-kien\//);
 });

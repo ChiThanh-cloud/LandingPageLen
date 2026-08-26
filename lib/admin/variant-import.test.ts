@@ -16,10 +16,10 @@ test("variant import validates the complete request before one RPC call", () => 
   assert.doesNotMatch(importAction, /\.from\("product_variants"\)/);
 });
 
-test("variant import passes the verified admin identity and revalidates the returned slug", () => {
+test("variant import passes the verified admin identity and revalidates yarn plus the umbrella catalog", () => {
   assert.match(importAction, /const admin = await requireAdminPage\(\)/);
   assert.match(importAction, /p_admin_user: admin\.id/);
-  assert.match(importAction, /revalidateProducts\(imported\.data\.productSlug\)/);
+  assert.match(importAction, /revalidateProducts\(imported\.data\.productSlug, "yarn"\)/);
 });
 
 test("RPC is a hardened security-definer function limited to service_role", () => {

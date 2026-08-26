@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdminPage } from "@/lib/admin/auth";
+import { getProductRevalidationPaths, type ProductRevalidationTarget } from "@/lib/admin/product-revalidation";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -62,16 +63,14 @@ function resultFromError(error: { message?: string } | null, success: string): P
   return { ok: false, message: "Tiny chưa thể lưu thay đổi. Vui lòng kiểm tra dữ liệu và thử lại." };
 }
 
-function revalidateProducts(slug?: string | null, category?: string | null) {
-  revalidatePath("/admin/san-pham");
-  if (category === "accessory") {
-    revalidatePath("/len-soi-va-phu-kien");
-    if (slug) revalidatePath(`/phu-kien/${slug}`);
-    return;
+function revalidateProducts(
+  slug?: string | null,
+  category?: string | null,
+  previousProduct?: ProductRevalidationTarget | null
+) {
+  for (const path of getProductRevalidationPaths({ slug, category }, previousProduct)) {
+    revalidatePath(path);
   }
-
-  revalidatePath("/len-soi");
-  if (slug) revalidatePath(`/len-soi/${slug}`);
 }
 
 export async function saveProductAction(formData: FormData): Promise<ProductAdminActionResult> {
@@ -172,11 +171,24 @@ export async function saveProductAction(formData: FormData): Promise<ProductAdmi
     insertPayload = { ...payload, slug: stableSlug };
   }
 
+  let previousProduct: ProductRevalidationTarget | null = null;
+  if (parsed.data.id !== "") {
+    const { data, error } = await client
+      .from("products")
+      .select("slug,category")
+      .eq("id", parsed.data.id)
+      .single();
+    if (error || !data) return resultFromError(error || { message: "PRODUCT_NOT_FOUND" }, "");
+    previousProduct = data;
+  }
+
   const request = parsed.data.id === ""
     ? client.from("products").insert(insertPayload).select("id,slug,category").single()
     : client.from("products").update(payload).eq("id", parsed.data.id).select("id,slug,category").single();
   const { data, error } = await request;
-  if (!error) revalidateProducts(data?.slug, data?.category);
+  if (!error) {
+    revalidateProducts(data?.slug, data?.category, previousProduct);
+  }
   return { ...resultFromError(error, "Đã lưu sản phẩm."), id: data?.id ? String(data.id) : undefined };
 }
 
@@ -340,7 +352,7 @@ export async function importVariantsAction(productId: string, input: unknown): P
     return resultFromError({ message: "VARIANT_IMPORT_RESPONSE_INVALID" }, "");
   }
 
-  revalidateProducts(imported.data.productSlug);
+  revalidateProducts(imported.data.productSlug, "yarn");
   return { ok: true, message: `Đã import ${imported.data.importedCount} mã màu.` };
 }
 

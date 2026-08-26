@@ -70,6 +70,7 @@ function commerceVariantFromRow(row: SupabaseVariantRow, productImage: string, c
 
 export function commerceProductFromRows(row: SupabaseProductRow, variantRows: SupabaseVariantRow[]): CommerceProduct | null {
   if (!isSellableCategory(row.category)) return null;
+  const category = row.category;
 
   const name = row.name?.trim();
   const price = numberValue(row.price) || numberValue(row.base_price);
@@ -80,7 +81,7 @@ export function commerceProductFromRows(row: SupabaseProductRow, variantRows: Su
     id: String(row.id),
     name,
     slug: productSlug(row),
-    category: row.category,
+    category,
     subCategory: row.sub_category?.trim() || null,
     description: row.description?.trim() || "",
     image: coverImage || "",
@@ -93,7 +94,7 @@ export function commerceProductFromRows(row: SupabaseProductRow, variantRows: Su
     updatedAt: row.updated_at || row.created_at || new Date(0).toISOString(),
     variants: variantRows
       .filter((variant) => variant.status !== "hidden")
-      .map((variant) => commerceVariantFromRow(variant, coverImage || "", row.category))
+      .map((variant) => commerceVariantFromRow(variant, coverImage || "", category))
   };
 }
 
