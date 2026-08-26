@@ -1,5 +1,9 @@
 import { formatCommercePrice, getCommerceProductPath } from "@/lib/products/commerce-catalog";
 import { getCommerceItemDisplayPrice } from "@/lib/products/commerce-pricing";
+import {
+  isCommerceProductOrderable,
+  isCommerceVariantOrderable
+} from "@/lib/products/commerce-orderability";
 import type { CartItem } from "@/types/yarn-product";
 import type { CommerceProduct, CommerceVariant } from "@/types/commerce-product";
 
@@ -41,7 +45,13 @@ export function resolveCommerceCartItems(
       detailPath: product ? getCommerceProductPath(product) : null,
       displayPrice: getCommerceItemDisplayPrice(product, variant, item.displayPrice),
       stock,
-      isAvailable: Boolean(product && variant && stock !== 0)
+      isAvailable: Boolean(
+        product
+        && variant
+        && isCommerceProductOrderable(product.status)
+        && isCommerceVariantOrderable(variant.status)
+        && stock !== 0
+      )
     };
   });
 }
@@ -65,7 +75,12 @@ export function getCommerceCartStockLabel(
   item: Pick<ResolvedCommerceCartItem, "product" | "variant" | "stock" | "unitLabel">
 ) {
   if (!item.product || !item.variant) return "Sản phẩm hoặc lựa chọn không còn khả dụng";
-  if (item.stock === null) return "Liên hệ Tiny để xác nhận số lượng lớn";
+  if (item.product.status === "out") return "Hết hàng";
+  if (item.variant.status === "out") return "Hết hàng";
   if (item.stock === 0) return "Hết hàng";
+  if (!isCommerceProductOrderable(item.product.status) || !isCommerceVariantOrderable(item.variant.status)) {
+    return "Sản phẩm hoặc lựa chọn không còn khả dụng";
+  }
+  if (item.stock === null) return "Liên hệ Tiny để xác nhận số lượng lớn";
   return `Còn hàng: ${item.stock.toLocaleString("vi-VN")} ${item.unitLabel}`;
 }

@@ -193,6 +193,31 @@ test("generic cart commerce resolution", async (t) => {
     assert.equal(getCommerceCartStockLabel(entries[2]), "Còn hàng: 3 Kg");
   });
 
+  await t.test("blocks an out product and keeps preorder orderable when stock allows", () => {
+    const out = resolveCommerceCartItems([cartItem()], [product({ status: "out" })])[0];
+    const preorder = resolveCommerceCartItems([cartItem()], [product({ status: "preorder" })])[0];
+
+    assert.equal(out.isAvailable, false);
+    assert.equal(getCommerceCartStockLabel(out), "Hết hàng");
+    assert.equal(preorder.isAvailable, true);
+  });
+
+  await t.test("blocks an out variant and keeps preorder orderable when stock allows", () => {
+    const out = resolveCommerceCartItems(
+      [cartItem()],
+      [product({ variants: [variant({ status: "out", stock: 3 })] })]
+    )[0];
+    const preorder = resolveCommerceCartItems(
+      [cartItem()],
+      [product({ variants: [variant({ status: "preorder", stock: 3 })] })]
+    )[0];
+
+    assert.equal(out.isAvailable, false);
+    assert.equal(getCommerceCartStockLabel(out), "Hết hàng");
+    assert.equal(preorder.isAvailable, true);
+    assert.equal(getCommerceCartStockLabel(preorder), "Còn hàng: 3 cuộn");
+  });
+
   await t.test("calculates subtotal from resolved prices and keeps accessible labels generic", () => {
     const resolved = resolveCommerceCartItems(
       [cartItem({ quantity: 2 }), cartItem({ variantId: "02", quantity: 3 })],

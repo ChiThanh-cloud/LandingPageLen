@@ -6,6 +6,10 @@ import { useState } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { getCommerceStatusLabel } from "@/lib/products/commerce-catalog";
 import {
+  isCommerceProductOrderable,
+  isCommerceVariantOrderable
+} from "@/lib/products/commerce-orderability";
+import {
   canAddAccessoryToCart,
   createAccessoryCartItem,
   getAccessoryDetailPriceLabel,
@@ -70,6 +74,11 @@ export function AccessoryProductPage({ product }: { product: CommerceProduct }) 
   };
 
   const addToCart = () => {
+    if (!isCommerceProductOrderable(product.status)) {
+      setMessage(product.status === "out" ? "Sản phẩm hiện đã hết hàng." : "Sản phẩm hiện không còn khả dụng.");
+      return;
+    }
+
     if (!selectedVariant) {
       setMessage(`Hãy chọn ${product.optionLabel.toLocaleLowerCase("vi-VN")} trước khi thêm vào giỏ hàng.`);
       return;
@@ -135,7 +144,7 @@ export function AccessoryProductPage({ product }: { product: CommerceProduct }) 
                   <div className={styles.optionGrid}>
                     {product.variants.map((variant) => {
                       const optionStockLimit = getCommerceStockLimit(variant.stock);
-                      const isOutOfStock = optionStockLimit === 0;
+                      const isOutOfStock = optionStockLimit === 0 || !isCommerceVariantOrderable(variant.status);
                       const visibleOptionStatus = getAccessoryOptionStatusLabel(variant.stock, variant.status);
                       return (
                         <button

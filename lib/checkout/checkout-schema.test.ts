@@ -6,6 +6,7 @@ import { getCommerceCartSubtotal, resolveCommerceCartItems } from "../cart/cart-
 import {
   checkoutFormSchema,
   createCheckoutPayload,
+  getCheckoutShippingItems,
   resolveCheckoutItems
 } from "./checkout-schema";
 
@@ -138,6 +139,49 @@ test("checkout cart revalidation", async (t) => {
 
   await t.test("allows unknown stock without inventing availability", () => {
     assert.equal(resolveCheckoutItems([cartItem], [product(null)])[0].issue, null);
+  });
+
+  await t.test("blocks an out product and keeps preorder orderable", () => {
+    const out = resolveCheckoutItems([cartItem], [{ ...product(), status: "out" }])[0];
+    const preorder = resolveCheckoutItems([cartItem], [{ ...product(), status: "preorder" }])[0];
+
+    assert.equal(out.issue, "product-out");
+    assert.equal(out.issueMessage, "Sản phẩm hiện đã hết hàng.");
+    assert.equal(out.isAvailable, false);
+    assert.equal(preorder.issue, null);
+    assert.equal(preorder.isAvailable, true);
+  });
+
+  await t.test("blocks an out variant and keeps preorder orderable", () => {
+    const outProduct = product();
+    outProduct.variants[0].status = "out";
+    const preorderProduct = product();
+    preorderProduct.variants[0].status = "preorder";
+
+    const out = resolveCheckoutItems([cartItem], [outProduct])[0];
+    const preorder = resolveCheckoutItems([cartItem], [preorderProduct])[0];
+
+    assert.equal(out.issue, "variant-out");
+    assert.equal(out.issueMessage, "Lựa chọn này hiện đã hết hàng.");
+    assert.equal(out.isAvailable, false);
+    assert.equal(preorder.issue, null);
+    assert.equal(preorder.isAvailable, true);
+  });
+
+  await t.test("maps shipping identity from resolved live category without changing the POST payload", () => {
+    const resolved = resolveCheckoutItems([cartItem], [product()]);
+    assert.deepEqual(getCheckoutShippingItems(resolved), [{
+      productId: cartItem.productId,
+      quantity: cartItem.quantity,
+      category: "yarn"
+    }]);
+
+    const unresolved = resolveCheckoutItems([cartItem], []);
+    assert.deepEqual(getCheckoutShippingItems(unresolved), [{
+      productId: cartItem.productId,
+      quantity: cartItem.quantity,
+      category: undefined
+    }]);
   });
 
   await t.test("resolves accessory option, unit, no-image and the same variant price as cart", () => {

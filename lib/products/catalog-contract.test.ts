@@ -9,7 +9,7 @@ const importMigration = read("../../supabase/migrations/20260820141529_atomic_bu
 const revalidationRoute = read("../../app/api/admin/revalidate-catalog/route.ts");
 
 test("storefront treats products.price as source of truth and exposes the stored color code", () => {
-  assert.match(adapter, /numberValue\(row\.price\)\s*\|\|\s*numberValue\(row\.base_price\)/);
+  assert.match(adapter, /normalizeCommercePriceValue\(row\.price\)\s*\?\?\s*normalizeCommercePriceValue\(row\.base_price\)/);
   assert.match(adapter, /const code = row\.color_code\?\.trim\(\) \|\| row\.name\?\.trim\(\) \|\| String\(row\.id\)/);
   assert.match(adapter, /colorCode: code/);
   assert.doesNotMatch(adapter, /colorCode: row\.color_hex/);

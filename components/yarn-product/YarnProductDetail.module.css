@@ -109,6 +109,18 @@
   line-height: 1.08;
 }
 
+.productStatus {
+  width: fit-content;
+  margin: -8px 0 16px;
+  padding: 6px 10px;
+  border: 1px solid var(--primary-200);
+  border-radius: 999px;
+  background: var(--primary-50);
+  color: var(--primary-700);
+  font-size: .78rem;
+  font-weight: 700;
+}
+
 .metadata {
   display: grid;
   gap: 7px;

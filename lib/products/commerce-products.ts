@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { yarnProducts as staticYarnProducts } from "@/lib/products/yarn-products";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { normalizeCommercePriceValue } from "@/lib/products/commerce-pricing";
 import type { CommerceProduct, CommerceVariant, SellableCategory } from "@/types/commerce-product";
 import type { SupabaseProductRow, SupabaseVariantRow } from "@/types/supabase-product";
 
@@ -20,17 +21,8 @@ function productSlug(row: SupabaseProductRow) {
   return persisted || `${slugify(row.name || "san-pham")}-${row.id}`;
 }
 
-function numberValue(value: number | string | null | undefined) {
-  if (typeof value === "number") return Number.isFinite(value) ? value : 0;
-  if (!value) return 0;
-  const parsed = Number(String(value).replace(/[^0-9.-]/g, ""));
-  return Number.isFinite(parsed) ? parsed : 0;
-}
-
 export function normalizeVariantPrice(value: number | string | null | undefined) {
-  if (value === null || value === undefined || String(value).trim() === "") return null;
-  const parsed = numberValue(value);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  return normalizeCommercePriceValue(value);
 }
 
 function isSellableCategory(value: string | null): value is SellableCategory {
@@ -73,7 +65,7 @@ export function commerceProductFromRows(row: SupabaseProductRow, variantRows: Su
   const category = row.category;
 
   const name = row.name?.trim();
-  const price = numberValue(row.price) || numberValue(row.base_price);
+  const price = normalizeCommercePriceValue(row.price) ?? normalizeCommercePriceValue(row.base_price) ?? 0;
   if (!name || price <= 0) return null;
 
   const coverImage = row.cover_image?.trim() || row.image_url?.trim() || row.full_image_url?.trim() || null;

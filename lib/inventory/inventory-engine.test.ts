@@ -19,7 +19,7 @@ const admin = readFileSync(
   "utf8"
 );
 const orderCreation = readFileSync(
-  new URL("../../supabase/migrations/20260813090000_freeship_same_product_quantity.sql", import.meta.url),
+  new URL("../../supabase/migrations/20260826103646_accessory_launch_business_rules.sql", import.meta.url),
   "utf8"
 );
 const yarnSchema = readFileSync(

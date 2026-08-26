@@ -22,6 +22,8 @@ test("umbrella catalog has accessible client-side sellable category filters and 
   assert.match(catalog, /getCommercePriceLabel\(product\)/);
   assert.match(catalog, /getCommerceOptionSummary\(product\)/);
   assert.match(catalog, /getCommerceProductPath\(product\)/);
+  assert.match(catalog, /getCommerceStatusLabel\(product\.status\)/);
+  assert.match(catalog, /\{statusLabel\}/);
   assert.doesNotMatch(catalog, /Mã màu: Không có/);
 });
 

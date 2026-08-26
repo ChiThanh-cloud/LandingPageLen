@@ -165,6 +165,35 @@ test("stock keeps null distinct from zero and caps managed quantities", () => {
   assert.match(detailSource, /<small>\{visibleOptionStatus\}<\/small>/);
 });
 
+test("accessory product status blocks out and preserves preorder ordering", () => {
+  const out = accessory({ status: "out" });
+  const preorder = accessory({ status: "preorder" });
+  const selected = variant({ stock: null });
+
+  assert.equal(canAddAccessoryToCart(out, selected), false);
+  assert.equal(createAccessoryCartItem(out, selected, 1), null);
+  assert.equal(canAddAccessoryToCart(preorder, selected), true);
+  assert.ok(createAccessoryCartItem(preorder, selected, 1));
+  assert.match(detailSource, /getCommerceStatusLabel\(product\.status\)/);
+  assert.match(detailSource, /disabled=\{!canAdd\}/);
+});
+
+test("accessory variant status blocks out, permits preorder, and keeps zero-stock priority", () => {
+  const product = accessory();
+  const out = variant({ status: "out", stock: 3 });
+  const preorder = variant({ status: "preorder", stock: 3 });
+  const preorderWithoutStock = variant({ status: "preorder", stock: 0 });
+
+  assert.equal(canAddAccessoryToCart(product, out), false);
+  assert.equal(createAccessoryCartItem(product, out, 1), null);
+  assert.equal(canAddAccessoryToCart(product, preorder), true);
+  assert.ok(createAccessoryCartItem(product, preorder, 1));
+  assert.equal(canAddAccessoryToCart(product, preorderWithoutStock), false);
+  assert.equal(getAccessoryOptionStatusLabel(0, "preorder"), "Hết hàng");
+  assert.match(detailSource, /!isCommerceVariantOrderable\(variant\.status\)/);
+  assert.match(detailSource, /disabled=\{isOutOfStock\}/);
+});
+
 test("TASK 8 preserves TASK 7 accessory detail behavior while making cart and checkout generic", () => {
   assert.match(cartSource, /CommerceProduct\[\]/);
   assert.match(checkoutSource, /getAllSellableProducts/);

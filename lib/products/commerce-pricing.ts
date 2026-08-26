@@ -4,6 +4,17 @@ function isPositiveFinitePrice(value: number | null | undefined): value is numbe
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 
+export function normalizeCommercePriceValue(value: number | string | null | undefined) {
+  if (typeof value === "number") return isPositiveFinitePrice(value) ? value : null;
+  if (typeof value !== "string") return null;
+
+  const normalized = value.trim();
+  if (!/^[0-9]+(?:\.[0-9]+)?$/.test(normalized)) return null;
+
+  const parsed = Number(normalized);
+  return isPositiveFinitePrice(parsed) ? parsed : null;
+}
+
 function getSafeSnapshotPrice(value: number) {
   return Number.isFinite(value) && value >= 0 ? value : 0;
 }
@@ -14,7 +25,7 @@ function getSafeSnapshotPrice(value: number) {
  */
 export function getCommerceVariantPrice(
   product: Pick<CommerceProduct, "price">,
-  variant: Pick<CommerceVariant, "price"> | null | undefined
+  variant: { price?: number | null } | null | undefined
 ) {
   if (isPositiveFinitePrice(variant?.price)) return variant.price;
   return isPositiveFinitePrice(product.price) ? product.price : null;

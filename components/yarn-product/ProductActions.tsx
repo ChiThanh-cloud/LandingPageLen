@@ -3,6 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/components/cart/CartProvider";
+import {
+  isCommerceProductOrderable,
+  isCommerceVariantOrderable
+} from "@/lib/products/commerce-orderability";
+import { getCommerceVariantPrice } from "@/lib/products/commerce-pricing";
 import type { YarnProduct, YarnVariant } from "@/types/yarn-product";
 import styles from "./YarnProductDetail.module.css";
 
@@ -10,7 +15,11 @@ export function ProductActions({ product, variant, quantity }: { product: YarnPr
   const [message, setMessage] = useState("");
   const { addItem } = useCart();
   const router = useRouter();
-  const disabled = variant.stock === 0;
+  const displayPrice = getCommerceVariantPrice(product, variant);
+  const disabled = !isCommerceProductOrderable(product.status)
+    || !isCommerceVariantOrderable(variant.status)
+    || variant.stock === 0
+    || displayPrice === null;
   return (
     <div className={styles.actionsWrap}>
       <div className={styles.actions}>
@@ -19,6 +28,7 @@ export function ProductActions({ product, variant, quantity }: { product: YarnPr
           className={styles.addButton}
           disabled={disabled}
           onClick={() => {
+            if (disabled || displayPrice === null) return;
             const result = addItem({
               productId: product.id,
               variantId: variant.id,
@@ -28,7 +38,7 @@ export function ProductActions({ product, variant, quantity }: { product: YarnPr
               variantName: variant.colorName,
               colorCode: variant.colorCode,
               imageUrl: variant.image || product.image,
-              displayPrice: variant.price ?? product.price
+              displayPrice
             }, variant.stock);
 
             if (result.code === "stock-capped") {
@@ -51,7 +61,7 @@ export function ProductActions({ product, variant, quantity }: { product: YarnPr
           className={`${styles.buyButton} ${disabled ? styles.disabledAction : ""}`}
           disabled={disabled}
           onClick={() => {
-            if (disabled) return;
+            if (disabled || displayPrice === null) return;
             addItem({
               productId: product.id,
               variantId: variant.id,
@@ -61,7 +71,7 @@ export function ProductActions({ product, variant, quantity }: { product: YarnPr
               variantName: variant.colorName,
               colorCode: variant.colorCode,
               imageUrl: variant.image || product.image,
-              displayPrice: variant.price ?? product.price
+              displayPrice
             }, variant.stock);
             router.push("/gio-hang");
           }}

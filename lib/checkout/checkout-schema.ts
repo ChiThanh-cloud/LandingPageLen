@@ -2,6 +2,10 @@ import { z } from "zod";
 import { resolveCommerceCartItems, type ResolvedCommerceCartItem } from "@/lib/cart/cart-commerce";
 import type { CartItem } from "@/types/yarn-product";
 import type { CommerceProduct } from "@/types/commerce-product";
+import {
+  isCommerceProductOrderable,
+  isCommerceVariantOrderable
+} from "@/lib/products/commerce-orderability";
 
 export const paymentMethodSchema = z.enum(["cod", "bank_transfer"]);
 
@@ -76,6 +80,8 @@ export function createCheckoutPayload(values: ValidCheckoutFormValues, items: Ca
 export type CheckoutItemIssue =
   | "missing-product"
   | "missing-variant"
+  | "product-out"
+  | "variant-out"
   | "out-of-stock"
   | "insufficient-stock";
 
@@ -93,9 +99,19 @@ export function resolveCheckoutItems(items: CartItem[], availableProducts: Comme
     if (!product) {
       issue = "missing-product";
       issueMessage = "Sản phẩm không còn khả dụng.";
+    } else if (!isCommerceProductOrderable(product.status)) {
+      issue = product.status === "out" ? "product-out" : "missing-product";
+      issueMessage = product.status === "out"
+        ? "Sản phẩm hiện đã hết hàng."
+        : "Sản phẩm không còn khả dụng.";
     } else if (!variant) {
       issue = "missing-variant";
       issueMessage = "Lựa chọn này không còn khả dụng.";
+    } else if (!isCommerceVariantOrderable(variant.status)) {
+      issue = variant.status === "out" ? "variant-out" : "missing-variant";
+      issueMessage = variant.status === "out"
+        ? "Lựa chọn này hiện đã hết hàng."
+        : "Lựa chọn này không còn khả dụng.";
     } else if (variant.stock === 0) {
       issue = "out-of-stock";
       issueMessage = "Lựa chọn này hiện đã hết hàng.";
@@ -110,4 +126,12 @@ export function resolveCheckoutItems(items: CartItem[], availableProducts: Comme
       issueMessage
     };
   });
+}
+
+export function getCheckoutShippingItems(items: ReadonlyArray<ResolvedCheckoutItem>) {
+  return items.map(({ item, product }) => ({
+    productId: item.productId,
+    quantity: item.quantity,
+    category: product?.category
+  }));
 }

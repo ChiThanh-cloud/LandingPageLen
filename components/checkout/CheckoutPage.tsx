@@ -13,6 +13,7 @@ import {
 import {
   checkoutFormSchema,
   createCheckoutPayload,
+  getCheckoutShippingItems,
   resolveCheckoutItems,
   type CheckoutFormValues
 } from "@/lib/checkout/checkout-schema";
@@ -73,7 +74,10 @@ export function CheckoutPage({ availableProducts }: { availableProducts: Commerc
 
   // DISPLAY ONLY. POST /api/orders re-queries Supabase and calculates trusted totals.
   const displaySubtotal = getCommerceCartSubtotal(resolvedItems);
-  const displayTotals = calculateCheckoutDisplayTotals(displaySubtotal, items);
+  const displayTotals = calculateCheckoutDisplayTotals(
+    displaySubtotal,
+    getCheckoutShippingItems(resolvedItems)
+  );
 
   function setField<Key extends keyof CheckoutFormValues>(field: Key, value: CheckoutFormValues[Key]) {
     setValues((current) => ({ ...current, [field]: value }));

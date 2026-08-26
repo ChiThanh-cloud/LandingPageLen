@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { yarnProducts as staticYarnProducts } from "@/lib/products/yarn-products";
+import { normalizeCommercePriceValue } from "@/lib/products/commerce-pricing";
 import type { YarnCategory, YarnProduct, YarnVariant } from "@/types/yarn-product";
 import type {
   SupabaseProductRow,
@@ -57,14 +58,15 @@ export function getYarnVariantImage(
 
 function variantFromRow(row: SupabaseVariantRow, productImage: string): YarnVariant {
   const code = row.color_code?.trim() || row.name?.trim() || String(row.id);
-  const price = numberValue(row.price);
+  const price = normalizeCommercePriceValue(row.price);
   return {
     id: String(row.id),
     colorCode: code,
     colorName: row.color_name?.trim() || code,
     ...getYarnVariantImage(row, productImage),
-    price: price > 0 ? price : null,
-    stock: typeof row.stock === "number" ? Math.max(0, row.stock) : null
+    price,
+    stock: typeof row.stock === "number" ? Math.max(0, row.stock) : null,
+    status: row.status
   };
 }
 
@@ -74,7 +76,7 @@ function productFromRows(
   wholesaleRows: SupabaseWholesalePriceRow[]
 ): YarnProduct | null {
   const name = row.name?.trim();
-  const price = numberValue(row.price) || numberValue(row.base_price);
+  const price = normalizeCommercePriceValue(row.price) ?? normalizeCommercePriceValue(row.base_price) ?? 0;
   const image = row.cover_image?.trim() || row.image_url?.trim() || row.full_image_url?.trim() || FALLBACK_IMAGE;
   if (!name || price <= 0) return null;
 
@@ -104,6 +106,7 @@ function productFromRows(
     origin: row.origin?.trim() || null,
     image,
     images,
+    status: row.status,
     updatedAt: row.updated_at || row.created_at || new Date(0).toISOString(),
     variants,
     wholesaleTiers: wholesaleRows

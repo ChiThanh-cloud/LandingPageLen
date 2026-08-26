@@ -16,6 +16,7 @@ function makeProduct(overrides: Partial<YarnProduct>): YarnProduct {
     price: 20_000,
     image: "/images/yarn_collection_800.jpg",
     images: ["/images/yarn_collection_800.jpg"],
+    status: "available",
     updatedAt: "2026-08-11T00:00:00.000Z",
     variants: [],
     wholesaleTiers: [],

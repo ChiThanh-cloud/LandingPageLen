@@ -1,6 +1,10 @@
 import type { CartItem } from "@/types/yarn-product";
 import { formatCommercePrice, getCommerceDisplayPrice, getCommerceStatusLabel } from "./commerce-catalog";
 import { getCommerceVariantPrice } from "./commerce-pricing";
+import {
+  isCommerceProductOrderable,
+  isCommerceVariantOrderable
+} from "./commerce-orderability";
 import type { CommerceProduct, CommerceVariant } from "@/types/commerce-product";
 
 export function getAccessoryDetailPriceLabel(
@@ -50,10 +54,14 @@ export function getAccessoryOptionStatusLabel(stock: number | null, status: stri
 }
 
 export function canAddAccessoryToCart(
-  product: Pick<CommerceProduct, "price">,
-  variant: Pick<CommerceVariant, "price" | "stock"> | null
+  product: Pick<CommerceProduct, "price" | "status">,
+  variant: Pick<CommerceVariant, "price" | "stock" | "status"> | null
 ) {
-  return variant !== null && getCommerceVariantPrice(product, variant) !== null && getCommerceStockLimit(variant.stock) !== 0;
+  return isCommerceProductOrderable(product.status)
+    && variant !== null
+    && isCommerceVariantOrderable(variant.status)
+    && getCommerceVariantPrice(product, variant) !== null
+    && getCommerceStockLimit(variant.stock) !== 0;
 }
 
 /**
@@ -63,7 +71,13 @@ export function canAddAccessoryToCart(
  */
 export function createAccessoryCartItem(product: CommerceProduct, variant: CommerceVariant, quantity: number): CartItem | null {
   const displayPrice = getCommerceVariantPrice(product, variant);
-  if (displayPrice === null || !Number.isInteger(quantity) || quantity < 1) return null;
+  if (
+    !isCommerceProductOrderable(product.status)
+    || !isCommerceVariantOrderable(variant.status)
+    || displayPrice === null
+    || !Number.isInteger(quantity)
+    || quantity < 1
+  ) return null;
 
   return {
     productId: product.id,

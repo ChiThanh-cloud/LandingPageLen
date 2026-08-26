@@ -11,7 +11,7 @@ import {
 } from "./order-display";
 
 const migration = readFileSync(
-  new URL("../../supabase/migrations/20260813090000_freeship_same_product_quantity.sql", import.meta.url),
+  new URL("../../supabase/migrations/20260826103646_accessory_launch_business_rules.sql", import.meta.url),
   "utf8"
 );
 const checkoutPage = readFileSync(
@@ -19,8 +19,8 @@ const checkoutPage = readFileSync(
   "utf8"
 );
 
-const items = (...lines: Array<[productId: string, quantity: number]>) => lines.map(
-  ([productId, quantity], index) => ({ productId, variantId: String(index), quantity })
+const items = (...lines: Array<[productId: string, quantity: number, category?: string | null]>) => lines.map(
+  ([productId, quantity, category = "yarn"], index) => ({ productId, variantId: String(index), quantity, category })
 );
 
 test("same-product freeship display pricing", async (t) => {
@@ -64,6 +64,20 @@ test("same-product freeship display pricing", async (t) => {
     });
   });
 
+  await t.test("never lets accessory quantity independently trigger freeship", () => {
+    assert.equal(calculateCheckoutDisplayTotals(500_000, items(["hook", 20, "accessory"])).shippingFee, 30_000);
+    assert.equal(calculateCheckoutDisplayTotals(500_000, items(
+      ["hook", 20, "accessory"], ["milk-bo", 5, "yarn"]
+    )).shippingFee, 30_000);
+    assert.equal(calculateCheckoutDisplayTotals(500_000, items(
+      ["milk-bo", 20, "yarn"], ["hook", 2, "accessory"]
+    )).shippingFee, 0);
+  });
+
+  await t.test("fails safe when live product category is missing", () => {
+    assert.equal(calculateCheckoutDisplayTotals(144_000, items(["missing", 20, null])).shippingFee, 30_000);
+  });
+
   await t.test("uses the same preview rule for COD and bank transfer", () => {
     for (const paymentMethod of ["cod", "bank_transfer"]) {
       assert.equal(paymentMethod.length > 0, true);
@@ -73,26 +87,26 @@ test("same-product freeship display pricing", async (t) => {
   });
 });
 
-test("same-product freeship migration preserves production order flow", () => {
-  assert.match(migration, /Existing orders are intentionally not backfilled/);
+test("yarn-only freeship migration preserves production order flow", () => {
+  assert.match(migration, /Existing orders and product data are intentionally not changed/);
   assert.match(migration, /CREATE OR REPLACE FUNCTION public\.create_guest_order\(p_payload jsonb\)/);
   assert.match(migration, /pg_catalog\.substr\([\s\S]*pg_catalog\.gen_random_uuid/);
-  assert.match(migration, /pg_catalog\.btrim\(v_product\.price\)[\s\S]*::numeric/);
+  assert.match(migration, /pg_catalog\.btrim\(v_product\.price::text\)[\s\S]*::numeric/);
   assert.match(migration, /from public\.product_variants[\s\S]*for update;/i);
   assert.match(migration, /if v_variant\.stock is null then[\s\S]*v_stock_confirmation_required := true;/i);
   assert.match(migration, /v_payment_method = 'bank_transfer' and v_variant\.stock is not null/i);
-  assert.match(migration, /from public\.order_items oi[\s\S]*where oi\.order_id = v_order_id[\s\S]*group by oi\.product_id[\s\S]*having pg_catalog\.sum\(oi\.quantity\) >= 20/i);
+  assert.match(migration, /from public\.order_items oi[\s\S]*join public\.products p on p\.id = oi\.product_id[\s\S]*p\.category = 'yarn'[\s\S]*group by oi\.product_id[\s\S]*having pg_catalog\.sum\(oi\.quantity\) >= 20/i);
   assert.match(migration, /shipping_fee = v_shipping_fee,[\s\S]*total = v_subtotal \+ v_shipping_fee/i);
   assert.match(migration, /where id = v_order_id;/i);
   assert.doesNotMatch(migration, /update public\.orders[\s\S]*where shipping_fee is null/i);
   assert.doesNotMatch(migration, /where\s+shipping_fee\s+is\s+null/i);
   assert.match(migration, /SECURITY DEFINER[\s\S]*SET search_path TO ''/);
-  assert.match(migration, /revoke all on function public\.create_guest_order\(jsonb\) from public, anon, authenticated;/i);
-  assert.match(migration, /grant execute on function public\.create_guest_order\(jsonb\) to service_role;/i);
+  assert.match(migration, /revoke all[\s\S]*on function public\.create_guest_order\(jsonb\)[\s\S]*from public, anon, authenticated;/i);
+  assert.match(migration, /grant execute[\s\S]*on function public\.create_guest_order\(jsonb\)[\s\S]*to service_role;/i);
 });
 
 test("checkout preview passes cart items to the same-product shipping rule", () => {
-  assert.match(checkoutPage, /calculateCheckoutDisplayTotals\(displaySubtotal, items\)/);
+  assert.match(checkoutPage, /calculateCheckoutDisplayTotals\([\s\S]*displaySubtotal,[\s\S]*getCheckoutShippingItems\(resolvedItems\)/);
 });
 
 test("customer order labels never render raw statuses", () => {

@@ -134,6 +134,15 @@ test("variant display prices use the same positive-override semantics as order p
   assert.deepEqual(accessory.variants.map((variant) => variant.price), [null, 25000, null, null]);
 });
 
+test("product price is strictly positive and precedes base_price with invalid values falling back", () => {
+  assert.equal(mappedProduct({ price: 18_000, base_price: 20_000 }).price, 18_000);
+  assert.equal(mappedProduct({ price: null, base_price: 20_000 }).price, 20_000);
+  assert.equal(mappedProduct({ price: 0, base_price: 20_000 }).price, 20_000);
+  assert.equal(mappedProduct({ price: -5_000, base_price: 20_000 }).price, 20_000);
+  assert.equal(mappedProduct({ price: "invalid", base_price: 20_000 }).price, 20_000);
+  assert.equal(commerceProductFromRows(productRow({ price: 0, base_price: 0 }), []), null);
+});
+
 test("generic mapping filters only hidden status and preserves out or preorder semantics", () => {
   const product = commerceProductFromRows(
     productRow({ status: "preorder" }),
