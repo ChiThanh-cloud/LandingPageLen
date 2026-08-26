@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { trackSiteEvent } from "@/lib/siteTracking";
 
 const messengerUrl = "https://m.me/61559447375156";
-const zaloUrl = "https://zalo.me/0368903519";
+const zaloUrl = "https://zalo.me/0937511107";
 
 export function FloatingContact() {
   const [inHero, setInHero] = useState(false);

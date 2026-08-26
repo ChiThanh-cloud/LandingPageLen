@@ -11,13 +11,13 @@ const policies = {
     <h3>4. Bên thứ ba liên quan</h3>
     <p>Thông tin có thể được chia sẻ ở mức cần thiết với nền tảng chat, đơn vị vận chuyển, Supabase để hiển thị dữ liệu sản phẩm, và các nền tảng đo lường quảng cáo khi pixel được bật.</p>
     <h3>5. Quyền của khách hàng</h3>
-    <p>Bạn có thể yêu cầu Tiny kiểm tra, chỉnh sửa hoặc xóa thông tin đặt hàng bằng cách liên hệ qua Zalo 036.890.3519 hoặc Facebook Fanpage.</p>
+    <p>Bạn có thể yêu cầu Tiny kiểm tra, chỉnh sửa hoặc xóa thông tin đặt hàng bằng cách liên hệ qua Zalo 093.751.1107 hoặc Facebook Fanpage.</p>
     <h3>6. Cam kết</h3>
     <p>Tiny không bán thông tin khách hàng. Dữ liệu chỉ được lưu trong thời gian cần thiết cho việc xử lý đơn, bảo hành/đổi trả và đối soát vận chuyển.</p>
   `,
   terms: `
     <h2>Điều khoản dịch vụ</h2>
-    <p>Chủ thể bán hàng: <strong>Tiệm Len Nhà Tiny</strong>. Địa chỉ liên hệ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh. Kênh hỗ trợ: Zalo 036.890.3519 và Facebook Fanpage.</p>
+    <p>Chủ thể bán hàng: <strong>Tiệm Len Nhà Tiny</strong>. Địa chỉ liên hệ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh. Kênh hỗ trợ: Zalo 093.751.1107 và Facebook Fanpage.</p>
     <h3>1. Sản phẩm và báo giá</h3>
     <p>Tiny bán len sợi từ 8.000đ, hộp quà từ 100.000đ, set tự móc từ 100.000đ và nhận làm đồ móc handmade báo giá theo mẫu. Giá hiển thị hoặc báo qua tin nhắn được tính bằng VND và có thể thay đổi theo kích thước, chất liệu, độ khó, số lượng và yêu cầu gói quà.</p>
     <h3>2. Đơn đặt riêng</h3>
