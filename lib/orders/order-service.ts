@@ -49,7 +49,7 @@ export class OrderServiceError extends Error {
   }
 }
 
-function parseDatabaseOrderError(message: string): OrderServiceError {
+export function parseDatabaseOrderError(message: string): OrderServiceError {
   const marker = message.match(
     /(OUT_OF_STOCK|PRODUCT_UNAVAILABLE|VARIANT_UNAVAILABLE|INVALID_REQUEST)(?:\|(\d+)\|(\d+)(?:\|(\d+))?)?/
   );
@@ -91,7 +91,7 @@ function parseDatabaseOrderError(message: string): OrderServiceError {
     return new OrderServiceError(
       "VARIANT_UNAVAILABLE",
       409,
-      "Mã màu này hiện chưa thể đặt. Vui lòng chọn mã màu khác.",
+      "Lựa chọn này hiện chưa thể đặt. Vui lòng chọn lựa chọn khác.",
       item
     );
   }
@@ -342,9 +342,28 @@ export async function lookupGuestOrder(
 
 export type NotificationItemSnapshot = {
   productName: string;
+  variantName: string;
   colorCode: string | null;
   quantity: number;
 };
+
+export type NotificationItemSnapshotRow = {
+  product_name_snapshot: string;
+  variant_name_snapshot: string;
+  color_code_snapshot: string | null;
+  quantity: number;
+};
+
+export function notificationItemSnapshotsFromRows(
+  items: ReadonlyArray<NotificationItemSnapshotRow>
+): NotificationItemSnapshot[] {
+  return items.map((item) => ({
+    productName: item.product_name_snapshot,
+    variantName: item.variant_name_snapshot,
+    colorCode: item.color_code_snapshot,
+    quantity: item.quantity
+  }));
+}
 
 export async function getOrderItemsSnapshot(orderCode: string): Promise<NotificationItemSnapshot[]> {
   const supabase = getSupabaseAdminClient();
@@ -352,7 +371,7 @@ export async function getOrderItemsSnapshot(orderCode: string): Promise<Notifica
 
   const { data, error } = await supabase
     .from("order_items")
-    .select("product_name_snapshot, color_code_snapshot, quantity, orders!inner(order_code)")
+    .select("product_name_snapshot, variant_name_snapshot, color_code_snapshot, quantity, orders!inner(order_code)")
     .eq("orders.order_code", orderCode)
     .order("created_at", { ascending: true });
 
@@ -361,9 +380,5 @@ export async function getOrderItemsSnapshot(orderCode: string): Promise<Notifica
     return [];
   }
 
-  return data.map(item => ({
-    productName: item.product_name_snapshot,
-    colorCode: item.color_code_snapshot,
-    quantity: item.quantity
-  }));
+  return notificationItemSnapshotsFromRows(data as NotificationItemSnapshotRow[]);
 }

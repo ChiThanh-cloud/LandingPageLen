@@ -16,7 +16,7 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { href: "/#bo-suu-tap", label: "Sản phẩm", styleIndex: 1 },
+  { href: "/len-soi-va-phu-kien", label: "Sản phẩm", styleIndex: 1 },
   { href: "/len-soi", label: "Len sợi", styleIndex: 2 },
   { href: "/#quy-trinh-dat-hang", label: "Đặt theo yêu cầu", styleIndex: 3 },
   { href: "/#khach-chia-se", label: "Khách hàng", styleIndex: 4 },

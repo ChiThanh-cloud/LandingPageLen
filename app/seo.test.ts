@@ -4,14 +4,23 @@ import test from "node:test";
 import { products } from "../data/products";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
-import { getAllYarnProducts } from "../lib/products/supabase-products";
+import { getCommerceProductPath } from "../lib/products/commerce-catalog";
+import { getAllSellableProducts } from "../lib/products/commerce-products";
+import type { CommerceProduct } from "../types/commerce-product";
 import robots from "./robots";
-import sitemap, { getSitemapYarnProducts, getYarnProductSitemapEntries, getYarnCatalogLastModified } from "./sitemap";
+import sitemap, {
+  dedupeSitemapEntries,
+  getCommerceCatalogLastModified,
+  getSellableProductSitemapEntries,
+  getSitemapSellableProducts,
+  getYarnCatalogLastModified
+} from "./sitemap";
 
 test("SEO routes", async (t) => {
   const posts = getAllPostMetadata(new Date("2026-12-31T00:00:00+07:00"));
   const entries = await sitemap();
-  const yarnProducts = await getAllYarnProducts();
+  const sellableProducts = await getAllSellableProducts();
+  const yarnProducts = sellableProducts.filter((product) => product.category === "yarn");
   const urls = entries.map((entry) => entry.url);
 
   await t.test("sitemap contains every public route exactly once", () => {
@@ -20,8 +29,9 @@ test("SEO routes", async (t) => {
       `${siteConfig.url}/about`,
       `${siteConfig.url}/blog`,
       `${siteConfig.url}/len-soi`,
+      `${siteConfig.url}/len-soi-va-phu-kien`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
-      ...yarnProducts.map((product) => `${siteConfig.url}/len-soi/${product.slug}`),
+      ...sellableProducts.map((product) => `${siteConfig.url}${getCommerceProductPath(product)}`),
       ...products
         .filter((product) => product.slug !== "len-soi")
         .map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
@@ -46,50 +56,93 @@ test("SEO routes", async (t) => {
     }
   });
 
-  await t.test("sitemap product entries use the storefront catalog source and canonical paths", () => {
+  await t.test("sitemap uses the generic sellable adapter and category-specific detail paths", () => {
     const source = readFileSync(new URL("./sitemap.ts", import.meta.url), "utf8");
-    assert.match(source, /from "@\/lib\/products\/supabase-products"/);
-    assert.doesNotMatch(source, /from "@\/lib\/products\/yarn-products"/);
+    assert.match(source, /from "@\/lib\/products\/commerce-products"/);
+    assert.match(source, /getAllSellableProducts/);
+    assert.match(source, /getCommerceProductPath/);
+    assert.doesNotMatch(source, /from "@\/lib\/products\/supabase-products"/);
 
-    const entries = getYarnProductSitemapEntries([
+    const entries = getSellableProductSitemapEntries([
       {
+        category: "yarn",
         slug: "catalog-item-a",
         updatedAt: "2026-08-11T00:00:00.000Z",
-        image: "/images/yarn_collection_800.jpg"
+        image: "/images/yarn_collection_800.jpg",
+        status: "available"
       },
       {
+        category: "yarn",
         slug: "catalog-item-a",
         updatedAt: "2026-08-11T00:00:00.000Z",
-        image: "/images/yarn_collection_800.jpg"
+        image: "/images/yarn_collection_800.jpg",
+        status: "available"
       },
       {
-        slug: "catalog-item-b",
+        category: "accessory",
+        slug: "kim-moc-can-mem",
         updatedAt: "2026-08-11T00:00:00.000Z",
-        image: "/images/yarn_collection_800.jpg"
-      }
+        image: "",
+        status: "available"
+      },
+      {
+        category: "yarn",
+        slug: "hidden-yarn",
+        updatedAt: "2026-08-11T00:00:00.000Z",
+        image: "/images/yarn_collection_800.jpg",
+        status: "hidden"
+      },
+      {
+        category: "handmade",
+        slug: "protected-product",
+        updatedAt: "2026-08-11T00:00:00.000Z",
+        image: "/images/crochet_products_800.jpg",
+        status: "available"
+      } as unknown as Pick<CommerceProduct, "category" | "slug" | "updatedAt" | "image" | "status">
     ]);
 
     assert.deepEqual(entries.map((entry) => entry.url), [
       `${siteConfig.url}/len-soi/catalog-item-a`,
-      `${siteConfig.url}/len-soi/catalog-item-b`
+      `${siteConfig.url}/phu-kien/kim-moc-can-mem`
     ]);
+    assert.equal(entries[1].images, undefined);
+    assert.equal(entries.some((entry) => entry.url === `${siteConfig.url}/len-soi/kim-moc-can-mem`), false);
+    assert.equal(entries.some((entry) => entry.url === `${siteConfig.url}/phu-kien/catalog-item-a`), false);
+    assert.equal(entries.some((entry) => /hidden-yarn|protected-product/.test(entry.url)), false);
   });
 
   await t.test("sitemap remains available when the production catalog fails closed", async () => {
-    const yarnProducts = await getSitemapYarnProducts(async () => {
+    const failedProducts = await getSitemapSellableProducts(async () => {
       throw new Error("Supabase catalog is temporarily unavailable");
     });
 
-    assert.deepEqual(yarnProducts, []);
+    assert.deepEqual(failedProducts, []);
     assert.ok(entries.some((entry) => entry.url === siteConfig.url));
     assert.ok(entries.some((entry) => entry.url === `${siteConfig.url}/blog`));
   });
 
-  await t.test("the yarn catalog URL follows the latest product timestamp with a stable fallback", () => {
+  await t.test("yarn and umbrella catalog URLs follow their sellable product timestamps", () => {
     const yarnCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/len-soi`);
+    const commerceCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/len-soi-va-phu-kien`);
     assert.equal(yarnCatalogEntry?.lastModified, getYarnCatalogLastModified(yarnProducts));
+    assert.equal(commerceCatalogEntry?.lastModified, getCommerceCatalogLastModified(sellableProducts));
     assert.equal(getYarnCatalogLastModified([]), "2026-08-11");
+    assert.equal(getCommerceCatalogLastModified([]), "2026-08-11");
     assert.equal(getYarnCatalogLastModified([{ updatedAt: "2026-08-14T00:00:00.000Z" }]), "2026-08-14T00:00:00.000Z");
+  });
+
+  await t.test("sitemap dedupes full URLs without removing stable catalog entries", () => {
+    const duplicateUrl = `${siteConfig.url}/len-soi`;
+    const deduped = dedupeSitemapEntries([
+      { url: duplicateUrl, lastModified: "2026-08-11", priority: 0.9 },
+      { url: duplicateUrl, lastModified: "2026-08-12", priority: 0.9 },
+      { url: `${siteConfig.url}/len-soi-va-phu-kien`, lastModified: "2026-08-12", priority: 0.9 }
+    ]);
+
+    assert.deepEqual(deduped.map((entry) => entry.url), [
+      duplicateUrl,
+      `${siteConfig.url}/len-soi-va-phu-kien`
+    ]);
   });
 
   await t.test("sitemap URLs and images are absolute HTTPS URLs", () => {

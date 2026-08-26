@@ -52,8 +52,9 @@ export async function sendTelegramNewOrderNotification({
   let text = `🛒 ĐƠN HÀNG MỚI\n\nMã đơn: ${orderCode}\nKhách: ${customerName}\nThanh toán: ${paymentMethod === "cod" ? "COD" : "Chuyển khoản"}\nSản phẩm: ${itemLines} dòng / ${totalQuantity} sản phẩm\n\n📦 SẢN PHẨM\n`;
 
   for (const item of items) {
-    const colorCodeText = item.colorCode ? item.colorCode : "Không có";
-    text += `• ${item.productName}\n  Mã màu: ${colorCodeText}\n  SL: ${item.quantity}\n\n`;
+    text += `• ${item.productName}\n  Phân loại: ${item.variantName}\n`;
+    if (item.colorCode?.trim()) text += `  Mã: ${item.colorCode.trim()}\n`;
+    text += `  SL: ${item.quantity}\n\n`;
   }
 
   if (appUrl) {
