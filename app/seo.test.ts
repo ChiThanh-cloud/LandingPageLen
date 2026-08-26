@@ -10,6 +10,7 @@ import type { CommerceProduct } from "../types/commerce-product";
 import robots from "./robots";
 import sitemap, {
   dedupeSitemapEntries,
+  getAccessoryCatalogLastModified,
   getCommerceCatalogLastModified,
   getSellableProductSitemapEntries,
   getSitemapSellableProducts,
@@ -21,6 +22,7 @@ test("SEO routes", async (t) => {
   const entries = await sitemap();
   const sellableProducts = await getAllSellableProducts();
   const yarnProducts = sellableProducts.filter((product) => product.category === "yarn");
+  const accessoryProducts = sellableProducts.filter((product) => product.category === "accessory");
   const urls = entries.map((entry) => entry.url);
 
   await t.test("sitemap contains every public route exactly once", () => {
@@ -29,6 +31,7 @@ test("SEO routes", async (t) => {
       `${siteConfig.url}/about`,
       `${siteConfig.url}/blog`,
       `${siteConfig.url}/len-soi`,
+      `${siteConfig.url}/phu-kien`,
       `${siteConfig.url}/len-soi-va-phu-kien`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
       ...sellableProducts.map((product) => `${siteConfig.url}${getCommerceProductPath(product)}`),
@@ -121,12 +124,15 @@ test("SEO routes", async (t) => {
     assert.ok(entries.some((entry) => entry.url === `${siteConfig.url}/blog`));
   });
 
-  await t.test("yarn and umbrella catalog URLs follow their sellable product timestamps", () => {
+  await t.test("category catalog URLs follow their own sellable product timestamps", () => {
     const yarnCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/len-soi`);
+    const accessoryCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/phu-kien`);
     const commerceCatalogEntry = entries.find((entry) => entry.url === `${siteConfig.url}/len-soi-va-phu-kien`);
     assert.equal(yarnCatalogEntry?.lastModified, getYarnCatalogLastModified(yarnProducts));
+    assert.equal(accessoryCatalogEntry?.lastModified, getAccessoryCatalogLastModified(accessoryProducts));
     assert.equal(commerceCatalogEntry?.lastModified, getCommerceCatalogLastModified(sellableProducts));
     assert.equal(getYarnCatalogLastModified([]), "2026-08-11");
+    assert.equal(getAccessoryCatalogLastModified([]), "2026-08-11");
     assert.equal(getCommerceCatalogLastModified([]), "2026-08-11");
     assert.equal(getYarnCatalogLastModified([{ updatedAt: "2026-08-14T00:00:00.000Z" }]), "2026-08-14T00:00:00.000Z");
   });
@@ -136,11 +142,13 @@ test("SEO routes", async (t) => {
     const deduped = dedupeSitemapEntries([
       { url: duplicateUrl, lastModified: "2026-08-11", priority: 0.9 },
       { url: duplicateUrl, lastModified: "2026-08-12", priority: 0.9 },
+      { url: `${siteConfig.url}/phu-kien`, lastModified: "2026-08-12", priority: 0.85 },
       { url: `${siteConfig.url}/len-soi-va-phu-kien`, lastModified: "2026-08-12", priority: 0.9 }
     ]);
 
     assert.deepEqual(deduped.map((entry) => entry.url), [
       duplicateUrl,
+      `${siteConfig.url}/phu-kien`,
       `${siteConfig.url}/len-soi-va-phu-kien`
     ]);
   });
@@ -178,7 +186,7 @@ test("SEO routes", async (t) => {
     }
   });
 
-  await t.test("robots leaves the yarn catalog and product URLs crawlable", () => {
+  await t.test("robots leaves public catalog and product URLs crawlable", () => {
     const config = robots();
     const rules = Array.isArray(config.rules) ? config.rules : [config.rules];
     const searchRule = rules.find((rule) => rule.userAgent === "*");
@@ -187,6 +195,8 @@ test("SEO routes", async (t) => {
     assert.equal(searchRule?.allow, "/");
     assert.equal(disallow.includes("/len-soi"), false);
     assert.equal(disallow.includes("/len-soi/"), false);
+    assert.equal(disallow.includes("/phu-kien"), false);
+    assert.equal(disallow.includes("/phu-kien/"), false);
   });
 });
 
@@ -215,6 +225,7 @@ test("SEO content data", async (t) => {
 test("yarn route intent separation", async (t) => {
   const legacyYarnGuide = products.find((product) => product.slug === "len-soi");
   const yarnCategorySource = readFileSync(new URL("./len-soi/page.tsx", import.meta.url), "utf8");
+  const accessoryCategorySource = readFileSync(new URL("./phu-kien/page.tsx", import.meta.url), "utf8");
   const redirectConfig = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
   const legacyPageSource = readFileSync(new URL("../components/product/ProductDetailPage.tsx", import.meta.url), "utf8");
   const beginnerGuideSource = readFileSync(
@@ -224,11 +235,18 @@ test("yarn route intent separation", async (t) => {
 
   assert.ok(legacyYarnGuide, "legacy yarn guide must exist");
 
-  await t.test("/len-soi remains the transactional catalog", () => {
+  await t.test("/len-soi remains the transactional yarn catalog", () => {
     assert.match(yarnCategorySource, /getAllYarnProducts/);
     assert.match(yarnCategorySource, /YarnCatalog/);
     assert.match(yarnCategorySource, /const canonical = `\$\{siteConfig\.url\}\/len-soi`;/);
     assert.match(yarnCategorySource, /alternates:\s*\{\s*canonical\s*\}/);
+  });
+
+  await t.test("/phu-kien has separate accessory search intent", () => {
+    assert.match(accessoryCategorySource, /getAllAccessoryProducts/);
+    assert.match(accessoryCategorySource, /scope="accessory"/);
+    assert.match(accessoryCategorySource, /const canonical = `\$\{siteConfig\.url\}\/phu-kien`;/);
+    assert.doesNotMatch(accessoryCategorySource, /getAllYarnProducts/);
   });
 
   await t.test("legacy yarn URL has a direct permanent redirect to the informational guide", () => {
