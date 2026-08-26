@@ -39,8 +39,6 @@ export async function getSitemapSellableProducts(
   try {
     return await loadProducts();
   } catch {
-    // The catalog intentionally fails closed in production. Sitemap generation
-    // must remain available so crawlers can still discover stable site content.
     console.error("Unable to load sellable products for sitemap generation");
     return [];
   }
@@ -62,6 +60,13 @@ export function getYarnCatalogLastModified(
   return getCommerceCatalogLastModified(yarnProducts, fallback);
 }
 
+export function getAccessoryCatalogLastModified(
+  accessoryProducts: ReadonlyArray<Pick<CommerceProduct, "updatedAt">>,
+  fallback = "2026-08-11"
+) {
+  return getCommerceCatalogLastModified(accessoryProducts, fallback);
+}
+
 export function dedupeSitemapEntries(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
   const seenUrls = new Set<string>();
   return entries.filter((entry) => {
@@ -76,7 +81,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = getAllPostMetadata();
   const sellableProducts = await getSitemapSellableProducts();
   const yarnProducts = sellableProducts.filter((product) => product.category === "yarn");
+  const accessoryProducts = sellableProducts.filter((product) => product.category === "accessory");
   const yarnCatalogLastModified = getYarnCatalogLastModified(yarnProducts);
+  const accessoryCatalogLastModified = getAccessoryCatalogLastModified(accessoryProducts);
   const commerceCatalogLastModified = getCommerceCatalogLastModified(sellableProducts);
   const blogLastModified = posts.reduce<string>(
     (latest, post) => (post.updatedAt > latest ? post.updatedAt : latest),
@@ -119,6 +126,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       images: [absoluteUrl(post.ogImage || post.image)]
     })),
     { url: `${siteConfig.url}/len-soi`, lastModified: yarnCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: `${siteConfig.url}/phu-kien`, lastModified: accessoryCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.85 },
     { url: `${siteConfig.url}/len-soi-va-phu-kien`, lastModified: commerceCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
     ...getSellableProductSitemapEntries(sellableProducts),
     ...products.filter((product) => product.slug !== "len-soi").map((product) => ({

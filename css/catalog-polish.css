@@ -1,0 +1,83 @@
+.yc-tree-parent {
+  display: block;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+.yc-tree-parent.yc-tree-toggle {
+  display: flex;
+}
+
+.yc-card-image-empty {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background: var(--primary-100);
+  color: var(--primary-700);
+  font-family: var(--font-playfair), serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.yc-mobile-chips a {
+  flex: 0 0 auto;
+  border: 1px solid var(--primary-300);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-mid);
+  font: inherit;
+  font-size: .76rem;
+  padding: 8px 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.yc-mobile-chips a.is-active {
+  border-color: var(--primary-200);
+  background: var(--primary-100);
+  color: var(--primary-700);
+  font-weight: 700;
+}
+
+.yc-tree-parent:focus-visible,
+.yc-tree-child:focus-visible,
+.yc-results-header select:focus-visible,
+.yc-mobile-controls select:focus-visible,
+.yc-mobile-chips a:focus-visible,
+.yc-mobile-chips button:focus-visible,
+.yc-card:focus-visible,
+.yc-empty button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary-700) 35%, transparent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .yc-mobile-chips a:hover {
+    border-color: var(--primary-500);
+    color: var(--primary-700);
+  }
+}
+
+@media (max-width: 800px) {
+  .yc-results-header h2 {
+    text-wrap: balance;
+  }
+}
+
+@media (max-width: 540px) {
+  .yc-card-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yc-tree-parent,
+  .yc-tree-child,
+  .yc-tree-chevron,
+  .yc-card img {
+    transition: none;
+  }
+}

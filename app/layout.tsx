@@ -13,6 +13,7 @@ import "./blog/blog-pages.css";
 import "./san-pham/product-pages.css";
 import "./globals.css";
 import "../css/yarn-product.css";
+import "../css/catalog-polish.css";
 import { StorefrontShell } from "@/components/layout/StorefrontShell";
 
 export const metadata: Metadata = {

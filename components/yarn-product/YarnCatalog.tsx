@@ -6,88 +6,41 @@ import { useMemo, useState } from "react";
 import { getYarnProductImageAlt } from "@/lib/products/yarn-product-seo";
 import type { YarnCategory, YarnProduct } from "@/types/yarn-product";
 
-type CategoryFilter = "all" | YarnCategory;
+type YarnCatalogCategory = Exclude<YarnCategory, "phu-kien">;
+type CategoryFilter = "all" | YarnCatalogCategory;
 type PriceFilter = "all" | "under-20" | "20-50" | "50-100" | "over-100";
 type SortOption = "newest" | "price-asc" | "price-desc";
 
-// ── Cấu trúc cây danh mục ──────────────────────────────────────
-type CategoryGroup = {
-  id: string;
-  label: string;
-  /** Nếu không có children → click chọn nhóm thẳng */
-  children?: Array<{ value: CategoryFilter; label: string }>;
-  /** value dùng khi không có children (ví dụ "phu-kien") */
-  value?: CategoryFilter;
-};
-
-const categoryGroups: CategoryGroup[] = [
-  {
-    id: "tat-ca",
-    label: "Tất cả",
-    value: "all",
-  },
-  {
-    id: "len",
-    label: "Len sợi",
-    children: [
-      { value: "milk-cotton", label: "Milk Cotton" },
-      { value: "len-nhung",   label: "Len Nhung" },
-      { value: "len-cotton",  label: "Len Cotton" },
-      { value: "len-baby",    label: "Len Baby" },
-      { value: "len-acrylic", label: "Len Acrylic" },
-      { value: "len-dac-biet", label: "Len đặc biệt" },
-    ],
-  },
-  {
-    id: "phu-kien",
-    label: "Phụ kiện",
-    value: "phu-kien",
-  },
-];
-
-// Danh sách phẳng cho mobile select & chips
-const flatCategories: Array<{ value: CategoryFilter; label: string; short: string }> = [
-  { value: "all",          label: "Tất cả",        short: "Tất cả" },
-  { value: "milk-cotton",  label: "Milk Cotton",    short: "Milk Cotton" },
-  { value: "len-nhung",    label: "Len Nhung",      short: "Nhung" },
-  { value: "len-cotton",   label: "Len Cotton",     short: "Cotton" },
-  { value: "len-baby",     label: "Len Baby",       short: "Baby" },
-  { value: "len-acrylic",  label: "Len Acrylic",    short: "Acrylic" },
-  { value: "len-dac-biet", label: "Len đặc biệt",   short: "Đặc biệt" },
-  { value: "phu-kien",     label: "Phụ kiện",       short: "Phụ kiện" },
+const yarnCategories: Array<{ value: YarnCatalogCategory; label: string; short: string }> = [
+  { value: "milk-cotton", label: "Milk Cotton", short: "Milk Cotton" },
+  { value: "len-nhung", label: "Len Nhung", short: "Nhung" },
+  { value: "len-cotton", label: "Len Cotton", short: "Cotton" },
+  { value: "len-baby", label: "Len Baby", short: "Baby" },
+  { value: "len-acrylic", label: "Len Acrylic", short: "Acrylic" },
+  { value: "len-dac-biet", label: "Len đặc biệt", short: "Đặc biệt" }
 ];
 
 const priceRanges: Array<{ value: PriceFilter; label: string }> = [
-  { value: "all",       label: "Tất cả mức giá" },
-  { value: "under-20",  label: "Dưới 20.000đ" },
-  { value: "20-50",     label: "20.000đ – 50.000đ" },
-  { value: "50-100",    label: "50.000đ – 100.000đ" },
-  { value: "over-100",  label: "Trên 100.000đ" },
+  { value: "all", label: "Tất cả mức giá" },
+  { value: "under-20", label: "Dưới 20.000đ" },
+  { value: "20-50", label: "20.000đ – 50.000đ" },
+  { value: "50-100", label: "50.000đ – 100.000đ" },
+  { value: "over-100", label: "Trên 100.000đ" }
 ];
 
-// Nhóm cha nào chứa category đang chọn
-function parentIdOf(cat: CategoryFilter): string | null {
-  if (cat === "all") return null;
-  const group = categoryGroups.find(
-    (g) => g.children?.some((c) => c.value === cat)
-  );
-  return group?.id ?? null;
-}
-
 function matchesPrice(price: number, filter: PriceFilter) {
-  if (filter === "under-20")  return price < 20000;
-  if (filter === "20-50")     return price >= 20000 && price <= 50000;
-  if (filter === "50-100")    return price > 50000 && price <= 100000;
-  if (filter === "over-100")  return price > 100000;
+  if (filter === "under-20") return price < 20000;
+  if (filter === "20-50") return price >= 20000 && price <= 50000;
+  if (filter === "50-100") return price > 50000 && price <= 100000;
+  if (filter === "over-100") return price > 100000;
   return true;
 }
 
-// ── Product card ───────────────────────────────────────────────
 function ProductCard({ product }: { product: YarnProduct }) {
-  const availableColors = product.variants.filter((v) => v.stock !== 0).length;
-  const knownStock = product.variants.every((v) => v.stock !== null);
+  const availableColors = product.variants.filter((variant) => variant.stock !== 0 && variant.status !== "out" && variant.status !== "hidden").length;
+  const knownStock = product.variants.every((variant) => variant.stock !== null);
   const totalStock = knownStock
-    ? product.variants.reduce((sum, v) => sum + (v.stock || 0), 0)
+    ? product.variants.reduce((sum, variant) => sum + (variant.stock || 0), 0)
     : null;
 
   return (
@@ -102,7 +55,7 @@ function ProductCard({ product }: { product: YarnProduct }) {
         />
       </div>
       <div className="yc-card-body">
-        <span className="yc-card-unit">{product.weight}</span>
+        <span className="yc-card-unit">{product.weight || "Len sợi"}</span>
         <h3>{product.name}</h3>
         <p>{product.description}</p>
         <strong>{product.price.toLocaleString("vi-VN")}đ</strong>
@@ -110,10 +63,10 @@ function ProductCard({ product }: { product: YarnProduct }) {
           <span>{availableColors} màu đang bán</span>
           <span>
             {totalStock === null
-              ? "Liên hệ Tiny để xác nhận số lượng lớn."
+              ? "Liên hệ Tiny để xác nhận"
               : totalStock > 0
-              ? `Còn hàng: ${totalStock.toLocaleString("vi-VN")} cuộn`
-              : "Hết hàng"}
+                ? `Còn ${totalStock.toLocaleString("vi-VN")} cuộn`
+                : "Hết hàng"}
           </span>
         </div>
         <span className="yc-card-cta">
@@ -124,148 +77,111 @@ function ProductCard({ product }: { product: YarnProduct }) {
   );
 }
 
-// ── Sidebar category tree ──────────────────────────────────────
 function CategoryTree({
   category,
-  onSelect,
+  onSelect
 }: {
   category: CategoryFilter;
-  onSelect: (v: CategoryFilter) => void;
+  onSelect: (value: CategoryFilter) => void;
 }) {
-  // Mặc định đóng — chỉ mở nhóm đang chứa active child
-  const defaultOpen = parentIdOf(category);
-  const [openGroup, setOpenGroup] = useState<string | null>(defaultOpen);
-
-  const toggleGroup = (id: string) =>
-    setOpenGroup((prev) => (prev === id ? null : id));
-
   return (
-    <nav className="yc-cat-tree" aria-label="Lọc danh mục">
-      {categoryGroups.map((group) => {
-        const hasChildren = !!group.children?.length;
+    <nav className="yc-cat-tree" aria-label="Danh mục sản phẩm">
+      <Link href="/len-soi-va-phu-kien" className="yc-tree-parent">
+        Tất cả
+      </Link>
 
-        // Nhóm không có con (Tất cả, Phụ kiện)
-        if (!hasChildren && group.value !== undefined) {
-          return (
+      <div className="yc-tree-group">
+        <Link
+          href="/len-soi"
+          className="yc-tree-parent yc-tree-toggle is-active"
+          aria-current="page"
+        >
+          <span>Len sợi</span>
+          <svg
+            className="yc-tree-chevron is-open"
+            aria-hidden="true"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </Link>
+        <ul className="yc-tree-children">
+          <li>
             <button
-              key={group.id}
               type="button"
-              className={[
-                "yc-tree-parent",
-                category === group.value ? "is-active" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              aria-pressed={category === group.value}
-              onClick={() => onSelect(group.value!)}
+              className={`yc-tree-child${category === "all" ? " is-active" : ""}`}
+              aria-pressed={category === "all"}
+              onClick={() => onSelect("all")}
             >
-              {group.label}
+              Tất cả len sợi
             </button>
-          );
-        }
-
-        // Nhóm có con (Len sợi)
-        const isOpen = openGroup === group.id;
-        const childActive = group.children?.some((c) => c.value === category);
-
-        return (
-          <div key={group.id} className="yc-tree-group">
-            <button
-              type="button"
-              className={[
-                "yc-tree-parent yc-tree-toggle",
-                childActive ? "has-active-child" : "",
-              ]
-                .filter(Boolean)
-                .join(" ")}
-              aria-expanded={isOpen}
-              onClick={() => toggleGroup(group.id)}
-            >
-              <span>{group.label}</span>
-              <svg
-                className={["yc-tree-chevron", isOpen ? "is-open" : ""].filter(Boolean).join(" ")}
-                aria-hidden="true"
-                width="14" height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          </li>
+          {yarnCategories.map((item) => (
+            <li key={item.value}>
+              <button
+                type="button"
+                className={`yc-tree-child${category === item.value ? " is-active" : ""}`}
+                aria-pressed={category === item.value}
+                onClick={() => onSelect(item.value)}
               >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
+                {item.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-            {isOpen && (
-              <ul className="yc-tree-children">
-                {group.children!.map((child) => (
-                  <li key={child.value}>
-                    <button
-                      type="button"
-                      className={[
-                        "yc-tree-child",
-                        category === child.value ? "is-active" : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" ")}
-                      aria-pressed={category === child.value}
-                      onClick={() => onSelect(child.value)}
-                    >
-                      {child.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        );
-      })}
+      <Link href="/phu-kien" className="yc-tree-parent">
+        Phụ kiện
+      </Link>
     </nav>
   );
 }
 
-// ── Main export ────────────────────────────────────────────────
 export function YarnCatalog({ products }: { products: YarnProduct[] }) {
   const [category, setCategory] = useState<CategoryFilter>("all");
   const [priceRange, setPriceRange] = useState<PriceFilter>("all");
   const [sort, setSort] = useState<SortOption>("newest");
 
   const visibleProducts = useMemo(() => {
-    const filtered = products.filter(
-      (p) =>
-        (category === "all" || p.category === category) &&
-        matchesPrice(p.price, priceRange)
-    );
+    const filtered = products.filter((product) => (
+      (category === "all" || product.category === category) && matchesPrice(product.price, priceRange)
+    ));
+
     return [...filtered].sort((a, b) => {
-      if (sort === "price-asc")  return a.price - b.price;
+      if (sort === "price-asc") return a.price - b.price;
       if (sort === "price-desc") return b.price - a.price;
       return b.updatedAt.localeCompare(a.updatedAt);
     });
   }, [category, priceRange, products, sort]);
 
-  const resetFilters = () => { setCategory("all"); setPriceRange("all"); };
+  const resetFilters = () => {
+    setCategory("all");
+    setPriceRange("all");
+  };
 
   return (
-    <section className="yc-products" aria-labelledby="yarn-list">
-      {/* ── Mobile: select + sort ── */}
+    <section className="yc-products" id="catalog" aria-labelledby="yarn-list">
       <div className="yc-mobile-controls">
         <label>
-          Danh mục
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as CategoryFilter)}
-          >
-            {flatCategories.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
+          Loại len
+          <select value={category} onChange={(event) => setCategory(event.target.value as CategoryFilter)}>
+            <option value="all">Tất cả len sợi</option>
+            {yarnCategories.map((item) => (
+              <option key={item.value} value={item.value}>{item.label}</option>
             ))}
           </select>
         </label>
         <label>
           Sắp xếp
-          <select value={sort} onChange={(e) => setSort(e.target.value as SortOption)}>
+          <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)}>
             <option value="newest">Mới nhất</option>
             <option value="price-asc">Giá thấp đến cao</option>
             <option value="price-desc">Giá cao đến thấp</option>
@@ -273,9 +189,11 @@ export function YarnCatalog({ products }: { products: YarnProduct[] }) {
         </label>
       </div>
 
-      {/* ── Mobile: chips scroll ── */}
-      <div className="yc-mobile-chips" aria-label="Lọc nhanh theo danh mục">
-        {flatCategories.map((item) => (
+      <div className="yc-mobile-chips" aria-label="Chuyển danh mục và lọc nhanh">
+        <Link href="/len-soi-va-phu-kien">Tất cả</Link>
+        <Link href="/len-soi" className="is-active" aria-current="page">Len sợi</Link>
+        <Link href="/phu-kien">Phụ kiện</Link>
+        {yarnCategories.map((item) => (
           <button
             key={item.value}
             type="button"
@@ -289,7 +207,6 @@ export function YarnCatalog({ products }: { products: YarnProduct[] }) {
       </div>
 
       <div className="yc-catalog-layout">
-        {/* ── Sidebar ── */}
         <aside className="yc-sidebar" aria-label="Bộ lọc sản phẩm">
           <div className="yc-filter-group">
             <h2>Danh mục</h2>
@@ -313,7 +230,6 @@ export function YarnCatalog({ products }: { products: YarnProduct[] }) {
           </div>
         </aside>
 
-        {/* ── Product grid ── */}
         <div className="yc-results">
           <div className="yc-results-header">
             <div>
@@ -322,7 +238,7 @@ export function YarnCatalog({ products }: { products: YarnProduct[] }) {
             </div>
             <label>
               Sắp xếp:
-              <select value={sort} onChange={(e) => setSort(e.target.value as SortOption)}>
+              <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)}>
                 <option value="newest">Mới nhất</option>
                 <option value="price-asc">Giá thấp đến cao</option>
                 <option value="price-desc">Giá cao đến thấp</option>
@@ -332,17 +248,13 @@ export function YarnCatalog({ products }: { products: YarnProduct[] }) {
 
           {visibleProducts.length > 0 ? (
             <div className="yc-grid">
-              {visibleProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {visibleProducts.map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
           ) : (
             <div className="yc-empty">
               <h3>Chưa có sản phẩm phù hợp</h3>
               <p>Danh mục hoặc khoảng giá này chưa có sản phẩm.</p>
-              <button type="button" onClick={resetFilters}>
-                Xem tất cả len sợi
-              </button>
+              <button type="button" onClick={resetFilters}>Xem tất cả len sợi</button>
             </div>
           )}
         </div>

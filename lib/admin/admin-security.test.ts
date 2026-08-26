@@ -55,10 +55,11 @@ test("every yarn mutation revalidates both the yarn catalog and the umbrella cat
   assert.match(productActions, /revalidateProducts\(imported\.data\.productSlug, "yarn"\)/);
 });
 
-test("accessory mutations retain only umbrella and future accessory-detail revalidation", () => {
+test("accessory mutations revalidate the umbrella, accessory category, and detail routes", () => {
   assert.deepEqual(getProductRevalidationPaths({ slug: "kim-moc", category: "accessory" }), [
     "/admin/san-pham",
     "/len-soi-va-phu-kien",
+    "/phu-kien",
     "/phu-kien/kim-moc"
   ]);
 });
@@ -80,20 +81,20 @@ test("existing product category transitions invalidate both the old and new stor
     "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien/kim-moc"
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moi"), target("yarn", "milk-bo")), [
-    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien/kim-moi", "/len-soi", "/len-soi/milk-bo"
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moi", "/len-soi", "/len-soi/milk-bo"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-moi"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/phu-kien/kim-moc"
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/phu-kien", "/phu-kien/kim-moc"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("gift"), target("handmade", "custom")), ["/admin/san-pham"]);
   assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-bo"), target("yarn", "milk-bo")), [
     "/admin/san-pham", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moc"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien/kim-moc"
+    "/admin/san-pham", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc"
   ]);
 });
 

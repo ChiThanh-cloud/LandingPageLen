@@ -15,6 +15,7 @@ function getStorefrontProductPaths({ slug, category }: ProductRevalidationTarget
   if (category === "accessory") {
     return [
       "/len-soi-va-phu-kien",
+      "/phu-kien",
       ...(slug ? [`/phu-kien/${slug}`] : [])
     ];
   }
