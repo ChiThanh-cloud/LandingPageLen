@@ -79,10 +79,11 @@ test("product label fields are controlled by the category-aware form state", () 
   assert.match(productManager, /value=\{productLabels\.optionLabel\}/);
 });
 
-test("accessory product edits prepare future routes without adding public catalog code", () => {
+test("accessory product edits revalidate the public category and detail routes", () => {
   assert.deepEqual(getProductRevalidationPaths({ slug: "kim-moc", category: "accessory" }), [
     "/admin/san-pham",
     "/len-soi-va-phu-kien",
+    "/phu-kien",
     "/phu-kien/kim-moc"
   ]);
   assert.doesNotMatch(actions, /inventory_movements|admin_adjust_variant_stock/);
