@@ -57,7 +57,7 @@ const homeJsonLd = {
       image: `${siteConfig.url}/images/og-image.jpg`,
       description:
         "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, chuyên bán cuộn len, phụ kiện đan móc, đồ móc handmade theo yêu cầu, set tự móc và quà tặng handmade.",
-      telephone: "+84368903519",
+      telephone: "+84937511107",
       priceRange: "8000 VND - 500000 VND",
       address: {
         "@type": "PostalAddress",
@@ -83,7 +83,7 @@ const homeJsonLd = {
       contactPoint: {
         "@type": "ContactPoint",
         contactType: "customer support",
-        telephone: "+84368903519",
+        telephone: "+84937511107",
         availableLanguage: "Vietnamese",
         url: siteConfig.messengerUrl
       }
@@ -453,7 +453,7 @@ export default function HomePage() {
               </span>
               <span className="contact-arrow" aria-hidden="true">→</span>
             </a>
-            <a href="https://zalo.me/0368903519" target="_blank" rel="noopener" className="contact-card" id="contact-zalo" data-track="contact_zalo_click">
+            <a href="https://zalo.me/0937511107" target="_blank" rel="noopener" className="contact-card" id="contact-zalo" data-track="contact_zalo_click">
               <span className="contact-card-icon zalo-icon" aria-hidden="true">
                 <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true">
                   <rect width="48" height="48" rx="10" fill="#0068FF" />
@@ -463,7 +463,7 @@ export default function HomePage() {
               <span className="contact-card-info">
                 <strong>Zalo</strong>
                 <span>Nhắn tin hoặc gọi điện trực tiếp</span>
-                <em>036.890.3519</em>
+                <em>093.751.1107</em>
               </span>
               <span className="contact-arrow" aria-hidden="true">→</span>
             </a>

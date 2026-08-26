@@ -212,7 +212,7 @@ export const products: ProductEntry[] = [
           ]
         },
         outro:
-          "Nhắn Zalo 0368.903.519 để Tiny tư vấn mẫu phù hợp với trình độ và ngân sách của bạn."
+          "Nhắn Zalo 093.751.1107 để Tiny tư vấn mẫu phù hợp với trình độ và ngân sách của bạn."
       },
       {
         type: "callout",
@@ -220,7 +220,7 @@ export const products: ProductEntry[] = [
         title: "Muốn bắt đầu bằng một set dễ móc?",
         text:
           "Nhắn Tiny qua Zalo, Tiny sẽ gợi ý set phù hợp với người mới, kèm hướng dẫn rõ ràng để bạn không bị bỡ ngỡ khi bắt đầu.",
-        ctaLabel: "Nhắn Zalo 0368.903.519",
+        ctaLabel: "Nhắn Zalo 093.751.1107",
         ctaTrackKey: "contact_zalo_click"
       },
       {
@@ -281,10 +281,10 @@ export const products: ProductEntry[] = [
     name: "Thú len theo yêu cầu",
     title: "Đặt Móc Thú Len Theo Yêu Cầu, Theo Ảnh - Tiệm Len Nhà Tiny",
     description:
-      "Nhận móc thú len theo ảnh, theo mẫu, theo nhân vật riêng. Phù hợp làm quà sinh nhật, quà tốt nghiệp, quà couple, quà kỷ niệm. Tiny đã hoàn thành 300+ đơn custom, hơn 80% khách quay lại đặt lần 2. Nhắn Zalo 0368.903.519 để đặt hàng.",
+      "Nhận móc thú len theo ảnh, theo mẫu, theo nhân vật riêng. Phù hợp làm quà sinh nhật, quà tốt nghiệp, quà couple, quà kỷ niệm. Tiny đã hoàn thành 300+ đơn custom, hơn 80% khách quay lại đặt lần 2. Nhắn Zalo 093.751.1107 để đặt hàng.",
     ogTitle: "Đặt Móc Thú Len Theo Yêu Cầu, Theo Ảnh - Tiệm Len Nhà Tiny",
     ogDescription:
-      "Móc thú len theo ảnh, theo mẫu riêng, theo nhân vật yêu thích. Quà sinh nhật, tốt nghiệp, couple siêu đáng yêu. 300+ đơn đã hoàn thành. Nhắn Zalo 0368.903.519.",
+      "Móc thú len theo ảnh, theo mẫu riêng, theo nhân vật yêu thích. Quà sinh nhật, tốt nghiệp, couple siêu đáng yêu. 300+ đơn đã hoàn thành. Nhắn Zalo 093.751.1107.",
     category: "Đặt móc",
     eyebrow: "Đặt móc - Handmade theo yêu cầu",
     h1: "Đặt móc thú len theo ảnh - thú bông len handmade riêng tại Tiệm Len Nhà Tiny",
@@ -367,7 +367,7 @@ export const products: ProductEntry[] = [
         title: "Có ảnh mẫu rồi? Nhắn Tiny ngay!",
         text:
           "Gửi ảnh, kích thước mong muốn và ngày cần nhận qua Zalo. Tiny sẽ phản hồi sớm nhất có thể và tư vấn miễn phí trước khi đặt cọc.",
-        ctaLabel: "Gửi ảnh qua Zalo 0368.903.519",
+        ctaLabel: "Gửi ảnh qua Zalo 093.751.1107",
         ctaTrackKey: "contact_zalo_click"
       },
       {
@@ -417,7 +417,7 @@ export const products: ProductEntry[] = [
       {
         question: "Giá đặt móc thú len theo yêu cầu là bao nhiêu?",
         answer:
-          "Giá tùy kích thước, độ chi tiết và số màu len. Gửi ảnh mẫu qua Zalo 0368.903.519, Tiny sẽ xem ảnh và báo giá cụ thể sau khi trao đổi."
+          "Giá tùy kích thước, độ chi tiết và số màu len. Gửi ảnh mẫu qua Zalo 093.751.1107, Tiny sẽ xem ảnh và báo giá cụ thể sau khi trao đổi."
       }
     ]
   },
@@ -430,7 +430,7 @@ export const products: ProductEntry[] = [
       "Hoa len handmade bền đẹp, không tàn, phối màu theo yêu cầu. Phù hợp tặng sinh nhật, tốt nghiệp, Valentine, 8/3. Đặt bó nhỏ, bó lớn hoặc mẫu riêng tại Tiệm Len Nhà Tiny. Giá từ 80.000đ.",
     ogTitle: "Hoa Len Handmade - Tặng Sinh Nhật, Tốt Nghiệp, Valentine | Tiệm Len Nhà Tiny",
     ogDescription:
-      "Hoa len handmade bền, đẹp, không tàn. Tặng sinh nhật, tốt nghiệp, Valentine, 8/3. Phối màu theo yêu cầu. Giá từ 80.000đ. Nhắn Zalo 0368.903.519.",
+      "Hoa len handmade bền, đẹp, không tàn. Tặng sinh nhật, tốt nghiệp, Valentine, 8/3. Phối màu theo yêu cầu. Giá từ 80.000đ. Nhắn Zalo 093.751.1107.",
     category: "Quà tặng",
     eyebrow: "Quà tặng - Hoa len",
     h1: "Hoa len handmade - bó hoa tặng sinh nhật, tốt nghiệp từ Tiệm Len Nhà Tiny",
@@ -503,7 +503,7 @@ export const products: ProductEntry[] = [
         title: "Giá hoa len được báo theo mẫu",
         paragraphs: [
           "Giá hoa len tùy theo kích thước bó, số lượng hoa, loại hoa và độ chi tiết. Một bó hoa nhỏ vài bông đơn giản sẽ có giá khác một bó lớn nhiều hoa phối màu phức tạp.",
-          "Nhắn Zalo 0368.903.519 để Tiny tư vấn mẫu hoa phù hợp với ngân sách và dịp tặng của bạn. Tiny sẽ gợi ý bó hoa vừa đẹp vừa phù hợp nhất."
+          "Nhắn Zalo 093.751.1107 để Tiny tư vấn mẫu hoa phù hợp với ngân sách và dịp tặng của bạn. Tiny sẽ gợi ý bó hoa vừa đẹp vừa phù hợp nhất."
         ]
       },
       {
@@ -512,7 +512,7 @@ export const products: ProductEntry[] = [
         title: "Đang cần một bó hoa đặc biệt cho người đặc biệt?",
         text:
           "Nhắn Tiny qua Zalo, cho Tiny biết dịp tặng, màu bạn thích và người nhận là ai - Tiny sẽ gợi ý mẫu hoa len thật phù hợp!",
-        ctaLabel: "Nhắn Zalo 0368.903.519",
+        ctaLabel: "Nhắn Zalo 093.751.1107",
         ctaTrackKey: "contact_zalo_click"
       },
       {
@@ -567,7 +567,7 @@ export const products: ProductEntry[] = [
       {
         question: "Giá bó hoa len là bao nhiêu?",
         answer:
-          "Giá tùy kích thước bó, loại hoa và số lượng bông. Nhắn Zalo 0368.903.519 để Tiny báo giá theo nhu cầu và ngân sách của bạn."
+          "Giá tùy kích thước bó, loại hoa và số lượng bông. Nhắn Zalo 093.751.1107 để Tiny báo giá theo nhu cầu và ngân sách của bạn."
       }
     ]
   }

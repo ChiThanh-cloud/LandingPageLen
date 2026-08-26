@@ -81,10 +81,10 @@ export function OrderReceivedEmail({
         <td style={{ borderTop: "1px solid #e8edf2", color: "#64748b", fontSize: "13px", lineHeight: "20px", padding: "18px 28px 22px" }}>
           <strong style={{ color: "#334155" }}>Tiệm Len Nhà Tiny</strong><br />
           853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh<br />
-          <a href="tel:+84368903519" style={{ color: "#1d4ed8", textDecoration: "none" }}>036.890.3519</a>
+          <a href="tel:+84937511107" style={{ color: "#1d4ed8", textDecoration: "none" }}>093.751.1107</a>
           <span aria-hidden="true"> · </span>
           <a href="https://lentiny.xyz" style={{ color: "#1d4ed8", textDecoration: "none" }}>lentiny.xyz</a><br />
-          <a href="https://zalo.me/0368903519" style={{ color: "#1d4ed8", textDecoration: "none" }}>Zalo</a>
+          <a href="https://zalo.me/0937511107" style={{ color: "#1d4ed8", textDecoration: "none" }}>Zalo</a>
           <span aria-hidden="true"> · </span>
           <a href="https://m.me/61559447375156" style={{ color: "#1d4ed8", textDecoration: "none" }}>Messenger</a>
         </td>
