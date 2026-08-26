@@ -1,6 +1,12 @@
 import { after, NextResponse } from "next/server";
+import { sendOrderReceivedEmail } from "@/lib/email/order-email-service";
 import { sendTelegramNewOrderNotification } from "@/lib/notifications/telegram";
-import { createOrder, OrderServiceError, getOrderItemsSnapshot } from "@/lib/orders/order-service";
+import {
+  createOrder,
+  getOrderItemsSnapshot,
+  getOrderReceivedEmailSnapshot,
+  OrderServiceError
+} from "@/lib/orders/order-service";
 import { orderRequestSchema } from "@/lib/orders/order-schema";
 import { canonicalizeOrderPhone } from "@/lib/orders/order-cancellation";
 import {
@@ -16,7 +22,9 @@ type OrderPostHandlerDependencies = {
   checkCompositeRateLimit: (request: Request, normalizedPhone: string) => Promise<OrderRateLimitDecision>;
   createOrder: typeof createOrder;
   getOrderItemsSnapshot: typeof getOrderItemsSnapshot;
+  getOrderReceivedEmailSnapshot: typeof getOrderReceivedEmailSnapshot;
   sendNewOrderNotification: typeof sendTelegramNewOrderNotification;
+  sendOrderReceivedEmail: typeof sendOrderReceivedEmail;
   scheduleAfter: (callback: () => Promise<void>) => void;
 };
 
@@ -81,24 +89,38 @@ export function createOrderPostHandler(dependencies: OrderPostHandlerDependencie
       const result = await dependencies.createOrder(parsed.data);
 
       dependencies.scheduleAfter(async () => {
-        try {
-          const items = await dependencies.getOrderItemsSnapshot(result.orderCode);
-          await dependencies.sendNewOrderNotification({
-            orderCode: result.orderCode,
-            customerName: parsed.data.customer.name,
-            paymentMethod: parsed.data.paymentMethod,
-            itemLines: parsed.data.items.length,
-            totalQuantity: parsed.data.items.reduce(
-              (sum, item) => sum + item.quantity,
-              0
-            ),
-            items
-          });
-        } catch (error) {
-          console.error("Telegram new-order notification failed", {
-            name: error instanceof Error ? error.name : "UnknownError"
-          });
-        }
+        await Promise.allSettled([
+          (async () => {
+            try {
+              const items = await dependencies.getOrderItemsSnapshot(result.orderCode);
+              await dependencies.sendNewOrderNotification({
+                orderCode: result.orderCode,
+                customerName: parsed.data.customer.name,
+                paymentMethod: parsed.data.paymentMethod,
+                itemLines: parsed.data.items.length,
+                totalQuantity: parsed.data.items.reduce(
+                  (sum, item) => sum + item.quantity,
+                  0
+                ),
+                items
+              });
+            } catch (error) {
+              console.error("Telegram new-order notification failed", {
+                name: error instanceof Error ? error.name : "UnknownError"
+              });
+            }
+          })(),
+          (async () => {
+            try {
+              const snapshot = await dependencies.getOrderReceivedEmailSnapshot(result.orderCode);
+              if (snapshot) await dependencies.sendOrderReceivedEmail(snapshot);
+            } catch (error) {
+              console.error("Order-received email failed", {
+                name: error instanceof Error ? error.name : "UnknownError"
+              });
+            }
+          })()
+        ]);
       });
 
       return NextResponse.json(result, {
@@ -127,6 +149,8 @@ export const POST = createOrderPostHandler({
   checkCompositeRateLimit: checkOrderCreationCompositeRateLimit,
   createOrder,
   getOrderItemsSnapshot,
+  getOrderReceivedEmailSnapshot,
   sendNewOrderNotification: sendTelegramNewOrderNotification,
+  sendOrderReceivedEmail,
   scheduleAfter: after
 });
