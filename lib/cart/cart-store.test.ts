@@ -84,6 +84,22 @@ test("cart store", async (t) => {
     assert.deepEqual(parseCartStorage(raw), current);
   });
 
+  await t.test("round-trips a valid accessory snapshot without an image or color", () => {
+    const accessoryItem: CartItem = {
+      productId: "hook",
+      variantId: "hook-25",
+      quantity: 1,
+      slug: "kim-moc-can-mem",
+      productName: "Kim móc cán mềm",
+      variantName: "2.5mm",
+      colorCode: "",
+      imageUrl: "",
+      displayPrice: 25_000
+    };
+
+    assert.deepEqual(parseCartStorage(serializeCart([accessoryItem])), [accessoryItem]);
+  });
+
   await t.test("handles corrupt, old, and partially invalid storage safely", () => {
     assert.deepEqual(parseCartStorage("not-json"), []);
     assert.deepEqual(parseCartStorage(JSON.stringify([item("01", 1)])), []);
@@ -91,6 +107,10 @@ test("cart store", async (t) => {
     assert.deepEqual(
       parseCartStorage(JSON.stringify({ version: CART_STORAGE_VERSION, items: [item("01", 1), { quantity: -1 }] })),
       [item("01", 1)]
+    );
+    assert.deepEqual(
+      parseCartStorage(JSON.stringify({ version: CART_STORAGE_VERSION, items: [{ ...item("01", 1), imageUrl: null }] })),
+      []
     );
   });
 });

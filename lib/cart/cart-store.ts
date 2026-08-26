@@ -40,7 +40,7 @@ function isCartItem(value: unknown): value is CartItem {
     isNonEmptyString(item.productName) &&
     isNonEmptyString(item.variantName) &&
     typeof item.colorCode === "string" &&
-    isNonEmptyString(item.imageUrl) &&
+    typeof item.imageUrl === "string" &&
     typeof item.displayPrice === "number" &&
     Number.isFinite(item.displayPrice) &&
     item.displayPrice >= 0

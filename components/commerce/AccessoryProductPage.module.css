@@ -1,0 +1,349 @@
+.page {
+  min-height: 70vh;
+  padding: 92px 0 80px;
+  background: var(--primary-50);
+}
+
+.shell {
+  width: min(1180px, calc(100% - 48px));
+  margin-inline: auto;
+  padding-top: 28px;
+}
+
+.productLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, .95fr);
+  gap: clamp(32px, 5vw, 68px);
+  align-items: start;
+  padding: clamp(18px, 3vw, 32px);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}
+
+.gallery {
+  position: sticky;
+  top: 108px;
+}
+
+.imageFrame {
+  position: relative;
+  display: grid;
+  min-height: 280px;
+  aspect-ratio: 1;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius);
+  background: var(--primary-50);
+}
+
+.imageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.imageEmpty {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 24px;
+  color: var(--text-light);
+  font-size: .88rem;
+  text-align: center;
+}
+
+.info {
+  min-width: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+  color: var(--text-light);
+  font-size: .78rem;
+}
+
+.breadcrumb a {
+  color: var(--primary-700);
+}
+
+.category {
+  margin-bottom: 8px;
+  color: var(--primary-700);
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: var(--text-dark);
+  font-family: var(--font-playfair), serif;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.08;
+}
+
+.description {
+  margin: 14px 0 0;
+  color: var(--text-mid);
+  line-height: 1.65;
+}
+
+.metadata {
+  display: grid;
+  gap: 7px;
+  margin: 18px 0;
+  color: var(--text-mid);
+  font-size: .9rem;
+}
+
+.metadata div {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 8px;
+}
+
+.metadata dt {
+  color: var(--text-light);
+}
+
+.metadata dd {
+  margin: 0;
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.pricePanel {
+  margin: 0 0 18px;
+  padding: 18px 20px;
+  border: 1px solid var(--primary-200);
+  border-radius: 14px;
+  background: var(--primary-100);
+  color: var(--primary-700);
+  font-size: clamp(1.55rem, 3vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.variants {
+  min-width: 0;
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--primary-200);
+  border-radius: 14px;
+  background: var(--primary-50);
+}
+
+.variants legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+  font-size: .9rem;
+}
+
+.variants legend strong {
+  color: var(--primary-700);
+}
+
+.optionGrid {
+  clear: both;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.optionGrid button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--primary-300);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--text-dark);
+  font: inherit;
+  font-size: .84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.optionGrid button small {
+  color: var(--text-light);
+  font-size: .7rem;
+  font-weight: 600;
+}
+
+.optionGrid button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.optionActive {
+  border-color: var(--primary-700) !important;
+  background: var(--primary-100) !important;
+  color: var(--primary-700) !important;
+  box-shadow: 0 0 0 1px var(--primary-700);
+}
+
+.stockRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 14px 0 0;
+  color: var(--text-mid);
+  font-size: .8rem;
+}
+
+.stockRow strong {
+  color: var(--primary-700);
+  font-size: inherit;
+}
+
+.quantityRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 18px 0 16px;
+}
+
+.quantityLabel {
+  color: var(--text-dark);
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.quantity {
+  display: grid;
+  grid-template-columns: 38px 46px 38px;
+  overflow: hidden;
+  border: 1px solid var(--primary-300);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.quantity button {
+  height: 40px;
+  border: 0;
+  background: var(--primary-50);
+  color: var(--primary-700);
+  font: inherit;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.quantity button:disabled {
+  color: var(--text-light);
+  cursor: not-allowed;
+}
+
+.quantity output {
+  display: grid;
+  place-items: center;
+  color: var(--text-dark);
+  font-weight: 700;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1.5px solid var(--primary-700);
+  border-radius: 12px;
+  background: var(--primary-700);
+  color: #fff;
+  font: inherit;
+  font-size: .88rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.addButton:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.selectionPrompt,
+.actionMessage {
+  min-height: 22px;
+  margin: 14px 0 0;
+  color: var(--text-mid);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+
+.actionMessage {
+  color: var(--primary-700);
+}
+
+.noVariants {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid var(--primary-200);
+  border-radius: 14px;
+  background: var(--primary-100);
+}
+
+.noVariants p {
+  margin-top: 5px;
+  color: var(--text-mid);
+  font-size: .86rem;
+}
+
+@media (hover: hover) {
+  .optionGrid button:not(:disabled):hover {
+    border-color: var(--primary-500);
+  }
+
+  .addButton:not(:disabled):hover {
+    border-color: var(--text-dark);
+    background: var(--text-dark);
+  }
+}
+
+@media (max-width: 800px) {
+  .page {
+    padding-top: 80px;
+  }
+
+  .shell {
+    width: min(100% - 28px, 680px);
+    padding-top: 20px;
+  }
+
+  .productLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery {
+    position: static;
+  }
+}
+
+@media (max-width: 460px) {
+  .productLayout {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .stockRow {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
