@@ -81,15 +81,30 @@ export function Header() {
 
   useEffect(() => {
     const isHomePage = window.location.pathname === "/";
+    if (!isHomePage) {
+      setIsScrolled(true);
+      return;
+    }
+
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      setIsScrolled(true);
+      return;
+    }
 
     const updateScrolledState = () => {
-      const nextIsScrolled = !isHomePage || window.scrollY > 12;
-      setIsScrolled((current) => current === nextIsScrolled ? current : nextIsScrolled);
+      const heroBottom = hero.getBoundingClientRect().bottom;
+      setIsScrolled(heroBottom <= 0);
     };
 
     updateScrolledState();
     window.addEventListener("scroll", updateScrolledState, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrolledState);
+    window.addEventListener("resize", updateScrolledState);
+
+    return () => {
+      window.removeEventListener("scroll", updateScrolledState);
+      window.removeEventListener("resize", updateScrolledState);
+    };
   }, []);
 
   const closeMenu = () => setIsOpen(false);
