@@ -8,7 +8,10 @@ import styles from "./Cart.module.css";
 export function CartHeaderLink() {
   const pathname = usePathname();
   const { hydrated, totalQuantity } = useCart();
-  const isCartScope = pathname === "/gio-hang" || pathname === "/thanh-toan" || pathname.startsWith("/len-soi");
+  const isCartScope = pathname === "/gio-hang"
+    || pathname === "/thanh-toan"
+    || pathname.startsWith("/len-soi")
+    || pathname.startsWith("/phu-kien");
 
   if (!isCartScope) return null;
 

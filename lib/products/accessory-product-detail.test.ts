@@ -11,7 +11,8 @@ import {
   getAccessoryQuantity,
   getAccessoryStockLabel,
   getCommerceStockLimit,
-  getInitialAccessoryVariantId
+  getInitialAccessoryVariantId,
+  shouldShowAccessoryVariantSelector
 } from "./accessory-product-detail";
 import { getCommerceVariantPrice } from "./commerce-pricing";
 import {
@@ -143,6 +144,18 @@ test("variant selection and cart snapshots use real variant IDs without creating
   );
   assert.ok(itemWithoutImages);
   assert.equal(itemWithoutImages.imageUrl, "");
+});
+
+test("singleton accessory hides its selector while multiple options require a choice", () => {
+  const first = variant({ id: "hook-20", name: "2.0mm" });
+  const second = variant({ id: "hook-25", name: "2.5mm" });
+
+  assert.equal(shouldShowAccessoryVariantSelector([]), false);
+  assert.equal(shouldShowAccessoryVariantSelector([first]), false);
+  assert.equal(getInitialAccessoryVariantId([first]), first.id);
+  assert.equal(shouldShowAccessoryVariantSelector([first, second]), true);
+  assert.equal(getInitialAccessoryVariantId([first, second]), null);
+  assert.match(detailSource, /showVariantSelector \? \([\s\S]*?<fieldset className=\{styles\.variants\}/);
 });
 
 test("stock keeps null distinct from zero and caps managed quantities", () => {

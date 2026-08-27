@@ -31,7 +31,7 @@ export function getProductRevalidationPaths(
     ? getStorefrontProductPaths(previousProduct)
     : [];
 
-  return ["/admin/san-pham", ...new Set([
+  return ["/admin/san-pham", "/gio-hang", "/thanh-toan", ...new Set([
     ...getStorefrontProductPaths(product),
     ...previousPaths
   ])];

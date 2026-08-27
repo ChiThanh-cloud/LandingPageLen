@@ -17,7 +17,8 @@ import {
   getAccessoryQuantity,
   getAccessoryStockLabel,
   getCommerceStockLimit,
-  getInitialAccessoryVariantId
+  getInitialAccessoryVariantId,
+  shouldShowAccessoryVariantSelector
 } from "@/lib/products/accessory-product-detail";
 import type { CommerceProduct, CommerceVariant } from "@/types/commerce-product";
 import styles from "./AccessoryProductPage.module.css";
@@ -61,6 +62,7 @@ export function AccessoryProductPage({ product }: { product: CommerceProduct }) 
   const displayedImage = selectedVariant?.image || product.image;
   const productStatus = getCommerceStatusLabel(product.status);
   const variantStatus = selectedVariant ? getCommerceStatusLabel(selectedVariant.status) : null;
+  const showVariantSelector = shouldShowAccessoryVariantSelector(product.variants);
 
   const selectVariant = (variant: CommerceVariant) => {
     setSelectedVariantId(variant.id);
@@ -139,30 +141,32 @@ export function AccessoryProductPage({ product }: { product: CommerceProduct }) 
               </section>
             ) : (
               <>
-                <fieldset className={styles.variants}>
-                  <legend>{product.optionLabel}{selectedVariant ? <><span aria-hidden="true">: </span><strong>{selectedVariant.name}</strong></> : null}</legend>
-                  <div className={styles.optionGrid}>
-                    {product.variants.map((variant) => {
-                      const optionStockLimit = getCommerceStockLimit(variant.stock);
-                      const isOutOfStock = optionStockLimit === 0 || !isCommerceVariantOrderable(variant.status);
-                      const visibleOptionStatus = getAccessoryOptionStatusLabel(variant.stock, variant.status);
-                      return (
-                        <button
-                          key={variant.id}
-                          type="button"
-                          className={variant.id === selectedVariantId ? styles.optionActive : undefined}
-                          onClick={() => selectVariant(variant)}
-                          disabled={isOutOfStock}
-                          aria-pressed={variant.id === selectedVariantId}
-                          aria-label={`${product.optionLabel}: ${variant.name}${visibleOptionStatus ? `, ${visibleOptionStatus.toLocaleLowerCase("vi-VN")}` : ""}`}
-                        >
-                          <span>{variant.name}</span>
-                          {visibleOptionStatus ? <small>{visibleOptionStatus}</small> : null}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </fieldset>
+                {showVariantSelector ? (
+                  <fieldset className={styles.variants}>
+                    <legend>{product.optionLabel}{selectedVariant ? <><span aria-hidden="true">: </span><strong>{selectedVariant.name}</strong></> : null}</legend>
+                    <div className={styles.optionGrid}>
+                      {product.variants.map((variant) => {
+                        const optionStockLimit = getCommerceStockLimit(variant.stock);
+                        const isOutOfStock = optionStockLimit === 0 || !isCommerceVariantOrderable(variant.status);
+                        const visibleOptionStatus = getAccessoryOptionStatusLabel(variant.stock, variant.status);
+                        return (
+                          <button
+                            key={variant.id}
+                            type="button"
+                            className={variant.id === selectedVariantId ? styles.optionActive : undefined}
+                            onClick={() => selectVariant(variant)}
+                            disabled={isOutOfStock}
+                            aria-pressed={variant.id === selectedVariantId}
+                            aria-label={`${product.optionLabel}: ${variant.name}${visibleOptionStatus ? `, ${visibleOptionStatus.toLocaleLowerCase("vi-VN")}` : ""}`}
+                          >
+                            <span>{variant.name}</span>
+                            {visibleOptionStatus ? <small>{visibleOptionStatus}</small> : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </fieldset>
+                ) : null}
 
                 {selectedVariant ? (
                   <>

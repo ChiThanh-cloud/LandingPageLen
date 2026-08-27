@@ -71,8 +71,19 @@ test("cart store", async (t) => {
     const current = [item("01", 3)];
 
     assert.equal(updateCartItemQuantity(current, "milk-bo", "01", 20, null).items[0].quantity, 20);
-    assert.equal(updateCartItemQuantity(current, "milk-bo", "01", 20, 0).code, "out-of-stock");
+    const blocked = updateCartItemQuantity(current, "milk-bo", "01", 20, 0);
+    assert.equal(blocked.code, "out-of-stock");
+    assert.equal(blocked.items[0].quantity, 3);
     assert.equal(updateCartItemQuantity(current, "milk-bo", "01", 20, 5).items[0].quantity, 5);
+  });
+
+  await t.test("allows quantity to decrease when current stock is zero", () => {
+    const result = updateCartItemQuantity([item("01", 4)], "milk-bo", "01", 3, 0);
+
+    assert.equal(result.code, "updated");
+    assert.equal(result.acceptedQuantity, -1);
+    assert.equal(result.quantity, 3);
+    assert.equal(result.items[0].quantity, 3);
   });
 
   await t.test("removes only the matching product and variant pair", () => {
