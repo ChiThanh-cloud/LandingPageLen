@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { usePathname } from "next/navigation";
 import { CartHeaderLink } from "@/components/cart/CartHeaderLink";
@@ -38,9 +38,12 @@ const navItems: NavItem[] = [
 
 export function Header() {
   const pathname = usePathname();
+  const isHomePage = pathname === "/";
   const [isOpen, setIsOpen] = useState(false);
   const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(true);
+  // Homepage: start transparent so hero is not covered on first paint.
+  // Other pages: start scrolled immediately — no hero to observe.
+  const [isScrolled, setIsScrolled] = useState(!isHomePage);
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLUListElement>(null);
   const productMenuPanelRef = useRef<HTMLUListElement>(null);
@@ -106,18 +109,38 @@ export function Header() {
     };
   }, [isOpen, isProductMenuOpen]);
 
-  useEffect(() => {
-    const isHomePage = window.location.pathname === "/";
+  /* eslint-disable react-hooks/set-state-in-effect -- The persistent root-layout header must sync route and DOM state before observing the hero. */
+  useLayoutEffect(() => {
+    if (!isHomePage) {
+      setIsScrolled(true);
+      return;
+    }
 
-    const updateScrolledState = () => {
-      const nextIsScrolled = !isHomePage || window.scrollY > 12;
-      setIsScrolled((current) => current === nextIsScrolled ? current : nextIsScrolled);
-    };
+    const hero = document.getElementById("hero");
 
-    updateScrolledState();
-    window.addEventListener("scroll", updateScrolledState, { passive: true });
-    return () => window.removeEventListener("scroll", updateScrolledState);
-  }, []);
+    if (!hero || !("IntersectionObserver" in window)) {
+      setIsScrolled(true);
+      return;
+    }
+
+    setIsScrolled(hero.getBoundingClientRect().bottom <= 0);
+
+    // Use IntersectionObserver: navbar transparent while hero intersects viewport,
+    // scrolled only after hero has fully scrolled past.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsScrolled(entry.boundingClientRect.bottom <= 0);
+      },
+      {
+        // threshold: 0 fires as soon as even 1px of hero enters/leaves viewport.
+        threshold: 0,
+      }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [isHomePage]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const isYarnRoute = pathname === "/len-soi" || pathname.startsWith("/len-soi/");
   const isAccessoryRoute = pathname === "/phu-kien" || pathname.startsWith("/phu-kien/");
