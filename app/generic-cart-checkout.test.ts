@@ -6,6 +6,7 @@ const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf
 const cartRoute = read("./gio-hang/page.tsx");
 const checkoutRoute = read("./thanh-toan/page.tsx");
 const cartPage = read("../components/cart/CartPage.tsx");
+const cartHeaderLink = read("../components/cart/CartHeaderLink.tsx");
 const checkoutPage = read("../components/checkout/CheckoutPage.tsx");
 const resolver = read("../lib/cart/cart-commerce.ts");
 const checkoutSchema = read("../lib/checkout/checkout-schema.ts");
@@ -54,4 +55,14 @@ test("empty commerce images use local accessible placeholders", () => {
 test("checkout payload remains identity-only", () => {
   assert.match(checkoutSchema, /items\.map\(\(\{ productId, variantId, quantity \}\) => \(\{ productId, variantId, quantity \}\)\)/);
   assert.doesNotMatch(checkoutSchema, /items\.map[\s\S]{0,180}(?:displayPrice|subtotal|shippingFee|paymentStatus|orderStatus)/);
+});
+
+test("cart header scope includes accessory category and detail routes", () => {
+  assert.match(cartHeaderLink, /pathname\.startsWith\("\/phu-kien"\)/);
+});
+
+test("unavailable cart items can decrease but cannot increase", () => {
+  assert.match(cartPage, /disabled=\{item\.quantity <= 1\}/);
+  assert.doesNotMatch(cartPage, /disabled=\{!isAvailable \|\| item\.quantity <= 1\}/);
+  assert.match(cartPage, /disabled=\{!isAvailable \|\| atStockLimit\}/);
 });

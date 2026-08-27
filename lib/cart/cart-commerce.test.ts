@@ -3,6 +3,7 @@ import test from "node:test";
 import type { CartItem } from "../../types/yarn-product";
 import type { CommerceProduct, CommerceVariant } from "../../types/commerce-product";
 import {
+  getCommerceCartOptionDescription,
   getCommerceCartStockLabel,
   getCommerceCartSubtotal,
   getCommerceItemAccessibleLabel,
@@ -226,5 +227,26 @@ test("generic cart commerce resolution", async (t) => {
 
     assert.equal(getCommerceCartSubtotal(resolved), 43_000);
     assert.equal(getCommerceItemAccessibleLabel(resolved[1]), "Milk Bò, Màu Xám");
+  });
+
+  await t.test("hides only singleton accessory options from cart copy", () => {
+    const singletonAccessory = product({ category: "accessory" });
+    const multiOptionAccessory = product({
+      category: "accessory",
+      variants: [variant(), variant({ id: "02", name: "Xám" })]
+    });
+    const [yarnEntry] = resolveCommerceCartItems([cartItem()], [product()]);
+    const [singletonEntry] = resolveCommerceCartItems([cartItem()], [singletonAccessory]);
+    const [multiOptionEntry] = resolveCommerceCartItems([cartItem()], [multiOptionAccessory]);
+    const [staleVariantEntry] = resolveCommerceCartItems([
+      cartItem({ variantId: "old-option", variantName: "Lựa chọn cũ" })
+    ], [singletonAccessory]);
+
+    assert.equal(getCommerceCartOptionDescription(yarnEntry), "Màu Trắng sữa");
+    assert.equal(getCommerceCartOptionDescription(singletonEntry), null);
+    assert.equal(getCommerceItemAccessibleLabel(singletonEntry), "Milk Bò");
+    assert.equal(getCommerceCartOptionDescription(multiOptionEntry), "Màu Trắng sữa");
+    assert.equal(staleVariantEntry.variant, undefined);
+    assert.equal(getCommerceCartOptionDescription(staleVariantEntry), "Màu Lựa chọn cũ");
   });
 });

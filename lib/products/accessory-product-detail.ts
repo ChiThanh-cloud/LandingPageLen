@@ -26,6 +26,10 @@ export function getInitialAccessoryVariantId(variants: CommerceVariant[]) {
   return variants.length === 1 ? variants[0].id : null;
 }
 
+export function shouldShowAccessoryVariantSelector(variants: CommerceVariant[]) {
+  return variants.length >= 2;
+}
+
 /** A null stock means the quantity is not managed by the public catalog. */
 export function getCommerceStockLimit(stock: number | null) {
   if (stock === null) return null;

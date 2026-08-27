@@ -65,10 +65,22 @@ export function getCommerceUnitPriceLabel(displayPrice: number, unitLabel: strin
   return unitLabel ? `${price} / ${unitLabel}` : price;
 }
 
-export function getCommerceItemAccessibleLabel(
-  item: Pick<ResolvedCommerceCartItem, "productName" | "optionLabel" | "variantName">
+export function getCommerceCartOptionDescription(
+  item: Pick<ResolvedCommerceCartItem, "product" | "variant" | "optionLabel" | "variantName">
 ) {
-  return `${item.productName}, ${item.optionLabel} ${item.variantName}`;
+  if (
+    item.product?.category === "accessory"
+    && item.variant
+    && item.product.variants.length === 1
+  ) return null;
+  return `${item.optionLabel} ${item.variantName}`;
+}
+
+export function getCommerceItemAccessibleLabel(
+  item: Pick<ResolvedCommerceCartItem, "product" | "variant" | "productName" | "optionLabel" | "variantName">
+) {
+  const optionDescription = getCommerceCartOptionDescription(item);
+  return optionDescription ? `${item.productName}, ${optionDescription}` : item.productName;
 }
 
 export function getCommerceCartStockLabel(

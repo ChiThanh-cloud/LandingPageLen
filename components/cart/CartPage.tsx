@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
+  getCommerceCartOptionDescription,
   getCommerceCartStockLabel,
   getCommerceCartSubtotal,
   getCommerceItemAccessibleLabel,
@@ -106,25 +107,26 @@ export function CartPage({ products }: { products: CommerceProduct[] }) {
           <section className={styles.itemList} aria-label="Sản phẩm trong giỏ hàng">
             {resolvedItems.map((entry) => {
               const { item, productName, variantName, optionLabel, unitLabel, stock, isAvailable, displayPrice } = entry;
-              const optionDescription = `${optionLabel} ${variantName}`;
+              const optionDescription = getCommerceCartOptionDescription(entry);
+              const itemDescription = optionDescription ? `${productName} – ${optionDescription}` : productName;
               const atStockLimit = stock !== null && item.quantity >= stock;
-              const updateMessage = `Đã cập nhật ${productName} – ${optionDescription}.`;
+              const updateMessage = `Đã cập nhật ${itemDescription}.`;
               return (
                 <article className={styles.cartItem} key={`${item.productId}-${item.variantId}`}>
                   <CartItemMedia entry={entry} />
 
                   <div className={styles.itemDetails}>
                     <CartItemName entry={entry} />
-                    <p>{optionLabel}: <strong>{variantName}</strong></p>
+                    {optionDescription ? <p>{optionLabel}: <strong>{variantName}</strong></p> : null}
                     <p className={styles.stockText}>{getCommerceCartStockLabel(entry)}</p>
                     <strong className={styles.mobilePrice}>{getCommerceUnitPriceLabel(displayPrice, unitLabel)}</strong>
 
                     <div className={styles.itemActions}>
-                      <div className={styles.quantityControl} aria-label={`Số lượng ${productName}, ${optionDescription}`}>
+                      <div className={styles.quantityControl} aria-label={`Số lượng ${itemDescription}`}>
                         <button
                           type="button"
-                          aria-label={`Giảm số lượng ${productName}, ${optionDescription}`}
-                          disabled={!isAvailable || item.quantity <= 1}
+                          aria-label={`Giảm số lượng ${itemDescription}`}
+                          disabled={item.quantity <= 1}
                           onClick={() => {
                             const result = updateQuantity(item.productId, item.variantId, item.quantity - 1, stock);
                             if (result.code === "updated") setMessage(updateMessage);
@@ -133,14 +135,14 @@ export function CartPage({ products }: { products: CommerceProduct[] }) {
                         <output aria-live="polite">{item.quantity}</output>
                         <button
                           type="button"
-                          aria-label={`Tăng số lượng ${productName}, ${optionDescription}`}
+                          aria-label={`Tăng số lượng ${itemDescription}`}
                           disabled={!isAvailable || atStockLimit}
                           onClick={() => {
                             const result = updateQuantity(item.productId, item.variantId, item.quantity + 1, stock);
                             if (result.code === "stock-capped" || result.code === "stock-limit") {
                               setMessage(stock !== null && unitLabel
                                 ? `Hiện chỉ còn ${stock.toLocaleString("vi-VN")} ${unitLabel}.`
-                                : `${productName} – ${optionDescription} đã đạt số lượng hiện có.`);
+                                : `${itemDescription} đã đạt số lượng hiện có.`);
                             } else if (result.code === "updated") {
                               setMessage(updateMessage);
                             }
@@ -150,10 +152,10 @@ export function CartPage({ products }: { products: CommerceProduct[] }) {
                       <button
                         type="button"
                         className={styles.removeButton}
-                        aria-label={`Xóa ${productName}, ${optionDescription} khỏi giỏ hàng`}
+                        aria-label={`Xóa ${itemDescription} khỏi giỏ hàng`}
                         onClick={() => {
                           removeItem(item.productId, item.variantId);
-                          setMessage(`Đã xóa ${productName} – ${optionDescription} khỏi giỏ hàng.`);
+                          setMessage(`Đã xóa ${itemDescription} khỏi giỏ hàng.`);
                         }}
                       >
                         Xóa

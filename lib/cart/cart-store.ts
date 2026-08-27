@@ -149,6 +149,18 @@ export function updateCartItemQuantity(
     return { items, code: "invalid-quantity", acceptedQuantity: 0, quantity: existing.quantity };
   }
 
+  if (quantity < existing.quantity) {
+    const nextItems = items.map((item) =>
+      cartItemKey(item.productId, item.variantId) === key ? { ...item, quantity } : item
+    );
+    return {
+      items: nextItems,
+      code: "updated",
+      acceptedQuantity: quantity - existing.quantity,
+      quantity
+    };
+  }
+
   const stock = normalizedStock(availableStock);
   if (stock === 0) {
     return { items, code: "out-of-stock", acceptedQuantity: 0, quantity: existing.quantity };
