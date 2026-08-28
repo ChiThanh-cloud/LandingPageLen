@@ -200,7 +200,8 @@
 }
 
 .nav-links a:focus-visible,
-.nav-product-menu__toggle:focus-visible {
+.nav-product-menu__toggle:focus-visible,
+.hamburger:focus-visible {
   outline: 2px solid var(--blue-deep);
   outline-offset: 4px;
 }
@@ -537,9 +538,13 @@
 }
 
 .top-float {
+  order: -1;
+  appearance: none;
   background: rgba(237, 245, 251, 0.88);
   border: 1.5px solid rgba(184, 210, 234, 0.55);
   color: var(--primary-700);
+  cursor: pointer;
+  font-family: inherit;
   backdrop-filter: blur(8px);
 }
 
@@ -573,32 +578,110 @@
 }
 
 @media (max-width: 768px) {
-  .float-buttons {
-    right: 16px;
-    bottom: calc(78px + env(safe-area-inset-bottom));
-    gap: 0;
+  .float-buttons.floating-actions {
+    right: 14px;
+    bottom: calc(env(safe-area-inset-bottom) + 80px);
+    width: 44px;
+    gap: 9px;
+    z-index: 999;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      visibility 180ms ease;
   }
 
-  .zalo-float,
-  .fb-float {
-    display: none;
-  }
-
-  .top-float {
+  .float-buttons.floating-actions .float-btn {
+    display: flex;
     width: 44px;
     height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
     padding: 0;
+    border: 1px solid rgba(70, 140, 190, .14);
     border-radius: 50%;
-    background: rgba(237, 245, 251, 0.94);
+    background: rgba(255, 255, 255, .82);
     color: var(--primary-700);
-    border: 1.5px solid rgba(184, 210, 234, 0.55);
-    box-shadow: 0 8px 20px rgba(59, 111, 160, .15);
+    box-shadow: 0 4px 16px rgba(31, 72, 106, .08);
+    opacity: .88;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease;
   }
 
-  .top-float svg {
-    width: 24px;
-    height: 24px;
+  .float-buttons.floating-actions .zalo-float,
+  .float-buttons.floating-actions .fb-float {
+    display: flex;
+  }
+
+  .float-buttons.floating-actions .zalo-float {
+    order: 1;
+  }
+
+  .float-buttons.floating-actions .fb-float {
+    order: 2;
+  }
+
+  .float-buttons.floating-actions .zalo-float svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .float-buttons.floating-actions .fb-float svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .float-buttons.floating-actions .top-float {
+    order: 3;
+    background: rgba(255, 255, 255, .55);
+    color: var(--primary-700);
+    border-color: rgba(70, 140, 190, .18);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .05);
+    opacity: .62;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .float-buttons.floating-actions .top-float svg {
+    width: 20px;
+    height: 20px;
     stroke-width: 1.8;
+  }
+
+  .float-buttons.floating-actions .top-float.is-hidden {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(8px) scale(.94);
+  }
+
+  .float-buttons.floating-actions .float-btn:focus-visible {
+    outline: 2px solid rgba(59, 111, 160, .55);
+    outline-offset: 3px;
+    opacity: .96;
+    box-shadow: 0 5px 18px rgba(31, 72, 106, .12);
+  }
+
+  .float-buttons.floating-actions .float-btn:active {
+    opacity: .96;
+    transform: scale(.96);
+  }
+
+  body.menu-open .float-buttons.floating-actions,
+  body.product-modal-open .float-buttons.floating-actions {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(10px);
   }
 
   /* Dual-button sticky CTA bar – container */
@@ -690,5 +773,14 @@
   .mobile-cta-secondary:hover {
     background: var(--primary-100);
     border-color: var(--primary-600);
+  }
+}
+
+@media (max-width: 768px) and (hover: hover) and (pointer: fine) {
+  .float-buttons.floating-actions .float-btn:hover {
+    opacity: .96;
+    border-color: rgba(70, 140, 190, .24);
+    box-shadow: 0 5px 18px rgba(31, 72, 106, .12);
+    transform: scale(1.02);
   }
 }

@@ -1,0 +1,381 @@
+.backdrop,
+.sheet {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    border: 0;
+    background: rgba(30, 47, 69, .38);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity var(--motion-fast) ease,
+      visibility 0s linear var(--motion-fast);
+  }
+
+  .backdropOpen {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+
+  .sheet {
+    position: fixed;
+    top: calc(82px + env(safe-area-inset-top));
+    right: 12px;
+    z-index: 2;
+    display: block;
+    width: min(460px, calc(100vw - 24px));
+    max-height: calc(100dvh - 96px - env(safe-area-inset-top));
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 18px;
+    border: 1px solid rgba(184, 210, 234, .62);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, .985);
+    box-shadow: 0 22px 58px rgba(35, 70, 105, .18);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px) scale(.99);
+    transform-origin: top right;
+    transition:
+      opacity var(--motion-fast) ease,
+      visibility 0s linear var(--motion-base),
+      transform var(--motion-base) var(--motion-ease-out);
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-300) transparent;
+  }
+
+  .sheetOpen {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition-delay: 0s;
+  }
+
+  .sheetHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 2px 2px 14px;
+  }
+
+  .sheetEyebrow {
+    margin: 0 0 3px;
+    color: var(--primary-700);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .sheetHeader h2 {
+    margin: 0;
+    color: var(--text-dark);
+    font-family: var(--font-be-vietnam), "Be Vietnam Pro", sans-serif;
+    font-size: 1.08rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .closeButton {
+    flex: 0 0 auto;
+    min-width: 54px;
+    min-height: 44px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--primary-100);
+    color: var(--primary-700);
+    font: inherit;
+    font-size: .75rem;
+    font-weight: 700;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+      background-color var(--motion-fast) ease,
+      transform var(--motion-fast) ease;
+  }
+
+  .mobileNavigation {
+    display: grid;
+    gap: 9px;
+  }
+
+  .productGroup {
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--primary-50);
+    box-shadow: inset 0 0 0 1px rgba(184, 210, 234, .44);
+  }
+
+  .activeGroup {
+    background: rgba(237, 245, 251, .94);
+    box-shadow: inset 3px 0 0 var(--primary-600);
+  }
+
+  .productButton,
+  .primaryLinks a {
+    display: flex;
+    width: 100%;
+    min-height: 56px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--text-dark);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+      background-color var(--motion-fast) ease,
+      color var(--motion-fast) ease,
+      transform var(--motion-fast) ease;
+  }
+
+  .productButton {
+    border-radius: 18px;
+  }
+
+  .rowCopy {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+  }
+
+  .rowCopy strong {
+    color: inherit;
+    font-size: .94rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .rowCopy small {
+    overflow: hidden;
+    color: var(--text-mid);
+    font-size: .74rem;
+    font-weight: 400;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chevron {
+    flex: 0 0 auto;
+    width: 9px;
+    height: 9px;
+    margin-right: 4px;
+    border-right: 1.5px solid currentColor;
+    border-bottom: 1.5px solid currentColor;
+    color: var(--primary-700);
+    transform: rotate(45deg) translate(-2px, -2px);
+    transition: transform var(--motion-base) var(--motion-ease-out);
+  }
+
+  .chevronOpen {
+    transform: rotate(225deg) translate(-1px, -1px);
+  }
+
+  .submenuReveal {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-rows var(--motion-base) var(--motion-ease-out),
+      opacity var(--motion-fast) ease;
+  }
+
+  .submenuRevealOpen {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .submenu {
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 10px;
+  }
+
+  .submenuRevealOpen .submenu {
+    padding-bottom: 9px;
+  }
+
+  .submenu li + li {
+    border-top: 1px solid rgba(184, 210, 234, .42);
+  }
+
+  .submenu a {
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 8px 11px;
+    border-radius: 11px;
+    color: var(--text-mid);
+    font-size: .84rem;
+    font-weight: 600;
+    line-height: 1.35;
+    touch-action: manipulation;
+    transition:
+      background-color var(--motion-fast) ease,
+      color var(--motion-fast) ease;
+  }
+
+  .primaryLinks {
+    display: grid;
+    gap: 2px;
+    padding: 2px 0;
+  }
+
+  .primaryLinks a {
+    position: relative;
+  }
+
+  .primaryLinks .activeLink,
+  .submenu .activeLink {
+    background: var(--primary-100);
+    color: var(--primary-700);
+    box-shadow: inset 3px 0 0 var(--primary-600);
+  }
+
+  .primaryLinks .activeLink .rowCopy small {
+    color: var(--text-mid);
+  }
+
+  .contactCta {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 2px;
+    padding: 10px 16px;
+    border: 1px solid var(--primary-700);
+    border-radius: 14px;
+    background: var(--primary-700);
+    color: var(--white);
+    font-size: .9rem;
+    font-weight: 700;
+    touch-action: manipulation;
+    box-shadow: 0 8px 20px rgba(59, 111, 160, .20);
+    transition:
+      background-color var(--motion-fast) ease,
+      transform var(--motion-fast) ease,
+      box-shadow var(--motion-fast) ease;
+  }
+
+  .contactCta small {
+    color: rgba(255, 255, 255, .84);
+    font-size: .7rem;
+    font-weight: 500;
+  }
+
+  .closeButton:focus-visible,
+  .productButton:focus-visible,
+  .primaryLinks a:focus-visible,
+  .submenu a:focus-visible,
+  .contactCta:focus-visible {
+    outline: 3px solid var(--primary-300);
+    outline-offset: 2px;
+  }
+
+  .closeButton:active,
+  .productButton:active,
+  .primaryLinks a:active,
+  .submenu a:active,
+  .contactCta:active {
+    transform: scale(.985);
+  }
+}
+
+@media (max-width: 430px) {
+  .sheet {
+    padding: 15px;
+  }
+
+  .sheetHeader {
+    padding-bottom: 11px;
+  }
+
+  .mobileNavigation {
+    gap: 7px;
+  }
+
+  .productButton,
+  .primaryLinks a {
+    min-height: 54px;
+    padding-inline: 13px;
+  }
+}
+
+@media (max-width: 390px) {
+  .sheet {
+    right: 10px;
+    width: calc(100vw - 20px);
+  }
+}
+
+@media (max-height: 700px) and (max-width: 768px) {
+  .sheet {
+    top: calc(78px + env(safe-area-inset-top));
+    max-height: calc(100dvh - 88px - env(safe-area-inset-top));
+    padding: 12px 14px;
+  }
+
+  .sheetEyebrow,
+  .rowCopy small {
+    display: none;
+  }
+
+  .sheetHeader {
+    padding-bottom: 8px;
+  }
+
+  .productButton,
+  .primaryLinks a {
+    min-height: 48px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (max-width: 768px) {
+  .closeButton:hover,
+  .productButton:hover,
+  .primaryLinks a:hover,
+  .submenu a:hover {
+    background: var(--primary-100);
+    color: var(--primary-700);
+  }
+
+  .contactCta:hover {
+    background: var(--primary-600);
+    box-shadow: 0 10px 24px rgba(59, 111, 160, .24);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .sheet,
+  .closeButton,
+  .productButton,
+  .primaryLinks a,
+  .submenu a,
+  .contactCta,
+  .chevron,
+  .submenuReveal {
+    transition-duration: .01ms;
+  }
+}
