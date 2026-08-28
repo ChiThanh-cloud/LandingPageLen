@@ -27,12 +27,18 @@ export function getProductRevalidationPaths(
   product: ProductRevalidationTarget,
   previousProduct?: ProductRevalidationTarget | null
 ) {
+  const currentPaths = getStorefrontProductPaths(product);
   const previousPaths = previousProduct && previousProduct.category !== product.category
     ? getStorefrontProductPaths(previousProduct)
     : [];
+  const publicPaths = [...new Set([...currentPaths, ...previousPaths])];
 
-  return ["/admin/san-pham", "/gio-hang", "/thanh-toan", ...new Set([
-    ...getStorefrontProductPaths(product),
-    ...previousPaths
-  ])];
+  return [
+    "/admin/san-pham",
+    "/gio-hang",
+    "/thanh-toan",
+    ...(publicPaths.length > 0 ? ["/"] : []),
+    ...publicPaths,
+    ...(publicPaths.length > 0 ? ["/sitemap.xml"] : [])
+  ];
 }

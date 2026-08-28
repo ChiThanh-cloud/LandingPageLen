@@ -8,6 +8,16 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/san-pham/thu-len-theo-yeu-cau",
+        destination: "/do-moc-theo-yeu-cau",
+        permanent: true
+      },
+      {
+        source: "/san-pham/thu-len-theo-yeu-cau.html",
+        destination: "/do-moc-theo-yeu-cau",
+        permanent: true
+      },
+      {
         source: "/san-pham/len-soi",
         destination: "/blog/nguoi-moi-hoc-moc-len-nen-chon-loai-len-nao",
         statusCode: 301

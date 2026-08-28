@@ -15,7 +15,7 @@ function productUrl(slug: string) {
 }
 
 export function generateStaticParams() {
-  return products.map((product) => ({
+  return products.filter((product) => product.slug !== "thu-len-theo-yeu-cau").map((product) => ({
     slug: product.slug
   }));
 }

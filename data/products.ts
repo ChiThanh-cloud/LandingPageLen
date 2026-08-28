@@ -1,4 +1,5 @@
 import type { ProductEntry } from "@/types/product";
+import { customDepositPercentage, customLeadTimeStatement } from "@/data/business-truth";
 
 export const products: ProductEntry[] = [
   {
@@ -366,7 +367,7 @@ export const products: ProductEntry[] = [
         kicker: "Bắt đầu đặt hàng",
         title: "Có ảnh mẫu rồi? Nhắn Tiny ngay!",
         text:
-          "Gửi ảnh, kích thước mong muốn và ngày cần nhận qua Zalo. Tiny sẽ phản hồi sớm nhất có thể và tư vấn miễn phí trước khi đặt cọc.",
+          `Gửi ảnh, kích thước mong muốn và ngày cần nhận qua Zalo. Tiny sẽ phản hồi sớm nhất có thể và tư vấn miễn phí trước khi bạn đặt cọc ${customDepositPercentage}% giá trị đơn.`,
         ctaLabel: "Gửi ảnh qua Zalo 093.751.1107",
         ctaTrackKey: "contact_zalo_click"
       },
@@ -406,8 +407,7 @@ export const products: ProductEntry[] = [
       },
       {
         question: "Thú len theo yêu cầu mất bao lâu để hoàn thiện?",
-        answer:
-          "Tùy kích thước và độ chi tiết. Mẫu nhỏ ít chi tiết thường nhanh hơn mẫu lớn hoặc nhiều phụ kiện. Nên báo Tiny trước ít nhất 1-2 tuần so với ngày cần tặng."
+        answer: customLeadTimeStatement
       },
       {
         question: "Thú len có thể làm theo nhân vật anime hoặc mascot không?",
@@ -536,7 +536,7 @@ export const products: ProductEntry[] = [
             text: "Tìm hiểu giá trị đặc biệt của những món quà làm bằng tay."
           },
           {
-            href: "/san-pham/thu-len-theo-yeu-cau",
+            href: "/do-moc-theo-yeu-cau",
             title: "Đặt móc thú len theo yêu cầu",
             text: "Kết hợp hoa len và thú bông len làm set quà hoàn chỉnh."
           }
@@ -561,8 +561,7 @@ export const products: ProductEntry[] = [
       },
       {
         question: "Nên đặt hoa len trước bao lâu?",
-        answer:
-          "Nên đặt trước ít nhất 5-7 ngày so với ngày cần nhận. Dịp đông như Valentine, 8/3, 20/10 nên đặt sớm hơn để Tiny sắp xếp thời gian làm kỹ."
+        answer: customLeadTimeStatement
       },
       {
         question: "Giá bó hoa len là bao nhiêu?",

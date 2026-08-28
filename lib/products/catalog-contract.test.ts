@@ -65,6 +65,7 @@ test("gallery exclusion is one-based and scraper revalidates through a protected
   assert.match(scraper, /await triggerCatalogRevalidation\(slug\)[\s\S]*Import complete/);
   assert.match(revalidationRoute, /CATALOG_REVALIDATE_SECRET/);
   assert.match(revalidationRoute, /timingSafeEqual/);
-  assert.match(revalidationRoute, /revalidatePath\("\/len-soi"\)/);
-  assert.match(revalidationRoute, /revalidatePath\(`\/len-soi\/\$\{parsed\.data\.slug\}`\)/);
+  assert.match(revalidationRoute, /category: z\.enum\(\["yarn", "accessory"\]\)\.default\("yarn"\)/);
+  assert.match(revalidationRoute, /getProductRevalidationPaths\(parsed\.data\)/);
+  assert.match(revalidationRoute, /for \(const path of getProductRevalidationPaths\(parsed\.data\)\)/);
 });

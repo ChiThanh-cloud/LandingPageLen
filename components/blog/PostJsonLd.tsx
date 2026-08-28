@@ -6,7 +6,7 @@ function absoluteUrl(path: string) {
   return `${siteConfig.url}${path}`;
 }
 
-export function PostJsonLd({ post }: { post: BlogPostMeta }) {
+export function getPostStructuredData(post: BlogPostMeta) {
   const url = `${siteConfig.url}/blog/${post.slug}`;
   const imageUrl = absoluteUrl(post.ogImage || post.image);
 
@@ -52,8 +52,9 @@ export function PostJsonLd({ post }: { post: BlogPostMeta }) {
       dateModified: post.updatedAt,
       author: {
         "@type": "Person",
+        "@id": `${siteConfig.url}/about#person`,
         name: "Tiny",
-        url: siteConfig.url,
+        url: `${siteConfig.url}/about`,
         worksFor: {
           "@type": "Organization",
           name: siteConfig.name,
@@ -88,16 +89,20 @@ export function PostJsonLd({ post }: { post: BlogPostMeta }) {
           "@type": "ListItem",
           position: 2,
           name: "Thú len đội mũ cử nhân làm theo yêu cầu",
-          url: `${siteConfig.url}/san-pham/thu-len-theo-yeu-cau`
+          url: `${siteConfig.url}/do-moc-theo-yeu-cau`
         }
       ]
     });
   }
 
-  const jsonLd = {
+  return {
     "@context": "https://schema.org",
     "@graph": graph
   };
+}
+
+export function PostJsonLd({ post }: { post: BlogPostMeta }) {
+  const jsonLd = getPostStructuredData(post);
 
   return (
     <script

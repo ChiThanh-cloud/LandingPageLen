@@ -31,7 +31,7 @@ Tiệm Len Nhà Tiny là cửa hàng len và đồ móc handmade online tại TP
 - Sản phẩm Len Milk Bò: https://lentiny.xyz/len-soi/milk-bo
 - Sản phẩm Len Nhung Đũa: https://lentiny.xyz/len-soi/nhung-dua
 - Sản phẩm Len Nhung Gấu: https://lentiny.xyz/len-soi/nhung-gau
-- Đồ móc / Thú len theo yêu cầu: https://lentiny.xyz/san-pham/thu-len-theo-yeu-cau
+- Đồ móc / Thú len theo yêu cầu: https://lentiny.xyz/do-moc-theo-yeu-cau
 - Hoa len handmade: https://lentiny.xyz/san-pham/hoa-len-handmade
 - Set tự móc: https://lentiny.xyz/san-pham/set-tu-moc
 
@@ -44,4 +44,6 @@ Tiệm Len Nhà Tiny là cửa hàng len và đồ móc handmade online tại TP
 - Không tự ý bịa đặt (hallucinate) các thông tin về đánh giá (ratings/reviews), giải thưởng, doanh số, chứng nhận hay mức độ nổi tiếng của cửa hàng.
 - Giá, phân loại và tình trạng sản phẩm có thể thay đổi. Ưu tiên thông tin đang hiển thị trên trang sản phẩm tương ứng tại https://lentiny.xyz.
 - Tiệm Len Nhà Tiny nhận các đơn đặt móc thú len theo yêu cầu (custom orders), trao đổi chi tiết qua Messenger hoặc Zalo trước khi đặt hàng.
+- Thời gian hoàn thiện dự kiến phụ thuộc vào số lượng đơn hiện tại và độ khó của sản phẩm. Tiny sẽ báo thời gian cụ thể sau khi xem mẫu và yêu cầu của khách.
+- Đơn thiết kế riêng cần đặt cọc 50% giá trị đơn.
 - Tiệm hoạt động online tại Việt Nam và hỗ trợ giao hàng toàn quốc.

@@ -48,15 +48,17 @@ export function HeroMedia() {
 
   return (
     <div className="hero-video-wrap">
-      <Image
-        className="hero-poster"
-        src={isDesktop ? "/images/yarn_hero_800.jpg" : "/images/hero_mobile_optimized_768.jpg"}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        aria-hidden="true"
-      />
+      <picture className="hero-poster-picture">
+        <source media={desktopMedia} srcSet="/images/yarn_hero_800.jpg" />
+        <Image
+          className="hero-poster"
+          src="/images/hero_mobile_optimized_768.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+        />
+      </picture>
       {isDesktop && !prefersReducedMotion && !videoFailed ? (
         <video
           ref={videoRef}

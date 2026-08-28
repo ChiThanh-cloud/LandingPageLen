@@ -4,6 +4,7 @@ import {
   filterCommerceProducts,
   getCommerceCategoryLabel,
   getCommerceDisplayPrice,
+  getMinimumPublicCommercePrice,
   getCommerceOptionSummary,
   getCommercePriceLabel,
   getCommerceProductPath,
@@ -76,6 +77,39 @@ test("zero, negative, or null variant prices never become a 0đ display price", 
 
   assert.deepEqual(getCommerceDisplayPrice(item), { amount: 10000, isFrom: false });
   assert.equal(getCommercePriceLabel(item), "10.000đ / cuộn");
+});
+
+test("store minimum price uses only public orderable products and variants", () => {
+  const visible = product({
+    price: 20_000,
+    variants: [
+      { id: "hidden-low", productId: "product-1", name: "Ẩn", sku: null, price: 1_000, stock: 5, status: "hidden", sortOrder: 0, image: "", colorCode: null, colorName: null, colorHex: null },
+      { id: "out-low", productId: "product-1", name: "Hết", sku: null, price: 2_000, stock: 5, status: "out", sortOrder: 1, image: "", colorCode: null, colorName: null, colorHex: null },
+      { id: "stock-low", productId: "product-1", name: "Hết tồn", sku: null, price: 3_000, stock: 0, status: "available", sortOrder: 2, image: "", colorCode: null, colorName: null, colorHex: null },
+      { id: "preorder", productId: "product-1", name: "Đặt trước", sku: null, price: 6_000, stock: null, status: "preorder", sortOrder: 3, image: "", colorCode: null, colorName: null, colorHex: null },
+      { id: "invalid", productId: "product-1", name: "Giá lỗi", sku: null, price: Number.NaN, stock: 5, status: "available", sortOrder: 4, image: "", colorCode: null, colorName: null, colorHex: null }
+    ]
+  });
+
+  assert.equal(getMinimumPublicCommercePrice([
+    product({ id: "hidden", status: "hidden", price: 500 }),
+    product({ id: "out", status: "out", price: 800 }),
+    visible
+  ]), 6_000);
+  assert.equal(getMinimumPublicCommercePrice([
+    product({ status: "out" }),
+    product({ variants: [{ id: "only-out", productId: "product-1", name: "Hết", sku: null, price: 1_000, stock: 1, status: "out", sortOrder: 0, image: "", colorCode: null, colorName: null, colorHex: null }] })
+  ]), null);
+
+  assert.equal(getMinimumPublicCommercePrice([
+    product({
+      price: 5_000,
+      variants: [
+        { id: "available-6k", productId: "product-1", name: "6k", sku: null, price: 6_000, stock: 2, status: "available", sortOrder: 0, image: "", colorCode: null, colorName: null, colorHex: null },
+        { id: "available-7k", productId: "product-1", name: "7k", sku: null, price: 7_000, stock: 2, status: "available", sortOrder: 1, image: "", colorCode: null, colorName: null, colorHex: null }
+      ]
+    })
+  ]), 6_000);
 });
 
 test("unit and option labels are generic, including no-variant and nullable-stock products", () => {

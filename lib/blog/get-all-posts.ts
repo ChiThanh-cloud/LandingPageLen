@@ -18,3 +18,8 @@ export function getAllPostMetadata(now = new Date()) {
     .filter((post) => isPublicPost(post, now))
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
+
+export function getLatestPostMetadata(limit = 3, now = new Date()) {
+  if (!Number.isInteger(limit) || limit <= 0) return [];
+  return getAllPostMetadata(now).slice(0, limit);
+}

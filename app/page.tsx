@@ -5,8 +5,10 @@ import { Fragment } from "react";
 import { HomepageEffects } from "@/components/home/HomepageEffects";
 import { HeroMedia } from "@/components/home/HeroMedia";
 import { ProductShowcase } from "@/components/home/ProductShowcase";
-import { posts } from "@/data/posts";
 import { siteConfig } from "@/data/site";
+import { getLatestPostMetadata } from "@/lib/blog/get-all-posts";
+import { getMinimumPublicCommercePrice } from "@/lib/products/commerce-catalog";
+import { getAllSellableProducts } from "@/lib/products/commerce-products";
 
 const messengerConsultUrl =
   "https://m.me/61559447375156?text=Ch%C3%A0o%20Tiny%2C%20m%C3%ACnh%20mu%E1%BB%91n%20t%C6%B0%20v%E1%BA%A5n%20%C4%91%E1%BA%B7t%20len%2F%C4%91%E1%BB%93%20m%C3%B3c%20handmade.%20M%C3%ACnh%20c%C3%B3%20th%E1%BB%83%20g%E1%BB%ADi%20%E1%BA%A3nh%20m%E1%BA%ABu%20%C4%91%E1%BB%83%20Tiny%20b%C3%A1o%20gi%C3%A1%20gi%C3%BAp%20m%C3%ACnh%20kh%C3%B4ng%3F";
@@ -44,7 +46,7 @@ export const metadata: Metadata = {
   }
 };
 
-const homeJsonLd = {
+export const homeJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -58,7 +60,6 @@ const homeJsonLd = {
       description:
         "Tiệm Len Nhà Tiny là shop len handmade tại TP.HCM, chuyên bán cuộn len, phụ kiện đan móc, đồ móc handmade theo yêu cầu, set tự móc và quà tặng handmade.",
       telephone: "+84937511107",
-      priceRange: "8000 VND - 500000 VND",
       address: {
         "@type": "PostalAddress",
         streetAddress: "853 Ba Đình, Phường Chánh Hưng",
@@ -94,15 +95,7 @@ const homeJsonLd = {
       url: `${siteConfig.url}/`,
       name: siteConfig.name,
       publisher: { "@id": `${siteConfig.url}/#business` },
-      inLanguage: siteConfig.language,
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: `${siteConfig.url}/blog?q={search_term_string}`
-        },
-        "query-input": "required name=search_term_string"
-      }
+      inLanguage: siteConfig.language
     },
     {
       "@type": "FAQPage",
@@ -159,9 +152,7 @@ const processSteps = [
   ["04", "Giao tới tận tay", "Đóng gói thơm tho, bọc hộp cẩn thận và ship bay thẳng đến nhà bạn!", LucideIconPackageCheck]
 ] as const;
 
-const latestPosts = [...posts]
-  .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-  .slice(0, 3);
+const latestPosts = getLatestPostMetadata(3);
 
 function CheckIcon() {
   return (
@@ -282,7 +273,18 @@ function MessengerBrandIcon() {
   );
 }
 
-export default function HomePage() {
+async function getHomepageMinimumPublicPrice() {
+  try {
+    return getMinimumPublicCommercePrice(await getAllSellableProducts());
+  } catch (error) {
+    console.error("Unable to derive the homepage public starting price", error);
+    return null;
+  }
+}
+
+export default async function HomePage() {
+  const minimumPublicPrice = await getHomepageMinimumPublicPrice();
+
   return (
     <>
       <HomepageEffects />
@@ -363,7 +365,7 @@ export default function HomePage() {
         <div className="container">
           <h2 className="section-title center">Tiny có thể làm gì <span className="highlight">giúp bạn?</span></h2>
           <p className="section-sub center">Từ nguyên liệu đan móc đến những món quà thành phẩm, tất cả đều sẵn sàng.</p>
-          <ProductShowcase />
+          <ProductShowcase minimumPublicPrice={minimumPublicPrice} />
         </div>
       </section>
 

@@ -84,9 +84,11 @@ test("accessory product edits revalidate cart, checkout, and public catalog rout
     "/admin/san-pham",
     "/gio-hang",
     "/thanh-toan",
+    "/",
     "/len-soi-va-phu-kien",
     "/phu-kien",
-    "/phu-kien/kim-moc"
+    "/phu-kien/kim-moc",
+    "/sitemap.xml"
   ]);
   assert.doesNotMatch(actions, /inventory_movements|admin_adjust_variant_stock/);
   assert.doesNotMatch(productManager, /\/phu-kien\//);

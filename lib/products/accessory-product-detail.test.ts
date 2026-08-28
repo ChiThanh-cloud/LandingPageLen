@@ -16,9 +16,12 @@ import {
 } from "./accessory-product-detail";
 import { getCommerceVariantPrice } from "./commerce-pricing";
 import {
+  getAccessoryAvailability,
   getAccessoryProductCanonical,
   getAccessoryProductDescription,
-  getAccessoryProductPageMetadata
+  getAccessoryProductPageMetadata,
+  getAccessoryProductStructuredData,
+  toAbsoluteAccessoryImageUrl
 } from "./accessory-product-seo";
 import { siteConfig } from "@/data/site";
 import type { CommerceProduct, CommerceVariant } from "@/types/commerce-product";
@@ -92,7 +95,109 @@ test("accessory metadata uses the dedicated canonical URL and factual descriptio
   assert.equal(openGraph.title, `${product.name} | ${siteConfig.name}`);
   assert.equal(openGraph.description, product.description);
   assert.doesNotMatch(String(metadata.alternates?.canonical), /\/len-soi\//);
-  assert.equal(getAccessoryProductDescription(accessory({ description: "" })), `Phụ kiện ${product.name} tại ${siteConfig.name}.`);
+  assert.equal(
+    getAccessoryProductDescription(accessory({ description: "" })),
+    `${product.name} là phụ kiện móc len tại ${siteConfig.name}, bán theo cây. Xem giá và các lựa chọn kích thước đang hiển thị.`
+  );
+});
+
+test("accessory Product JSON-LD uses only factual commerce fields and the visible breadcrumb hierarchy", () => {
+  const product = accessory({
+    variants: [
+      variant({ id: "public", price: 25_000, stock: 2, image: "/images/yarn_collection_800.jpg" }),
+      variant({ id: "hidden", status: "hidden", price: 1, stock: 100, image: "/images/hidden.jpg" })
+    ]
+  });
+  const data = getAccessoryProductStructuredData(product);
+  assert.ok(data);
+  const productNode = data["@graph"].find((entry) => entry["@type"] === "Product") as Record<string, unknown>;
+  const breadcrumbNode = data["@graph"].find((entry) => entry["@type"] === "BreadcrumbList") as Record<string, unknown>;
+  const offer = productNode.offers as Record<string, unknown>;
+  const canonical = `${siteConfig.url}/phu-kien/${product.slug}`;
+  const serialized = JSON.stringify(data);
+
+  assert.equal(productNode.name, product.name);
+  assert.equal(productNode.url, canonical);
+  assert.deepEqual(productNode.image, [
+    product.image,
+    `${siteConfig.url}/images/yarn_collection_800.jpg`
+  ]);
+  assert.equal(offer.price, 25_000);
+  assert.equal(offer.priceCurrency, "VND");
+  assert.equal(offer.availability, "https://schema.org/InStock");
+  assert.deepEqual(breadcrumbNode.itemListElement, [
+    { "@type": "ListItem", position: 1, name: "Trang chủ", item: siteConfig.url },
+    { "@type": "ListItem", position: 2, name: "Phụ kiện", item: `${siteConfig.url}/phu-kien` },
+    { "@type": "ListItem", position: 3, name: product.name, item: canonical }
+  ]);
+  assert.doesNotMatch(serialized, /aggregateRating|review|gtin|mpn|itemCondition|sku/i);
+  assert.doesNotMatch(serialized, /hidden\.jpg/);
+  assert.equal(toAbsoluteAccessoryImageUrl(product.image), product.image);
+});
+
+test("accessory Offer price uses only the variants represented by its purchasable availability", () => {
+  const cases = [
+    {
+      product: accessory({
+        price: 20_000,
+        variants: [
+          variant({ id: "out-low", status: "out", price: 1_000, stock: 3 }),
+          variant({ id: "available", status: "available", price: 25_000, stock: 3 })
+        ]
+      }),
+      price: 25_000,
+      availability: "https://schema.org/InStock"
+    },
+    {
+      product: accessory({
+        price: 20_000,
+        variants: [
+          variant({ id: "available", status: "available", price: 25_000, stock: 3 }),
+          variant({ id: "preorder-low", status: "preorder", price: 6_000, stock: null })
+        ]
+      }),
+      price: 25_000,
+      availability: "https://schema.org/InStock"
+    },
+    {
+      product: accessory({
+        price: 20_000,
+        variants: [
+          variant({ id: "zero-stock", status: "available", price: 2_000, stock: 0 }),
+          variant({ id: "preorder", status: "preorder", price: 6_000, stock: null })
+        ]
+      }),
+      price: 6_000,
+      availability: "https://schema.org/PreOrder"
+    },
+    {
+      product: accessory({
+        price: 20_000,
+        variants: [variant({ id: "fallback", status: "available", price: null, stock: 1 })]
+      }),
+      price: 20_000,
+      availability: "https://schema.org/InStock"
+    }
+  ] as const;
+
+  for (const item of cases) {
+    const data = getAccessoryProductStructuredData(item.product);
+    assert.ok(data);
+    const productNode = data["@graph"].find((entry) => entry["@type"] === "Product") as Record<string, unknown>;
+    const offer = productNode.offers as Record<string, unknown>;
+    assert.equal(offer.price, item.price);
+    assert.equal(offer.availability, item.availability);
+  }
+});
+
+test("accessory availability reflects product, variant, stock, preorder, and hidden states", () => {
+  assert.equal(getAccessoryAvailability(accessory()), "InStock");
+  assert.equal(getAccessoryAvailability(accessory({ status: "out" })), "OutOfStock");
+  assert.equal(getAccessoryAvailability(accessory({ status: "preorder" })), "PreOrder");
+  assert.equal(getAccessoryAvailability(accessory({ variants: [variant({ stock: 0 })] })), "OutOfStock");
+  assert.equal(getAccessoryAvailability(accessory({ variants: [variant({ status: "preorder" })] })), "PreOrder");
+  assert.equal(getAccessoryAvailability(accessory({ status: "hidden" })), null);
+  assert.equal(getAccessoryProductStructuredData(accessory({ status: "hidden" })), null);
 });
 
 test("accessory labels and price use the configured unit and option data without yarn inference", () => {
@@ -105,6 +210,12 @@ test("accessory labels and price use the configured unit and option data without
   assert.match(detailSource, /product\.optionLabel/);
   assert.match(detailSource, /product\.unitLabel/);
   assert.doesNotMatch(detailSource, /Mã màu|Bảng màu|\/ cuộn/);
+});
+
+test("accessory detail renders Product JSON-LD and a breadcrumb matching /phu-kien", () => {
+  assert.match(routeSource, /AccessoryProductJsonLd product=\{product\}/);
+  assert.match(detailSource, /<Link href="\/phu-kien">Phụ kiện<\/Link>/);
+  assert.doesNotMatch(detailSource, /<Link href="\/len-soi-va-phu-kien">Cuộn len/);
 });
 
 test("selected variant price overrides only when it is a positive finite number", () => {

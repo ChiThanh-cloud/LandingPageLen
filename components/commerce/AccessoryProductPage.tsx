@@ -110,7 +110,7 @@ export function AccessoryProductPage({ product }: { product: CommerceProduct }) 
             <nav className={styles.breadcrumb} aria-label="Breadcrumb">
               <Link href="/">Trang chủ</Link>
               <span aria-hidden="true">›</span>
-              <Link href="/len-soi-va-phu-kien">Cuộn len &amp; phụ kiện</Link>
+              <Link href="/phu-kien">Phụ kiện</Link>
               <span aria-hidden="true">›</span>
               <span aria-current="page">{product.name}</span>
             </nav>
