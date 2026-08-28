@@ -16,6 +16,13 @@
   z-index: 0;
 }
 
+.hero-poster-picture {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 0;
+}
+
 .hero-poster,
 .hero-video {
   position: absolute;
@@ -433,6 +440,7 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   width: 100%;
+  height: auto;
   aspect-ratio: 4/3;
   object-fit: cover;
 }

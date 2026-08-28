@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { customCrochetLandingUpdatedAt } from "@/data/business-truth";
 import { products } from "@/data/products";
 import { siteConfig } from "@/data/site";
 import { getAllPostMetadata } from "@/lib/blog/get-all-posts";
@@ -46,7 +47,7 @@ export async function getSitemapSellableProducts(
 
 export function getCommerceCatalogLastModified(
   sellableProducts: ReadonlyArray<Pick<CommerceProduct, "updatedAt">>,
-  fallback = "2026-08-11"
+  fallback: string = siteConfig.updatedAt
 ) {
   return sellableProducts.reduce((latest, product) => (
     product.updatedAt > latest ? product.updatedAt : latest
@@ -55,14 +56,14 @@ export function getCommerceCatalogLastModified(
 
 export function getYarnCatalogLastModified(
   yarnProducts: ReadonlyArray<Pick<CommerceProduct, "updatedAt">>,
-  fallback = "2026-08-11"
+  fallback: string = siteConfig.updatedAt
 ) {
   return getCommerceCatalogLastModified(yarnProducts, fallback);
 }
 
 export function getAccessoryCatalogLastModified(
   accessoryProducts: ReadonlyArray<Pick<CommerceProduct, "updatedAt">>,
-  fallback = "2026-08-11"
+  fallback: string = siteConfig.updatedAt
 ) {
   return getCommerceCatalogLastModified(accessoryProducts, fallback);
 }
@@ -128,8 +129,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.url}/len-soi`, lastModified: yarnCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
     { url: `${siteConfig.url}/phu-kien`, lastModified: accessoryCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.85 },
     { url: `${siteConfig.url}/len-soi-va-phu-kien`, lastModified: commerceCatalogLastModified, changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: `${siteConfig.url}/do-moc-theo-yeu-cau`, lastModified: customCrochetLandingUpdatedAt, changeFrequency: "monthly" as const, priority: 0.85, images: [`${siteConfig.url}/images/crochet_products_800.jpg`] },
     ...getSellableProductSitemapEntries(sellableProducts),
-    ...products.filter((product) => product.slug !== "len-soi").map((product) => ({
+    ...products.filter((product) => product.slug !== "len-soi" && product.slug !== "thu-len-theo-yeu-cau").map((product) => ({
       url: `${siteConfig.url}/san-pham/${product.slug}`,
       lastModified: product.updatedAt,
       changeFrequency: "monthly" as const,

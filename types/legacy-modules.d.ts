@@ -5,6 +5,7 @@ declare module "@/js/products.js" {
 }
 
 declare module "@/js/policy-modal.js" {
+  export const policies: Record<"privacy" | "terms" | "shipping" | "refund", string>;
   export function initPolicyModal(): void;
   export function openPolicyModal(type: "privacy" | "terms" | "shipping" | "refund"): void;
   export function closePolicyModal(): void;

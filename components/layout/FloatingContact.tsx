@@ -1,16 +1,20 @@
 "use client";
 
-import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { trackSiteEvent } from "@/lib/siteTracking";
 
 const messengerUrl = "https://m.me/61559447375156";
 const zaloUrl = "https://zalo.me/0937511107";
+const backToTopThreshold = 600;
 
 export function FloatingContact() {
+  const pathname = usePathname();
   const [inHero, setInHero] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- This persistent root-layout control must reset stale hero visibility as the route DOM changes. */
   useEffect(() => {
     const mobileQuery = window.matchMedia("(max-width: 768px)");
     const updateMobile = () => setIsMobile(mobileQuery.matches);
@@ -23,28 +27,102 @@ export function FloatingContact() {
   useEffect(() => {
     const hero = document.getElementById("hero");
     if (!hero || !("IntersectionObserver" in window)) {
+      setInHero(false);
       return;
     }
 
+    setInHero(hero.getBoundingClientRect().bottom > 0);
     const observer = new IntersectionObserver(
       ([entry]) => setInHero(entry.isIntersecting),
       { threshold: 0.05 }
     );
     observer.observe(hero);
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
+
+  useEffect(() => {
+    const updateBackToTopVisibility = () => {
+      setShowBackToTop(window.scrollY >= backToTopThreshold);
+    };
+
+    updateBackToTopVisibility();
+    window.addEventListener("scroll", updateBackToTopVisibility, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateBackToTopVisibility);
+  }, [pathname]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const isBackToTopVisible = isMobile ? showBackToTop : !inHero;
+
+  const handleBackToTop = () => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    trackSiteEvent("float_top_click", { label: "Lên đầu", href: "/#hero" });
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+  };
 
   return (
     <>
-      <div className={`float-buttons${isMobile && inHero ? " is-mobile-hero" : ""}`}>
-        <Link
-          href="/#hero"
-          className={`float-btn top-float${inHero ? " is-hidden" : ""}`}
+      <div className="float-buttons floating-actions">
+        <a
+          href={zaloUrl}
+          target="_blank"
+          rel="noopener"
+          className="float-btn zalo-float"
+          id="float-zalo"
+          aria-label="Nhắn Tiny qua Zalo"
+          data-track="float_zalo_click"
+          data-track-handled="true"
+          onClick={() => trackSiteEvent("float_zalo_click", { label: "Zalo", href: zaloUrl })}
+        >
+          <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
+            <text
+              x="50%"
+              y="56%"
+              dominantBaseline="middle"
+              textAnchor="middle"
+              fill="currentColor"
+              fontSize="18"
+              fontWeight="bold"
+              fontFamily="Arial, sans-serif"
+            >
+              Za
+            </text>
+          </svg>
+          <span className="float-label">Zalo</span>
+        </a>
+        <a
+          href={messengerUrl}
+          target="_blank"
+          rel="noopener"
+          className="float-btn fb-float"
+          id="float-fb"
+          aria-label="Nhắn Tiny qua Messenger"
+          data-track="float_facebook_click"
+          data-track-handled="true"
+          onClick={() =>
+            trackSiteEvent("float_facebook_click", {
+              label: "Messenger",
+              href: messengerUrl
+            })
+          }
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M12 2C6.477 2 2 6.145 2 11.259c0 2.915 1.455 5.515 3.728 7.213V22l3.405-1.868c.909.251 1.872.386 2.867.386 5.523 0 10-4.145 10-9.259C22 6.145 17.523 2 12 2Zm.994 12.468-2.546-2.715-4.968 2.715 5.465-5.803 2.608 2.715 4.906-2.715-5.465 5.803Z"
+            />
+          </svg>
+          <span className="float-label">Messenger</span>
+        </a>
+        <button
+          type="button"
+          className={`float-btn top-float${isBackToTopVisible ? "" : " is-hidden"}`}
           id="float-top"
-          aria-label="Lên đầu trang"
+          aria-label="Về đầu trang"
           data-track="float_top_click"
           data-track-handled="true"
-          onClick={() => trackSiteEvent("float_top_click", { label: "Lên đầu", href: "/#hero" })}
+          onClick={handleBackToTop}
         >
           <svg
             className="lucide lucide-arrow-up"
@@ -63,55 +141,7 @@ export function FloatingContact() {
             <path d="M12 19V5" />
           </svg>
           <span className="float-label">Lên đầu</span>
-        </Link>
-        <a
-          href={zaloUrl}
-          target="_blank"
-          rel="noopener"
-          className="float-btn zalo-float"
-          id="float-zalo"
-          aria-label="Chat Zalo"
-          data-track="float_zalo_click"
-          data-track-handled="true"
-          onClick={() => trackSiteEvent("float_zalo_click", { label: "Zalo", href: zaloUrl })}
-        >
-          <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
-            <text
-              x="50%"
-              y="56%"
-              dominantBaseline="middle"
-              textAnchor="middle"
-              fill="white"
-              fontSize="18"
-              fontWeight="bold"
-              fontFamily="Arial, sans-serif"
-            >
-              Za
-            </text>
-          </svg>
-          <span className="float-label">Zalo</span>
-        </a>
-        <a
-          href={messengerUrl}
-          target="_blank"
-          rel="noopener"
-          className="float-btn fb-float"
-          id="float-fb"
-          aria-label="Chat Facebook"
-          data-track="float_facebook_click"
-          data-track-handled="true"
-          onClick={() =>
-            trackSiteEvent("float_facebook_click", {
-              label: "Messenger",
-              href: messengerUrl
-            })
-          }
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-          </svg>
-          <span className="float-label">Messenger</span>
-        </a>
+        </button>
       </div>
       <div
         id="mobile-cta-bar"

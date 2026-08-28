@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { AccessoryCatalogJsonLd } from "@/components/commerce/AccessoryCatalogJsonLd";
 import { CommerceCatalog } from "@/components/commerce/CommerceCatalog";
 import { siteConfig } from "@/data/site";
 import { getAllAccessoryProducts } from "@/lib/products/commerce-products";
@@ -26,6 +27,7 @@ export default async function AccessoryCatalogPage() {
 
   return (
     <main className="yc-page">
+      <AccessoryCatalogJsonLd products={products} />
       <nav className="yc-breadcrumb" aria-label="Breadcrumb">
         <Link href="/">Trang chủ</Link>
         <span aria-hidden="true">›</span>

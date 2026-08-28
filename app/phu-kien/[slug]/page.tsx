@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AccessoryProductPage } from "@/components/commerce/AccessoryProductPage";
+import { AccessoryProductJsonLd } from "@/components/commerce/AccessoryProductJsonLd";
 import { getAccessoryProductBySlug } from "@/lib/products/commerce-products";
 import { getAccessoryProductPageMetadata } from "@/lib/products/accessory-product-seo";
 
@@ -17,5 +18,10 @@ export async function generateMetadata({ params }: AccessoryProductRouteProps): 
 export default async function AccessoryProductRoute({ params }: AccessoryProductRouteProps) {
   const product = await getAccessoryProductBySlug((await params).slug);
   if (!product) notFound();
-  return <AccessoryProductPage product={product} />;
+  return (
+    <>
+      <AccessoryProductJsonLd product={product} />
+      <AccessoryProductPage product={product} />
+    </>
+  );
 }

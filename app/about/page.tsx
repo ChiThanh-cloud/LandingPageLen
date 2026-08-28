@@ -48,7 +48,7 @@ const profileJsonLd = {
       inLanguage: siteConfig.language,
       mainEntity: {
         "@type": "Person",
-        "@id": `${siteConfig.url}/#author-tiny`,
+        "@id": `${canonical}#person`,
         name: "Tiny",
         url: canonical,
         jobTitle: "Người thợ móc len handmade",

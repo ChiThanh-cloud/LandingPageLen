@@ -33,7 +33,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
     "heroCta": {
       "primaryLabel": "Nhắn Tiny tư vấn",
       "secondaryLabel": "Xem đặt móc theo yêu cầu",
-      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+      "secondaryHref": "/do-moc-theo-yeu-cau"
     }
   },
   {
@@ -177,7 +177,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
   {
     "slug": "moc-thu-len-theo-anh-mat-bao-lau",
     "title": "Móc Thú Len Theo Ảnh Mất Bao Lâu? | LenTiny",
-    "description": "Thời gian hoàn thiện thú len theo ảnh phụ thuộc vào kích thước, độ phức tạp, số lượng và lịch đơn hiện tại. Xem quy trình và cách hỏi lịch.",
+    "description": "Thời gian hoàn thiện dự kiến phụ thuộc vào số lượng đơn hiện tại và độ khó của sản phẩm. Tiny sẽ báo thời gian cụ thể sau khi xem mẫu và yêu cầu của khách.",
     "ogTitle": "Móc Thú Len Theo Ảnh Mất Bao Lâu? | LenTiny",
     "ogDescription": "Thời gian dự kiến, quy trình custom và cách chuẩn bị ảnh để Tiny kiểm tra lịch trước khi nhận đơn.",
     "category": "Quà handmade",
@@ -193,7 +193,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
     "eyebrow": "Quà handmade - Đặt móc theo yêu cầu",
     "breadcrumbLabel": "Móc thú len theo ảnh",
     "h1": "Móc thú len theo ảnh mất bao lâu?",
-    "lead": "Thời gian hoàn thiện phụ thuộc vào kích thước, độ phức tạp, số lượng và lịch đơn hiện tại. Tiny sẽ xem yêu cầu và xác nhận lịch dự kiến trước khi bạn đặt cọc.",
+    "lead": "Thời gian hoàn thiện dự kiến phụ thuộc vào số lượng đơn hiện tại và độ khó của sản phẩm. Tiny sẽ báo thời gian cụ thể sau khi xem mẫu và yêu cầu của khách. Đơn thiết kế riêng cần đặt cọc 50% giá trị đơn.",
     "excerpt": "Thời gian dự kiến, quy trình custom và các yếu tố có thể làm lịch hoàn thiện thay đổi.",
     "image": "https://res.cloudinary.com/djn2kd2hh/image/upload/lentiny/blog/moc-thu-len-theo-anh-mat-bao-lau/cover.png",
     "imageAlt": "Quà handmade bằng len đặt móc theo yêu cầu",
@@ -204,7 +204,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
     "heroCta": {
       "primaryLabel": "Gửi ảnh cho Tiny",
       "secondaryLabel": "Xem đặt móc theo yêu cầu",
-      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+      "secondaryHref": "/do-moc-theo-yeu-cau"
     }
   },
   {
@@ -305,7 +305,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
     "heroCta": {
       "primaryLabel": "Kể Tiny nghe về món quà",
       "secondaryLabel": "Xem cách đặt theo yêu cầu",
-      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+      "secondaryHref": "/do-moc-theo-yeu-cau"
     }
   },
   {
@@ -338,7 +338,7 @@ export const mdxPostMetadata: BlogPostMeta[] = [
     "heroCta": {
       "primaryLabel": "Nhắn Tiny tư vấn quà",
       "secondaryLabel": "Xem đồ móc handmade",
-      "secondaryHref": "/san-pham/thu-len-theo-yeu-cau"
+      "secondaryHref": "/do-moc-theo-yeu-cau"
     }
   }
 ];

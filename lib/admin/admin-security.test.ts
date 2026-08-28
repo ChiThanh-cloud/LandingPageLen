@@ -60,9 +60,11 @@ test("accessory mutations revalidate cart, checkout, and accessory catalog route
     "/admin/san-pham",
     "/gio-hang",
     "/thanh-toan",
+    "/",
     "/len-soi-va-phu-kien",
     "/phu-kien",
-    "/phu-kien/kim-moc"
+    "/phu-kien/kim-moc",
+    "/sitemap.xml"
   ]);
 });
 
@@ -82,25 +84,25 @@ test("existing product category transitions invalidate both the old and new stor
 
   const target = (category: string | null, slug = "new-product") => ({ category, slug });
   assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("yarn", "milk-bo")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moi"), target("yarn", "milk-bo")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moi", "/len-soi", "/len-soi/milk-bo"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moi", "/len-soi", "/len-soi/milk-bo", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-moi"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/phu-kien", "/phu-kien/kim-moc"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/phu-kien", "/phu-kien/kim-moc", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("gift"), target("handmade", "custom")), [
     "/admin/san-pham", "/gio-hang", "/thanh-toan"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-bo"), target("yarn", "milk-bo")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moc"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc", "/sitemap.xml"
   ]);
 });
 

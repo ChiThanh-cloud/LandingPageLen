@@ -1,4 +1,10 @@
-const policies = {
+import {
+  customDepositStatement,
+  customLeadTimeStatement,
+  nationwideShippingStatement
+} from "@/data/business-truth";
+
+export const policies = {
   privacy: `
     <h2>Chính sách bảo mật</h2>
     <p><strong>Chủ thể bán hàng: Tiệm Len Nhà Tiny.</strong> Tiny chỉ thu thập thông tin cần thiết để tư vấn, xác nhận đơn, giao hàng và hỗ trợ sau bán hàng.</p>
@@ -19,22 +25,22 @@ const policies = {
     <h2>Điều khoản dịch vụ</h2>
     <p>Chủ thể bán hàng: <strong>Tiệm Len Nhà Tiny</strong>. Địa chỉ liên hệ: 853 Ba Đình, Phường Chánh Hưng, TP. Hồ Chí Minh. Kênh hỗ trợ: Zalo 093.751.1107 và Facebook Fanpage.</p>
     <h3>1. Sản phẩm và báo giá</h3>
-    <p>Tiny bán len sợi từ 8.000đ, hộp quà từ 100.000đ, set tự móc từ 100.000đ và nhận làm đồ móc handmade báo giá theo mẫu. Giá hiển thị hoặc báo qua tin nhắn được tính bằng VND và có thể thay đổi theo kích thước, chất liệu, độ khó, số lượng và yêu cầu gói quà.</p>
+    <p>Giá len sợi và phụ kiện được hiển thị theo catalog public hiện tại. Hộp quà, set tự móc và đồ móc handmade được báo giá theo mẫu hoặc yêu cầu. Giá hiển thị hoặc báo qua tin nhắn được tính bằng VND và có thể thay đổi theo kích thước, chất liệu, độ khó, số lượng và yêu cầu gói quà.</p>
     <h3>2. Đơn đặt riêng</h3>
     <p>Với sản phẩm handmade theo ảnh mẫu, Tiny sẽ tư vấn trước về màu, size, thời gian hoàn thiện và chi phí. Sản phẩm handmade có thể chênh nhẹ về màu sắc/kích thước do ánh sáng, lô len và thao tác thủ công.</p>
     <h3>3. Thanh toán và đặt cọc</h3>
-    <p>Đơn có sẵn có thể thanh toán theo thỏa thuận khi chốt đơn. Đơn thiết kế riêng có thể cần đặt cọc trước, thông thường từ 30-50% giá trị đơn, tùy độ phức tạp và số lượng.</p>
+    <p>Đơn có sẵn có thể thanh toán theo thỏa thuận khi chốt đơn. ${customDepositStatement}</p>
     <h3>4. Thời gian thực hiện</h3>
-    <p>Đơn móc theo yêu cầu thường cần 3-7 ngày làm việc, đơn phức tạp hoặc số lượng lớn có thể lâu hơn. Tiny sẽ báo lịch dự kiến trước khi nhận cọc.</p>
+    <p>${customLeadTimeStatement}</p>
     <h3>5. Hủy đơn</h3>
     <p>Đơn đặt riêng đã bắt đầu làm hoặc đã mua nguyên liệu riêng theo yêu cầu có thể không được hủy hoàn toàn. Tiny sẽ trao đổi phương án phù hợp theo tiến độ thực tế.</p>
   `,
   shipping: `
     <h2>Chính sách vận chuyển</h2>
     <h3>1. Phạm vi giao hàng</h3>
-    <p>Tiny hỗ trợ giao hàng toàn quốc qua các đơn vị vận chuyển phù hợp như GHN, GHTK, J&amp;T hoặc đơn vị tương đương.</p>
+    <p>${nationwideShippingStatement}</p>
     <h3>2. Thời gian giao hàng</h3>
-    <p>Nội thành TP.HCM thường từ 1-3 ngày làm việc sau khi gửi hàng. Các tỉnh thành khác thường từ 2-5 ngày làm việc, tùy khu vực và tình trạng vận chuyển.</p>
+    <p>Tiny chưa công bố mốc thời gian giao hàng cố định trên website.</p>
     <h3>3. Phí vận chuyển</h3>
     <p>Phí ship được báo khi chốt đơn, phụ thuộc địa chỉ nhận hàng, kích thước và trọng lượng gói hàng. Một số chương trình ưu đãi ship nếu có sẽ được thông báo rõ trước khi thanh toán.</p>
     <h3>4. Đóng gói</h3>

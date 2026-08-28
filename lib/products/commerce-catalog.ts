@@ -1,4 +1,9 @@
 import type { CommerceProduct, SellableCategory } from "@/types/commerce-product";
+import {
+  isCommerceProductOrderable,
+  isCommerceVariantOrderable
+} from "@/lib/products/commerce-orderability";
+import { getCommerceVariantPrice } from "@/lib/products/commerce-pricing";
 
 export type CommerceCatalogFilter = "all" | SellableCategory;
 
@@ -27,6 +32,30 @@ export function getCommerceDisplayPrice(product: Pick<CommerceProduct, "price" |
     amount: Math.min(...candidates),
     isFrom: new Set(candidates).size > 1
   };
+}
+
+/**
+ * Lowest price a customer can order from a public commerce record. Variant
+ * prices follow checkout semantics: a positive variant price wins and the
+ * product price is only that variant's fallback.
+ */
+export function getMinimumPublicCommercePrice(products: CommerceProduct[]): number | null {
+  const prices = products
+    .filter((product) => isCommerceProductOrderable(product.status))
+    .flatMap((product) => {
+      if (product.variants.length === 0) {
+        const price = getCommerceVariantPrice(product, null);
+        return price === null ? [] : [price];
+      }
+
+      return product.variants
+        .filter((variant) => isCommerceVariantOrderable(variant.status) && variant.stock !== 0)
+        .map((variant) => getCommerceVariantPrice(product, variant))
+        .filter((price): price is number => price !== null);
+    })
+    .filter((price): price is number => price !== null);
+
+  return prices.length > 0 ? Math.min(...prices) : null;
 }
 
 export function formatCommercePrice(amount: number) {

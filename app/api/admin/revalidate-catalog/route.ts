@@ -2,11 +2,13 @@ import { timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { getProductRevalidationPaths } from "@/lib/admin/product-revalidation";
 
 export const runtime = "nodejs";
 
 const requestSchema = z.object({
-  slug: z.string().trim().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+  slug: z.string().trim().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  category: z.enum(["yarn", "accessory"]).default("yarn")
 });
 
 function hasValidSecret(request: Request, expected: string) {
@@ -41,8 +43,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  revalidatePath("/len-soi");
-  revalidatePath(`/len-soi/${parsed.data.slug}`);
+  for (const path of getProductRevalidationPaths(parsed.data)) {
+    revalidatePath(path);
+  }
   return NextResponse.json(
     { ok: true },
     { status: 200, headers: { "Cache-Control": "no-store" } }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { KeyboardEvent } from "react";
 import { useEffect } from "react";
 import { trackSiteEvent } from "@/lib/siteTracking";
+import { formatCommercePrice } from "@/lib/products/commerce-catalog";
 
 type ProductCard = {
   id: string;
@@ -16,7 +17,7 @@ type ProductCard = {
   tag: string;
   tagClassName?: string;
   title: string;
-  price: string;
+  price: string | null;
   priceClassName?: string;
   description: string;
   modalLabel: string;
@@ -33,7 +34,7 @@ const products: ProductCard[] = [
     imageAlt: "Cuộn len và phụ kiện đan móc tại Tiệm Len Nhà Tiny",
     tag: "Bán chạy",
     title: "Cuộn len & phụ kiện",
-    price: "Từ 8.000đ",
+    price: null,
     description:
       "Bảng màu len siêu xinh, chất sợi mềm mịn (Cotton, Wool...). Đủ kim móc và phụ kiện để bạn tự tay làm nên tác phẩm của mình.",
     modalLabel: "Xem len & phụ kiện →",
@@ -55,8 +56,8 @@ const products: ProductCard[] = [
     description:
       "Thú bông Amigurumi, túi xách, mũ nón... Bạn chỉ cần có ý tưởng hoặc ảnh mẫu, Tiny sẽ dùng len biến nó thành hiện thực.",
     modalLabel: "Xem mẫu Tiny đã móc →",
-    detailHref: "/san-pham/thu-len-theo-yeu-cau",
-    detailLabel: "Xem quy trình đặt móc theo ảnh →"
+    detailHref: "/do-moc-theo-yeu-cau",
+    detailLabel: "Xem mẫu và quy trình đặt riêng →"
   },
   {
     id: "prod-qua-tang",
@@ -92,7 +93,7 @@ const products: ProductCard[] = [
   }
 ];
 
-export function ProductShowcase() {
+export function ProductShowcase({ minimumPublicPrice }: { minimumPublicPrice: number | null }) {
   useEffect(() => {
     let mounted = true;
     import("@/js/products.js").then(({ initProductModal }) => {
@@ -133,8 +134,13 @@ export function ProductShowcase() {
     <>
       <div className="products-grid">
         {products.map((product) => {
-          // Card commerce → navigate thẳng tới catalog umbrella, không mở modal
-          if (product.type === "yarn") {
+          const priceLabel = product.price ?? (
+            minimumPublicPrice !== null && Number.isFinite(minimumPublicPrice) && minimumPublicPrice > 0
+              ? `Từ ${formatCommercePrice(minimumPublicPrice)}`
+              : "Xem giá hiện tại"
+          );
+          // Card commerce và dịch vụ đặt riêng đều có landing page riêng.
+          if (product.type === "yarn" || product.type === "handmade") {
             return (
               <Link
                 key={product.id}
@@ -152,15 +158,15 @@ export function ProductShowcase() {
                 </div>
                 <div className="product-info">
                   <h3>{product.title}</h3>
-                  <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
+                  <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{priceLabel}</div>
                   <p>{product.description}</p>
-                  <span className="product-detail-link">Xem len & phụ kiện →</span>
+                  <span className="product-detail-link">{product.detailLabel}</span>
                 </div>
               </Link>
             );
           }
 
-          // 3 card còn lại → giữ nguyên modal behavior
+          // Hộp quà và set tự móc tiếp tục giữ nguyên modal behavior.
           return (
             <div
               key={product.id}
@@ -188,7 +194,7 @@ export function ProductShowcase() {
               </div>
               <div className="product-info">
                 <h3>{product.title}</h3>
-                <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{product.price}</div>
+                <div className={["product-price", product.priceClassName].filter(Boolean).join(" ")}>{priceLabel}</div>
                 <p>{product.description}</p>
                 <Link
                   className="product-detail-link"

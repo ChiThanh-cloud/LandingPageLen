@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { products } from "../data/products";
+import { customCrochetLandingUpdatedAt } from "../data/business-truth";
 import { siteConfig } from "../data/site";
 import { getAllPostMetadata } from "../lib/blog/get-all-posts";
 import { getCommerceProductPath } from "../lib/products/commerce-catalog";
@@ -33,10 +34,11 @@ test("SEO routes", async (t) => {
       `${siteConfig.url}/len-soi`,
       `${siteConfig.url}/phu-kien`,
       `${siteConfig.url}/len-soi-va-phu-kien`,
+      `${siteConfig.url}/do-moc-theo-yeu-cau`,
       ...posts.map((post) => `${siteConfig.url}/blog/${post.slug}`),
       ...sellableProducts.map((product) => `${siteConfig.url}${getCommerceProductPath(product)}`),
       ...products
-        .filter((product) => product.slug !== "len-soi")
+        .filter((product) => product.slug !== "len-soi" && product.slug !== "thu-len-theo-yeu-cau")
         .map((product) => `${siteConfig.url}/san-pham/${product.slug}`)
     ];
 
@@ -131,10 +133,17 @@ test("SEO routes", async (t) => {
     assert.equal(yarnCatalogEntry?.lastModified, getYarnCatalogLastModified(yarnProducts));
     assert.equal(accessoryCatalogEntry?.lastModified, getAccessoryCatalogLastModified(accessoryProducts));
     assert.equal(commerceCatalogEntry?.lastModified, getCommerceCatalogLastModified(sellableProducts));
-    assert.equal(getYarnCatalogLastModified([]), "2026-08-11");
-    assert.equal(getAccessoryCatalogLastModified([]), "2026-08-11");
-    assert.equal(getCommerceCatalogLastModified([]), "2026-08-11");
+    assert.equal(getYarnCatalogLastModified([]), siteConfig.updatedAt);
+    assert.equal(getAccessoryCatalogLastModified([]), siteConfig.updatedAt);
+    assert.equal(getCommerceCatalogLastModified([]), siteConfig.updatedAt);
     assert.equal(getYarnCatalogLastModified([{ updatedAt: "2026-08-14T00:00:00.000Z" }]), "2026-08-14T00:00:00.000Z");
+  });
+
+  await t.test("custom crochet landing uses its route-specific content timestamp", () => {
+    const entry = entries.find((item) => item.url === `${siteConfig.url}/do-moc-theo-yeu-cau`);
+    assert.equal(entry?.lastModified, customCrochetLandingUpdatedAt);
+    assert.notEqual(entry?.lastModified, siteConfig.updatedAt);
+    assert.ok(new Date(String(entry?.lastModified)).getTime() <= Date.now());
   });
 
   await t.test("sitemap dedupes full URLs without removing stable catalog entries", () => {
