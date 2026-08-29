@@ -69,11 +69,34 @@ test("accessory mutations revalidate cart, checkout, and accessory catalog route
 });
 
 test("every product mutation revalidates cart and checkout even outside online categories", () => {
-  for (const category of ["handmade", "set", "gift", null, undefined]) {
+  for (const category of ["set", "gift", null, undefined]) {
     assert.deepEqual(getProductRevalidationPaths({ slug: "protected", category }), [
       "/admin/san-pham", "/gio-hang", "/thanh-toan"
     ]);
   }
+});
+
+test("handmade product edits revalidate only the portfolio route beyond shared admin and checkout paths", () => {
+  const expectedPaths = [
+    "/admin/san-pham",
+    "/gio-hang",
+    "/thanh-toan",
+    "/do-moc-theo-yeu-cau"
+  ];
+
+  assert.deepEqual(
+    getProductRevalidationPaths({ slug: "hoa-tot-nghiep", category: "handmade" }),
+    expectedPaths
+  );
+  assert.deepEqual(
+    getProductRevalidationPaths(
+      { slug: "hoa-tot-nghiep-moi", category: "handmade" },
+      { slug: "hoa-tot-nghiep", category: "handmade" }
+    ),
+    expectedPaths
+  );
+  assert.ok(!expectedPaths.includes("/"));
+  assert.ok(!expectedPaths.includes("/sitemap.xml"));
 });
 
 test("existing product category transitions invalidate both the old and new storefront categories", () => {
@@ -84,10 +107,16 @@ test("existing product category transitions invalidate both the old and new stor
 
   const target = (category: string | null, slug = "new-product") => ({ category, slug });
   assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("yarn", "milk-bo")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo", "/sitemap.xml"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo", "/do-moc-theo-yeu-cau", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("handmade"), target("accessory", "kim-moc")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc", "/sitemap.xml"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moc", "/do-moc-theo-yeu-cau", "/sitemap.xml"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-moi"), target("handmade", "hoa-cu")), [
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/do-moc-theo-yeu-cau", "/sitemap.xml"
+  ]);
+  assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moi"), target("handmade", "hoa-cu")), [
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moi", "/do-moc-theo-yeu-cau", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("accessory", "kim-moi"), target("yarn", "milk-bo")), [
     "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/phu-kien", "/phu-kien/kim-moi", "/len-soi", "/len-soi/milk-bo", "/sitemap.xml"
@@ -96,7 +125,7 @@ test("existing product category transitions invalidate both the old and new stor
     "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-moi", "/phu-kien", "/phu-kien/kim-moc", "/sitemap.xml"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("gift"), target("handmade", "custom")), [
-    "/admin/san-pham", "/gio-hang", "/thanh-toan"
+    "/admin/san-pham", "/gio-hang", "/thanh-toan", "/do-moc-theo-yeu-cau"
   ]);
   assert.deepEqual(getProductRevalidationPaths(target("yarn", "milk-bo"), target("yarn", "milk-bo")), [
     "/admin/san-pham", "/gio-hang", "/thanh-toan", "/", "/len-soi-va-phu-kien", "/len-soi", "/len-soi/milk-bo", "/sitemap.xml"
