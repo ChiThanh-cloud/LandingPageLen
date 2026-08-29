@@ -3,6 +3,8 @@ export type ProductRevalidationTarget = {
   category?: string | null;
 };
 
+const HANDMADE_PORTFOLIO_PATH = "/do-moc-theo-yeu-cau";
+
 function getStorefrontProductPaths({ slug, category }: ProductRevalidationTarget) {
   if (category === "yarn") {
     return [
@@ -32,6 +34,8 @@ export function getProductRevalidationPaths(
     ? getStorefrontProductPaths(previousProduct)
     : [];
   const publicPaths = [...new Set([...currentPaths, ...previousPaths])];
+  const shouldRevalidateHandmadePortfolio = product.category === "handmade"
+    || previousProduct?.category === "handmade";
 
   return [
     "/admin/san-pham",
@@ -39,6 +43,7 @@ export function getProductRevalidationPaths(
     "/thanh-toan",
     ...(publicPaths.length > 0 ? ["/"] : []),
     ...publicPaths,
+    ...(shouldRevalidateHandmadePortfolio ? [HANDMADE_PORTFOLIO_PATH] : []),
     ...(publicPaths.length > 0 ? ["/sitemap.xml"] : [])
   ];
 }

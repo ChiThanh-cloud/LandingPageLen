@@ -26,7 +26,10 @@ export function HandmadePortfolioGallery({ items }: { items: HandmadePortfolioIt
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [selectedItem, setSelectedItem] = useState<HandmadePortfolioItem | null>(null);
+  const [isImageZoomed, setIsImageZoomed] = useState(false);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const imageZoomTriggerRef = useRef<HTMLButtonElement>(null);
+  const imageZoomCloseRef = useRef<HTMLButtonElement>(null);
 
   const categories = useMemo(() => {
     const uniqueCategories = new Map<string, string>();
@@ -51,6 +54,25 @@ export function HandmadePortfolioGallery({ items }: { items: HandmadePortfolioIt
     if (selectedItem && !dialog.open) dialog.showModal();
     if (!selectedItem && dialog.open) dialog.close();
   }, [selectedItem]);
+
+  useEffect(() => {
+    if (isImageZoomed) imageZoomCloseRef.current?.focus();
+  }, [isImageZoomed]);
+
+  const openPortfolioItem = (item: HandmadePortfolioItem) => {
+    setIsImageZoomed(false);
+    setSelectedItem(item);
+  };
+
+  const closeLightbox = () => {
+    setIsImageZoomed(false);
+    setSelectedItem(null);
+  };
+
+  const closeImageZoom = () => {
+    setIsImageZoomed(false);
+    requestAnimationFrame(() => imageZoomTriggerRef.current?.focus());
+  };
 
   if (items.length === 0) {
     return (
@@ -119,7 +141,7 @@ export function HandmadePortfolioGallery({ items }: { items: HandmadePortfolioIt
               <button
                 className={styles.portfolioImageButton}
                 type="button"
-                onClick={() => setSelectedItem(item)}
+                onClick={() => openPortfolioItem(item)}
                 aria-label={`Xem ảnh lớn mẫu ${item.name}`}
               >
                 <Image
@@ -167,29 +189,46 @@ export function HandmadePortfolioGallery({ items }: { items: HandmadePortfolioIt
         ref={dialogRef}
         className={styles.lightbox}
         aria-labelledby="handmade-lightbox-title"
-        onCancel={() => setSelectedItem(null)}
-        onClose={() => setSelectedItem(null)}
+        onCancel={(event) => {
+          if (isImageZoomed) {
+            event.preventDefault();
+            closeImageZoom();
+            return;
+          }
+          closeLightbox();
+        }}
+        onClose={closeLightbox}
         onClick={(event) => {
-          if (event.target === event.currentTarget) setSelectedItem(null);
+          if (event.target === event.currentTarget) closeLightbox();
         }}
       >
         {selectedItem && (
-          <div className={styles.lightboxPanel}>
+          <div
+            className={styles.lightboxPanel}
+            aria-hidden={isImageZoomed}
+            inert={isImageZoomed ? true : undefined}
+          >
             <button
               className={styles.lightboxClose}
               type="button"
-              onClick={() => setSelectedItem(null)}
+              onClick={closeLightbox}
             >
               Đóng
             </button>
-            <div className={styles.lightboxImage}>
+            <button
+              ref={imageZoomTriggerRef}
+              className={styles.lightboxImage}
+              type="button"
+              aria-label={`Mở ảnh lớn: ${selectedItem.name}`}
+              onClick={() => setIsImageZoomed(true)}
+            >
               <Image
                 src={selectedItem.fullImage}
                 alt={selectedItem.imageAlt}
                 fill
                 sizes="(max-width: 768px) 94vw, 72vw"
               />
-            </div>
+            </button>
             <div className={styles.lightboxCaption}>
               <p>{selectedItem.categoryLabel}</p>
               <h3 id="handmade-lightbox-title">{selectedItem.name}</h3>
@@ -206,6 +245,40 @@ export function HandmadePortfolioGallery({ items }: { items: HandmadePortfolioIt
             </div>
           </div>
         )}
+        {selectedItem && isImageZoomed ? (
+          <div
+            className={styles.imageZoomOverlay}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Ảnh lớn: ${selectedItem.name}`}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) closeImageZoom();
+            }}
+          >
+            <button
+              ref={imageZoomCloseRef}
+              className={styles.imageZoomClose}
+              type="button"
+              aria-label="Đóng ảnh lớn"
+              onClick={closeImageZoom}
+            >
+              ×
+            </button>
+            <button
+              className={styles.imageZoomFrame}
+              type="button"
+              aria-label="Đóng ảnh lớn"
+              onClick={closeImageZoom}
+            >
+              <Image
+                src={selectedItem.fullImage}
+                alt={selectedItem.imageAlt}
+                fill
+                sizes="96vw"
+              />
+            </button>
+          </div>
+        ) : null}
       </dialog>
     </>
   );
