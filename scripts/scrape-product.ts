@@ -4,6 +4,14 @@ import * as path from 'path';
 import { v2 as cloudinary } from 'cloudinary';
 import { createClient } from '@supabase/supabase-js';
 import * as dotenv from 'dotenv';
+import {
+  buildVariantsOnlyPlan,
+  executeVariantsOnlyPlan,
+  isSupportedImageBuffer,
+  isVariantsOnlyImportResult,
+  normalizeTargetSlug,
+  type RawVariantSwatch,
+} from './lib/variants-only';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -87,6 +95,12 @@ interface ExistingVariant {
   full_image_url: string | null;
   status: string | null;
   sort_order: number | null;
+}
+
+interface VariantsOnlyTargetProduct extends Record<string, unknown> {
+  id: number | string;
+  slug: string | null;
+  category: string | null;
 }
 
 interface ScrapeImportResult {
@@ -339,6 +353,250 @@ function validateScrapedProduct(input: {
       failImport(`Variant ${variant.code} has no valid source image URL.`);
     }
     codes.add(variant.code);
+  }
+}
+
+async function scrapeVariantsOnly(
+  url: string,
+  targetSlugRaw: string,
+  dryRun: boolean,
+  isImport: boolean,
+) {
+  const targetSlug = normalizeTargetSlug(targetSlugRaw);
+  if (!SUPABASE_URL || !SUPABASE_ADMIN_KEY) {
+    failImport('Supabase credentials are required to verify --target-slug.');
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ADMIN_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+  const { data: targetProduct, error: targetError } = await supabase
+    .from('products')
+    .select('*')
+    .eq('slug', targetSlug)
+    .maybeSingle<VariantsOnlyTargetProduct>();
+
+  if (targetError) {
+    throw new Error(`Database error fetching target product: ${targetError.message}`);
+  }
+  if (!targetProduct) {
+    throw new Error(`❌ Target product not found: ${targetSlug}\nNo changes were made.`);
+  }
+  if (targetProduct.category !== PRODUCT_CATEGORY) {
+    failImport(`Target product ${targetSlug} is not in category yarn.`);
+  }
+
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.waitForSelector('.swatch-element', { timeout: 10000 });
+
+    const swatches = await page.evaluate(() => {
+      return Array.from(document.querySelectorAll('.swatch-element')).map((element) => {
+        const input = element.querySelector('input') as HTMLInputElement | null;
+        const label = element.querySelector('label');
+        const image = element.querySelector('img');
+        const fallbackAttributes = ['data-image', 'data-bimg', 'data-zoom-image', 'data-src', 'data-original'];
+        const fallbackImageValues: Array<string | null> = [];
+        for (const owner of [image, label, input, element]) {
+          const backgroundImage = owner instanceof HTMLElement
+            ? owner.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/)?.[1] || null
+            : null;
+          fallbackImageValues.push(backgroundImage);
+          for (const attribute of fallbackAttributes) {
+            fallbackImageValues.push(owner?.getAttribute(attribute) || null);
+          }
+        }
+
+        return {
+          inputValue: input?.value || null,
+          labelText: label?.textContent || null,
+          elementText: element.textContent || null,
+          image: image ? {
+            dataZoomImage: image.getAttribute('data-zoom-image'),
+            dataImage: image.getAttribute('data-image'),
+            dataSrc: image.getAttribute('data-src'),
+            dataOriginal: image.getAttribute('data-original'),
+            dataLazySrc: image.getAttribute('data-lazy-src'),
+            dataSrcset: image.getAttribute('data-srcset'),
+            srcset: image.getAttribute('srcset'),
+            src: image.getAttribute('src'),
+          } : null,
+          fallbackImageValues,
+        } satisfies RawVariantSwatch;
+      });
+    });
+
+    const plan = buildVariantsOnlyPlan(swatches, url, targetSlug);
+    console.log(`\nSource:\n${url}`);
+    console.log(`\nTarget product:\n${targetSlug}`);
+    console.log(`\nMode:\nvariants-only`);
+    console.log(`\nVariants found: ${plan.items.length}\n`);
+    plan.items.forEach((item, index) => {
+      const code = item.code || 'MISSING';
+      const image = item.image || 'MISSING';
+      const issue = item.issue ? ` [${item.issue.toUpperCase()}]` : '';
+      console.log(`${String(index + 1).padStart(2, '0')}. code=${code}${issue}`);
+      console.log(`    image=${image}\n`);
+    });
+    console.log(`Valid variants: ${plan.validVariants.length}`);
+    console.log(`Missing code: ${plan.missingCodeCount}`);
+    console.log(`Missing image: ${plan.missingImageCount}`);
+    console.log(`Duplicate codes: ${plan.duplicateCodes.length}`);
+    console.log(`Duplicated source images: ${plan.duplicatedImages.length}`);
+    for (const duplicate of plan.duplicatedImages) {
+      console.warn(`WARNING: ${duplicate.image} is mapped directly by swatches ${duplicate.codes.join(', ')}.`);
+    }
+
+    if (dryRun) {
+      await executeVariantsOnlyPlan(plan, 'dry-run', {
+        processImage: async () => {
+          throw new Error('Dry-run attempted an image side effect.');
+        },
+        importBatch: async () => {
+          throw new Error('Dry-run attempted a database side effect.');
+        },
+      });
+      console.log(`\nDRY RUN — no database or Cloudinary changes made.`);
+      return;
+    }
+
+    if (!isImport) {
+      throw new Error('--variants-only supports --dry-run or --import.');
+    }
+    if (!process.env.CLOUDINARY_API_SECRET) {
+      failImport('CLOUDINARY_API_SECRET is missing.');
+    }
+
+    const { data: variantsBefore, error: variantsBeforeError } = await supabase
+      .from('product_variants')
+      .select('*')
+      .eq('product_id', targetProduct.id)
+      .order('sort_order', { ascending: true });
+    if (variantsBeforeError || !variantsBefore) {
+      throw new Error(`Database error fetching existing variants: ${variantsBeforeError?.message || 'variants not found'}`);
+    }
+
+    let downloadedCount = 0;
+    let uploadedCount = 0;
+    const importResult = await executeVariantsOnlyPlan(plan, 'import', {
+      processImage: async (variant) => {
+        const imagePath = path.join(process.cwd(), variant.localImage);
+        fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+        if (!isReusableLocalImage(imagePath)) {
+          const response = await fetch(variant.sourceImage);
+          if (!response.ok) {
+            throw new Error(`Variant ${variant.code} image download failed with HTTP ${response.status}.`);
+          }
+          const imageBuffer = Buffer.from(await response.arrayBuffer());
+          if (!isSupportedImageBuffer(imageBuffer)) {
+            throw new Error(`Variant ${variant.code} downloaded an unsupported or invalid image.`);
+          }
+          fs.writeFileSync(imagePath, imageBuffer);
+          downloadedCount += 1;
+        } else {
+          console.log(`REUSE: ${variant.localImage}`);
+        }
+
+        const uploaded = await cloudinary.uploader.upload(imagePath, {
+          public_id: variant.cloudinaryPublicId,
+          overwrite: true,
+          format: 'webp',
+        });
+        if (!isCloudinaryUrl(uploaded.secure_url)) {
+          throw new Error(`Variant ${variant.code} Cloudinary upload returned an invalid URL.`);
+        }
+        uploadedCount += 1;
+        console.log(`Uploaded [${variant.code}]: ${uploaded.secure_url}`);
+        return uploaded.secure_url;
+      },
+      importBatch: async (payload) => {
+        const { data, error } = await supabase.rpc('service_import_scraped_variant_images', {
+          p_target_slug: targetSlug,
+          p_variants: payload,
+        });
+        if (error) throw new Error(`Atomic variant-image import failed: ${error.message}`);
+        if (!isVariantsOnlyImportResult(data)
+          || data.targetSlug !== targetSlug
+          || data.productId !== targetProduct.id
+          || data.importedCount !== payload.length) {
+          failImport('Variant-image import returned an invalid result.');
+        }
+        return data;
+      },
+    });
+    if (!importResult) failImport('Variant-image import did not return a result.');
+
+    const { data: verifiedProduct, error: verifiedProductError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('id', targetProduct.id)
+      .single<VariantsOnlyTargetProduct>();
+    if (verifiedProductError || !verifiedProduct) {
+      failImport(`Target product read-back failed: ${verifiedProductError?.message || 'product not found'}.`);
+    }
+    if (JSON.stringify(verifiedProduct) !== JSON.stringify(targetProduct)) {
+      failImport('--variants-only changed protected product data.');
+    }
+
+    const { data: verifiedVariants, error: verifiedVariantsError } = await supabase
+      .from('product_variants')
+      .select('*')
+      .eq('product_id', targetProduct.id)
+      .order('sort_order', { ascending: true });
+    if (verifiedVariantsError || !verifiedVariants) {
+      failImport(`Variant read-back failed: ${verifiedVariantsError?.message || 'variants not found'}.`);
+    }
+    if (verifiedVariants.length !== variantsBefore.length + importResult.insertedCount) {
+      failImport('Variant read-back count does not match the import result.');
+    }
+
+    const importedCodes = new Set(plan.validVariants.map((variant) => variant.code));
+    const verifiedByCode = new Map<string, Record<string, unknown>>();
+    for (const variant of verifiedVariants as Array<Record<string, unknown>>) {
+      const code = typeof variant.color_code === 'string' ? variant.color_code.trim() : '';
+      if (code && importedCodes.has(code)) verifiedByCode.set(code, variant);
+    }
+    for (const before of variantsBefore as Array<Record<string, unknown>>) {
+      const code = typeof before.color_code === 'string' ? before.color_code.trim() : '';
+      if (!importedCodes.has(code)) continue;
+      const after = verifiedByCode.get(code);
+      if (!after) failImport(`Existing variant ${code} is missing after import.`);
+      for (const key of Object.keys(before)) {
+        if (['image_url', 'full_image_url', 'sort_order', 'updated_at'].includes(key)) continue;
+        if (after[key] !== before[key]) {
+          failImport(`Existing variant ${code} changed protected field ${key}.`);
+        }
+      }
+    }
+    const existingCodes = new Set(
+      (variantsBefore as Array<Record<string, unknown>>)
+        .map((variant) => typeof variant.color_code === 'string' ? variant.color_code.trim() : '')
+        .filter(Boolean),
+    );
+    for (const code of importedCodes) {
+      if (existingCodes.has(code)) continue;
+      const inserted = verifiedByCode.get(code);
+      if (!inserted || inserted.status !== 'hidden' || inserted.stock !== null || inserted.price !== null) {
+        failImport(`New variant ${code} did not keep the safe hidden/null inventory defaults.`);
+      }
+    }
+
+    await triggerCatalogRevalidation(targetSlug);
+    console.log(`\nTarget: ${targetSlug}`);
+    console.log(`\nScraped: ${plan.items.length}`);
+    console.log(`Images downloaded: ${downloadedCount}`);
+    console.log(`Images uploaded: ${uploadedCount}`);
+    console.log(`\nVariants inserted: ${importResult.insertedCount}`);
+    console.log(`Variants updated: ${importResult.updatedCount}`);
+    console.log(`Variants skipped: ${plan.items.length - plan.validVariants.length}`);
+    console.log(`Errors: 0`);
+    console.log(`\nProduct price: unchanged`);
+    console.log(`Product inventory: unchanged`);
+    console.log(`Product info: unchanged`);
+  } finally {
+    await browser.close();
   }
 }
 
@@ -947,6 +1205,8 @@ let isImport = false;
 let excludeGalleryIndexRaw = '';
 let updateGalleryOnly = false;
 let syncPrice = false;
+let variantsOnly = false;
+let targetSlug = '';
 
 for (const arg of args) {
   if (arg === '--dry-run') dryRun = true;
@@ -954,6 +1214,8 @@ for (const arg of args) {
   else if (arg === '--import') isImport = true;
   else if (arg === '--update-gallery-only') updateGalleryOnly = true;
   else if (arg === '--sync-price') syncPrice = true;
+  else if (arg === '--variants-only') variantsOnly = true;
+  else if (arg.startsWith('--target-slug=')) targetSlug = arg.slice('--target-slug='.length);
   else if (arg.startsWith('--exclude-gallery-index=')) {
     excludeGalleryIndexRaw = arg.slice('--exclude-gallery-index='.length);
   }
@@ -965,7 +1227,7 @@ for (const arg of args) {
 }
 
 if (!url) {
-  console.error('Usage: npx tsx scripts/scrape-product.ts <URL> [--dry-run | --download | --import] [--update-gallery-only] [--sync-price] [--exclude-gallery-index="2,3"]');
+  console.error('Usage: npx tsx scripts/scrape-product.ts <URL> [--dry-run | --download | --import] [--variants-only --target-slug=<tiny-slug>] [--update-gallery-only] [--sync-price] [--exclude-gallery-index="2,3"]');
   process.exit(1);
 }
 
@@ -976,6 +1238,18 @@ if ((dryRun && download) || (dryRun && isImport) || (download && isImport)) {
 }
 if (updateGalleryOnly && syncPrice) {
   console.error('--sync-price cannot be combined with --update-gallery-only.');
+  process.exit(1);
+}
+if (variantsOnly && !targetSlug.trim()) {
+  console.error('--target-slug is required when using --variants-only');
+  process.exit(1);
+}
+if (!variantsOnly && targetSlug.trim()) {
+  console.error('--target-slug can only be used with --variants-only.');
+  process.exit(1);
+}
+if (variantsOnly && (download || updateGalleryOnly || syncPrice || excludeGalleryIndexRaw)) {
+  console.error('--variants-only supports only --dry-run or --import and cannot use gallery/price flags.');
   process.exit(1);
 }
 
@@ -993,4 +1267,11 @@ if (!dryRun && !download && !isImport) {
   dryRun = true;
 }
 
-scrapeProduct(url, dryRun, download, isImport, excludeGalleryIndices, updateGalleryOnly, syncPrice);
+if (variantsOnly) {
+  scrapeVariantsOnly(url, targetSlug, dryRun, isImport).catch((error: unknown) => {
+    console.error(`Error during variants-only scraping: ${errorMessage(error)}`);
+    process.exitCode = 1;
+  });
+} else {
+  scrapeProduct(url, dryRun, download, isImport, excludeGalleryIndices, updateGalleryOnly, syncPrice);
+}
