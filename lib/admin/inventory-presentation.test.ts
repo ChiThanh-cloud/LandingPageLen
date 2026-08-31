@@ -6,6 +6,7 @@ import { getInventoryOptionLabel, getInventoryStockText, getInventoryUnitLabel, 
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const service = read("./admin-service.ts");
 const inventoryPage = read("../../app/admin/(protected)/ton-kho/page.tsx");
+const inventoryCatalog = read("../../components/admin/InventoryCatalog.tsx");
 const stockEditor = read("../../components/admin/StockEditor.tsx");
 const actions = read("../../app/admin/(protected)/actions.ts");
 
@@ -51,7 +52,8 @@ test("inventory rows keep yarn colors, accessory option values, and NULL stock s
 });
 
 test("accessory adjustment uses the existing protected server action and RPC", () => {
-  assert.match(inventoryPage, /<StockEditor variantId=\{String\(variant\.id\)\} stock=\{variant\.stock\}/);
+  assert.match(inventoryPage, /<InventoryCatalog products=\{products\} variants=\{variants\}/);
+  assert.match(inventoryCatalog, /<StockEditor variantId=\{String\(variant\.id\)\} stock=\{variant\.stock\}/);
   assert.match(actions, /export async function adjustStockAction[\s\S]*callAdminRpc\("admin_adjust_variant_stock"/);
   assert.match(actions, /Không tìm thấy phiên bản thuộc khu vực quản lý tồn kho/);
   assert.match(stockEditor, /chuyển phiên bản sang “Chưa quản lý tồn”/);

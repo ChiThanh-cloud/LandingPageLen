@@ -6,10 +6,12 @@ import { getProductRevalidationPaths } from "./product-revalidation";
 const read = (path: string) => readFileSync(new URL(path, import.meta.url), "utf8");
 const actions = read("../../app/admin/(protected)/san-pham/actions.ts");
 const productManager = read("../../components/admin/ProductManager.tsx");
+const catalogOrganization = read("./catalog-organization.ts");
 
 test("admin category contract accepts accessory without dropping existing categories", () => {
   assert.match(actions, /z\.enum\(\["handmade", "yarn", "accessory", "set", "gift"\]\)/);
-  assert.match(productManager, /accessory: "Phụ kiện"/);
+  assert.match(catalogOrganization, /\{ value: "accessory", label: "Phụ kiện" \}/);
+  assert.match(productManager, /ADMIN_PRODUCT_CATEGORIES/);
 });
 
 test("online product labels are required, trimmed, and yarn keeps null-safe defaults", () => {

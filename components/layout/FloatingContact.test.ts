@@ -4,6 +4,9 @@ import test from "node:test";
 
 const componentSource = readFileSync(new URL("./FloatingContact.tsx", import.meta.url), "utf8");
 const layoutCss = readFileSync(new URL("../../css/layout.css", import.meta.url), "utf8");
+const animationCss = readFileSync(new URL("../../css/animations.css", import.meta.url), "utf8");
+const productCss = readFileSync(new URL("../../css/products.css", import.meta.url), "utf8");
+const trackingSource = readFileSync(new URL("../../lib/siteTracking.ts", import.meta.url), "utf8");
 
 test("mobile floating actions keep the requested order and accessible names", () => {
   const zaloIndex = componentSource.indexOf('id="float-zalo"');
@@ -35,8 +38,22 @@ test("back-to-top visibility uses the requested scroll threshold without changin
   assert.match(componentSource, /https:\/\/zalo\.me\/0937511107/);
 });
 
+test("mobile bottom CTA is removed while all three floating actions remain rendered", () => {
+  assert.doesNotMatch(componentSource, /mobile-cta-bar|mobile-cta-btn|mobile_sticky_cta_click/);
+  assert.doesNotMatch(componentSource, />\s*Nhắn Messenger\s*</);
+  assert.doesNotMatch(componentSource, />\s*Nhắn Zalo\s*</);
+  assert.doesNotMatch(layoutCss, /\.mobile-cta/);
+  assert.doesNotMatch(animationCss, /\.mobile-cta/);
+  assert.doesNotMatch(trackingSource, /mobile_sticky_cta_click/);
+  assert.match(componentSource, /id="float-zalo"/);
+  assert.match(componentSource, /id="float-fb"/);
+  assert.match(componentSource, /id="float-top"/);
+});
+
 test("mobile styles respect safe area, touch targets, and open-menu visibility", () => {
-  assert.match(layoutCss, /bottom: calc\(env\(safe-area-inset-bottom\) \+ 80px\)/);
+  assert.match(layoutCss, /bottom: calc\(env\(safe-area-inset-bottom\) \+ 20px\)/);
+  assert.doesNotMatch(layoutCss, /padding-bottom: calc\(80px \+ env\(safe-area-inset-bottom\)\)/);
+  assert.doesNotMatch(productCss, /\.float-buttons\s*\{[^}]*bottom:/);
   assert.match(layoutCss, /\.float-buttons\.floating-actions \.float-btn \{[\s\S]*?min-width: 44px;[\s\S]*?min-height: 44px;/);
   assert.match(layoutCss, /body\.menu-open \.float-buttons\.floating-actions/);
   assert.match(layoutCss, /body\.product-modal-open \.float-buttons\.floating-actions/);

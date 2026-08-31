@@ -61,8 +61,7 @@ export function FloatingContact() {
   };
 
   return (
-    <>
-      <div className="float-buttons floating-actions">
+    <div className="float-buttons floating-actions">
         <a
           href={zaloUrl}
           target="_blank"
@@ -142,39 +141,6 @@ export function FloatingContact() {
           </svg>
           <span className="float-label">Lên đầu</span>
         </button>
-      </div>
-      <div
-        id="mobile-cta-bar"
-        className={`mobile-cta-bar${!isMobile || inHero ? " is-hidden" : ""}`}
-      >
-        <a
-          href={messengerUrl}
-          target="_blank"
-          rel="noopener"
-          className="mobile-cta-btn mobile-cta-primary"
-          data-track="mobile_sticky_cta_click"
-          data-track-handled="true"
-          onClick={() =>
-            trackSiteEvent("mobile_sticky_cta_click", {
-              label: "Nhắn Tiny báo giá ngay",
-              href: messengerUrl
-            })
-          }
-        >
-          Nhắn Messenger
-        </a>
-        <a
-          href={zaloUrl}
-          target="_blank"
-          rel="noopener"
-          className="mobile-cta-btn mobile-cta-secondary"
-          data-track="float_zalo_click"
-          data-track-handled="true"
-          onClick={() => trackSiteEvent("float_zalo_click", { label: "Zalo", href: zaloUrl })}
-        >
-          Nhắn Zalo
-        </a>
-      </div>
-    </>
+    </div>
   );
 }

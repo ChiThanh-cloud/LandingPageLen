@@ -19,7 +19,6 @@ const adEventNames: Record<string, string> = {
   float_top_click: "FloatTopClick",
   float_zalo_click: "FloatZaloClick",
   float_facebook_click: "FloatFacebookClick",
-  mobile_sticky_cta_click: "MobileStickyCtaClick",
   policy_privacy_click: "PolicyView",
   policy_terms_click: "PolicyView",
   policy_shipping_click: "PolicyView",

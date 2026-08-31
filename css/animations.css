@@ -51,7 +51,6 @@
 .review-card,
 .step,
 .float-btn,
-.mobile-cta-bar,
 .blog-button,
 .blog-card,
 .blog-related-card {
@@ -66,7 +65,6 @@
 .review-card,
 .step,
 .float-btn,
-.mobile-cta-bar,
 .blog-button,
 .blog-card,
 .blog-related-card {
@@ -75,8 +73,7 @@
 }
 
 .btn:active,
-.blog-button:active,
-.mobile-cta-bar:active {
+.blog-button:active {
   transform: translateY(1px) scale(.985);
 }
 

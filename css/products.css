@@ -382,7 +382,6 @@
 
 @media (max-width: 768px) {
   .footer { padding-bottom: 40px; }
-  .float-buttons { bottom: calc(78px + env(safe-area-inset-bottom)); }
 }
 
 /* 4. Product Modal Refinement */

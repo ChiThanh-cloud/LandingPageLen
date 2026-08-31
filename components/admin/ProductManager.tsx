@@ -12,6 +12,12 @@ import {
   toggleVariantAction,
   type ProductAdminActionResult
 } from "@/app/admin/(protected)/san-pham/actions";
+import {
+  ADMIN_PRODUCT_CATEGORIES,
+  getProductCategoryCounts,
+  getProductCategoryGroups,
+  type AdminProductCategory
+} from "@/lib/admin/catalog-organization";
 import { getProductFormLabels } from "@/lib/admin/product-form-state";
 import styles from "./Admin.module.css";
 
@@ -64,13 +70,9 @@ type SignedUploadResponse = {
 const allowedImageMimeTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 const maxImageFileSize = 10 * 1024 * 1024;
 
-const categoryLabels: Record<string, string> = {
-  handmade: "Đồ móc",
-  yarn: "Cuộn len",
-  accessory: "Phụ kiện",
-  set: "Set tự móc",
-  gift: "Quà tặng"
-};
+const categoryLabels = Object.fromEntries(
+  ADMIN_PRODUCT_CATEGORIES.map(({ value, label }) => [value, label])
+) as Record<AdminProductCategory, string>;
 
 const statusLabels: Record<string, string> = {
   available: "Còn hàng",
@@ -143,7 +145,7 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingVariantId, setEditingVariantId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState<"all" | AdminProductCategory>("all");
   const [productCategory, setProductCategory] = useState("handmade");
   const [productLabels, setProductLabels] = useState(() => getProductFormLabels("handmade"));
   const [message, setMessage] = useState<ProductAdminActionResult | null>(null);
@@ -166,10 +168,12 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   const supportsVariants = selected?.category === "yarn" || selected?.category === "accessory";
   const variantNoun = isYarnProduct ? "mã màu" : "lựa chọn";
   const variantNameLabel = isYarnProduct ? "Tên / mã" : "Tên phiên bản / giá trị lựa chọn";
-  const filtered = useMemo(() => products.filter((product) => {
-    const matchesText = !search.trim() || String(product.name || "").toLowerCase().includes(search.trim().toLowerCase());
-    return matchesText && (category === "all" || product.category === category);
-  }), [products, search, category]);
+  const categoryCounts = useMemo(() => getProductCategoryCounts(products), [products]);
+  const productGroups = useMemo(() => getProductCategoryGroups(products, search, category), [category, products, search]);
+  const filteredCount = useMemo(
+    () => productGroups.reduce((total, group) => total + group.products.length, 0),
+    [productGroups]
+  );
 
   function run(action: () => Promise<ProductAdminActionResult>, after?: (result: ProductAdminActionResult) => void) {
     setMessage(null);
@@ -254,43 +258,74 @@ export function ProductManager({ products, variants }: { products: ProductRecord
   return (
     <div className={styles.productWorkspace}>
       <section className={styles.productToolbar} aria-label="Tìm và lọc sản phẩm">
-        <input type="search" placeholder="Tìm theo tên sản phẩm" value={search} onChange={(event) => setSearch(event.target.value)} />
-        <select aria-label="Lọc danh mục" value={category} onChange={(event) => setCategory(event.target.value)}>
-          <option value="all">Tất cả danh mục</option>
-          {Object.entries(categoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-        </select>
+        <label className={styles.productSearch}>
+          <span className={styles.srOnly}>Tìm sản phẩm</span>
+          <input type="search" placeholder="Tìm theo tên sản phẩm..." value={search} onChange={(event) => setSearch(event.target.value)} />
+        </label>
         <button type="button" onClick={() => chooseProduct(null)}>Sản phẩm mới</button>
+        <div className={styles.filterScroller} role="group" aria-label="Lọc sản phẩm theo danh mục">
+          <button
+            type="button"
+            className={category === "all" ? styles.filterChipActive : styles.filterChip}
+            aria-pressed={category === "all"}
+            onClick={() => setCategory("all")}
+          >
+            <span>Tất cả</span><strong>{categoryCounts.all}</strong>
+          </button>
+          {ADMIN_PRODUCT_CATEGORIES.map((definition) => (
+            <button
+              key={definition.value}
+              type="button"
+              className={category === definition.value ? styles.filterChipActive : styles.filterChip}
+              aria-pressed={category === definition.value}
+              onClick={() => setCategory(definition.value)}
+            >
+              <span>{definition.label}</span><strong>{categoryCounts[definition.value]}</strong>
+            </button>
+          ))}
+        </div>
       </section>
 
       {message?.message ? <p className={message.ok ? styles.success : styles.error} role="status">{message.message}</p> : null}
 
       <div className={styles.productColumns}>
         <section className={styles.productListPanel} aria-labelledby="product-list-heading">
-          <div className={styles.sectionHeading}><h2 id="product-list-heading">Danh sách sản phẩm</h2><span>{filtered.length} sản phẩm</span></div>
+          <div className={styles.sectionHeading}><h2 id="product-list-heading">Danh sách sản phẩm</h2><span>{filteredCount} sản phẩm</span></div>
           <div className={styles.productList}>
-            {filtered.map((product) => (
-              <article className={`${styles.productListItem} ${product.status === "hidden" ? styles.mutedItem : ""} ${selectedId === String(product.id) ? styles.selectedItem : ""}`} key={String(product.id)}>
-                <button type="button" className={styles.productSelect} onClick={() => chooseProduct(product)} aria-label={`Sửa ${product.name}`}>
-                  <span className={styles.productThumb}>
-                    {product.image_url ? <Image src={product.image_url} alt="" width={68} height={68} /> : "Ảnh"}
-                  </span>
-                  <span><strong>{product.name || "Chưa đặt tên"}</strong><small>{categoryLabels[product.category || ""] || product.category} · {formatPrice(product.price)}</small><small>{statusLabels[product.status || ""] || product.status}</small></span>
-                </button>
-                <div className={styles.compactActions}>
-                  <button type="button" disabled={pending} onClick={() => run(() => toggleProductAction(String(product.id), product.status || "available"))}>{product.status === "hidden" ? "Hiện" : "Ẩn"}</button>
-                  <button type="button" disabled={pending} onClick={() => run(() => generateCaptionAction(String(product.id)))}>Caption</button>
-                  <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => setDeleteId(String(product.id))}>Xóa</button>
+            {productGroups.map((group, groupIndex) => (
+              <section className={styles.productCategoryGroup} key={group.value} aria-labelledby={`product-category-${group.value}`}>
+                <header className={styles.productCategoryHeader}>
+                  <span className={styles.categorySymbol} aria-hidden="true">{String(groupIndex + 1).padStart(2, "0")}</span>
+                  <h3 id={`product-category-${group.value}`}>{group.label}</h3>
+                  <span>{group.products.length} sản phẩm</span>
+                </header>
+                <div className={styles.productCategoryItems}>
+                  {group.products.map((product) => (
+                    <article className={`${styles.productListItem} ${product.status === "hidden" ? styles.mutedItem : ""} ${selectedId === String(product.id) ? styles.selectedItem : ""}`} key={String(product.id)}>
+                      <button type="button" className={styles.productSelect} onClick={() => chooseProduct(product)} aria-label={`Sửa ${product.name}`}>
+                        <span className={styles.productThumb}>
+                          {product.image_url ? <Image src={product.image_url} alt="" width={68} height={68} /> : "Ảnh"}
+                        </span>
+                        <span><strong>{product.name || "Chưa đặt tên"}</strong><small>{categoryLabels[product.category as AdminProductCategory] || product.category} · {formatPrice(product.price)}</small><small>{statusLabels[product.status || ""] || product.status}</small></span>
+                      </button>
+                      <div className={styles.compactActions}>
+                        <button type="button" disabled={pending} onClick={() => run(() => toggleProductAction(String(product.id), product.status || "available"))}>{product.status === "hidden" ? "Hiện" : "Ẩn"}</button>
+                        <button type="button" disabled={pending} onClick={() => run(() => generateCaptionAction(String(product.id)))}>Caption</button>
+                        <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => setDeleteId(String(product.id))}>Xóa</button>
+                      </div>
+                      {deleteId === String(product.id) ? (
+                        <div className={styles.inlineConfirm}>
+                          <p>Xóa “{product.name}” và các phiên bản thuộc sản phẩm này?</p>
+                          <button type="button" onClick={() => setDeleteId(null)}>Giữ lại</button>
+                          <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => run(() => deleteProductAction(String(product.id)), (result) => result.ok && setDeleteId(null))}>Xác nhận xóa</button>
+                        </div>
+                      ) : null}
+                    </article>
+                  ))}
                 </div>
-                {deleteId === String(product.id) ? (
-                  <div className={styles.inlineConfirm}>
-                    <p>Xóa “{product.name}” và các phiên bản thuộc sản phẩm này?</p>
-                    <button type="button" onClick={() => setDeleteId(null)}>Giữ lại</button>
-                    <button type="button" className={styles.dangerButton} disabled={pending} onClick={() => run(() => deleteProductAction(String(product.id)), (result) => result.ok && setDeleteId(null))}>Xác nhận xóa</button>
-                  </div>
-                ) : null}
-              </article>
+              </section>
             ))}
-            {!filtered.length ? <p className={styles.empty}>Không có sản phẩm phù hợp.</p> : null}
+            {!productGroups.length ? <p className={styles.empty}>Không có sản phẩm phù hợp.</p> : null}
           </div>
         </section>
 

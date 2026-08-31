@@ -573,14 +573,10 @@
   text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.mobile-cta-bar {
-  display: none;
-}
-
 @media (max-width: 768px) {
   .float-buttons.floating-actions {
     right: 14px;
-    bottom: calc(env(safe-area-inset-bottom) + 80px);
+    bottom: calc(env(safe-area-inset-bottom) + 20px);
     width: 44px;
     gap: 9px;
     z-index: 999;
@@ -684,62 +680,6 @@
     transform: translateY(10px);
   }
 
-  /* Dual-button sticky CTA bar – container */
-  .mobile-cta-bar {
-    position: fixed;
-    left: 10px;
-    right: 10px;
-    bottom: max(10px, env(safe-area-inset-bottom));
-    z-index: 1000;
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-    transform: translateY(0);
-    opacity: 1;
-    transition: var(--transition);
-  }
-
-  .mobile-cta-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 52px;
-    border-radius: 999px;
-    font-size: .88rem;
-    font-weight: 700;
-    text-decoration: none;
-    white-space: nowrap;
-    padding: 0 16px;
-    transition: var(--transition);
-    font-family: 'Be Vietnam Pro', sans-serif;
-  }
-
-  .mobile-cta-primary {
-    background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
-    color: var(--white);
-    box-shadow: 0 8px 20px rgba(59, 111, 160, .25);
-    flex: 3;
-  }
-
-  .mobile-cta-secondary {
-    background: var(--white);
-    color: var(--primary-700);
-    border: 2px solid var(--primary-300);
-    flex: 2;
-    box-shadow: 0 4px 12px rgba(59, 111, 160, .08);
-  }
-
-  .mobile-cta-bar.is-hidden,
-  body.menu-open .mobile-cta-bar,
-  body.product-modal-open .mobile-cta-bar {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(16px);
-  }
-
-  body {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
-  }
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -765,15 +705,6 @@
     transform: translateX(-3px) scale(1.02);
   }
 
-  .mobile-cta-primary:hover {
-    box-shadow: 0 10px 24px rgba(59, 111, 160, .32);
-    transform: translateY(-1px);
-  }
-
-  .mobile-cta-secondary:hover {
-    background: var(--primary-100);
-    border-color: var(--primary-600);
-  }
 }
 
 @media (max-width: 768px) and (hover: hover) and (pointer: fine) {
