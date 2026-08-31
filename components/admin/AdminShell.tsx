@@ -24,7 +24,7 @@ export function AdminShell({
     <div className={styles.adminRoot}>
       <a className={styles.skipLink} href="#admin-content">Đi đến nội dung chính</a>
       <aside className={styles.sidebar}>
-        <Link href="/admin" className={styles.adminBrand} aria-label="Tiny Admin — Tổng quan">
+        <Link href="/admin" prefetch={false} className={styles.adminBrand} aria-label="Tiny Admin — Tổng quan">
           <span className={styles.brandMark}>T</span>
           <span><strong>Tiny Admin</strong><small>Quản lý cửa hàng</small></span>
         </Link>
